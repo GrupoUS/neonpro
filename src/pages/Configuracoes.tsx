@@ -28,7 +28,7 @@ const ConfiguracoesPage = () => {
       setFormData({
         name: profile.name || '',
         email: user?.email || '',
-        phone: '' // Campo phone não existe no Profile atual
+        phone: profile.phone || ''
       });
     }
   }, [profile, user]);
@@ -53,7 +53,8 @@ const ConfiguracoesPage = () => {
     setIsLoading(true);
     try {
       await updateProfile({
-        name: formData.name
+        name: formData.name,
+        phone: formData.phone
       });
       
       toast({

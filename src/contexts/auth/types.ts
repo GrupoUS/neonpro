@@ -1,10 +1,11 @@
-
 import { Session, User } from '@supabase/supabase-js';
 
 export interface Profile {
   id: string;
   name: string | null;
   email: string | null;
+  phone: string | null;
+  avatar_url?: string | null;
 }
 
 export interface AuthContextProps {

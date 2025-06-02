@@ -15,7 +15,7 @@ export const useAuthOperations = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, email')
+        .select('id, name, email, phone, avatar_url')
         .eq('id', userId)
         .single();
 
