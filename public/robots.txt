@@ -1,0 +1,28 @@
+
+# NEON PRO - Sistema Premium de Gestão para Clínicas de Estética
+# https://neonpro.com.br/
+
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /redefinir-senha
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://neonpro.com.br/sitemap.xml
+
+# Specific crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /

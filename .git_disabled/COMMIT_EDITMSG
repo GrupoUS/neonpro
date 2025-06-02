@@ -1,0 +1,1 @@
+feat: update Tailwind CSS configuration with new colors, fonts, and animations; add environment variables for Supabase; implement patient registration form with validation and error handling; create layout components including Header and Sidebar; establish Supabase client for data management.

@@ -1,0 +1,394 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Horizon UI Professional Color Palette */
+    --background: 0 0% 100%; /* Pure white base */
+    --foreground: 220 13% 18%; /* Professional dark gray */
+
+    /* Horizon UI Core Colors */
+    --primary-50: 220 60% 99%;
+    --primary-100: 220 43% 96%;
+    --primary-200: 220 50% 90%;
+    --primary-300: 220 50% 80%;
+    --primary-400: 220 50% 65%;
+    --primary-500: 220 91% 50%; /* Main brand blue */
+    --primary-600: 220 91% 45%;
+    --primary-700: 220 91% 40%;
+    --primary-800: 220 91% 35%;
+    --primary-900: 220 91% 25%;
+
+    /* Neon Gold Accent - Professional vibrant gold */
+    --neon-gold: 51 100% 50%; /* #FFD700 - Pure gold */
+    --neon-gold-light: 51 100% 65%;
+    --neon-gold-dark: 45 100% 45%;
+
+    /* Neutral Professional Palette */
+    --gray-50: 210 20% 98%;
+    --gray-100: 210 20% 95%;
+    --gray-200: 210 16% 93%;
+    --gray-300: 210 14% 89%;
+    --gray-400: 210 14% 83%;
+    --gray-500: 210 11% 71%;
+    --gray-600: 210 7% 56%;
+    --gray-700: 210 9% 31%;
+    --gray-800: 210 10% 23%;
+    --gray-900: 220 13% 18%;
+
+    /* Semantic Colors */
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --error: 0 84% 60%;
+    --info: 199 89% 48%;
+
+    /* Component Variables */
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+
+    --primary: 220 91% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 220 13% 18%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 7% 56%;
+
+    --accent: 51 100% 50%; /* Neon Gold */
+    --accent-foreground: 220 13% 18%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 16% 93%;
+    --input: 210 16% 93%;
+    --ring: 51 100% 50%; /* Neon Gold for focus rings */
+
+    --radius: 0.75rem; /* Horizon UI standard radius */
+
+    /* Sidebar Variables */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 51 100% 50%; /* Neon Gold */
+    --sidebar-primary-foreground: 220 13% 18%;
+    --sidebar-accent: 220 91% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 210 16% 93%;
+    --sidebar-ring: 51 100% 50%;
+  }
+
+  .dark {
+    --background: 220 13% 9%;
+    --foreground: 210 20% 98%;
+
+    --card: 220 13% 12%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 220 13% 12%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 220 91% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 220 13% 15%;
+    --muted-foreground: 210 11% 71%;
+
+    --accent: 51 100% 50%;
+    --accent-foreground: 220 13% 9%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 220 13% 15%;
+    --input: 220 13% 15%;
+    --ring: 51 100% 50%;
+
+    --sidebar-background: 220 13% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 51 100% 50%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 220 91% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 15%;
+    --sidebar-ring: 51 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    /* Improved antialiasing for text */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+  }
+  
+  /* Horizon UI Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+
+  h6 {
+    @apply text-base md:text-lg lg:text-xl;
+  }
+  
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background transition-all duration-200;
+  }
+  
+  /* Improved button and interactive element tap states */
+  button, a, [role="button"] {
+    @apply outline-none select-none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Smoother transitions for interactive elements */
+  a, button, input, select, textarea {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  /* Horizon UI Utility Classes */
+  .gradient-neon-gold {
+    background: linear-gradient(135deg, hsl(var(--neon-gold)) 0%, hsl(var(--neon-gold-dark)) 100%);
+  }
+  
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary-500)) 0%, hsl(var(--primary-700)) 100%);
+  }
+  
+  .shadow-horizon {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-horizon-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .shadow-horizon-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 ease-out cursor-pointer;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Horizon UI Animation Classes */
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.5s ease-out forwards;
+  }
+  
+  .slide-in-left {
+    animation: slideInLeft 0.5s ease-out forwards;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  /* Stagger Animation Classes */
+  .stagger-item {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .stagger-delay-1 { animation-delay: 0.1s; }
+  .stagger-delay-2 { animation-delay: 0.2s; }
+  .stagger-delay-3 { animation-delay: 0.3s; }
+  .stagger-delay-4 { animation-delay: 0.4s; }
+  .stagger-delay-5 { animation-delay: 0.5s; }
+  .stagger-delay-6 { animation-delay: 0.6s; }
+  
+  /* Horizon UI Button Styles */
+  .btn-primary {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-horizon;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(255, 215, 0, 0.3), 0 4px 6px -2px rgba(255, 215, 0, 0.1);
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-horizon;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-300;
+  }
+  
+  /* Improved form focus states */
+  input:focus, 
+  textarea:focus, 
+  select:focus {
+    @apply outline-none ring-2 ring-accent border-accent;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  }
+  
+  /* Horizon UI Card Styles */
+  .card-horizon {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-horizon;
+  }
+  
+  .card-horizon-interactive {
+    @apply card-horizon card-hover;
+  }
+  
+  /* Professional Loading States */
+  .loading-shimmer {
+    background: linear-gradient(90deg, 
+      hsl(var(--gray-200)) 25%, 
+      hsl(var(--gray-100)) 50%, 
+      hsl(var(--gray-200)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--gray-100));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--gray-400));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+  
+  /* Text Selection */
+  ::selection {
+    background: hsl(var(--accent) / 0.2);
+    color: hsl(var(--foreground));
+  }
+}
