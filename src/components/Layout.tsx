@@ -11,7 +11,7 @@ import {
   Moon,
   Briefcase
 } from 'lucide-react';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface LayoutProps {
   children: React.ReactNode;

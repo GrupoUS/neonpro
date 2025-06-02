@@ -6,8 +6,10 @@ import { Helmet } from "react-helmet";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 const FinanceiroPage = () => {
+  const navigate = useNavigate();
   // Mock data for transactions
   const transactions = [
     { id: 1, date: "15/06/2023", description: "Procedimento - Botox", category: "Serviços", value: 1200, type: "income" },
@@ -57,7 +59,10 @@ const FinanceiroPage = () => {
                     Relatórios
                   </Button>
                   
-                  <Button className="bg-gold hover:bg-gold/80 text-white">
+                  <Button 
+                    className="bg-gold hover:bg-gold/80 text-white"
+                    onClick={() => navigate('/financeiro/novo')}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Nova Transação
                   </Button>

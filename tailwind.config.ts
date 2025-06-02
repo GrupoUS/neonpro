@@ -73,6 +73,13 @@ export default {
 				'error': 'hsl(0, 84%, 60%)',
 				'info': 'hsl(199, 89%, 48%)',
 				
+				// Gold alias for compatibility
+				'gold': {
+					DEFAULT: 'hsl(51, 100%, 50%)', // #FFD700
+					light: 'hsl(51, 100%, 65%)',
+					dark: 'hsl(45, 100%, 45%)',
+				},
+				
 				// Base System Colors
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

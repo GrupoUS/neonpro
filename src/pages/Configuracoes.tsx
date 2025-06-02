@@ -1,5 +1,7 @@
-
 import { Settings, User, Building, CreditCard, Bell, Shield, Package, Save } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Helmet } from "react-helmet";
@@ -8,8 +10,69 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { BillingSection } from "@/components/billing/BillingSection";
 
 const ConfiguracoesPage = () => {
+  const { toast } = useToast();
+  const { user, profile, updateProfile } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
+
+  // Carregar dados do perfil quando disponível
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || '',
+        email: user?.email || '',
+        phone: '' // Campo phone não existe no Profile atual
+      });
+    }
+  }, [profile, user]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) {
+      toast({
+        title: "Erro",
+        description: "Usuário não encontrado",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await updateProfile({
+        name: formData.name
+      });
+      
+      toast({
+        title: "Sucesso!",
+        description: "Perfil atualizado com sucesso",
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Erro ao salvar perfil:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao salvar as alterações. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SidebarProvider>
       <Helmet>
@@ -97,7 +160,11 @@ const ConfiguracoesPage = () => {
                       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="name">Nome Completo</Label>
-                          <Input id="name" defaultValue="Dra. Maria Silva" />
+                          <Input 
+                            id="name" 
+                            value={formData.name}
+                            onChange={(e) => handleInputChange('name', e.target.value)}
+                          />
                         </div>
                         
                         <div className="space-y-2">
@@ -107,19 +174,32 @@ const ConfiguracoesPage = () => {
                         
                         <div className="space-y-2">
                           <Label htmlFor="email">Email</Label>
-                          <Input id="email" defaultValue="maria.silva@clinica.com" />
+                          <Input 
+                            id="email" 
+                            value={formData.email}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            disabled
+                          />
                         </div>
                         
                         <div className="space-y-2">
                           <Label htmlFor="phone">Telefone</Label>
-                          <Input id="phone" defaultValue="(11) 99999-9999" />
+                          <Input 
+                            id="phone" 
+                            value={formData.phone}
+                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                          />
                         </div>
                       </div>
                       
                       <div className="pt-4">
-                        <Button className="bg-gold hover:bg-gold/80 text-white">
+                        <Button 
+                          className="bg-gold hover:bg-gold/80 text-white"
+                          onClick={handleSaveProfile}
+                          disabled={isLoading}
+                        >
                           <Save className="w-4 h-4 mr-2" />
-                          Salvar Alterações
+                          {isLoading ? 'Salvando...' : 'Salvar Alterações'}
                         </Button>
                       </div>
                     </div>
@@ -259,7 +339,7 @@ const ConfiguracoesPage = () => {
                 <TabsContent value="billing" className="p-6 focus:outline-none">
                   <div className="space-y-4">
                     <h2 className="text-xl font-serif font-semibold text-dark-blue mb-4">Informações de Faturamento</h2>
-                    <p>Gerencie suas informações de pagamento e assinatura aqui.</p>
+                    <BillingSection />
                   </div>
                 </TabsContent>
                 
