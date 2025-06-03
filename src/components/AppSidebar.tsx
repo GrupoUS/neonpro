@@ -54,15 +54,15 @@ const AppSidebar: React.FC = () => {
     <aside className="w-64 sidebar-neon">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
-          {/* Novo ícone hexagonal NEON PRO */}
+          {/* Ícone hexagonal NEON PRO */}
           <div className="relative">
             <svg 
               viewBox="0 0 32 32" 
-              className="w-10 h-10 glow-neon"
+              className="w-10 h-10 glow-neon transition-all duration-300 hover:glow-neon-intense"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                <linearGradient id="neon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="neon-gradient-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#00F5FF"/>
                   <stop offset="100%" stopColor="#00FA9A"/>
                 </linearGradient>
@@ -70,7 +70,7 @@ const AppSidebar: React.FC = () => {
               <polygon 
                 points="16,4 28,12 28,20 16,28 4,20 4,12" 
                 fill="none" 
-                stroke="url(#neon-gradient)" 
+                stroke="url(#neon-gradient-sidebar)" 
                 strokeWidth="2"
                 className="drop-shadow-lg"
               />
@@ -78,16 +78,22 @@ const AppSidebar: React.FC = () => {
                 cx="16" 
                 cy="16" 
                 r="6" 
-                fill="url(#neon-gradient)"
+                fill="url(#neon-gradient-sidebar)"
                 className="animate-pulse-neon"
               />
             </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-neon-brand">
+            <span 
+              className="text-xl font-bold text-neon-brand transition-all duration-300 hover:animate-gradient-shift"
+              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+            >
               NEON PRO
             </span>
-            <span className="text-xs text-neon-subtitle">
+            <span 
+              className="text-xs text-neon-subtitle"
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
               Gestão Premium
             </span>
           </div>
@@ -107,6 +113,7 @@ const AppSidebar: React.FC = () => {
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md hover:shadow-neon/20'
                   }`
                 }
+                style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 <IconComponent className="h-5 w-5 transition-transform group-hover:scale-110" />
                 <span className="font-medium">{item.label}</span>

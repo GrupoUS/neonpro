@@ -32,6 +32,11 @@ export default {
 				// Paleta NEON PRO
 				'neon': neonColors,
 				
+				// Cores específicas do branding NEON PRO
+				'neon-brand': '#00F5FF', // Cor principal da marca
+				'neon-subtitle': '#B0B0B8', // Cor para subtítulos  
+				'neon-dark': '#0A0A0F', // Azul muito escuro
+				
 				// Paleta Sacha (compatibilidade)
 				'sacha': sachaColors,
 				

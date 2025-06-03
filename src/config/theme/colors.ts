@@ -14,6 +14,10 @@ export const neonColors = {
   'dark-blue': '#1A1A2E', // Azul escuro para fundos
   'gray': '#2D2D3A', // Cinza azulado
   'light-gray': '#B0B0B8', // Cinza claro
+  
+  // Cores específicas para branding
+  'brand': '#00F5FF', // Cor principal da marca
+  'subtitle': '#B0B0B8', // Cor para subtítulos
 };
 
 // Paleta de cores oficial "Universo da Sacha" - Mantida para compatibilidade
