@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '../lib/supabase';
 import { UserProfile, CreateUserProfileData, UpdateUserProfileData, UserRole } from '@/types/user';
 
 export const useUsers = () => {

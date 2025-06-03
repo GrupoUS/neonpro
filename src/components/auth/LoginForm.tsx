@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,15 +21,20 @@ import { GoogleSignInButton } from './GoogleSignInButton';
 import { PasswordInput } from './PasswordInput';
 import { LoadingSpinner } from './LoadingSpinner';
 import { toast } from 'sonner';
+=======
+import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
+>>>>>>> Stashed changes
 
-type LoginFormProps = {
+interface LoginFormProps {
   onSuccess: () => void;
   isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
-  handleGoogleSignIn: () => void;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  handleGoogleSignIn: () => Promise<void>;
   onResetPassword: () => void;
-};
+}
 
+<<<<<<< Updated upstream
 export const LoginForm: React.FC<LoginFormProps> = ({ 
   onSuccess, 
   isLoading, 
@@ -58,9 +64,30 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       }
     } finally {
       setIsLoading(false);
+=======
+const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, isLoading, setIsLoading, handleGoogleSignIn, onResetPassword }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage('');
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      setMessage(error.message);
+    } else {
+      onSuccess();
+>>>>>>> Stashed changes
     }
+    setIsLoading(false);
   };
 
+<<<<<<< Updated upstream
   return (
     <div className="space-y-6">
       <FormHeader 
@@ -123,5 +150,68 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         isLoading={isLoading}
       />
     </div>
+=======
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
+
+    const { error } = await supabase.auth.signUp({ email, password });
+
+    if (error) {
+      setMessage(error.message);
+    } else {
+      setMessage('Registration successful. Please check your email for confirmation.');
+    }
+    setIsLoading(false);
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+    if (error) {
+      setMessage(error.message);
+    } else {
+      setMessage('Password reset email sent. Please check your inbox.');
+    }
+    setIsLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleLogin} className="flex flex-col space-y-4">
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="p-2 border border-gray-300 rounded"
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="p-2 border border-gray-300 rounded"
+        required
+      />
+      <button type="submit" disabled={isLoading} className="p-2 bg-blue-500 text-white rounded">
+        {isLoading ? 'Loading...' : 'Login'}
+      </button>
+      <button type="button" onClick={handleGoogleSignIn} disabled={isLoading} className="p-2 bg-red-500 text-white rounded">
+        {isLoading ? 'Loading...' : 'Login with Google'}
+      </button>
+      <button type="button" onClick={onResetPassword} disabled={isLoading} className="text-blue-500 text-sm">
+        Forgot Password?
+      </button>
+      {message && <p className="text-center text-sm">{message}</p>}
+    </form>
+>>>>>>> Stashed changes
   );
 };
+
+export default LoginForm;

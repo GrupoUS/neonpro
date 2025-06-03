@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
+# NEON PRO - Sistema Premium de Gestão para Clínicas de Estética
 
-## Project info
+Bem-vindo ao repositório do NEON PRO, um sistema de gestão completo e premium desenvolvido para clínicas de estética. Este projeto utiliza uma stack moderna com React, TypeScript, Tailwind CSS e Supabase como backend.
 
-**URL**: https://lovable.dev/projects/471997d4-fa03-4689-b43a-abddf59ca746
+## Visão Geral do Projeto
 
-## How can I edit this code?
+O NEON PRO oferece funcionalidades robustas para:
+- **Autenticação de Usuários**: Login, cadastro, redefinição de senha e autenticação social (Google) via Supabase Auth.
+- **Gestão de Clientes**: Cadastro, edição e visualização de informações de pacientes.
+- **Gestão de Agendamentos**: Criação, atualização e acompanhamento de agendamentos.
+- **Gestão Financeira**: Registro e controle de transações (receitas e despesas).
+- **Gestão de Usuários**: Controle de acesso baseado em roles (admin, médico, secretária).
+- **Relatórios**: Visão geral e análises de dados.
 
-There are several ways of editing your application.
+## Tecnologias Utilizadas
 
-**Use Lovable**
+- **Frontend**:
+    - React
+    - TypeScript
+    - Vite (para desenvolvimento rápido)
+    - Tailwind CSS (para estilização)
+    - shadcn/ui (componentes UI)
+    - React Router DOM (para roteamento)
+    - React Query (para gerenciamento de estado assíncrono)
+- **Backend**:
+    - Supabase (Database, Authentication, Realtime, Storage)
+- **Ferramentas de Desenvolvimento**:
+    - npm
+    - ESLint
+    - Prettier
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/471997d4-fa03-4689-b43a-abddf59ca746) and start prompting.
+## Configuração do Ambiente de Desenvolvimento
 
-Changes made via Lovable will be committed automatically to this repo.
+Para configurar e rodar o projeto localmente, siga os passos abaixo:
 
-**Use your preferred IDE**
+### Pré-requisitos
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (versão 18 ou superior)
+- npm (gerenciador de pacotes)
+- Uma conta Supabase e um projeto configurado.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Clonar o Repositório
 
-Follow these steps:
+```bash
+git clone <URL_DO_SEU_REPOSITORIO>
+cd neonpro
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 2. Configurar Variáveis de Ambiente
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Crie um arquivo `.env.local` na raiz do diretório `neonpro` com as seguintes variáveis:
 
-# Step 3: Install the necessary dependencies.
-npm i
+```
+VITE_SUPABASE_URL="SUA_URL_SUPABASE"
+VITE_SUPABASE_ANON_KEY="SUA_CHAVE_ANON_SUPABASE"
+```
+- `VITE_SUPABASE_URL`: Encontrada no Dashboard do Supabase, em `Project Settings > API`.
+- `VITE_SUPABASE_ANON_KEY`: Também encontrada no Dashboard do Supabase, em `Project Settings > API` (chave `anon public`).
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+**Importante**: Nunca commite seu arquivo `.env.local` para o controle de versão. O arquivo `.gitignore` já está configurado para ignorá-lo.
+
+### 3. Instalar Dependências
+
+No diretório `neonpro`, execute:
+
+```bash
+npm install
+```
+
+### 4. Configurar o Banco de Dados Supabase
+
+Certifique-se de que seu projeto Supabase está configurado com as tabelas e políticas RLS (Row Level Security) corretas. As migrações e políticas RLS foram desenvolvidas para garantir a segurança e integridade dos dados.
+
+**Estrutura de Migrações (exemplo):**
+- `supabase/migrations/001_create_tables.sql`
+- `supabase/migrations/002_create_appointments.sql`
+- `supabase/migrations/003_create_transactions.sql`
+- `supabase/migrations/004_create_patient_medical_history.sql`
+- `supabase/migrations/005_create_user_profiles.sql`
+
+**Políticas RLS**: Todas as tabelas sensíveis (`pacientes`, `agendamentos`, `transacoes`, `user_profiles`) possuem políticas RLS que restringem o acesso aos dados com base no `user_id` do usuário autenticado e suas `roles`.
+
+### 5. Rodar o Servidor de Desenvolvimento
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+A aplicação estará disponível em `http://localhost:8081` (ou outra porta disponível).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Testes e Validação
 
-**Use GitHub Codespaces**
+Após a configuração, você pode:
+- **Acessar a aplicação no navegador**: Verifique a página de login e tente criar uma nova conta ou fazer login.
+- **Testar funcionalidades**: Navegue pelas diferentes seções (Clientes, Agendamentos, Financeiro, etc.) e teste as operações CRUD.
+- **Verificar logs**: Monitore o console do navegador e os logs do Supabase para quaisquer erros.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Contribuição
 
-## What technologies are used for this project?
+Para contribuir com o projeto, por favor, siga as diretrizes de código e abra Pull Requests para novas funcionalidades ou correções.
 
-This project is built with:
+## Licença
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/471997d4-fa03-4689-b43a-abddf59ca746) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+[Informações sobre a licença do projeto, se aplicável.]

@@ -1,7 +1,7 @@
 
 import React, { createContext, useEffect, ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '../../lib/supabase';
 import { useAuthOperations } from './useAuthOperations';
 import { AuthContextProps } from './types';
 
@@ -31,6 +31,34 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   } = useAuthOperations();
 
   useEffect(() => {
+    const handleInitialSession = async () => {
+      setIsLoading(true); // Start loading
+      console.log('Auth: Starting initial session check. isLoading = true');
+
+      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
+      
+      if (initialSession?.user) {
+        await fetchProfile(initialSession.user.id); // Wait for profile
+        console.log('Auth: Initial session has user. Profile fetched. isLoading = false');
+        // If user is authenticated and on auth page, redirect to dashboard
+        if (location.pathname === '/auth' || location.pathname.includes('access_token') || location.hash) {
+          navigate('/', { replace: true });
+        }
+      } else {
+        console.log('Auth: Initial session has no user. isLoading = false');
+        // If no user and not on auth page, redirect to auth
+        if (location.pathname !== '/auth') {
+          navigate('/auth', { replace: true });
+        }
+      }
+      setIsLoading(false); // End loading after all checks
+    };
+
+    handleInitialSession();
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log('Auth state change:', event, currentSession?.user?.id);
@@ -41,52 +69,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (event === 'SIGNED_OUT') {
         setProfile(null);
         setIsLoading(false);
-        // Redirect to auth page on sign out
+        console.log('Auth: Signed out. isLoading = false');
         navigate('/auth', { replace: true });
       } else if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-        // Defer profile fetching to avoid blocking the auth state change
-        setTimeout(() => {
-          fetchProfile(currentSession.user.id);
-        }, 100);
+        setIsLoading(true); // Start loading for profile fetch
+        console.log('Auth: Signed in/refreshed. Starting profile fetch. isLoading = true');
+        await fetchProfile(currentSession.user.id); // Wait for profile
+        console.log('Auth: Profile fetched after state change. isLoading = false');
+        setIsLoading(false); // End loading
         
-        // Handle redirect after successful login
         if (event === 'SIGNED_IN') {
-          // Clean any hash from URL and redirect to dashboard
           const cleanPath = location.pathname === '/auth' ? '/' : location.pathname;
           navigate(cleanPath, { replace: true });
         }
       } else {
         setIsLoading(false);
-      }
-    });
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      console.log('Initial session:', initialSession?.user?.id);
-      
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
-      
-      if (initialSession?.user) {
-        fetchProfile(initialSession.user.id);
-        
-        // If user is authenticated and on auth page, redirect to dashboard
-        if (location.pathname === '/auth' || location.pathname.includes('access_token') || location.hash) {
-          navigate('/', { replace: true });
-        }
-      } else {
-        setIsLoading(false);
-        // If no user and not on auth page, redirect to auth
-        if (location.pathname !== '/auth') {
-          navigate('/auth', { replace: true });
-        }
+        console.log('Auth: No user after state change. isLoading = false');
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, fetchProfile]); // Add fetchProfile to dependencies
 
   // Handle OAuth redirects and errors
   useEffect(() => {

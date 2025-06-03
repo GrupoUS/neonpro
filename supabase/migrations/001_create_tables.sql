@@ -54,15 +54,3 @@ CREATE POLICY "Permitir todas as operações em servicos" ON servicos FOR ALL US
 CREATE POLICY "Permitir todas as operações em agendamentos" ON agendamentos FOR ALL USING (true);
 
 -- Inserir alguns dados de exemplo
-INSERT INTO servicos (nome_servico, preco, duracao, descricao) VALUES
-  ('Consulta Geral', 150.00, 60, 'Consulta médica geral'),
-  ('Exame de Sangue', 80.00, 30, 'Coleta de sangue para exames laboratoriais'),
-  ('Eletrocardiograma', 120.00, 45, 'Exame do coração'),
-  ('Raio-X', 200.00, 30, 'Exame de imagem por raio-X')
-ON CONFLICT DO NOTHING;
-
-INSERT INTO pacientes (nome, email, telefone, data_nascimento) VALUES
-  ('João Silva', 'joao@email.com', '(11) 99999-9999', '1985-03-15'),
-  ('Maria Santos', 'maria@email.com', '(11) 88888-8888', '1990-07-22'),
-  ('Pedro Oliveira', 'pedro@email.com', '(11) 77777-7777', '1978-12-10')
-ON CONFLICT DO NOTHING;

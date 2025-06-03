@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '../lib/supabase';
 
 export const testTransactionInsertion = async () => {
   console.log('=== TESTANDO INSERÇÃO DE TRANSAÇÃO ===');

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Client, Appointment } from "@/types/database";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../../lib/supabase";
 import {
   Dialog,
   DialogContent,

@@ -57,47 +57,6 @@ CREATE TRIGGER update_agendamentos_updated_at
     BEFORE UPDATE ON public.agendamentos 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Add some sample data for testing
-INSERT INTO public.agendamentos (
-    paciente_id,
-    medico_nome,
-    medico_especialidade,
-    data_agendamento,
-    hora_inicio,
-    hora_fim,
-    tipo_consulta,
-    status,
-    observacoes,
-    valor_consulta,
-    sala
-) VALUES 
--- Note: These will need real paciente_id values after patients are created
-(
-    (SELECT id FROM public.pacientes LIMIT 1),
-    'Dr. João Silva',
-    'Cardiologia',
-    CURRENT_DATE + INTERVAL '1 day',
-    '09:00:00',
-    '09:30:00',
-    'consulta',
-    'agendado',
-    'Consulta de rotina - check-up cardiológico',
-    150.00,
-    'Sala 1'
-),
-(
-    (SELECT id FROM public.pacientes LIMIT 1),
-    'Dra. Maria Santos',
-    'Dermatologia',
-    CURRENT_DATE + INTERVAL '2 days',
-    '14:00:00',
-    '14:30:00',
-    'retorno',
-    'confirmado',
-    'Retorno para avaliação de tratamento',
-    100.00,
-    'Sala 2'
-);
 
 COMMENT ON TABLE public.agendamentos IS 'Tabela para gerenciar agendamentos de consultas e procedimentos médicos';
 COMMENT ON COLUMN public.agendamentos.tipo_consulta IS 'Tipo: consulta, retorno, procedimento, emergencia';

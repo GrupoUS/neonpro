@@ -1,0 +1,1568 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  public: {
+    Tables: {
+      agendamentos: {
+        Row: {
+          created_at: string | null
+          data_hora: string
+          duracao: number | null
+          id: string
+          observacoes: string | null
+          paciente_id: string | null
+          profissional_id: string | null
+          servico_id: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_hora: string
+          duracao?: number | null
+          id?: string
+          observacoes?: string | null
+          paciente_id?: string | null
+          profissional_id?: string | null
+          servico_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_hora?: string
+          duracao?: number | null
+          id?: string
+          observacoes?: string | null
+          paciente_id?: string | null
+          profissional_id?: string | null
+          servico_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_paciente_id_fkey"
+            columns: ["paciente_id"]
+            isOneToOne: false
+            referencedRelation: "pacientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agendamentos_alunos: {
+        Row: {
+          aluno_id: string
+          created_at: string
+          id: string
+          pratica_id: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          aluno_id: string
+          created_at?: string
+          id?: string
+          pratica_id: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aluno_id?: string
+          created_at?: string
+          id?: string
+          pratica_id?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_alunos_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_alunos_pratica_id_fkey"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_aluno"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_pratica"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agendamentos_pacientes: {
+        Row: {
+          aluno_id: string | null
+          created_at: string
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          observacoes: string | null
+          paciente_id: string
+          pratica_id: string
+          procedure_id: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          aluno_id?: string | null
+          created_at?: string
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          observacoes?: string | null
+          paciente_id: string
+          pratica_id: string
+          procedure_id: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aluno_id?: string | null
+          created_at?: string
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          observacoes?: string | null
+          paciente_id?: string
+          pratica_id?: string
+          procedure_id?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_pacientes_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_pacientes_paciente_id_fkey"
+            columns: ["paciente_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_pacientes_pratica_id_fkey"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_pacientes_procedure_id_fkey"
+            columns: ["procedure_id"]
+            isOneToOne: false
+            referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_pacientes_aluno"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_pacientes_paciente"
+            columns: ["paciente_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_pacientes_pratica"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_agendamentos_pacientes_procedure"
+            columns: ["procedure_id"]
+            isOneToOne: false
+            referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alunos: {
+        Row: {
+          course_year: number | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          registration_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          course_year?: number | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          registration_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          course_year?: number | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          registration_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      appointment_procedures: {
+        Row: {
+          appointment_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          price_at_booking: number
+          procedure_id: string
+          quantity: number
+        }
+        Insert: {
+          appointment_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          price_at_booking: number
+          procedure_id: string
+          quantity?: number
+        }
+        Update: {
+          appointment_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          price_at_booking?: number
+          procedure_id?: string
+          quantity?: number
+        }
+        Relationships: []
+      }
+      appointments: {
+        Row: {
+          after_photos_url: string[] | null
+          before_photos_url: string[] | null
+          client_id: string
+          course_id: string | null
+          created_at: string
+          end_time: string
+          id: string
+          instructor_notes: string | null
+          notes: string | null
+          price_at_booking: number
+          procedure_type: string | null
+          professional_id: string
+          service_id: string
+          start_time: string
+          status: string
+          student_feedback: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          after_photos_url?: string[] | null
+          before_photos_url?: string[] | null
+          client_id: string
+          course_id?: string | null
+          created_at?: string
+          end_time: string
+          id?: string
+          instructor_notes?: string | null
+          notes?: string | null
+          price_at_booking: number
+          procedure_type?: string | null
+          professional_id: string
+          service_id: string
+          start_time: string
+          status: string
+          student_feedback?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          after_photos_url?: string[] | null
+          before_photos_url?: string[] | null
+          client_id?: string
+          course_id?: string | null
+          created_at?: string
+          end_time?: string
+          id?: string
+          instructor_notes?: string | null
+          notes?: string | null
+          price_at_booking?: number
+          procedure_type?: string | null
+          professional_id?: string
+          service_id?: string
+          start_time?: string
+          status?: string
+          student_feedback?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      availability_slots: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean
+          professional_id: string
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean
+          professional_id: string
+          start_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean
+          professional_id?: string
+          start_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          conteudo: string
+          id: string
+          metadata: Json | null
+          processed: boolean | null
+          session_id: string
+          timestamp: string
+          tipo: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          conteudo: string
+          id?: string
+          metadata?: Json | null
+          processed?: boolean | null
+          session_id: string
+          timestamp?: string
+          tipo: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          conteudo?: string
+          id?: string
+          metadata?: Json | null
+          processed?: boolean | null
+          session_id?: string
+          timestamp?: string
+          tipo?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_sessions: {
+        Row: {
+          configuracoes: Json | null
+          contexto: Json | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          status: string | null
+          titulo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          configuracoes?: Json | null
+          contexto?: Json | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          status?: string | null
+          titulo?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          configuracoes?: Json | null
+          contexto?: Json | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          status?: string | null
+          titulo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chatbot_analytics: {
+        Row: {
+          dados: Json | null
+          evento: string
+          id: string
+          session_id: string | null
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          dados?: Json | null
+          evento: string
+          id?: string
+          session_id?: string | null
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          dados?: Json | null
+          evento?: string
+          id?: string
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chatbot_config: {
+        Row: {
+          automacoes_ativas: Json | null
+          comandos_customizados: Json | null
+          created_at: string
+          id: string
+          max_tokens: number | null
+          modelo_preferido: string | null
+          openrouter_api_key: string | null
+          personalidade: Json | null
+          temperatura: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          automacoes_ativas?: Json | null
+          comandos_customizados?: Json | null
+          created_at?: string
+          id?: string
+          max_tokens?: number | null
+          modelo_preferido?: string | null
+          openrouter_api_key?: string | null
+          personalidade?: Json | null
+          temperatura?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          automacoes_ativas?: Json | null
+          comandos_customizados?: Json | null
+          created_at?: string
+          id?: string
+          max_tokens?: number | null
+          modelo_preferido?: string | null
+          openrouter_api_key?: string | null
+          personalidade?: Json | null
+          temperatura?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_portal_access: {
+        Row: {
+          access_token: string
+          client_id: string
+          clinic_user_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          last_accessed_at: string | null
+        }
+        Insert: {
+          access_token: string
+          client_id: string
+          clinic_user_id: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_active?: boolean
+          last_accessed_at?: string | null
+        }
+        Update: {
+          access_token?: string
+          client_id?: string
+          clinic_user_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          last_accessed_at?: string | null
+        }
+        Relationships: []
+      }
+      client_portal_settings: {
+        Row: {
+          auto_confirm_appointments: boolean
+          booking_advance_days: number
+          booking_instructions: string | null
+          booking_notice_hours: number
+          created_at: string
+          enable_self_booking: boolean
+          id: string
+          show_prices: boolean
+          updated_at: string
+          user_id: string
+          welcome_message: string | null
+        }
+        Insert: {
+          auto_confirm_appointments?: boolean
+          booking_advance_days?: number
+          booking_instructions?: string | null
+          booking_notice_hours?: number
+          created_at?: string
+          enable_self_booking?: boolean
+          id?: string
+          show_prices?: boolean
+          updated_at?: string
+          user_id: string
+          welcome_message?: string | null
+        }
+        Update: {
+          auto_confirm_appointments?: boolean
+          booking_advance_days?: number
+          booking_instructions?: string | null
+          booking_notice_hours?: number
+          created_at?: string
+          enable_self_booking?: boolean
+          id?: string
+          show_prices?: boolean
+          updated_at?: string
+          user_id?: string
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          allergies: string | null
+          birthdate: string | null
+          consent_marketing: boolean | null
+          created_at: string
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string
+          id: string
+          instagram_handle: string | null
+          is_model_patient: boolean | null
+          medical_conditions: string | null
+          notes: string | null
+          phone: string | null
+          preferred_language: string | null
+          previous_procedures: string | null
+          profile_photo_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          allergies?: string | null
+          birthdate?: string | null
+          consent_marketing?: boolean | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name: string
+          id?: string
+          instagram_handle?: string | null
+          is_model_patient?: boolean | null
+          medical_conditions?: string | null
+          notes?: string | null
+          phone?: string | null
+          preferred_language?: string | null
+          previous_procedures?: string | null
+          profile_photo_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          allergies?: string | null
+          birthdate?: string | null
+          consent_marketing?: boolean | null
+          created_at?: string
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string
+          id?: string
+          instagram_handle?: string | null
+          is_model_patient?: boolean | null
+          medical_conditions?: string | null
+          notes?: string | null
+          phone?: string | null
+          preferred_language?: string | null
+          previous_procedures?: string | null
+          profile_photo_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      clinic_settings: {
+        Row: {
+          address: string | null
+          business_hours: Json | null
+          city: string | null
+          clinic_name: string
+          created_at: string
+          email: string | null
+          id: string
+          logo_url: string | null
+          phone: string | null
+          state: string | null
+          updated_at: string
+          user_id: string
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          business_hours?: Json | null
+          city?: string | null
+          clinic_name: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          user_id: string
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          business_hours?: Json | null
+          city?: string | null
+          clinic_name?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          user_id?: string
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      clinicas: {
+        Row: {
+          cnpj: string | null
+          created_at: string
+          email: string | null
+          endereco: string | null
+          especialidades: string[] | null
+          horario_funcionamento: Json | null
+          id: string
+          logo_url: string | null
+          nome_clinica: string
+          telefone: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          especialidades?: string[] | null
+          horario_funcionamento?: Json | null
+          id?: string
+          logo_url?: string | null
+          nome_clinica: string
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          especialidades?: string[] | null
+          horario_funcionamento?: Json | null
+          id?: string
+          logo_url?: string | null
+          nome_clinica?: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      course_enrollments: {
+        Row: {
+          client_id: string
+          consent_form_signed: boolean | null
+          course_id: string
+          created_at: string
+          enrollment_date: string
+          id: string
+          medical_clearance: boolean | null
+          notes: string | null
+          payment_status: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          consent_form_signed?: boolean | null
+          course_id: string
+          created_at?: string
+          enrollment_date?: string
+          id?: string
+          medical_clearance?: boolean | null
+          notes?: string | null
+          payment_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          consent_form_signed?: boolean | null
+          course_id?: string
+          created_at?: string
+          enrollment_date?: string
+          id?: string
+          medical_clearance?: boolean | null
+          notes?: string | null
+          payment_status?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_enrollments_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_hours: number
+          end_date: string | null
+          id: string
+          is_active: boolean
+          max_students: number
+          name: string
+          price: number
+          start_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          max_students?: number
+          name: string
+          price?: number
+          start_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          max_students?: number
+          name?: string
+          price?: number
+          start_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      medical_documents: {
+        Row: {
+          client_id: string
+          created_at: string
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          is_verified: boolean | null
+          notes: string | null
+          updated_at: string
+          uploaded_at: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          is_verified?: boolean | null
+          notes?: string | null
+          updated_at?: string
+          uploaded_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          is_verified?: boolean | null
+          notes?: string | null
+          updated_at?: string
+          uploaded_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Relationships: []
+      }
+      paciente_preferencias: {
+        Row: {
+          aceita_notificacoes: boolean | null
+          created_at: string
+          disponibilidade_dias: number[] | null
+          horario_preferido_fim: string | null
+          horario_preferido_inicio: string | null
+          id: string
+          observacoes: string | null
+          procedimentos_interesse: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          aceita_notificacoes?: boolean | null
+          created_at?: string
+          disponibilidade_dias?: number[] | null
+          horario_preferido_fim?: string | null
+          horario_preferido_inicio?: string | null
+          id?: string
+          observacoes?: string | null
+          procedimentos_interesse?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          aceita_notificacoes?: boolean | null
+          created_at?: string
+          disponibilidade_dias?: number[] | null
+          horario_preferido_fim?: string | null
+          horario_preferido_inicio?: string | null
+          id?: string
+          observacoes?: string | null
+          procedimentos_interesse?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pacientes: {
+        Row: {
+          celular: string | null
+          contato_emergencia: Json | null
+          cpf: string | null
+          created_at: string | null
+          data_nascimento: string | null
+          email: string | null
+          endereco: Json | null
+          estado_civil: string | null
+          id: string
+          informacoes_medicas: Json | null
+          nome: string
+          observacoes: string | null
+          profissao: string | null
+          rg: string | null
+          telefone: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          celular?: string | null
+          contato_emergencia?: Json | null
+          cpf?: string | null
+          created_at?: string | null
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: Json | null
+          estado_civil?: string | null
+          id?: string
+          informacoes_medicas?: Json | null
+          nome: string
+          observacoes?: string | null
+          profissao?: string | null
+          rg?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          celular?: string | null
+          contato_emergencia?: Json | null
+          cpf?: string | null
+          created_at?: string | null
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: Json | null
+          estado_civil?: string | null
+          id?: string
+          informacoes_medicas?: Json | null
+          nome?: string
+          observacoes?: string | null
+          profissao?: string | null
+          rg?: string | null
+          telefone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      pratica_procedimentos: {
+        Row: {
+          created_at: string
+          id: string
+          pratica_id: string
+          procedure_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pratica_id: string
+          procedure_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pratica_id?: string
+          procedure_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_pratica_procedimentos_pratica"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_pratica_procedimentos_procedure"
+            columns: ["procedure_id"]
+            isOneToOne: false
+            referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pratica_procedimentos_pratica_id_fkey"
+            columns: ["pratica_id"]
+            isOneToOne: false
+            referencedRelation: "praticas_presenciais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pratica_procedimentos_procedure_id_fkey"
+            columns: ["procedure_id"]
+            isOneToOne: false
+            referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      praticas_presenciais: {
+        Row: {
+          created_at: string
+          data_pratica: string
+          descricao: string | null
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          is_active: boolean
+          max_alunos: number | null
+          max_pacientes: number | null
+          nome_pratica: string
+          professor_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_pratica: string
+          descricao?: string | null
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          is_active?: boolean
+          max_alunos?: number | null
+          max_pacientes?: number | null
+          nome_pratica: string
+          professor_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_pratica?: string
+          descricao?: string | null
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          is_active?: boolean
+          max_alunos?: number | null
+          max_pacientes?: number | null
+          nome_pratica?: string
+          professor_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_praticas_professor"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "professores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "praticas_presenciais_professor_id_fkey"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "professores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      procedures: {
+        Row: {
+          aftercare_instructions: string | null
+          category: string
+          color: string | null
+          contraindications: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          requirements: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          aftercare_instructions?: string | null
+          category?: string
+          color?: string | null
+          contraindications?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price?: number
+          requirements?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          aftercare_instructions?: string | null
+          category?: string
+          color?: string | null
+          contraindications?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          requirements?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      professionals: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          specialty: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      professores: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          specialty: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+          phone: string | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      servicos: {
+        Row: {
+          ativo: boolean | null
+          created_at: string | null
+          descricao: string | null
+          duracao: number | null
+          id: string
+          nome_servico: string
+          preco: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao?: number | null
+          id?: string
+          nome_servico: string
+          preco: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao?: number | null
+          id?: string
+          nome_servico?: string
+          preco?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      time_off: {
+        Row: {
+          created_at: string
+          end_date: string
+          end_time: string | null
+          id: string
+          is_recurring: boolean
+          professional_id: string
+          reason: string | null
+          recurrence_pattern: string | null
+          start_date: string
+          start_time: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          end_time?: string | null
+          id?: string
+          is_recurring?: boolean
+          professional_id: string
+          reason?: string | null
+          recurrence_pattern?: string | null
+          start_date: string
+          start_time?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          end_time?: string | null
+          id?: string
+          is_recurring?: boolean
+          professional_id?: string
+          reason?: string | null
+          recurrence_pattern?: string | null
+          start_date?: string
+          start_time?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transacoes: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_transacao: string
+          descricao: string
+          id: string
+          observacoes: string | null
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_transacao?: string
+          descricao: string
+          id?: string
+          observacoes?: string | null
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_transacao?: string
+          descricao?: string
+          id?: string
+          observacoes?: string | null
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          appointment_id: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          payment_method: string | null
+          transaction_date: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          appointment_id?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          payment_method?: string | null
+          transaction_date?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          appointment_id?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          payment_method?: string | null
+          transaction_date?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [\n          {\n            foreignKeyName: \"transactions_appointment_id_fkey\"\n            columns: [\"appointment_id\"]\n            isOneToOne: false\n            referencedRelation: \"appointments\"\n            referencedColumns: ["id"]
+          },\n        ]\n      }\n      user_profiles: {\n        Row: {\n          ativo: boolean | null\n          created_at: string | null\n          crm: string | null\n          email: string\n          especialidade: string | null\n          id: string\n          nome: string\n          role: string\n          telefone: string | null\n          updated_at: string | null\n          user_id: string | null\n        }\n        Insert: {\n          ativo?: boolean | null\n          created_at?: string | null\n          crm?: string | null\n          email: string\n          especialidade?: string | null\n          id?: string\n          nome: string\n          role: string\n          telefone?: string | null\n          updated_at?: string | null\n          user_id?: string | null\n        }\n        Update: {\n          ativo?: boolean | null\n          created_at?: string | null\n          crm?: string | null\n          email?: string\n          especialidade?: string | null\n          id?: string\n          nome?: string\n          role?: string\n          telefone?: string | null\n          updated_at?: string | null\n          user_id?: string | null\n        }\n        Relationships: []\n      }\n      user_roles: {\n        Row: {\n          created_at: string\n          id: string\n          role: Database[\"public\"][\"Enums\"][\"app_role\"]\n          updated_at: string\n          user_id: string\n        }\n        Insert: {\n          created_at?: string\n          id?: string\n          role: Database[\"public\"][\"Enums\"][\"app_role\"]\n          updated_at?: string\n          user_id: string\n        }\n        Update: {\n          created_at?: string\n          id?: string\n          role?: Database[\"public\"][\"Enums\"][\"app_role\"]\n          updated_at?: string\n          user_id?: string\n        }\n        Relationships: []\n      }\n    }\n    Views: {\n      [_ in never]: never\n    }\n    Functions: {\n      cleanup_old_chat_sessions: {\n        Args: Record<PropertyKey, never>\n        Returns: undefined\n      }\n      has_role: {\n        Args: {\n          _user_id: string\n          _role: Database[\"public\"][\"Enums\"][\"app_role\"]\n        }\n        Returns: boolean\n      }\n    }\n    Enums: {\n      app_role: "administrador" | "professor" | "aluno" | "paciente_modelo"\n    }\n    CompositeTypes: {\n      [_ in never]: never\n    }\n  }\n}\n\ntype DefaultSchema = Database[Extract<keyof Database, "public">]\n\nexport type Tables<\n  DefaultSchemaTableNameOrOptions extends\n    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])\n    | { schema: keyof Database },\n  TableName extends DefaultSchemaTableNameOrOptions extends {\n    schema: keyof Database\n  }\n    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &\n        Database[DefaultTableNameOrOptions["schema"]]["Views"])\n    : never = never,\n> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }\n  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &\n      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {\n      Row: infer R\n    }\n    ? R\n    : never\n  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &\n        DefaultSchema["Views"])\n    ? (DefaultSchema["Tables"] &\n        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {\n        Row: infer R\n      }\n      ? R\n      : never\n    : never\n\nexport type TablesInsert<\n  DefaultSchemaTableNameOrOptions extends\n    | keyof DefaultSchema["Tables"]\n    | { schema: keyof Database },\n  TableName extends DefaultSchemaTableNameOrOptions extends {\n    schema: keyof Database\n  }\n    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]\n    : never = never,\n> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }\n  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {\n      Insert: infer I\n    }\n    ? I\n    : never\n  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]\n    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {\n        Insert: infer I\n      }\n      ? I\n      : never\n    : never\n\nexport type TablesUpdate<\n  DefaultSchemaTableNameOrOptions extends\n    | keyof DefaultSchema["Tables"]\n    | { schema: keyof Database },\n  TableName extends DefaultSchemaTableNameOrOptions extends {\n    schema: keyof Database\n  }\n    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]\n    : never = never,\n> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }\n  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {\n      Update: infer U\n    }\n    ? U\n    : never\n  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]\n    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {\n        Update: infer U\n      }\n      ? U\n      : never\n    : never\n\nexport type Enums<\n  DefaultSchemaEnumNameOrOptions extends\n    | keyof DefaultSchema["Enums"]\n    | { schema: keyof Database },\n  EnumName extends DefaultSchemaEnumNameOrOptions extends {\n    schema: keyof Database\n  }\n    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]\n    : never = never,\n> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }\n  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]\n  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]\n    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]\n    : never\n\nexport type CompositeTypes<\n  PublicCompositeTypeNameOrOptions extends\n    | keyof DefaultSchema["CompositeTypes"]\n    | { schema: keyof Database },\n  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {\n    schema: keyof Database\n  }\n    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]\n    : never = never,\n> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }\n  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]\n  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]\n    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]\n    : never\n\nexport const Constants = {\n  public: {\n    Enums: {\n      app_role: ["administrador", "professor", "aluno", "paciente_modelo"],\n    },\n  },\n} as const\n

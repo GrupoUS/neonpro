@@ -3,29 +3,29 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthHeader } from "@/components/auth/AuthHeader";
 import { AuthFooter } from "@/components/auth/AuthFooter";
-import { LoginForm } from "@/components/auth/LoginForm";
+import LoginForm from "../components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Helmet } from "react-helmet";
-import { useAuth } from "@/contexts/auth";
+import { useAuth } from "../hooks/useAuth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "../lib/supabase";
 
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isLoading, setIsLoading] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const { user } = useAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   // Handle redirection after login
   useEffect(() => {
-    if (user) {
+    if (session) {
       navigate('/', { replace: true });
     }
-  }, [user, navigate]);
+  }, [session, navigate]);
 
   // Clean up URL parameters from OAuth redirects
   useEffect(() => {
