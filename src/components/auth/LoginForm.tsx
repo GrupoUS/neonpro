@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/contexts/auth';
@@ -15,12 +14,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { loginSchema, LoginFormValues } from './schemas';
-import { toast } from 'sonner';
 import { FormHeader } from './FormHeader';
-import { PasswordInput } from './PasswordInput';
 import { FormDivider } from './FormDivider';
 import { GoogleSignInButton } from './GoogleSignInButton';
+import { PasswordInput } from './PasswordInput';
 import { LoadingSpinner } from './LoadingSpinner';
+import { toast } from 'sonner';
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -35,10 +34,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   isLoading, 
   setIsLoading, 
   handleGoogleSignIn,
-  onResetPassword 
+  onResetPassword
 }) => {
   const { signIn } = useAuth();
-  const navigate = useNavigate();
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -52,7 +50,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
-      navigate('/');
       onSuccess();
     } catch (error: unknown) {
       console.error("Login error:", error);
@@ -67,8 +64,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   return (
     <div className="space-y-6">
       <FormHeader 
-        title="Bem-vindo de volta"
-        subtitle="Entre na sua conta NEON PRO"
+        title="Bem-vindo ao NEON PRO"
+        subtitle="Entre na sua conta para continuar"
       />
 
       <Form {...form}>
@@ -91,7 +88,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                     className="input-neon" 
                     style={{ fontFamily: 'Inter, sans-serif' }}
                     {...field} 
-                    aria-label="Endereço de e-mail" 
+                    aria-label="Endereço de e-mail"
                   />
                 </FormControl>
                 <FormMessage className="text-destructive text-xs" />
@@ -104,24 +101,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             name="password"
             label="Senha"
             placeholder="••••••"
-            showForgotPassword
+            showForgotPassword={true}
             onForgotPassword={onResetPassword}
           />
           
           <Button 
             type="submit" 
-            className="btn-neon-primary w-full h-12" 
+            className="btn-neon-primary w-full h-12 mt-6" 
             style={{ fontFamily: 'Inter, sans-serif' }}
             disabled={isLoading}
           >
-            {isLoading ? <LoadingSpinner /> : 'Entrar no NEON PRO'}
+            {isLoading ? <LoadingSpinner text="Entrando..." /> : 'Entrar no NEON PRO'}
           </Button>
         </form>
       </Form>
       
       <FormDivider text="Ou continue com" />
       
-      <GoogleSignInButton 
+      <GoogleSignInButton
         onClick={handleGoogleSignIn}
         isLoading={isLoading}
       />
