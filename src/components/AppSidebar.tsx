@@ -51,14 +51,14 @@ const AppSidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-card border-r border-border h-full">
+    <aside className="w-64 sidebar-neon">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
           {/* Novo ícone hexagonal NEON PRO */}
           <div className="relative">
             <svg 
               viewBox="0 0 32 32" 
-              className="w-10 h-10"
+              className="w-10 h-10 glow-neon"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
@@ -72,7 +72,7 @@ const AppSidebar: React.FC = () => {
                 fill="none" 
                 stroke="url(#neon-gradient)" 
                 strokeWidth="2"
-                className="drop-shadow-sm"
+                className="drop-shadow-lg"
               />
               <circle 
                 cx="16" 
@@ -84,10 +84,10 @@ const AppSidebar: React.FC = () => {
             </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold bg-gradient-neon bg-clip-text text-transparent">
+            <span className="text-xl font-bold text-neon-brand">
               NEON PRO
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-neon-subtitle">
               Gestão Premium
             </span>
           </div>
@@ -101,14 +101,14 @@ const AppSidebar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
+                  `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 group ${
                     isActive
                       ? 'bg-gradient-neon text-neon-dark shadow-neon-lg border border-primary/20'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md hover:shadow-neon/20'
                   }`
                 }
               >
-                <IconComponent className="h-5 w-5" />
+                <IconComponent className="h-5 w-5 transition-transform group-hover:scale-110" />
                 <span className="font-medium">{item.label}</span>
               </NavLink>
             );

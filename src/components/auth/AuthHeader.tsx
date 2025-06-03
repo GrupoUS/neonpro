@@ -15,7 +15,7 @@ export const AuthHeader: React.FC = () => {
         <div className="relative">
           <svg 
             viewBox="0 0 32 32" 
-            className="w-12 h-12 group-hover:animate-glow-neon transition-all duration-300"
+            className="w-12 h-12 group-hover:glow-neon-intense transition-all duration-300"
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
@@ -41,16 +41,10 @@ export const AuthHeader: React.FC = () => {
           </svg>
         </div>
         <div className="flex flex-col">
-          <h1 
-            className="text-2xl font-bold bg-gradient-neon bg-clip-text text-transparent group-hover:animate-gradient-shift transition-all duration-300" 
-            style={{ fontFamily: 'Optima, Arial, sans-serif' }}
-          >
+          <h1 className="text-2xl font-bold text-neon-brand group-hover:animate-gradient-shift transition-all duration-300">
             NEON PRO
           </h1>
-          <span 
-            className="text-xs text-muted-foreground opacity-80" 
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
+          <span className="text-xs text-neon-subtitle">
             Gestão Premium
           </span>
         </div>

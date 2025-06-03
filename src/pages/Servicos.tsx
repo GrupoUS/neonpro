@@ -83,7 +83,7 @@ const Servicos: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
       </div>
     );
   }
@@ -93,14 +93,14 @@ const Servicos: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Serviços</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold text-neon-brand">Serviços</h1>
+          <p className="text-neon-subtitle mt-1">
             Gerencie os serviços oferecidos pela clínica
           </p>
         </div>
         <Button
           onClick={openNewModal}
-          className="bg-gold hover:bg-gold/90 text-sacha-dark-blue"
+          className="btn-neon-gradient"
         >
           <Plus className="h-4 w-4 mr-2" />
           Novo Serviço
@@ -108,7 +108,7 @@ const Servicos: React.FC = () => {
       </div>
 
       {/* Lista de Serviços */}
-      <div className="bg-card rounded-xl border border-border p-6">
+      <div className="card-neon">
         {servicos.length === 0 ? (
           <ServicoEmptyState onAddFirst={openNewModal} />
         ) : (

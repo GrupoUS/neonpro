@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,8 +46,8 @@ const Agendamentos: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <Clock className="h-8 w-8 animate-spin mx-auto mb-2" />
-          <p>Carregando agendamentos...</p>
+          <Clock className="h-8 w-8 animate-spin mx-auto mb-2 text-accent" />
+          <p className="text-muted-foreground">Carregando agendamentos...</p>
         </div>
       </div>
     );
@@ -57,29 +58,29 @@ const Agendamentos: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Agendamentos</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-neon-brand">Agendamentos</h1>
+          <p className="text-neon-subtitle mt-1">
             Gerencie consultas e procedimentos da clínica
           </p>
         </div>
-        <Button onClick={() => setIsFormOpen(true)} className="mt-4 md:mt-0">
+        <Button onClick={() => setIsFormOpen(true)} className="btn-neon-gradient mt-4 md:mt-0">
           <Plus className="mr-2 h-4 w-4" />
           Nova Consulta
         </Button>
       </div>
 
       {/* Calendar Navigation */}
-      <Card>
+      <Card className="card-neon-gradient">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>
+              <CardTitle className="text-foreground">
                 {new Date().toLocaleDateString('pt-BR', { 
                   month: 'long', 
                   year: 'numeric' 
                 }).replace(/^\w/, c => c.toUpperCase())}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-muted-foreground">
                 {new Date().toLocaleDateString('pt-BR', { 
                   weekday: 'long', 
                   day: 'numeric', 
@@ -88,13 +89,13 @@ const Agendamentos: React.FC = () => {
               </CardDescription>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="hover:shadow-neon/20">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="btn-neon-outline">
                 Hoje
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="hover:shadow-neon/20">
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -105,10 +106,10 @@ const Agendamentos: React.FC = () => {
       {/* Appointments List */}
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="card-neon">
             <CardHeader>
-              <CardTitle>Consultas de Hoje</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-foreground">Consultas de Hoje</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 {todayAppointments.length} consultas agendadas para hoje
               </CardDescription>
             </CardHeader>
@@ -122,30 +123,30 @@ const Agendamentos: React.FC = () => {
 
         {/* Side Panel */}
         <div className="space-y-4">
-          <Card>
+          <Card className="card-neon-interactive">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-foreground">
                 Consultas Hoje
               </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <Calendar className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{todayAppointments.length}</div>
+              <div className="text-2xl font-bold text-neon-brand">{todayAppointments.length}</div>
               <p className="text-xs text-muted-foreground">
                 {todayAppointments.filter(apt => apt.status === 'confirmado').length} confirmadas
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-neon-interactive">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-foreground">
                 Taxa de Ocupação
               </CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4 text-secondary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-neon-brand">
                 {Math.round((todayAppointments.length / 8) * 100)}%
               </div>
               <p className="text-xs text-muted-foreground">
@@ -155,15 +156,15 @@ const Agendamentos: React.FC = () => {
           </Card>
 
           {todayAppointments.length > 0 && (
-            <Card>
+            <Card className="card-neon-interactive">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="text-sm font-medium text-foreground">
                   Próxima Consulta
                 </CardTitle>
-                <User className="h-4 w-4 text-muted-foreground" />
+                <User className="h-4 w-4 text-accent" />
               </CardHeader>
               <CardContent>
-                <div className="text-sm font-medium">
+                <div className="text-sm font-medium text-foreground">
                   {todayAppointments[0]?.paciente?.nome || 'N/A'}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -174,7 +175,6 @@ const Agendamentos: React.FC = () => {
           )}
         </div>
       </div>
-
     </div>
   );
 };

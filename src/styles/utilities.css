@@ -1,8 +1,8 @@
 
 /* Classes utilitárias NEON PRO */
 
-@layer base {
-  /* Classes utilitárias NEON PRO */
+@layer utilities {
+  /* Gradientes NEON PRO */
   .gradient-neon {
     background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
   }
@@ -46,7 +46,7 @@
   }
   
   /* Estados de carregamento com a identidade visual NEON PRO */
-  .loading-sacha {
+  .loading-neon {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -56,7 +56,7 @@
     animation: shimmer 2s infinite;
   }
   
-  .shimmer-sacha {
+  .shimmer-neon {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -64,6 +64,14 @@
     );
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
+  }
+  
+  /* Texto com gradiente NEON */
+  .text-gradient-neon {
+    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   
   /* Utilitários para acessibilidade NEON PRO */
