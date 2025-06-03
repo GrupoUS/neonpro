@@ -30,18 +30,18 @@ const AppRouter: React.FC = () => {
   }
 
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/clientes" element={<Clientes />} />
-        <Route path="/agendamentos" element={<Agendamentos />} />
-        <Route path="/financeiro" element={<Financeiro />} />
-        <Route path="/servicos" element={<Servicos />} />
-        <Route path="/relatorios" element={<Relatorios />} />
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="clientes" element={<Clientes />} />
+        <Route path="agendamentos" element={<Agendamentos />} />
+        <Route path="financeiro" element={<Financeiro />} />
+        <Route path="servicos" element={<Servicos />} />
+        <Route path="relatorios" element={<Relatorios />} />
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Layout>
+      </Route>
+    </Routes>
   );
 };
 
