@@ -11,7 +11,7 @@ export const AuthHeader: React.FC = () => {
         className="group flex items-center space-x-3 transition-transform hover:scale-105" 
         aria-label="NEON PRO - Voltar para a página inicial"
       >
-        {/* Ícone hexagonal NEON PRO */}
+        {/* Ícone hexagonal NEON PRO com nova identidade visual */}
         <div className="relative">
           <svg 
             viewBox="0 0 32 32" 
@@ -20,8 +20,8 @@ export const AuthHeader: React.FC = () => {
           >
             <defs>
               <linearGradient id="neon-gradient-header" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#00F5FF"/>
-                <stop offset="100%" stopColor="#00FA9A"/>
+                <stop offset="0%" stopColor="#AC9469"/>
+                <stop offset="100%" stopColor="#c4aa7d"/>
               </linearGradient>
             </defs>
             <polygon 
@@ -41,10 +41,10 @@ export const AuthHeader: React.FC = () => {
           </svg>
         </div>
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-neon-brand group-hover:animate-gradient-shift transition-all duration-300">
+          <h1 className="text-2xl font-bold text-gradient-neon group-hover:animate-gradient-shift transition-all duration-300">
             NEON PRO
           </h1>
-          <span className="text-xs text-neon-subtitle">
+          <span className="text-xs text-muted-foreground">
             Gestão Premium
           </span>
         </div>

@@ -54,7 +54,7 @@ const AppSidebar: React.FC = () => {
     <aside className="w-64 sidebar-neon">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
-          {/* Ícone hexagonal NEON PRO */}
+          {/* Ícone hexagonal NEON PRO com nova identidade visual */}
           <div className="relative">
             <svg 
               viewBox="0 0 32 32" 
@@ -63,8 +63,8 @@ const AppSidebar: React.FC = () => {
             >
               <defs>
                 <linearGradient id="neon-gradient-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#00F5FF"/>
-                  <stop offset="100%" stopColor="#00FA9A"/>
+                  <stop offset="0%" stopColor="#AC9469"/>
+                  <stop offset="100%" stopColor="#c4aa7d"/>
                 </linearGradient>
               </defs>
               <polygon 
@@ -85,13 +85,13 @@ const AppSidebar: React.FC = () => {
           </div>
           <div className="flex flex-col">
             <span 
-              className="text-xl font-bold text-neon-brand transition-all duration-300 hover:animate-gradient-shift"
+              className="text-xl font-bold text-gradient-neon transition-all duration-300 hover:animate-gradient-shift"
               style={{ fontFamily: 'Space Grotesk, sans-serif' }}
             >
               NEON PRO
             </span>
             <span 
-              className="text-xs text-neon-subtitle"
+              className="text-xs text-muted-foreground"
               style={{ fontFamily: 'Inter, sans-serif' }}
             >
               Gestão Premium
@@ -109,7 +109,7 @@ const AppSidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 group ${
                     isActive
-                      ? 'bg-gradient-neon text-neon-dark shadow-neon-lg border border-primary/20'
+                      ? 'bg-gradient-neon-gold text-accent-foreground shadow-neon-gold border border-primary/20'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md hover:shadow-neon/20'
                   }`
                 }

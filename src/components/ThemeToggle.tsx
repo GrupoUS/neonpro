@@ -1,3 +1,4 @@
+
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -10,7 +11,7 @@ export const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="relative p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-xl transition-all duration-300 group glow-sacha"
+      className="relative p-2 text-muted-foreground hover:text-accent hover:bg-accent/10 focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-xl transition-all duration-300 group glow-neon"
       aria-label={`Alternar para modo ${theme === 'light' ? 'escuro' : 'claro'}`}
       title={`Mudar para modo ${theme === 'light' ? 'escuro' : 'claro'}`}
     >

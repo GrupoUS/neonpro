@@ -17,10 +17,10 @@ const Layout: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">N</span>
+                  <div className="w-8 h-8 bg-gradient-neon-gold rounded-lg flex items-center justify-center shadow-neon-gold">
+                    <span className="text-neon-dark font-bold text-sm">N</span>
                   </div>
-                  <span className="font-bold text-xl bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+                  <span className="font-bold text-xl text-gradient-neon">
                     NEON PRO
                   </span>
                 </div>
