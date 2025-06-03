@@ -253,6 +253,45 @@ export type Database = {
         }
         Relationships: []
       }
+      appearance_settings: {
+        Row: {
+          created_at: string | null
+          date_format: string | null
+          id: string
+          language: string | null
+          sidebar_collapsed: boolean | null
+          theme: string | null
+          time_format: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date_format?: string | null
+          id?: string
+          language?: string | null
+          sidebar_collapsed?: boolean | null
+          theme?: string | null
+          time_format?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date_format?: string | null
+          id?: string
+          language?: string | null
+          sidebar_collapsed?: boolean | null
+          theme?: string | null
+          time_format?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       appointment_procedures: {
         Row: {
           appointment_id: string
@@ -952,6 +991,48 @@ export type Database = {
           },
         ]
       }
+      notification_settings: {
+        Row: {
+          created_at: string | null
+          email_appointments: boolean | null
+          email_marketing: boolean | null
+          email_reminders: boolean | null
+          id: string
+          push_notifications: boolean | null
+          reminder_hours_before: number | null
+          sms_appointments: boolean | null
+          sms_reminders: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_appointments?: boolean | null
+          email_marketing?: boolean | null
+          email_reminders?: boolean | null
+          id?: string
+          push_notifications?: boolean | null
+          reminder_hours_before?: number | null
+          sms_appointments?: boolean | null
+          sms_reminders?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_appointments?: boolean | null
+          email_marketing?: boolean | null
+          email_reminders?: boolean | null
+          id?: string
+          push_notifications?: boolean | null
+          reminder_hours_before?: number | null
+          sms_appointments?: boolean | null
+          sms_reminders?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           action_url: string | null
@@ -1362,6 +1443,42 @@ export type Database = {
           phone?: string | null
           role?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      security_settings: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string | null
+          id: string
+          login_notifications: boolean | null
+          password_changed_at: string | null
+          session_timeout_minutes: number | null
+          two_factor_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          login_notifications?: boolean | null
+          password_changed_at?: string | null
+          session_timeout_minutes?: number | null
+          two_factor_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          login_notifications?: boolean | null
+          password_changed_at?: string | null
+          session_timeout_minutes?: number | null
+          two_factor_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

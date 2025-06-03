@@ -10,6 +10,7 @@ import Agendamentos from '@/pages/Agendamentos';
 import Financeiro from '@/pages/Financeiro';
 import Relatorios from '@/pages/Relatorios';
 import Servicos from '@/pages/Servicos';
+import Configuracoes from '@/pages/Configuracoes';
 
 const AppRouter: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -39,6 +40,7 @@ const AppRouter: React.FC = () => {
         <Route path="financeiro" element={<Financeiro />} />
         <Route path="servicos" element={<Servicos />} />
         <Route path="relatorios" element={<Relatorios />} />
+        <Route path="configuracoes" element={<Configuracoes />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
