@@ -1,15 +1,20 @@
+
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, DollarSign, Briefcase } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/auth';
+import { toast } from 'sonner';
 
 interface Servico {
   id: string;
+  user_id: string;
   nome_servico: string;
   preco: number;
   created_at: string;
 }
 
 const Servicos: React.FC = () => {
+  const { user } = useAuth();
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -20,20 +25,30 @@ const Servicos: React.FC = () => {
   });
 
   useEffect(() => {
-    fetchServicos();
-  }, []);
+    if (user) {
+      fetchServicos();
+    }
+  }, [user]);
 
   const fetchServicos = async () => {
+    if (!user) return;
+    
     try {
       const { data, error } = await supabase
         .from('servicos')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erro ao buscar serviços:', error);
+        toast.error('Erro ao carregar serviços');
+        return;
+      }
+      
       setServicos(data || []);
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
+      toast.error('Erro ao carregar serviços');
     } finally {
       setLoading(false);
     }
@@ -42,25 +57,46 @@ const Servicos: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast.error('Usuário não autenticado');
+      return;
+    }
+    
     try {
       const servicoData = {
         nome_servico: formData.nome_servico,
-        preco: parseFloat(formData.preco)
+        preco: parseFloat(formData.preco),
+        user_id: user.id
       };
 
       if (editingServico) {
         const { error } = await supabase
           .from('servicos')
-          .update(servicoData)
+          .update({
+            nome_servico: servicoData.nome_servico,
+            preco: servicoData.preco
+          })
           .eq('id', editingServico.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Erro ao atualizar serviço:', error);
+          toast.error('Erro ao atualizar serviço');
+          return;
+        }
+        
+        toast.success('Serviço atualizado com sucesso!');
       } else {
         const { error } = await supabase
           .from('servicos')
           .insert([servicoData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Erro ao criar serviço:', error);
+          toast.error('Erro ao criar serviço');
+          return;
+        }
+        
+        toast.success('Serviço criado com sucesso!');
       }
 
       setFormData({ nome_servico: '', preco: '' });
@@ -69,6 +105,7 @@ const Servicos: React.FC = () => {
       fetchServicos();
     } catch (error) {
       console.error('Erro ao salvar serviço:', error);
+      toast.error('Erro ao salvar serviço');
     }
   };
 
@@ -82,18 +119,27 @@ const Servicos: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Tem certeza que deseja excluir este serviço?')) {
-      try {
-        const { error } = await supabase
-          .from('servicos')
-          .delete()
-          .eq('id', id);
+    if (!window.confirm('Tem certeza que deseja excluir este serviço?')) {
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('servicos')
+        .delete()
+        .eq('id', id);
 
-        if (error) throw error;
-        fetchServicos();
-      } catch (error) {
+      if (error) {
         console.error('Erro ao excluir serviço:', error);
+        toast.error('Erro ao excluir serviço');
+        return;
       }
+      
+      toast.success('Serviço excluído com sucesso!');
+      fetchServicos();
+    } catch (error) {
+      console.error('Erro ao excluir serviço:', error);
+      toast.error('Erro ao excluir serviço');
     }
   };
 
@@ -110,10 +156,18 @@ const Servicos: React.FC = () => {
     }).format(value);
   };
 
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Você precisa estar logado para acessar esta página.</p>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
       </div>
     );
   }
@@ -130,7 +184,7 @@ const Servicos: React.FC = () => {
         </div>
         <button
           onClick={openNewModal}
-          className="btn-primary flex items-center gap-2"
+          className="bg-gold hover:bg-gold/90 text-sacha-dark-blue px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
           Novo Serviço
@@ -138,7 +192,7 @@ const Servicos: React.FC = () => {
       </div>
 
       {/* Lista de Serviços */}
-      <div className="card-horizon">
+      <div className="bg-card rounded-xl border border-border p-6">
         {servicos.length === 0 ? (
           <div className="text-center py-12">
             <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -150,7 +204,7 @@ const Servicos: React.FC = () => {
             </p>
             <button
               onClick={openNewModal}
-              className="btn-primary"
+              className="bg-gold hover:bg-gold/90 text-sacha-dark-blue px-4 py-2 rounded-lg font-medium transition-colors"
             >
               Adicionar Primeiro Serviço
             </button>
@@ -180,8 +234,8 @@ const Servicos: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                            <Briefcase className="h-5 w-5 text-accent" />
+                          <div className="h-10 w-10 rounded-lg bg-gold/10 flex items-center justify-center">
+                            <Briefcase className="h-5 w-5 text-gold" />
                           </div>
                         </div>
                         <div className="ml-4">
@@ -204,13 +258,13 @@ const Servicos: React.FC = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleEdit(servico)}
-                          className="text-accent hover:text-accent/80 transition-colors"
+                          className="text-gold hover:text-gold/80 transition-colors"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(servico.id)}
-                          className="text-destructive hover:text-destructive/80 transition-colors"
+                          className="text-red-500 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -227,7 +281,7 @@ const Servicos: React.FC = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-card rounded-2xl p-6 w-full max-w-md mx-4">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md mx-4 border border-border">
             <h2 className="text-xl font-bold text-foreground mb-4">
               {editingServico ? 'Editar Serviço' : 'Novo Serviço'}
             </h2>
@@ -241,8 +295,8 @@ const Servicos: React.FC = () => {
                   type="text"
                   value={formData.nome_servico}
                   onChange={(e) => setFormData({ ...formData, nome_servico: e.target.value })}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                  placeholder="Ex: Consulta Médica"
+                  className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-gold"
+                  placeholder="Ex: Limpeza de Pele"
                   required
                 />
               </div>
@@ -257,7 +311,7 @@ const Servicos: React.FC = () => {
                   min="0"
                   value={formData.preco}
                   onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-3 py-2 border border-input rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-gold"
                   placeholder="0,00"
                   required
                 />
@@ -273,7 +327,7 @@ const Servicos: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="bg-gold hover:bg-gold/90 text-sacha-dark-blue px-4 py-2 rounded-lg font-medium transition-colors"
                 >
                   {editingServico ? 'Atualizar' : 'Criar'} Serviço
                 </button>
