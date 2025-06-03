@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap');
+/* Importação das fontes institucionais da identidade "Universo da Sacha" */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Optima:wght@400;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,121 +8,106 @@
 
 @layer base {
   :root {
-    /* Horizon UI Professional Color Palette */
-    --background: 0 0% 100%; /* Pure white base */
-    --foreground: 220 13% 18%; /* Professional dark gray */
+    /* Paleta de Cores "Universo da Sacha" - Modo Claro */
+    --background: 0 0% 100%; /* Branco puro para fundo claro */
+    --foreground: 210 47% 15%; /* #112031 (azul escuro) para texto principal */
 
-    /* Horizon UI Core Colors */
-    --primary-50: 220 60% 99%;
-    --primary-100: 220 43% 96%;
-    --primary-200: 220 50% 90%;
-    --primary-300: 220 50% 80%;
-    --primary-400: 220 50% 65%;
-    --primary-500: 220 91% 50%; /* Main brand blue */
-    --primary-600: 220 91% 45%;
-    --primary-700: 220 91% 40%;
-    --primary-800: 220 91% 35%;
-    --primary-900: 220 91% 25%;
+    /* Cores principais da identidade */
+    --sacha-dark-blue: 210 47% 15%; /* #112031 */
+    --sacha-blue: 210 36% 25%; /* #294359 */
+    --sacha-gold: 45 26% 53%; /* #AC9469 */
+    --sacha-gray-dark: 38 12% 68%; /* #B4AC9C */
+    --sacha-gray-light: 60 15% 82%; /* #D2D0C8 */
 
-    /* Neon Gold Accent - Professional vibrant gold */
-    --neon-gold: 51 100% 50%; /* #FFD700 - Pure gold */
-    --neon-gold-light: 51 100% 65%;
-    --neon-gold-dark: 45 100% 45%;
+    /* Sistema de cores principais */
+    --primary: 45 26% 53%; /* Dourado #AC9469 */
+    --primary-foreground: 210 47% 15%; /* #112031 */
+    
+    --secondary: 210 36% 25%; /* Azul secundário #294359 */
+    --secondary-foreground: 60 15% 82%; /* #D2D0C8 */
 
-    /* Neutral Professional Palette */
-    --gray-50: 210 20% 98%;
-    --gray-100: 210 20% 95%;
-    --gray-200: 210 16% 93%;
-    --gray-300: 210 14% 89%;
-    --gray-400: 210 14% 83%;
-    --gray-500: 210 11% 71%;
-    --gray-600: 210 7% 56%;
-    --gray-700: 210 9% 31%;
-    --gray-800: 210 10% 23%;
-    --gray-900: 220 13% 18%;
-
-    /* Semantic Colors */
-    --success: 142 76% 36%;
-    --warning: 38 92% 50%;
-    --error: 0 84% 60%;
-    --info: 199 89% 48%;
-
-    /* Component Variables */
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    /* Cores de componentes - Modo Claro */
+    --card: 0 0% 100%; /* Branco */
+    --card-foreground: 210 47% 15%; /* #112031 */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover-foreground: 210 47% 15%;
 
-    --primary: 220 91% 50%;
-    --primary-foreground: 0 0% 100%;
+    --muted: 60 15% 95%; /* Versão muito clara do cinza */
+    --muted-foreground: 38 12% 45%; /* Versão escura do cinza */
 
-    --secondary: 210 20% 95%;
-    --secondary-foreground: 220 13% 18%;
+    --accent: 45 26% 53%; /* Dourado para destaques */
+    --accent-foreground: 210 47% 15%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 210 7% 56%;
-
-    --accent: 51 100% 50%; /* Neon Gold */
-    --accent-foreground: 220 13% 18%;
-
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 60%; /* Vermelho para ações destrutivas */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 16% 93%;
-    --input: 210 16% 93%;
-    --ring: 51 100% 50%; /* Neon Gold for focus rings */
+    --success: 142 76% 36%; /* Verde para sucesso */
+    --warning: 38 92% 50%; /* Laranja para avisos */
+    --info: 210 36% 45%; /* Azul mais claro para informações */
 
-    --radius: 0.75rem; /* Horizon UI standard radius */
+    --border: 60 15% 90%; /* Cinza claro para bordas */
+    --input: 60 15% 95%; /* Fundo de inputs */
+    --ring: 45 26% 53%; /* Dourado para focus rings */
 
-    /* Sidebar Variables */
+    --radius: 0.75rem; /* Raio padrão para bordas arredondadas */
+
+    /* Sidebar - Modo Claro */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 13% 18%;
-    --sidebar-primary: 51 100% 50%; /* Neon Gold */
-    --sidebar-primary-foreground: 220 13% 18%;
-    --sidebar-accent: 220 91% 50%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 210 16% 93%;
-    --sidebar-ring: 51 100% 50%;
+    --sidebar-foreground: 210 47% 15%;
+    --sidebar-primary: 45 26% 53%;
+    --sidebar-primary-foreground: 210 47% 15%;
+    --sidebar-accent: 210 36% 25%;
+    --sidebar-accent-foreground: 60 15% 82%;
+    --sidebar-border: 60 15% 90%;
+    --sidebar-ring: 45 26% 53%;
   }
 
   .dark {
-    --background: 220 13% 9%;
-    --foreground: 210 20% 98%;
+    /* Paleta de Cores "Universo da Sacha" - Modo Escuro */
+    --background: 210 47% 12%; /* #112031 mais escuro para fundo */
+    --foreground: 60 15% 85%; /* #D2D0C8 mais claro para texto */
 
-    --card: 220 13% 12%;
-    --card-foreground: 210 20% 98%;
+    /* Cores principais adaptadas para modo escuro */
+    --primary: 45 26% 60%; /* Dourado mais claro #c4aa7d */
+    --primary-foreground: 210 47% 15%;
+    
+    --secondary: 210 36% 30%; /* Azul secundário mais claro */
+    --secondary-foreground: 60 15% 82%;
 
-    --popover: 220 13% 12%;
-    --popover-foreground: 210 20% 98%;
+    /* Componentes - Modo Escuro */
+    --card: 210 47% 15%; /* #112031 */
+    --card-foreground: 60 15% 82%; /* #D2D0C8 */
 
-    --primary: 220 91% 50%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 210 47% 15%;
+    --popover-foreground: 60 15% 82%;
 
-    --secondary: 220 13% 15%;
-    --secondary-foreground: 210 20% 98%;
+    --muted: 210 36% 20%; /* Azul secundário escuro */
+    --muted-foreground: 38 12% 65%; /* Cinza médio */
 
-    --muted: 220 13% 15%;
-    --muted-foreground: 210 11% 71%;
-
-    --accent: 51 100% 50%;
-    --accent-foreground: 220 13% 9%;
+    --accent: 45 26% 60%; /* Dourado mais claro para melhor contraste */
+    --accent-foreground: 210 47% 15%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: 60 15% 85%;
 
-    --border: 220 13% 15%;
-    --input: 220 13% 15%;
-    --ring: 51 100% 50%;
+    --success: 142 76% 45%; /* Verde mais claro */
+    --warning: 38 92% 60%; /* Laranja mais claro */
+    --info: 210 36% 55%; /* Azul mais claro */
 
-    --sidebar-background: 220 13% 9%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 51 100% 50%;
-    --sidebar-primary-foreground: 220 13% 9%;
-    --sidebar-accent: 220 91% 50%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 220 13% 15%;
-    --sidebar-ring: 51 100% 50%;
+    --border: 210 36% 25%; /* Azul secundário para bordas */
+    --input: 210 36% 20%; /* Fundo escuro para inputs */
+    --ring: 45 26% 60%; /* Dourado claro para focus */
+
+    /* Sidebar - Modo Escuro */
+    --sidebar-background: 210 47% 10%; /* Ainda mais escuro que o fundo */
+    --sidebar-foreground: 60 15% 85%;
+    --sidebar-primary: 45 26% 60%;
+    --sidebar-primary-foreground: 210 47% 15%;
+    --sidebar-accent: 210 36% 30%;
+    --sidebar-accent-foreground: 60 15% 82%;
+    --sidebar-border: 210 36% 20%;
+    --sidebar-ring: 45 26% 60%;
   }
 }
 
@@ -136,95 +123,125 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Fontes institucionais da identidade "Universo da Sacha" */
+    font-family: 'Inter', sans-serif; /* Fonte principal para textos */
     font-weight: 400;
     line-height: 1.6;
-    /* Improved antialiasing for text */
+    /* Melhor renderização de texto */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Prevent horizontal scroll */
+    /* Evitar scroll horizontal */
     overflow-x: hidden;
   }
   
-  /* Horizon UI Typography Hierarchy */
+  /* Hierarquia tipográfica "Universo da Sacha" */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Optima', 'Inter', sans-serif; /* Optima para títulos e destaques */
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
   }
 
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl;
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold;
   }
 
   h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl;
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold;
   }
 
   h3 {
-    @apply text-2xl md:text-3xl lg:text-4xl;
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
   }
 
   h4 {
-    @apply text-xl md:text-2xl lg:text-3xl;
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold;
   }
 
   h5 {
-    @apply text-lg md:text-xl lg:text-2xl;
+    @apply text-lg md:text-xl lg:text-2xl font-medium;
   }
 
   h6 {
-    @apply text-base md:text-lg lg:text-xl;
+    @apply text-base md:text-lg lg:text-xl font-medium;
+  }
+
+  /* Textos de corpo usando Inter */
+  p, span, div, li {
+    font-family: 'Inter', sans-serif;
   }
   
-  /* Focus styles for accessibility */
+  /* Estados de foco melhorados para acessibilidade */
   :focus-visible {
     @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background transition-all duration-200;
   }
   
-  /* Improved button and interactive element tap states */
+  /* Elementos interativos melhorados */
   button, a, [role="button"] {
     @apply outline-none select-none;
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Smoother transitions for interactive elements */
+  /* Transições suaves para elementos interativos */
   a, button, input, select, textarea {
     @apply transition-all duration-300 ease-out;
   }
   
-  /* Horizon UI Utility Classes */
-  .gradient-neon-gold {
-    background: linear-gradient(135deg, hsl(var(--neon-gold)) 0%, hsl(var(--neon-gold-dark)) 100%);
+  /* Classes utilitárias "Universo da Sacha" */
+  .gradient-sacha-gold {
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(45 26% 45%) 100%);
   }
   
-  .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary-500)) 0%, hsl(var(--primary-700)) 100%);
+  .gradient-sacha-blue {
+    background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(210 47% 10%) 100%);
   }
   
-  .shadow-horizon {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  .gradient-sacha-cosmic {
+    background: linear-gradient(135deg, 
+      hsl(210 47% 15%) 0%, 
+      hsl(210 36% 25%) 35%, 
+      hsl(45 26% 53%) 100%
+    );
   }
   
-  .shadow-horizon-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* Sombras personalizadas */
+  .shadow-sacha {
+    box-shadow: 0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06);
   }
   
-  .shadow-horizon-xl {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  .shadow-sacha-lg {
+    box-shadow: 0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05);
   }
   
+  .shadow-sacha-xl {
+    box-shadow: 0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04);
+  }
+  
+  .shadow-sacha-gold {
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
+  }
+  
+  /* Efeitos hover melhorados */
   .card-hover {
     @apply transition-all duration-300 ease-out cursor-pointer;
   }
   
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(172, 148, 105, 0.15), 0 10px 10px -5px rgba(172, 148, 105, 0.1);
   }
   
-  /* Horizon UI Animation Classes */
+  /* Brilho e efeitos especiais da identidade */
+  .glow-sacha {
+    box-shadow: 0 0 10px rgba(172, 148, 105, 0.3);
+  }
+  
+  .glow-sacha-intense {
+    box-shadow: 0 0 20px rgba(172, 148, 105, 0.5), 0 0 30px rgba(172, 148, 105, 0.3);
+  }
+  
+  /* Animações personalizadas */
   .fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
   }
@@ -245,6 +262,20 @@
     animation: slideInLeft 0.5s ease-out forwards;
   }
   
+  .pulse-gold {
+    animation: pulseGold 2s infinite;
+  }
+  
+  .shimmer-sacha {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 25%, 
+      hsl(var(--accent) / 0.1) 50%, 
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -257,12 +288,8 @@
   }
   
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   
   @keyframes scaleIn {
@@ -298,7 +325,21 @@
     }
   }
   
-  /* Stagger Animation Classes */
+  @keyframes pulseGold {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(172, 148, 105, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(172, 148, 105, 0);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  /* Classes de delay para animações escalonadas */
   .stagger-item {
     opacity: 0;
     animation: fadeInUp 0.6s ease-out forwards;
@@ -311,74 +352,61 @@
   .stagger-delay-5 { animation-delay: 0.5s; }
   .stagger-delay-6 { animation-delay: 0.6s; }
   
-  /* Horizon UI Button Styles */
-  .btn-primary {
-    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-horizon;
+  /* Estilos de botão "Universo da Sacha" */
+  .btn-sacha-primary {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha;
+    font-family: 'Optima', 'Inter', sans-serif;
   }
   
-  .btn-primary:hover {
+  .btn-sacha-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(255, 215, 0, 0.3), 0 4px 6px -2px rgba(255, 215, 0, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
   }
   
-  .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-horizon;
+  .btn-sacha-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha;
+    font-family: 'Optima', 'Inter', sans-serif;
   }
   
-  .btn-outline {
+  .btn-sacha-outline {
     @apply border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-300;
+    font-family: 'Optima', 'Inter', sans-serif;
   }
   
-  /* Improved form focus states */
+  /* Estados de foco melhorados para formulários */
   input:focus, 
   textarea:focus, 
   select:focus {
     @apply outline-none ring-2 ring-accent border-accent;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(172, 148, 105, 0.1);
   }
   
-  /* Horizon UI Card Styles */
-  .card-horizon {
-    @apply bg-card border border-border rounded-2xl p-6 shadow-horizon;
+  /* Estilos de card "Universo da Sacha" */
+  .card-sacha {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-sacha;
   }
   
-  .card-horizon-interactive {
-    @apply card-horizon card-hover;
+  .card-sacha-interactive {
+    @apply card-sacha card-hover;
   }
   
-  /* Professional Loading States */
-  .loading-shimmer {
-    background: linear-gradient(90deg, 
-      hsl(var(--gray-200)) 25%, 
-      hsl(var(--gray-100)) 50%, 
-      hsl(var(--gray-200)) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
+  .card-sacha-gold {
+    @apply bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20 rounded-2xl p-6 shadow-sacha-gold;
   }
   
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
-  
-  /* Scrollbar Styling */
+  /* Estilização de scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   
   ::-webkit-scrollbar-track {
-    background: hsl(var(--gray-100));
+    background: hsl(var(--muted));
     border-radius: 4px;
   }
   
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--gray-400));
+    background: hsl(var(--accent) / 0.5);
     border-radius: 4px;
   }
   
@@ -386,9 +414,74 @@
     background: hsl(var(--accent));
   }
   
-  /* Text Selection */
+  /* Seleção de texto */
   ::selection {
     background: hsl(var(--accent) / 0.2);
     color: hsl(var(--foreground));
+  }
+  
+  /* Melhorias de responsividade */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-4;
+    }
+    
+    h1 {
+      @apply text-3xl;
+    }
+    
+    h2 {
+      @apply text-2xl;
+    }
+    
+    h3 {
+      @apply text-xl;
+    }
+  }
+  
+  /* Estados de carregamento com a identidade visual */
+  .loading-sacha {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 25%, 
+      hsl(var(--accent) / 0.1) 50%, 
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Utilitários para acessibilidade */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Estilos para modo de alto contraste */
+  @media (prefers-contrast: high) {
+    :root {
+      --border: 0 0% 0%;
+      --ring: 0 0% 0%;
+    }
+    
+    .dark {
+      --border: 0 0% 100%;
+      --ring: 0 0% 100%;
+    }
+  }
+  
+  /* Suporte para movimento reduzido */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

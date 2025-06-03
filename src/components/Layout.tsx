@@ -44,11 +44,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-sidebar-background border-r border-sidebar-border">
             <div className="flex items-center flex-shrink-0 px-4">
               <div className="flex items-center">
-                <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">N</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-sacha-gold via-sacha-blue to-sacha-dark-blue rounded-xl flex items-center justify-center shadow-lg shadow-sacha-gold/20 relative overflow-hidden group">
+                  <span className="text-sacha-gray-light font-display font-extrabold text-lg tracking-wider relative z-10">US</span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-sacha-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <h1 className="ml-3 text-xl font-bold text-sidebar-foreground">
-                  Neon Pro
+                  Universo da Sacha
                 </h1>
               </div>
             </div>
@@ -113,11 +114,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
                 <div className="flex-shrink-0 flex items-center px-4">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">N</span>
+                    <div className="w-8 h-8 bg-gradient-to-br from-sacha-gold via-sacha-blue to-sacha-dark-blue rounded-lg flex items-center justify-center shadow-lg shadow-sacha-gold/20">
+                      <span className="text-sacha-gray-light font-display font-extrabold text-sm tracking-wider">US</span>
                     </div>
                     <h1 className="ml-3 text-xl font-bold text-sidebar-foreground">
-                      Neon Pro
+                      Universo da Sacha
                     </h1>
                   </div>
                 </div>

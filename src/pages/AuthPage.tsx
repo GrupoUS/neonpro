@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthHeader } from "@/components/auth/AuthHeader";
@@ -7,8 +6,10 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Helmet } from "react-helmet";
 import { useAuth } from "@/contexts/auth";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -52,8 +53,9 @@ const AuthPage: React.FC = () => {
           redirectTo: `${window.location.origin}/dashboard`,
         }
       });
-    } catch (error: any) {
-      toast.error(`Erro ao entrar com Google: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      toast.error(`Erro ao entrar com Google: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -77,11 +79,11 @@ const AuthPage: React.FC = () => {
           <meta name="description" content="Recupere sua senha para acessar o NEON PRO - Sistema premium de gestão para clínicas de estética." />
           <meta name="robots" content="noindex, nofollow" />
         </Helmet>
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+        <div className="flex flex-col min-h-screen bg-gradient-sacha-cosmic transition-colors duration-300">
           <AuthHeader />
           
           <main className="flex-1 flex items-center justify-center p-6">
-            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg animate-fade-in">
+            <div className="w-full max-w-md card-sacha-gold animate-fade-in">
               <ResetPasswordForm 
                 onCancel={() => setShowResetPassword(false)} 
                 onSuccess={() => setShowResetPassword(false)}
@@ -104,15 +106,27 @@ const AuthPage: React.FC = () => {
         <meta name="description" content="Faça login no NEON PRO - Sistema premium completo para gestão de clínicas de estética." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="flex flex-col min-h-screen bg-gradient-sacha-cosmic transition-colors duration-300">
         <AuthHeader />
         
         <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg animate-fade-in">
+          <div className="w-full max-w-md card-sacha-gold animate-fade-in backdrop-blur-sm">
             <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="transition-all duration-300">
-              <TabsList className="grid grid-cols-2 w-full mb-8">
-                <TabsTrigger value="login" className="transition-all">Login</TabsTrigger>
-                <TabsTrigger value="register" className="transition-all">Cadastro</TabsTrigger>
+              <TabsList className="grid grid-cols-2 w-full mb-8 bg-sacha-dark-blue/20 dark:bg-sacha-blue/30 border border-sacha-gold/30 rounded-lg">
+                <TabsTrigger 
+                  value="login" 
+                  className="transition-all data-[state=active]:bg-sacha-gold data-[state=active]:text-sacha-dark-blue text-sacha-dark-blue dark:text-sacha-gray-light font-semibold"
+                  style={{ fontFamily: 'Optima, Inter, sans-serif' }}
+                >
+                  Login
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="register" 
+                  className="transition-all data-[state=active]:bg-sacha-gold data-[state=active]:text-sacha-dark-blue text-sacha-dark-blue dark:text-sacha-gray-light font-semibold"
+                  style={{ fontFamily: 'Optima, Inter, sans-serif' }}
+                >
+                  Cadastro
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="animate-fade-in">

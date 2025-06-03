@@ -20,8 +20,11 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'sans': ['Plus Jakarta Sans', 'sans-serif'],
-				'display': ['Plus Jakarta Sans', 'sans-serif'],
+				// Tipografias institucionais da identidade visual "Universo da Sacha"
+				'sans': ['Inter', 'sans-serif'], // Para textos de corpo
+				'display': ['Optima', 'Inter', 'sans-serif'], // Para títulos e destaques
+				'optima': ['Optima', 'Inter', 'sans-serif'], // Explícita para títulos
+				'inter': ['Inter', 'sans-serif'], // Explícita para textos
 			},
 			fontWeight: {
 				'light': '300',
@@ -30,71 +33,80 @@ export default {
 				'semibold': '600',
 				'bold': '700',
 				'extrabold': '800',
+				'extrablack': '900',
 			},
 			colors: {
-				// Horizon UI Core Colors
-				'horizon-blue': {
-					50: 'hsl(220, 60%, 99%)',
-					100: 'hsl(220, 43%, 96%)',
-					200: 'hsl(220, 50%, 90%)',
-					300: 'hsl(220, 50%, 80%)',
-					400: 'hsl(220, 50%, 65%)',
-					500: 'hsl(220, 91%, 50%)',
-					600: 'hsl(220, 91%, 45%)',
-					700: 'hsl(220, 91%, 40%)',
-					800: 'hsl(220, 91%, 35%)',
-					900: 'hsl(220, 91%, 25%)',
+				// Paleta de cores oficial "Universo da Sacha"
+				'sacha': {
+					// Azul Escuro (Fundo Principal do Modo Escuro) - #112031
+					'dark-blue': '#112031',
+					'dark-blue-rgb': '17, 32, 49',
+					
+					// Azul Secundário - #294359  
+					'blue': '#294359',
+					'blue-rgb': '41, 67, 89',
+					
+					// Dourado (Cor de Destaque) - #AC9469
+					'gold': '#AC9469',
+					'gold-rgb': '172, 148, 105',
+					
+					// Cinzas (Texto, Fundos Secundários)
+					'gray-dark': '#B4AC9C', // #B4AC9C
+					'gray-light': '#D2D0C8', // #D2D0C8 com 75% opacidade
+					
+					// Variações para melhor contraste
+					'dark-blue-lighter': '#1a2b42',
+					'dark-blue-darker': '#0a1520',
+					'blue-lighter': '#3a5a7a',
+					'blue-darker': '#1e3347',
+					'gold-lighter': '#c4aa7d',
+					'gold-darker': '#8a7852',
 				},
 				
-				// Neon Gold Accent
-				'neon-gold': {
-					DEFAULT: 'hsl(51, 100%, 50%)', // #FFD700
-					light: 'hsl(51, 100%, 65%)',
-					dark: 'hsl(45, 100%, 45%)',
+				// Aliases para compatibilidade e semântica
+				'primary': {
+					DEFAULT: '#AC9469', // Dourado principal
+					50: '#f7f5f1',
+					100: '#ede8dc',
+					200: '#dbd0bb',
+					300: '#c4aa7d',
+					400: '#AC9469', // Cor principal
+					500: '#9a8359',
+					600: '#8a7852',
+					700: '#6f5f42',
+					800: '#5c4f38',
+					900: '#4d422f',
+					foreground: '#112031'
 				},
 				
-				// Professional Gray Scale
-				'horizon-gray': {
-					50: 'hsl(210, 20%, 98%)',
-					100: 'hsl(210, 20%, 95%)',
-					200: 'hsl(210, 16%, 93%)',
-					300: 'hsl(210, 14%, 89%)',
-					400: 'hsl(210, 14%, 83%)',
-					500: 'hsl(210, 11%, 71%)',
-					600: 'hsl(210, 7%, 56%)',
-					700: 'hsl(210, 9%, 31%)',
-					800: 'hsl(210, 10%, 23%)',
-					900: 'hsl(220, 13%, 18%)',
+				'secondary': {
+					DEFAULT: '#294359', // Azul secundário
+					50: '#f1f5f9',
+					100: '#e2e8f0',
+					200: '#cbd5e1',
+					300: '#94a3b8',
+					400: '#64748b',
+					500: '#294359', // Cor principal
+					600: '#233a4d',
+					700: '#1e3347',
+					800: '#182934',
+					900: '#0f1c24',
+					foreground: '#D2D0C8'
 				},
 				
-				// Semantic Colors
-				'success': 'hsl(142, 76%, 36%)',
-				'warning': 'hsl(38, 92%, 50%)',
-				'error': 'hsl(0, 84%, 60%)',
-				'info': 'hsl(199, 89%, 48%)',
+				// Sistema de cores semânticas mantido
+				'success': '#22c55e',
+				'warning': '#f59e0b', 
+				'error': '#ef4444',
+				'info': '#3b82f6',
 				
-				// Gold alias for compatibility
-				'gold': {
-					DEFAULT: 'hsl(51, 100%, 50%)', // #FFD700
-					light: 'hsl(51, 100%, 65%)',
-					dark: 'hsl(45, 100%, 45%)',
-				},
-				
-				// Base System Colors
+				// Cores do sistema shadcn/ui mantidas para compatibilidade
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -140,10 +152,15 @@ export default {
 				'128': '32rem',
 			},
 			boxShadow: {
+				// Sombras personalizadas seguindo a identidade visual
+				'sacha': '0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06)',
+				'sacha-lg': '0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05)',
+				'sacha-xl': '0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04)',
+				'sacha-gold': '0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1)',
+				// Mantendo compatibilidade
 				'horizon': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
 				'horizon-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
 				'horizon-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-				'neon-gold': '0 10px 15px -3px rgba(255, 215, 0, 0.3), 0 4px 6px -2px rgba(255, 215, 0, 0.1)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -222,10 +239,18 @@ export default {
 				},
 				'pulse-gold': {
 					'0%, 100%': {
-						boxShadow: '0 0 0 0 rgba(255, 215, 0, 0.7)'
+						boxShadow: '0 0 0 0 rgba(172, 148, 105, 0.7)'
 					},
 					'70%': {
-						boxShadow: '0 0 0 10px rgba(255, 215, 0, 0)'
+						boxShadow: '0 0 0 10px rgba(172, 148, 105, 0)'
+					}
+				},
+				'glow-sacha': {
+					'0%, 100%': {
+						boxShadow: '0 0 5px rgba(172, 148, 105, 0.5)'
+					},
+					'50%': {
+						boxShadow: '0 0 20px rgba(172, 148, 105, 0.8), 0 0 30px rgba(172, 148, 105, 0.6)'
 					}
 				}
 			},
@@ -239,6 +264,7 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'shimmer': 'shimmer 2s infinite',
 				'pulse-gold': 'pulse-gold 2s infinite',
+				'glow-sacha': 'glow-sacha 2s ease-in-out infinite',
 			},
 			backdropBlur: {
 				'xs': '2px',
@@ -249,6 +275,7 @@ export default {
 			},
 			transitionTimingFunction: {
 				'bounce-in': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+				'sacha-ease': 'cubic-bezier(0.4, 0, 0.2, 1)',
 			},
 			zIndex: {
 				'60': '60',
