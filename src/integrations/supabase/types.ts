@@ -411,6 +411,155 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          conteudo: string
+          id: string
+          metadata: Json | null
+          processed: boolean | null
+          session_id: string
+          timestamp: string
+          tipo: string
+          tokens_used: number | null
+          user_id: string
+        }
+        Insert: {
+          conteudo: string
+          id?: string
+          metadata?: Json | null
+          processed?: boolean | null
+          session_id: string
+          timestamp?: string
+          tipo: string
+          tokens_used?: number | null
+          user_id: string
+        }
+        Update: {
+          conteudo?: string
+          id?: string
+          metadata?: Json | null
+          processed?: boolean | null
+          session_id?: string
+          timestamp?: string
+          tipo?: string
+          tokens_used?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "chat_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_sessions: {
+        Row: {
+          configuracoes: Json | null
+          contexto: Json | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          status: string | null
+          titulo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          configuracoes?: Json | null
+          contexto?: Json | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          status?: string | null
+          titulo?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          configuracoes?: Json | null
+          contexto?: Json | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          status?: string | null
+          titulo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chatbot_analytics: {
+        Row: {
+          dados: Json | null
+          evento: string
+          id: string
+          session_id: string | null
+          timestamp: string
+          user_id: string
+        }
+        Insert: {
+          dados?: Json | null
+          evento: string
+          id?: string
+          session_id?: string | null
+          timestamp?: string
+          user_id: string
+        }
+        Update: {
+          dados?: Json | null
+          evento?: string
+          id?: string
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chatbot_config: {
+        Row: {
+          automacoes_ativas: Json | null
+          comandos_customizados: Json | null
+          created_at: string
+          id: string
+          max_tokens: number | null
+          modelo_preferido: string | null
+          openrouter_api_key: string | null
+          personalidade: Json | null
+          temperatura: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          automacoes_ativas?: Json | null
+          comandos_customizados?: Json | null
+          created_at?: string
+          id?: string
+          max_tokens?: number | null
+          modelo_preferido?: string | null
+          openrouter_api_key?: string | null
+          personalidade?: Json | null
+          temperatura?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          automacoes_ativas?: Json | null
+          comandos_customizados?: Json | null
+          created_at?: string
+          id?: string
+          max_tokens?: number | null
+          modelo_preferido?: string | null
+          openrouter_api_key?: string | null
+          personalidade?: Json | null
+          temperatura?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_portal_access: {
         Row: {
           access_token: string
@@ -1496,6 +1645,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_chat_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _user_id: string
