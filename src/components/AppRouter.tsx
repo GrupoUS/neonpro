@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import ProtectedRoute from './auth/ProtectedRoute';
-import LoginForm from '../components/auth/LoginForm';
+import { useAuth } from '@/contexts/auth';
 import Layout from '@/components/Layout';
 import AuthPage from '@/pages/AuthPage';
 import Dashboard from '@/pages/Dashboard';
@@ -12,11 +10,12 @@ import Agendamentos from '@/pages/Agendamentos';
 import Financeiro from '@/pages/Financeiro';
 import Relatorios from '@/pages/Relatorios';
 import Servicos from '@/pages/Servicos';
+import Configuracoes from '@/pages/Configuracoes';
 
 const AppRouter: React.FC = () => {
-  const { session, isLoading } = useAuth(); // Usar isLoading em vez de loading
+  const { user, isLoading } = useAuth();
 
-  if (isLoading) { // Usar isLoading
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
         <div className="text-center">
@@ -27,17 +26,23 @@ const AppRouter: React.FC = () => {
     );
   }
 
+  if (!user) {
+    return <AuthPage />;
+  }
+
   return (
     <Routes>
-      <Route path="/login" element={<AuthPage />} />
-      <Route path="/" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-      <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-      <Route path="/clientes" element={<ProtectedRoute><Layout><Clientes /></Layout></ProtectedRoute>} />
-      <Route path="/agendamentos" element={<ProtectedRoute><Layout><Agendamentos /></Layout></ProtectedRoute>} />
-      <Route path="/financeiro" element={<ProtectedRoute><Layout><Financeiro /></Layout></ProtectedRoute>} />
-      <Route path="/servicos" element={<ProtectedRoute><Layout><Servicos /></Layout></ProtectedRoute>} />
-      <Route path="/relatorios" element={<ProtectedRoute><Layout><Relatorios /></Layout></ProtectedRoute>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="clientes" element={<Clientes />} />
+        <Route path="agendamentos" element={<Agendamentos />} />
+        <Route path="financeiro" element={<Financeiro />} />
+        <Route path="servicos" element={<Servicos />} />
+        <Route path="relatorios" element={<Relatorios />} />
+        <Route path="configuracoes" element={<Configuracoes />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
     </Routes>
   );
 };

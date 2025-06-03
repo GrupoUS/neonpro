@@ -1,78 +1,92 @@
 
 import React from 'react';
-import { Settings, User, Bell, Shield, Palette } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { NotificationSettingsForm } from '@/components/settings/NotificationSettingsForm';
+import { SecuritySettingsForm } from '@/components/settings/SecuritySettingsForm';
+import { AppearanceSettingsForm } from '@/components/settings/AppearanceSettingsForm';
+import { useSettings } from '@/hooks/useSettings';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Bell, Shield, Palette } from 'lucide-react';
 
 const Configuracoes: React.FC = () => {
+  const {
+    notificationSettings,
+    securitySettings,
+    appearanceSettings,
+    isLoading,
+    updateNotificationSettings,
+    updateSecuritySettings,
+    updateAppearanceSettings,
+  } = useSettings();
+
+  if (isLoading) {
+    return (
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Configurações</h1>
+          <p className="text-muted-foreground">Gerencie suas preferências e configurações</p>
+        </div>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-neon-brand">Configurações</h1>
-        <p className="text-neon-subtitle mt-1">
-          Gerencie as configurações da sua clínica
-        </p>
+    <div className="p-6 max-w-4xl">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+          Configurações
+        </h1>
+        <p className="text-muted-foreground">Gerencie suas preferências e configurações</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="card-neon-interactive">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-accent/10 rounded-lg">
-              <User className="h-5 w-5 text-accent" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground">Perfil</h3>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Gerencie informações do seu perfil e preferências pessoais.
-          </p>
-          <button className="btn-neon-primary">
-            Editar Perfil
-          </button>
-        </div>
+      <Tabs defaultValue="notifications" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <Bell className="w-4 h-4" />
+            Notificações
+          </TabsTrigger>
+          <TabsTrigger value="security" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Segurança
+          </TabsTrigger>
+          <TabsTrigger value="appearance" className="flex items-center gap-2">
+            <Palette className="w-4 h-4" />
+            Aparência
+          </TabsTrigger>
+        </TabsList>
 
-        <div className="card-neon-interactive">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-secondary/10 rounded-lg">
-              <Bell className="h-5 w-5 text-secondary" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground">Notificações</h3>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Configure como e quando você deseja receber notificações.
-          </p>
-          <button className="btn-neon-secondary">
-            Configurar
-          </button>
-        </div>
+        <TabsContent value="notifications">
+          <NotificationSettingsForm
+            settings={notificationSettings}
+            onUpdate={updateNotificationSettings}
+          />
+        </TabsContent>
 
-        <div className="card-neon-interactive">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-accent/10 rounded-lg">
-              <Shield className="h-5 w-5 text-accent" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground">Segurança</h3>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Gerencie senhas, autenticação e configurações de segurança.
-          </p>
-          <button className="btn-neon-outline">
-            Gerenciar
-          </button>
-        </div>
+        <TabsContent value="security">
+          <SecuritySettingsForm
+            settings={securitySettings}
+            onUpdate={updateSecuritySettings}
+          />
+        </TabsContent>
 
-        <div className="card-neon-interactive">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-secondary/10 rounded-lg">
-              <Palette className="h-5 w-5 text-secondary" />
-            </div>
-            <h3 className="text-lg font-semibold text-foreground">Aparência</h3>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            Personalize a aparência e tema da aplicação.
-          </p>
-          <button className="btn-neon-gradient">
-            Personalizar
-          </button>
-        </div>
-      </div>
+        <TabsContent value="appearance">
+          <AppearanceSettingsForm
+            settings={appearanceSettings}
+            onUpdate={updateAppearanceSettings}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
