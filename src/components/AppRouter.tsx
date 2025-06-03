@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 import Layout from '@/components/Layout';
 import AuthPage from '@/pages/AuthPage';
@@ -10,26 +11,35 @@ import Financeiro from '@/pages/Financeiro';
 import Relatorios from '@/pages/Relatorios';
 
 const AppRouter: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <AuthPage />;
   }
 
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/agendamentos" element={<Agendamentos />} />
-          <Route path="/financeiro" element={<Financeiro />} />
-          <Route path="/relatorios" element={<Relatorios />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/clientes" element={<Clientes />} />
+        <Route path="/agendamentos" element={<Agendamentos />} />
+        <Route path="/financeiro" element={<Financeiro />} />
+        <Route path="/relatorios" element={<Relatorios />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Layout>
   );
 };
 

@@ -597,6 +597,54 @@ export type Database = {
         }
         Relationships: []
       }
+      clinicas: {
+        Row: {
+          cnpj: string | null
+          created_at: string
+          email: string | null
+          endereco: string | null
+          especialidades: string[] | null
+          horario_funcionamento: Json | null
+          id: string
+          logo_url: string | null
+          nome_clinica: string
+          telefone: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          especialidades?: string[] | null
+          horario_funcionamento?: Json | null
+          id?: string
+          logo_url?: string | null
+          nome_clinica: string
+          telefone?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          cnpj?: string | null
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          especialidades?: string[] | null
+          horario_funcionamento?: Json | null
+          id?: string
+          logo_url?: string | null
+          nome_clinica?: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       course_enrollments: {
         Row: {
           client_id: string
@@ -1131,22 +1179,34 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          created_at: string | null
           email: string | null
           id: string
           name: string | null
+          phone: string | null
           role: string | null
+          updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
           email?: string | null
           id: string
           name?: string | null
+          phone?: string | null
           role?: string | null
+          updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
+          created_at?: string | null
           email?: string | null
           id?: string
           name?: string | null
+          phone?: string | null
           role?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1186,6 +1246,39 @@ export type Database = {
           price?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      servicos: {
+        Row: {
+          ativo: boolean | null
+          created_at: string | null
+          descricao: string | null
+          duracao: number | null
+          id: string
+          nome_servico: string
+          preco: number
+          updated_at: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao?: number | null
+          id?: string
+          nome_servico: string
+          preco: number
+          updated_at?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string | null
+          descricao?: string | null
+          duracao?: number | null
+          id?: string
+          nome_servico?: string
+          preco?: number
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1231,6 +1324,45 @@ export type Database = {
           start_time?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      transacoes: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_transacao: string
+          descricao: string
+          id: string
+          observacoes: string | null
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_transacao?: string
+          descricao: string
+          id?: string
+          observacoes?: string | null
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_transacao?: string
+          descricao?: string
+          id?: string
+          observacoes?: string | null
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor?: number
         }
         Relationships: []
       }
@@ -1283,6 +1415,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_profiles: {
+        Row: {
+          ativo: boolean | null
+          created_at: string | null
+          crm: string | null
+          email: string
+          especialidade: string | null
+          id: string
+          nome: string
+          role: string
+          telefone: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string | null
+          crm?: string | null
+          email: string
+          especialidade?: string | null
+          id?: string
+          nome: string
+          role: string
+          telefone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string | null
+          crm?: string | null
+          email?: string
+          especialidade?: string | null
+          id?: string
+          nome?: string
+          role?: string
+          telefone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthHeader } from "@/components/auth/AuthHeader";
@@ -6,10 +7,8 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Helmet } from "react-helmet";
 import { useAuth } from "@/contexts/auth";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,17 +23,17 @@ const AuthPage: React.FC = () => {
   // Handle redirection after login
   useEffect(() => {
     if (user) {
-      const from = location.state?.from || "/dashboard";
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     }
-  }, [user, navigate, location]);
+  }, [user, navigate]);
 
   // Clean up URL parameters from OAuth redirects
   useEffect(() => {
     const url = new URL(window.location.href);
     const hasAuthParams = url.searchParams.has('access_token') || 
                          url.searchParams.has('refresh_token') || 
-                         url.searchParams.has('error');
+                         url.searchParams.has('error') ||
+                         url.hash;
     
     if (hasAuthParams) {
       // Clean the URL without triggering a page reload
@@ -50,7 +49,7 @@ const AuthPage: React.FC = () => {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/`,
         }
       });
     } catch (error: unknown) {

@@ -15,10 +15,9 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     if (!isLoading && !user) {
       // Redirect to auth page when user is not authenticated
-      // Store the route they were trying to access
-      navigate('/auth', { state: { from: location.pathname }, replace: true });
+      navigate('/auth', { replace: true });
     }
-  }, [user, isLoading, navigate, location.pathname]);
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (

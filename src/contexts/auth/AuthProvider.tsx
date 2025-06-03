@@ -41,6 +41,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (event === 'SIGNED_OUT') {
         setProfile(null);
         setIsLoading(false);
+        // Redirect to auth page on sign out
+        navigate('/auth', { replace: true });
       } else if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
         // Defer profile fetching to avoid blocking the auth state change
         setTimeout(() => {
@@ -49,10 +51,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         
         // Handle redirect after successful login
         if (event === 'SIGNED_IN') {
-          // Check if we're on auth page and redirect to dashboard
-          if (location.pathname === '/auth' || location.pathname.includes('access_token')) {
-            navigate('/dashboard', { replace: true });
-          }
+          // Clean any hash from URL and redirect to dashboard
+          const cleanPath = location.pathname === '/auth' ? '/' : location.pathname;
+          navigate(cleanPath, { replace: true });
         }
       } else {
         setIsLoading(false);
@@ -70,11 +71,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         fetchProfile(initialSession.user.id);
         
         // If user is authenticated and on auth page, redirect to dashboard
-        if (location.pathname === '/auth' || location.pathname.includes('access_token')) {
-          navigate('/dashboard', { replace: true });
+        if (location.pathname === '/auth' || location.pathname.includes('access_token') || location.hash) {
+          navigate('/', { replace: true });
         }
       } else {
         setIsLoading(false);
+        // If no user and not on auth page, redirect to auth
+        if (location.pathname !== '/auth') {
+          navigate('/auth', { replace: true });
+        }
       }
     });
 
@@ -94,6 +99,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.error('Auth error:', error, errorDescription);
         // Clean the URL and redirect to auth page
         navigate('/auth', { replace: true });
+      }
+      
+      // Clean hash and search params from OAuth redirects
+      if (url.hash || url.searchParams.has('access_token') || url.searchParams.has('refresh_token')) {
+        const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+        window.history.replaceState({}, document.title, cleanUrl);
       }
     };
 
