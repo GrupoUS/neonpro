@@ -78,11 +78,11 @@ const AuthPage: React.FC = () => {
           <meta name="description" content="Recupere sua senha para acessar o NEON PRO - Sistema premium de gestão para clínicas de estética." />
           <meta name="robots" content="noindex, nofollow" />
         </Helmet>
-        <div className="flex flex-col min-h-screen bg-gradient-sacha-cosmic transition-colors duration-300">
+        <div className="flex flex-col min-h-screen bg-background transition-colors duration-300">
           <AuthHeader />
           
           <main className="flex-1 flex items-center justify-center p-6">
-            <div className="w-full max-w-md card-sacha-gold animate-fade-in">
+            <div className="w-full max-w-md card-neon animate-fade-in">
               <ResetPasswordForm 
                 onCancel={() => setShowResetPassword(false)} 
                 onSuccess={() => setShowResetPassword(false)}
@@ -105,24 +105,24 @@ const AuthPage: React.FC = () => {
         <meta name="description" content="Faça login no NEON PRO - Sistema premium completo para gestão de clínicas de estética." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <div className="flex flex-col min-h-screen bg-gradient-sacha-cosmic transition-colors duration-300">
+      <div className="flex flex-col min-h-screen bg-background transition-colors duration-300">
         <AuthHeader />
         
         <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md card-sacha-gold animate-fade-in backdrop-blur-sm">
+          <div className="w-full max-w-md card-neon animate-fade-in backdrop-blur-sm">
             <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="transition-all duration-300">
-              <TabsList className="grid grid-cols-2 w-full mb-8 bg-sacha-dark-blue/20 dark:bg-sacha-blue/30 border border-sacha-gold/30 rounded-lg">
+              <TabsList className="grid grid-cols-2 w-full mb-8 bg-muted border border-border rounded-lg">
                 <TabsTrigger 
                   value="login" 
-                  className="transition-all data-[state=active]:bg-sacha-gold data-[state=active]:text-sacha-dark-blue text-sacha-dark-blue dark:text-sacha-gray-light font-semibold"
-                  style={{ fontFamily: 'Optima, Inter, sans-serif' }}
+                  className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                 >
                   Login
                 </TabsTrigger>
                 <TabsTrigger 
                   value="register" 
-                  className="transition-all data-[state=active]:bg-sacha-gold data-[state=active]:text-sacha-dark-blue text-sacha-dark-blue dark:text-sacha-gray-light font-semibold"
-                  style={{ fontFamily: 'Optima, Inter, sans-serif' }}
+                  className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                 >
                   Cadastro
                 </TabsTrigger>

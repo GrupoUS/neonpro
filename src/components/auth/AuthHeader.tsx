@@ -11,7 +11,7 @@ export const AuthHeader: React.FC = () => {
         className="group flex items-center space-x-3 transition-transform hover:scale-105" 
         aria-label="NEON PRO - Voltar para a página inicial"
       >
-        {/* Novo ícone hexagonal NEON PRO */}
+        {/* Ícone hexagonal NEON PRO */}
         <div className="relative">
           <svg 
             viewBox="0 0 32 32" 

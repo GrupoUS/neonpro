@@ -21,6 +21,7 @@ export type Database = {
           servico_id: string | null
           status: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -33,6 +34,7 @@ export type Database = {
           servico_id?: string | null
           status?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           servico_id?: string | null
           status?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -899,6 +902,7 @@ export type Database = {
           rg: string | null
           telefone: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           celular?: string | null
@@ -917,6 +921,7 @@ export type Database = {
           rg?: string | null
           telefone?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           celular?: string | null
@@ -935,6 +940,7 @@ export type Database = {
           rg?: string | null
           telefone?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

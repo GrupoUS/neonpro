@@ -1,106 +1,86 @@
 
 /* Animações personalizadas NEON PRO */
 
-@layer base {
-  /* Animações personalizadas NEON PRO */
-  .fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-  
-  .fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-  }
-  
-  .scale-in {
-    animation: scaleIn 0.4s ease-out forwards;
-  }
-  
-  .slide-in-right {
-    animation: slideInRight 0.5s ease-out forwards;
-  }
-  
-  .slide-in-left {
-    animation: slideInLeft 0.5s ease-out forwards;
-  }
-  
-  .pulse-gold {
-    animation: pulseGold 2s infinite;
-  }
-  
-  /* Keyframes para animações */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
+@layer utilities {
+  /* Animações de pulso especiais */
+  @keyframes pulse-neon {
+    0%, 100% {
       opacity: 1;
       transform: scale(1);
     }
-  }
-  
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
     }
   }
   
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-30px);
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
     }
-    to {
-      opacity: 1;
-      transform: translateX(0);
+    50% {
+      background-position: 100% 50%;
     }
-  }
-  
-  @keyframes pulseGold {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(172, 148, 105, 0.7);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(172, 148, 105, 0);
+    100% {
+      background-position: 0% 50%;
     }
   }
   
   @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
   
-  /* Classes de delay para animações escalonadas NEON PRO */
-  .stagger-item {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
   
-  .stagger-delay-1 { animation-delay: 0.1s; }
-  .stagger-delay-2 { animation-delay: 0.2s; }
-  .stagger-delay-3 { animation-delay: 0.3s; }
-  .stagger-delay-4 { animation-delay: 0.4s; }
-  .stagger-delay-5 { animation-delay: 0.5s; }
-  .stagger-delay-6 { animation-delay: 0.6s; }
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 250, 154, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.6), 0 0 60px rgba(0, 250, 154, 0.4);
+    }
+  }
+  
+  /* Classes de animação */
+  .animate-pulse-neon {
+    animation: pulse-neon 2s ease-in-out infinite;
+  }
+  
+  .animate-gradient-shift {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+  
+  /* Transições especiais */
+  .transition-neon {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .transition-smooth {
+    transition: all 0.5s ease-out;
+  }
 }
