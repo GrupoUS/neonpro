@@ -1,0 +1,45 @@
+
+/* Estilos responsivos e adaptações NEON PRO */
+
+@layer base {
+  /* Melhorias de responsividade NEON PRO */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-4;
+    }
+    
+    h1 {
+      @apply text-3xl;
+    }
+    
+    h2 {
+      @apply text-2xl;
+    }
+    
+    h3 {
+      @apply text-xl;
+    }
+  }
+  
+  /* Estilos para modo de alto contraste NEON PRO */
+  @media (prefers-contrast: high) {
+    :root {
+      --border: 0 0% 0%;
+      --ring: 0 0% 0%;
+    }
+    
+    .dark {
+      --border: 0 0% 100%;
+      --ring: 0 0% 100%;
+    }
+  }
+  
+  /* Suporte para movimento reduzido NEON PRO */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
