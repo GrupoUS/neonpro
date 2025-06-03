@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from './types';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/use-toast';
 
 export const useAuthOperations = () => {
+  const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -15,7 +16,7 @@ export const useAuthOperations = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, email, phone, avatar_url')
+        .select('id, name, email, avatar_url')
         .eq('id', userId)
         .single();
 
@@ -35,7 +36,7 @@ export const useAuthOperations = () => {
     }
   };
 
-  const createProfile = async (userId: string, userData: any) => {
+  const createProfile = async (userId: string, userData: { full_name?: string; name?: string; email: string }) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -72,24 +73,37 @@ export const useAuthOperations = () => {
       if (error) throw error;
       
       if (data.user && !data.session) {
-        toast.success('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.');
+        toast({
+          title: "Sucesso!",
+          description: "Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.",
+          variant: "default"
+        });
       } else if (data.session) {
-        toast.success('Cadastro realizado com sucesso!');
+        toast({
+          title: "Sucesso!",
+          description: "Cadastro realizado com sucesso!",
+          variant: "default"
+        });
       }
       
-    } catch (error: any) {
-      console.error('Erro no cadastro:', error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro no cadastro:', errorMessage);
       
-      let errorMessage = 'Erro ao criar conta. Tente novamente.';
-      if (error.message.includes('email')) {
-        errorMessage = 'Este e-mail já está em uso.';
-      } else if (error.message.includes('Password')) {
-        errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
-      } else if (error.message.includes('User already registered')) {
-        errorMessage = 'Este e-mail já está cadastrado.';
+      let userMessage = 'Erro ao criar conta. Tente novamente.';
+      if (errorMessage.includes('email')) {
+        userMessage = 'Este e-mail já está em uso.';
+      } else if (errorMessage.includes('Password')) {
+        userMessage = 'A senha deve ter pelo menos 6 caracteres.';
+      } else if (errorMessage.includes('User already registered')) {
+        userMessage = 'Este e-mail já está cadastrado.';
       }
       
-      toast.error(errorMessage);
+      toast({
+        title: "Erro",
+        description: userMessage,
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -100,18 +114,27 @@ export const useAuthOperations = () => {
       
       if (error) throw error;
       
-      toast.success('Login realizado com sucesso!');
-    } catch (error: any) {
-      console.error('Erro no login:', error.message);
+      toast({
+        title: "Sucesso!",
+        description: "Login realizado com sucesso!",
+        variant: "default"
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro no login:', errorMessage);
       
-      let errorMessage = 'Erro ao fazer login. Tente novamente.';
-      if (error.message.includes('Invalid login credentials')) {
-        errorMessage = 'E-mail ou senha inválidos.';
-      } else if (error.message.includes('Email not confirmed')) {
-        errorMessage = 'Confirme seu e-mail antes de fazer login.';
+      let userMessage = 'Erro ao fazer login. Tente novamente.';
+      if (errorMessage.includes('Invalid login credentials')) {
+        userMessage = 'E-mail ou senha inválidos.';
+      } else if (errorMessage.includes('Email not confirmed')) {
+        userMessage = 'Confirme seu e-mail antes de fazer login.';
       }
       
-      toast.error(errorMessage);
+      toast({
+        title: "Erro",
+        description: userMessage,
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -126,9 +149,14 @@ export const useAuthOperations = () => {
       });
       
       if (error) throw error;
-    } catch (error: any) {
-      console.error('Erro ao fazer login com Google:', error.message);
-      toast.error('Erro ao fazer login com Google. Tente novamente.');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro ao fazer login com Google:', errorMessage);
+      toast({
+        title: "Erro",
+        description: "Erro ao fazer login com Google. Tente novamente.",
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -137,10 +165,19 @@ export const useAuthOperations = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      toast.success('Logout realizado com sucesso!');
-    } catch (error: any) {
-      console.error('Erro ao fazer logout:', error.message);
-      toast.error('Erro ao fazer logout. Tente novamente.');
+      toast({
+        title: "Sucesso!",
+        description: "Logout realizado com sucesso!",
+        variant: "default"
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro ao fazer logout:', errorMessage);
+      toast({
+        title: "Erro",
+        description: "Erro ao fazer logout. Tente novamente.",
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -153,10 +190,19 @@ export const useAuthOperations = () => {
       
       if (error) throw error;
       
-      toast.success('E-mail para redefinição de senha enviado!');
-    } catch (error: any) {
-      console.error('Erro ao solicitar redefinição de senha:', error.message);
-      toast.error('Erro ao solicitar redefinição de senha. Tente novamente.');
+      toast({
+        title: "Sucesso!",
+        description: "E-mail para redefinição de senha enviado!",
+        variant: "default"
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro ao solicitar redefinição de senha:', errorMessage);
+      toast({
+        title: "Erro",
+        description: "Erro ao solicitar redefinição de senha. Tente novamente.",
+        variant: "destructive"
+      });
       throw error;
     }
   };
@@ -176,10 +222,19 @@ export const useAuthOperations = () => {
         setProfile({ ...profile, ...updates });
       }
       
-      toast.success('Perfil atualizado com sucesso!');
-    } catch (error: any) {
-      console.error('Erro ao atualizar perfil:', error.message);
-      toast.error('Erro ao atualizar perfil. Tente novamente.');
+      toast({
+        title: "Sucesso!",
+        description: "Perfil atualizado com sucesso!",
+        variant: "default"
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('Erro ao atualizar perfil:', errorMessage);
+      toast({
+        title: "Erro",
+        description: "Erro ao atualizar perfil. Tente novamente.",
+        variant: "destructive"
+      });
       throw error;
     }
   };
