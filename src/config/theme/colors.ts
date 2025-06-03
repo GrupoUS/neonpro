@@ -1,71 +1,58 @@
 
-// Configuração de cores NEON PRO
-export const neonColors = {
-  // Cores principais do gradiente cyan-green
-  'cyan': '#00F5FF', // Cyan brilhante
-  'cyan-dark': '#00D4DD', // Cyan mais escuro
-  'cyan-light': '#33F7FF', // Cyan mais claro
-  'green': '#00FA9A', // Verde brilhante (medium spring green)
-  'green-dark': '#00D882', // Verde mais escuro
-  'green-light': '#33FBA8', // Verde mais claro
-  
-  // Tons de apoio
-  'dark': '#0A0A0F', // Azul muito escuro, quase preto
-  'dark-blue': '#1A1A2E', // Azul escuro para fundos
-  'gray': '#2D2D3A', // Cinza azulado
-  'light-gray': '#B0B0B8', // Cinza claro
-  
-  // Cores específicas para branding
-  'brand': '#00F5FF', // Cor principal da marca
-  'subtitle': '#B0B0B8', // Cor para subtítulos
-};
-
-// Paleta de cores oficial "Universo da Sacha" - Mantida para compatibilidade
+// Configuração de cores "Universo da Sacha"
 export const sachaColors = {
-  'dark-blue': '#112031',
+  // Cores principais da paleta "Universo da Sacha"
+  'dark-blue': '#112031', // Azul escuro principal
   'dark-blue-rgb': '17, 32, 49',
-  'blue': '#294359',
+  'blue': '#294359', // Azul médio
   'blue-rgb': '41, 67, 89',
-  'gold': '#AC9469',
+  'gold': '#AC9469', // Dourado principal
   'gold-rgb': '172, 148, 105',
-  'gray-dark': '#B4AC9C',
-  'gray-light': '#D2D0C8',
+  'gray-dark': '#B4AC9C', // Cinza escuro
+  'gray-light': '#D2D0C8', // Cinza claro
+  
+  // Variações da paleta principal
   'dark-blue-lighter': '#1a2b42',
   'dark-blue-darker': '#0a1520',
   'blue-lighter': '#3a5a7a',
   'blue-darker': '#1e3347',
   'gold-lighter': '#c4aa7d',
   'gold-darker': '#8a7852',
+  
+  // Tons neutros complementares
+  'cream': '#F5F3F0', // Creme suave
+  'warm-white': '#FDFCFA', // Branco quente
+  'charcoal': '#2C2C2C', // Carvão
 };
 
 export const primaryColors = {
-  DEFAULT: '#00F5FF', // Cyan brilhante como cor principal
-  50: '#e6feff',
-  100: '#ccfdff',
-  200: '#99fbff',
-  300: '#66f9ff',
-  400: '#33f7ff',
-  500: '#00F5FF', // Cor principal
-  600: '#00c4cc',
-  700: '#009399',
-  800: '#006266',
-  900: '#003133',
-  foreground: '#0A0A0F'
+  DEFAULT: '#AC9469', // Dourado como cor principal
+  50: '#faf8f5',
+  100: '#f5f1ea',
+  200: '#ebe2d1',
+  300: '#ddd0b3',
+  400: '#ccb88f',
+  500: '#AC9469', // Cor principal
+  600: '#9a7f52',
+  700: '#7d6642',
+  800: '#665438',
+  900: '#544530',
+  foreground: '#112031' // Azul escuro para contraste
 };
 
 export const secondaryColors = {
-  DEFAULT: '#00FA9A', // Verde brilhante como secundária
-  50: '#e6fffa',
-  100: '#ccfff5',
-  200: '#99ffeb',
-  300: '#66ffe1',
-  400: '#33ffd7',
-  500: '#00FA9A', // Cor principal
-  600: '#00c87b',
-  700: '#00965c',
-  800: '#00643e',
-  900: '#00321f',
-  foreground: '#0A0A0F'
+  DEFAULT: '#112031', // Azul escuro como secundária
+  50: '#f6f7f8',
+  100: '#eaedf1',
+  200: '#d1d8e0',
+  300: '#acbac8',
+  400: '#8196ab',
+  500: '#607691',
+  600: '#4d5f78',
+  700: '#3f4e62',
+  800: '#294359', // Azul médio
+  900: '#112031', // Azul escuro principal
+  foreground: '#FDFCFA'
 };
 
 export const systemColors = {
@@ -106,3 +93,6 @@ export const systemColors = {
     ring: 'hsl(var(--sidebar-ring))'
   }
 };
+
+// Mantendo compatibilidade com código existente
+export const neonColors = sachaColors;

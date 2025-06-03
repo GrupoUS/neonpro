@@ -1,10 +1,10 @@
 
-/* Hierarquia tipográfica NEON PRO */
+/* Hierarquia tipográfica "Universo da Sacha" */
 
 @layer base {
-  /* Hierarquia tipográfica NEON PRO */
+  /* Hierarquia tipográfica seguindo a identidade visual */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif; /* Space Grotesk para títulos modernos */
+    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif; /* Optima para títulos */
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.025em;
@@ -40,19 +40,24 @@
     font-family: 'Inter', sans-serif;
   }
   
-  /* Classes especiais para branding NEON PRO */
-  .text-neon-brand {
-    font-family: 'Space Grotesk', sans-serif;
+  /* Classes especiais para branding "Universo da Sacha" */
+  .text-sacha-brand {
+    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif;
     font-weight: 700;
-    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  .text-neon-subtitle {
+  .text-sacha-subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
   }
-}
+
+  .text-sacha-heading {
+    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    color: hsl(var(--primary));
+  }
