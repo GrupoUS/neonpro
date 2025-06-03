@@ -36,25 +36,34 @@ export default {
 				'extrablack': '900',
 			},
 			colors: {
-				// Paleta de cores oficial "Universo da Sacha"
+				// Nova paleta NEON PRO - Baseada no hexágono cyan-green
+				'neon': {
+					// Cores principais do gradiente cyan-green
+					'cyan': '#00F5FF', // Cyan brilhante
+					'cyan-dark': '#00D4DD', // Cyan mais escuro
+					'cyan-light': '#33F7FF', // Cyan mais claro
+					'green': '#00FA9A', // Verde brilhante (medium spring green)
+					'green-dark': '#00D882', // Verde mais escuro
+					'green-light': '#33FBA8', // Verde mais claro
+					
+					// Tons de apoio
+					'dark': '#0A0A0F', // Azul muito escuro, quase preto
+					'dark-blue': '#1A1A2E', // Azul escuro para fundos
+					'gray': '#2D2D3A', // Cinza azulado
+					'light-gray': '#B0B0B8', // Cinza claro
+				},
+				
+				// Paleta de cores oficial "Universo da Sacha" - Mantida para compatibilidade
 				'sacha': {
-					// Azul Escuro (Fundo Principal do Modo Escuro) - #112031
+					// ... keep existing code (sacha color definitions)
 					'dark-blue': '#112031',
 					'dark-blue-rgb': '17, 32, 49',
-					
-					// Azul Secundário - #294359  
 					'blue': '#294359',
 					'blue-rgb': '41, 67, 89',
-					
-					// Dourado (Cor de Destaque) - #AC9469
 					'gold': '#AC9469',
 					'gold-rgb': '172, 148, 105',
-					
-					// Cinzas (Texto, Fundos Secundários)
-					'gray-dark': '#B4AC9C', // #B4AC9C
-					'gray-light': '#D2D0C8', // #D2D0C8 com 75% opacidade
-					
-					// Variações para melhor contraste
+					'gray-dark': '#B4AC9C',
+					'gray-light': '#D2D0C8',
 					'dark-blue-lighter': '#1a2b42',
 					'dark-blue-darker': '#0a1520',
 					'blue-lighter': '#3a5a7a',
@@ -63,44 +72,41 @@ export default {
 					'gold-darker': '#8a7852',
 				},
 				
-				// Aliases para compatibilidade e semântica
+				// Atualização das cores principais para NEON PRO
 				'primary': {
-					DEFAULT: '#AC9469', // Dourado principal
-					50: '#f7f5f1',
-					100: '#ede8dc',
-					200: '#dbd0bb',
-					300: '#c4aa7d',
-					400: '#AC9469', // Cor principal
-					500: '#9a8359',
-					600: '#8a7852',
-					700: '#6f5f42',
-					800: '#5c4f38',
-					900: '#4d422f',
-					foreground: '#112031'
+					DEFAULT: '#00F5FF', // Cyan brilhante como cor principal
+					50: '#e6feff',
+					100: '#ccfdff',
+					200: '#99fbff',
+					300: '#66f9ff',
+					400: '#33f7ff',
+					500: '#00F5FF', // Cor principal
+					600: '#00c4cc',
+					700: '#009399',
+					800: '#006266',
+					900: '#003133',
+					foreground: '#0A0A0F'
 				},
 				
 				'secondary': {
-					DEFAULT: '#294359', // Azul secundário
-					50: '#f1f5f9',
-					100: '#e2e8f0',
-					200: '#cbd5e1',
-					300: '#94a3b8',
-					400: '#64748b',
-					500: '#294359', // Cor principal
-					600: '#233a4d',
-					700: '#1e3347',
-					800: '#182934',
-					900: '#0f1c24',
-					foreground: '#D2D0C8'
+					DEFAULT: '#00FA9A', // Verde brilhante como secundária
+					50: '#e6fffa',
+					100: '#ccfff5',
+					200: '#99ffeb',
+					300: '#66ffe1',
+					400: '#33ffd7',
+					500: '#00FA9A', // Cor principal
+					600: '#00c87b',
+					700: '#00965c',
+					800: '#00643e',
+					900: '#00321f',
+					foreground: '#0A0A0F'
 				},
 				
-				// Sistema de cores semânticas mantido
-				'success': '#22c55e',
-				'warning': '#f59e0b', 
-				'error': '#ef4444',
-				'info': '#3b82f6',
+				// Aliases para compatibilidade mantidos
+				'gold': '#00F5FF', // Mapeado para o novo cyan
 				
-				// Cores do sistema shadcn/ui mantidas para compatibilidade
+				// ... keep existing code (system colors)
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -151,18 +157,31 @@ export default {
 				'88': '22rem',
 				'128': '32rem',
 			},
+			backgroundImage: {
+				// Novos gradientes NEON PRO
+				'gradient-neon': 'linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%)',
+				'gradient-neon-dark': 'linear-gradient(135deg, #00D4DD 0%, #00D882 100%)',
+				'gradient-neon-vertical': 'linear-gradient(180deg, #00F5FF 0%, #00FA9A 100%)',
+				'gradient-neon-radial': 'radial-gradient(circle, #00F5FF 0%, #00FA9A 100%)',
+			},
 			boxShadow: {
 				// Sombras personalizadas seguindo a identidade visual
 				'sacha': '0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06)',
 				'sacha-lg': '0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05)',
 				'sacha-xl': '0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04)',
 				'sacha-gold': '0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1)',
+				// Novas sombras NEON PRO
+				'neon': '0 4px 6px -1px rgba(0, 245, 255, 0.2), 0 2px 4px -1px rgba(0, 250, 154, 0.1)',
+				'neon-lg': '0 10px 15px -3px rgba(0, 245, 255, 0.3), 0 4px 6px -2px rgba(0, 250, 154, 0.2)',
+				'neon-xl': '0 20px 25px -5px rgba(0, 245, 255, 0.4), 0 10px 10px -5px rgba(0, 250, 154, 0.3)',
+				'neon-glow': '0 0 20px rgba(0, 245, 255, 0.5), 0 0 40px rgba(0, 250, 154, 0.3)',
 				// Mantendo compatibilidade
 				'horizon': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
 				'horizon-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
 				'horizon-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
 			},
 			keyframes: {
+				// ... keep existing code (accordion, fade, scale animations)
 				'accordion-down': {
 					from: {
 						height: '0'
@@ -245,16 +264,37 @@ export default {
 						boxShadow: '0 0 0 10px rgba(172, 148, 105, 0)'
 					}
 				},
-				'glow-sacha': {
+				// Novas animações NEON PRO
+				'pulse-neon': {
 					'0%, 100%': {
-						boxShadow: '0 0 5px rgba(172, 148, 105, 0.5)'
+						boxShadow: '0 0 0 0 rgba(0, 245, 255, 0.7)'
+					},
+					'70%': {
+						boxShadow: '0 0 0 15px rgba(0, 245, 255, 0)'
+					}
+				},
+				'glow-neon': {
+					'0%, 100%': {
+						boxShadow: '0 0 5px rgba(0, 245, 255, 0.5), 0 0 10px rgba(0, 250, 154, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 20px rgba(172, 148, 105, 0.8), 0 0 30px rgba(172, 148, 105, 0.6)'
+						boxShadow: '0 0 20px rgba(0, 245, 255, 0.8), 0 0 30px rgba(0, 250, 154, 0.6), 0 0 40px rgba(0, 245, 255, 0.4)'
+					}
+				},
+				'gradient-shift': {
+					'0%': {
+						backgroundPosition: '0% 50%'
+					},
+					'50%': {
+						backgroundPosition: '100% 50%'
+					},
+					'100%': {
+						backgroundPosition: '0% 50%'
 					}
 				}
 			},
 			animation: {
+				// ... keep existing code (basic animations)
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
@@ -264,7 +304,10 @@ export default {
 				'slide-in-left': 'slide-in-left 0.5s ease-out',
 				'shimmer': 'shimmer 2s infinite',
 				'pulse-gold': 'pulse-gold 2s infinite',
-				'glow-sacha': 'glow-sacha 2s ease-in-out infinite',
+				// Novas animações NEON PRO
+				'pulse-neon': 'pulse-neon 2s infinite',
+				'glow-neon': 'glow-neon 2s ease-in-out infinite',
+				'gradient-shift': 'gradient-shift 3s ease-in-out infinite',
 			},
 			backdropBlur: {
 				'xs': '2px',

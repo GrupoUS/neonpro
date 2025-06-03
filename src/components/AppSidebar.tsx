@@ -54,10 +54,43 @@ const AppSidebar: React.FC = () => {
     <aside className="w-64 bg-card border-r border-border h-full">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-8 h-8 bg-gradient-to-br from-gold to-yellow-400 rounded-lg flex items-center justify-center">
-            <span className="text-sacha-dark-blue font-bold text-sm">N</span>
+          {/* Novo ícone hexagonal NEON PRO */}
+          <div className="relative">
+            <svg 
+              viewBox="0 0 32 32" 
+              className="w-10 h-10"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="neon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#00F5FF"/>
+                  <stop offset="100%" stopColor="#00FA9A"/>
+                </linearGradient>
+              </defs>
+              <polygon 
+                points="16,4 28,12 28,20 16,28 4,20 4,12" 
+                fill="none" 
+                stroke="url(#neon-gradient)" 
+                strokeWidth="2"
+                className="drop-shadow-sm"
+              />
+              <circle 
+                cx="16" 
+                cy="16" 
+                r="6" 
+                fill="url(#neon-gradient)"
+                className="animate-pulse-neon"
+              />
+            </svg>
           </div>
-          <span className="text-xl font-bold text-foreground">NEON PRO</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold bg-gradient-neon bg-clip-text text-transparent">
+              NEON PRO
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Gestão Premium
+            </span>
+          </div>
         </div>
         
         <nav className="space-y-2">
@@ -68,15 +101,15 @@ const AppSidebar: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                  `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                     isActive
-                      ? 'bg-gold text-sacha-dark-blue font-medium'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                      ? 'bg-gradient-neon text-neon-dark shadow-neon-lg border border-primary/20'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md'
                   }`
                 }
               >
                 <IconComponent className="h-5 w-5" />
-                <span>{item.label}</span>
+                <span className="font-medium">{item.label}</span>
               </NavLink>
             );
           })}

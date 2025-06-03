@@ -8,106 +8,105 @@
 
 @layer base {
   :root {
-    /* Paleta de Cores "Universo da Sacha" - Modo Claro */
+    /* Nova Paleta NEON PRO - Modo Claro */
     --background: 0 0% 100%; /* Branco puro para fundo claro */
-    --foreground: 210 47% 15%; /* #112031 (azul escuro) para texto principal */
+    --foreground: 240 10% 10%; /* Azul escuro quase preto para texto principal */
 
-    /* Cores principais da identidade */
-    --sacha-dark-blue: 210 47% 15%; /* #112031 */
-    --sacha-blue: 210 36% 25%; /* #294359 */
-    --sacha-gold: 45 26% 53%; /* #AC9469 */
-    --sacha-gray-dark: 38 12% 68%; /* #B4AC9C */
-    --sacha-gray-light: 60 15% 82%; /* #D2D0C8 */
+    /* Cores principais NEON PRO */
+    --neon-cyan: 187 100% 50%; /* #00F5FF - Cyan brilhante */
+    --neon-green: 157 100% 49%; /* #00FA9A - Verde brilhante */
+    --neon-dark: 240 25% 6%; /* #0A0A0F - Azul muito escuro */
+    --neon-gray: 240 7% 21%; /* #2D2D3A - Cinza azulado */
 
-    /* Sistema de cores principais */
-    --primary: 45 26% 53%; /* Dourado #AC9469 */
-    --primary-foreground: 210 47% 15%; /* #112031 */
+    /* Sistema de cores principais - NEON PRO */
+    --primary: 187 100% 50%; /* Cyan brilhante #00F5FF */
+    --primary-foreground: 240 25% 6%; /* #0A0A0F */
     
-    --secondary: 210 36% 25%; /* Azul secundário #294359 */
-    --secondary-foreground: 60 15% 82%; /* #D2D0C8 */
+    --secondary: 157 100% 49%; /* Verde brilhante #00FA9A */
+    --secondary-foreground: 240 25% 6%; /* #0A0A0F */
 
-    /* Cores de componentes - Modo Claro */
+    /* Cores de componentes - Modo Claro NEON PRO */
     --card: 0 0% 100%; /* Branco */
-    --card-foreground: 210 47% 15%; /* #112031 */
+    --card-foreground: 240 10% 10%; /* Azul escuro quase preto */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 47% 15%;
+    --popover-foreground: 240 10% 10%;
 
-    --muted: 60 15% 95%; /* Versão muito clara do cinza */
-    --muted-foreground: 38 12% 45%; /* Versão escura do cinza */
+    --muted: 240 5% 96%; /* Cinza muito claro com toque azulado */
+    --muted-foreground: 240 7% 35%; /* Cinza médio azulado */
 
-    --accent: 45 26% 53%; /* Dourado para destaques */
-    --accent-foreground: 210 47% 15%;
+    --accent: 187 100% 50%; /* Cyan para destaques */
+    --accent-foreground: 240 25% 6%;
 
     --destructive: 0 84% 60%; /* Vermelho para ações destrutivas */
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%; /* Verde para sucesso */
+    --success: 157 100% 49%; /* Verde NEON para sucesso */
     --warning: 38 92% 50%; /* Laranja para avisos */
-    --info: 210 36% 45%; /* Azul mais claro para informações */
+    --info: 187 100% 50%; /* Cyan NEON para informações */
 
-    --border: 60 15% 90%; /* Cinza claro para bordas */
-    --input: 60 15% 95%; /* Fundo de inputs */
-    --ring: 45 26% 53%; /* Dourado para focus rings */
+    --border: 240 5% 90%; /* Cinza claro azulado para bordas */
+    --input: 240 5% 95%; /* Fundo de inputs */
+    --ring: 187 100% 50%; /* Cyan para focus rings */
 
     --radius: 0.75rem; /* Raio padrão para bordas arredondadas */
 
-    /* Sidebar - Modo Claro */
+    /* Sidebar - Modo Claro NEON PRO */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 210 47% 15%;
-    --sidebar-primary: 45 26% 53%;
-    --sidebar-primary-foreground: 210 47% 15%;
-    --sidebar-accent: 210 36% 25%;
-    --sidebar-accent-foreground: 60 15% 82%;
-    --sidebar-border: 60 15% 90%;
-    --sidebar-ring: 45 26% 53%;
+    --sidebar-foreground: 240 10% 10%;
+    --sidebar-primary: 187 100% 50%;
+    --sidebar-primary-foreground: 240 25% 6%;
+    --sidebar-accent: 157 100% 49%;
+    --sidebar-accent-foreground: 240 25% 6%;
+    --sidebar-border: 240 5% 90%;
+    --sidebar-ring: 187 100% 50%;
   }
 
   .dark {
-    /* Paleta de Cores "Universo da Sacha" - Modo Escuro */
-    --background: 210 47% 12%; /* #112031 mais escuro para fundo */
-    --foreground: 60 15% 85%; /* #D2D0C8 mais claro para texto */
+    /* Nova Paleta NEON PRO - Modo Escuro */
+    --background: 240 25% 6%; /* #0A0A0F - Azul muito escuro */
+    --foreground: 240 5% 85%; /* Cinza claro azulado para texto */
 
-    /* Cores principais adaptadas para modo escuro */
-    --primary: 45 26% 60%; /* Dourado mais claro #c4aa7d */
-    --primary-foreground: 210 47% 15%;
+    /* Cores principais adaptadas para modo escuro NEON PRO */
+    --primary: 187 100% 55%; /* Cyan um pouco mais claro para contraste */
+    --primary-foreground: 240 25% 6%;
     
-    --secondary: 210 36% 30%; /* Azul secundário mais claro */
-    --secondary-foreground: 60 15% 82%;
+    --secondary: 157 100% 54%; /* Verde um pouco mais claro para contraste */
+    --secondary-foreground: 240 25% 6%;
 
-    /* Componentes - Modo Escuro */
-    --card: 210 47% 15%; /* #112031 */
-    --card-foreground: 60 15% 82%; /* #D2D0C8 */
+    /* Componentes - Modo Escuro NEON PRO */
+    --card: 240 12% 12%; /* Azul escuro */
+    --card-foreground: 240 5% 85%; /* Cinza claro azulado */
 
-    --popover: 210 47% 15%;
-    --popover-foreground: 60 15% 82%;
+    --popover: 240 12% 12%;
+    --popover-foreground: 240 5% 85%;
 
-    --muted: 210 36% 20%; /* Azul secundário escuro */
-    --muted-foreground: 38 12% 65%; /* Cinza médio */
+    --muted: 240 7% 18%; /* Cinza escuro azulado */
+    --muted-foreground: 240 5% 65%; /* Cinza médio azulado */
 
-    --accent: 45 26% 60%; /* Dourado mais claro para melhor contraste */
-    --accent-foreground: 210 47% 15%;
+    --accent: 187 100% 55%; /* Cyan mais claro para melhor contraste */
+    --accent-foreground: 240 25% 6%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 60 15% 85%;
+    --destructive-foreground: 240 5% 85%;
 
-    --success: 142 76% 45%; /* Verde mais claro */
+    --success: 157 100% 54%; /* Verde NEON mais claro */
     --warning: 38 92% 60%; /* Laranja mais claro */
-    --info: 210 36% 55%; /* Azul mais claro */
+    --info: 187 100% 55%; /* Cyan NEON mais claro */
 
-    --border: 210 36% 25%; /* Azul secundário para bordas */
-    --input: 210 36% 20%; /* Fundo escuro para inputs */
-    --ring: 45 26% 60%; /* Dourado claro para focus */
+    --border: 240 7% 21%; /* Cinza azulado para bordas */
+    --input: 240 7% 18%; /* Fundo escuro azulado para inputs */
+    --ring: 187 100% 55%; /* Cyan claro para focus */
 
-    /* Sidebar - Modo Escuro */
-    --sidebar-background: 210 47% 10%; /* Ainda mais escuro que o fundo */
-    --sidebar-foreground: 60 15% 85%;
-    --sidebar-primary: 45 26% 60%;
-    --sidebar-primary-foreground: 210 47% 15%;
-    --sidebar-accent: 210 36% 30%;
-    --sidebar-accent-foreground: 60 15% 82%;
-    --sidebar-border: 210 36% 20%;
-    --sidebar-ring: 45 26% 60%;
+    /* Sidebar - Modo Escuro NEON PRO */
+    --sidebar-background: 240 25% 4%; /* Ainda mais escuro que o fundo */
+    --sidebar-foreground: 240 5% 85%;
+    --sidebar-primary: 187 100% 55%;
+    --sidebar-primary-foreground: 240 25% 6%;
+    --sidebar-accent: 157 100% 54%;
+    --sidebar-accent-foreground: 240 25% 6%;
+    --sidebar-border: 240 7% 18%;
+    --sidebar-ring: 187 100% 55%;
   }
 }
 
@@ -188,60 +187,60 @@
     @apply transition-all duration-300 ease-out;
   }
   
-  /* Classes utilitárias "Universo da Sacha" */
-  .gradient-sacha-gold {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(45 26% 45%) 100%);
+  /* Classes utilitárias NEON PRO */
+  .gradient-neon {
+    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
   }
   
-  .gradient-sacha-blue {
-    background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(210 47% 10%) 100%);
+  .gradient-neon-dark {
+    background: linear-gradient(135deg, #00D4DD 0%, #00D882 100%);
   }
   
-  .gradient-sacha-cosmic {
-    background: linear-gradient(135deg, 
-      hsl(210 47% 15%) 0%, 
-      hsl(210 36% 25%) 35%, 
-      hsl(45 26% 53%) 100%
-    );
+  .gradient-neon-vertical {
+    background: linear-gradient(180deg, #00F5FF 0%, #00FA9A 100%);
   }
   
-  /* Sombras personalizadas */
-  .shadow-sacha {
-    box-shadow: 0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06);
+  .gradient-neon-radial {
+    background: radial-gradient(circle, #00F5FF 0%, #00FA9A 100%);
   }
   
-  .shadow-sacha-lg {
-    box-shadow: 0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05);
+  /* Sombras personalizadas NEON PRO */
+  .shadow-neon {
+    box-shadow: 0 4px 6px -1px rgba(0, 245, 255, 0.2), 0 2px 4px -1px rgba(0, 250, 154, 0.1);
   }
   
-  .shadow-sacha-xl {
-    box-shadow: 0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04);
+  .shadow-neon-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 245, 255, 0.3), 0 4px 6px -2px rgba(0, 250, 154, 0.2);
   }
   
-  .shadow-sacha-gold {
-    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
+  .shadow-neon-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 245, 255, 0.4), 0 10px 10px -5px rgba(0, 250, 154, 0.3);
   }
   
-  /* Efeitos hover melhorados */
+  .shadow-neon-glow {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.5), 0 0 40px rgba(0, 250, 154, 0.3);
+  }
+  
+  /* Efeitos hover melhorados NEON PRO */
   .card-hover {
     @apply transition-all duration-300 ease-out cursor-pointer;
   }
   
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(172, 148, 105, 0.15), 0 10px 10px -5px rgba(172, 148, 105, 0.1);
+    box-shadow: 0 20px 25px -5px rgba(0, 245, 255, 0.25), 0 10px 10px -5px rgba(0, 250, 154, 0.15);
   }
   
-  /* Brilho e efeitos especiais da identidade */
-  .glow-sacha {
-    box-shadow: 0 0 10px rgba(172, 148, 105, 0.3);
+  /* Brilho e efeitos especiais NEON PRO */
+  .glow-neon {
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.4), 0 0 20px rgba(0, 250, 154, 0.2);
   }
   
-  .glow-sacha-intense {
-    box-shadow: 0 0 20px rgba(172, 148, 105, 0.5), 0 0 30px rgba(172, 148, 105, 0.3);
+  .glow-neon-intense {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 30px rgba(0, 250, 154, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
   }
   
-  /* Animações personalizadas */
+  /* Animações personalizadas NEON PRO */
   .fade-in-up {
     animation: fadeInUp 0.6s ease-out forwards;
   }
@@ -339,7 +338,7 @@
     100% { background-position: 200% 0; }
   }
   
-  /* Classes de delay para animações escalonadas */
+  /* Classes de delay para animações escalonadas NEON PRO */
   .stagger-item {
     opacity: 0;
     animation: fadeInUp 0.6s ease-out forwards;
@@ -352,7 +351,7 @@
   .stagger-delay-5 { animation-delay: 0.5s; }
   .stagger-delay-6 { animation-delay: 0.6s; }
   
-  /* Estilos de botão "Universo da Sacha" */
+  /* Estilos de botão "Universo da Sacha" NEON PRO */
   .btn-sacha-primary {
     @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha;
     font-family: 'Optima', 'Inter', sans-serif;
@@ -373,7 +372,7 @@
     font-family: 'Optima', 'Inter', sans-serif;
   }
   
-  /* Estados de foco melhorados para formulários */
+  /* Estados de foco melhorados para formulários NEON PRO */
   input:focus, 
   textarea:focus, 
   select:focus {
@@ -381,7 +380,7 @@
     box-shadow: 0 0 0 3px rgba(172, 148, 105, 0.1);
   }
   
-  /* Estilos de card "Universo da Sacha" */
+  /* Estilos de card "Universo da Sacha" NEON PRO */
   .card-sacha {
     @apply bg-card border border-border rounded-2xl p-6 shadow-sacha;
   }
@@ -394,7 +393,7 @@
     @apply bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20 rounded-2xl p-6 shadow-sacha-gold;
   }
   
-  /* Estilização de scrollbar */
+  /* Estilização de scrollbar NEON PRO */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -414,13 +413,13 @@
     background: hsl(var(--accent));
   }
   
-  /* Seleção de texto */
+  /* Seleção de texto NEON PRO */
   ::selection {
     background: hsl(var(--accent) / 0.2);
     color: hsl(var(--foreground));
   }
   
-  /* Melhorias de responsividade */
+  /* Melhorias de responsividade NEON PRO */
   @media (max-width: 768px) {
     .container {
       @apply px-4;
@@ -439,7 +438,7 @@
     }
   }
   
-  /* Estados de carregamento com a identidade visual */
+  /* Estados de carregamento com a identidade visual NEON PRO */
   .loading-sacha {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
@@ -450,7 +449,7 @@
     animation: shimmer 2s infinite;
   }
   
-  /* Utilitários para acessibilidade */
+  /* Utilitários para acessibilidade NEON PRO */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -463,7 +462,7 @@
     border: 0;
   }
   
-  /* Estilos para modo de alto contraste */
+  /* Estilos para modo de alto contraste NEON PRO */
   @media (prefers-contrast: high) {
     :root {
       --border: 0 0% 0%;
@@ -476,7 +475,7 @@
     }
   }
   
-  /* Suporte para movimento reduzido */
+  /* Suporte para movimento reduzido NEON PRO */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
