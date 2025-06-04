@@ -1,7 +1,68 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '@/contexts/auth';
-import type { Transacao, CreateTransacaoData, UpdateTransacaoData } from '@/types/transaction';
+import { Database } from '../types/supabase';
+
+type TransactionRow = Database['public']['Tables']['transactions']['Row'];
+type TransactionInsert = Database['public']['Tables']['transactions']['Insert'];
+type TransactionUpdate = Database['public']['Tables']['transactions']['Update'];
+
+// Interface para compatibilidade com o componente existente
+export interface Transacao {
+  id: string;
+  user_id: string;
+  descricao: string;
+  valor: number;
+  tipo: 'receita' | 'despesa';
+  categoria: string;
+  data_transacao: string;
+  observacoes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateTransacaoData {
+  descricao: string;
+  valor: number;
+  tipo: 'receita' | 'despesa';
+  categoria: string;
+  data_transacao: string;
+  observacoes?: string;
+}
+
+export interface UpdateTransacaoData {
+  descricao?: string;
+  valor?: number;
+  tipo?: 'receita' | 'despesa';
+  categoria?: string;
+  data_transacao?: string;
+  observacoes?: string;
+}
+
+// Função para converter da estrutura do banco para a interface do componente
+const convertToTransacao = (transaction: TransactionRow): Transacao => ({
+  id: transaction.id,
+  user_id: transaction.user_id,
+  descricao: transaction.description,
+  valor: Number(transaction.amount),
+  tipo: transaction.type as 'receita' | 'despesa',
+  categoria: transaction.category,
+  data_transacao: transaction.transaction_date,
+  observacoes: null, // transactions table doesn't have this field
+  created_at: transaction.created_at,
+  updated_at: transaction.updated_at,
+});
+
+// Função para converter da interface do componente para a estrutura do banco
+const convertToTransaction = (transacao: CreateTransacaoData): TransactionInsert => ({
+  description: transacao.descricao,
+  amount: transacao.valor,
+  type: transacao.tipo,
+  category: transacao.categoria,
+  transaction_date: transacao.data_transacao,
+  user_id: '', // Will be set in the function
+});
 
 export const useTransactions = () => {
   const [transacoes, setTransacoes] = useState<Transacao[]>([]);
@@ -18,14 +79,15 @@ export const useTransactions = () => {
       setError(null);
 
       const { data, error } = await supabase
-        .from('transacoes')
+        .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .order('data_transacao', { ascending: false });
+        .order('transaction_date', { ascending: false });
 
       if (error) throw error;
 
-      setTransacoes(data || []);
+      const convertedData = (data || []).map(convertToTransacao);
+      setTransacoes(convertedData);
     } catch (err) {
       console.error('Erro ao buscar transações:', err);
       setError('Erro ao carregar transações');
@@ -42,20 +104,19 @@ export const useTransactions = () => {
     }
 
     try {
+      const transactionData = convertToTransaction(dados);
+      transactionData.user_id = user.id;
+
       const { data, error } = await supabase
-        .from('transacoes')
-        .insert([
-          {
-            ...dados,
-            user_id: user.id,
-          }
-        ])
+        .from('transactions')
+        .insert([transactionData])
         .select()
         .single();
 
       if (error) throw error;
 
-      setTransacoes(prev => [data, ...prev]);
+      const convertedData = convertToTransacao(data);
+      setTransacoes(prev => [convertedData, ...prev]);
       return true;
     } catch (err) {
       console.error('Erro ao criar transação:', err);
@@ -72,9 +133,17 @@ export const useTransactions = () => {
     }
 
     try {
+      const updateData: TransactionUpdate = {
+        description: dados.descricao,
+        amount: dados.valor,
+        type: dados.tipo,
+        category: dados.categoria,
+        transaction_date: dados.data_transacao,
+      };
+
       const { data, error } = await supabase
-        .from('transacoes')
-        .update(dados)
+        .from('transactions')
+        .update(updateData)
         .eq('id', id)
         .eq('user_id', user.id)
         .select()
@@ -82,9 +151,10 @@ export const useTransactions = () => {
 
       if (error) throw error;
 
+      const convertedData = convertToTransacao(data);
       setTransacoes(prev => 
         prev.map(transacao => 
-          transacao.id === id ? data : transacao
+          transacao.id === id ? convertedData : transacao
         )
       );
       
@@ -105,7 +175,7 @@ export const useTransactions = () => {
 
     try {
       const { error } = await supabase
-        .from('transacoes')
+        .from('transactions')
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);
@@ -130,16 +200,17 @@ export const useTransactions = () => {
       setError(null);
 
       const { data, error } = await supabase
-        .from('transacoes')
+        .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .gte('data_transacao', dataInicio)
-        .lte('data_transacao', dataFim)
-        .order('data_transacao', { ascending: false });
+        .gte('transaction_date', dataInicio)
+        .lte('transaction_date', dataFim)
+        .order('transaction_date', { ascending: false });
 
       if (error) throw error;
 
-      setTransacoes(data || []);
+      const convertedData = (data || []).map(convertToTransacao);
+      setTransacoes(convertedData);
     } catch (err) {
       console.error('Erro ao buscar transações por período:', err);
       setError('Erro ao carregar transações');
@@ -157,15 +228,16 @@ export const useTransactions = () => {
       setError(null);
 
       const { data, error } = await supabase
-        .from('transacoes')
+        .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('categoria', categoria)
-        .order('data_transacao', { ascending: false });
+        .eq('category', categoria)
+        .order('transaction_date', { ascending: false });
 
       if (error) throw error;
 
-      setTransacoes(data || []);
+      const convertedData = (data || []).map(convertToTransacao);
+      setTransacoes(convertedData);
     } catch (err) {
       console.error('Erro ao buscar transações por categoria:', err);
       setError('Erro ao carregar transações');
