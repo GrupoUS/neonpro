@@ -7,7 +7,9 @@ import { UserForm } from '@/components/users/UserForm';
 import { UserList } from '@/components/users/UserList';
 import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/contexts/auth/useAuth';
-import { CreateUserProfileData, UpdateUserProfileData, UserProfile } from '@/types/profile';
+import { CreateUserProfileData, UpdateUserProfileData } from '@/types/profile';
+import { UserProfile as ProfileUserProfile } from '@/types/profile';
+import { UserProfile as UserUserProfile } from '@/types/user';
 import { toast } from 'sonner';
 
 export const Usuarios = () => {
@@ -25,7 +27,7 @@ export const Usuarios = () => {
   } = useUsers();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [editingUser, setEditingUser] = useState<ProfileUserProfile | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   const isCurrentUserAdmin = currentUserProfile?.role === 'admin';
@@ -83,7 +85,7 @@ export const Usuarios = () => {
     }
   };
 
-  const handleEdit = (user: UserProfile) => {
+  const handleEdit = (user: ProfileUserProfile) => {
     setEditingUser(user);
     setIsFormOpen(true);
   };
@@ -144,6 +146,37 @@ export const Usuarios = () => {
     setEditingUser(null);
   };
 
+  // Função para converter ProfileUserProfile para UserUserProfile
+  const convertToUserUserProfile = (profileUser: ProfileUserProfile): UserUserProfile => {
+    return {
+      id: profileUser.id,
+      user_id: profileUser.id,
+      nome: profileUser.name || '',
+      email: profileUser.email || '',
+      telefone: profileUser.phone || undefined,
+      role: (profileUser.role as any) || 'secretaria',
+      especialidade: undefined,
+      crm: undefined,
+      ativo: profileUser.role !== 'inactive',
+      created_at: profileUser.created_at || '',
+      updated_at: profileUser.updated_at || ''
+    };
+  };
+
+  // Função para converter UserUserProfile para ProfileUserProfile
+  const convertToProfileUserProfile = (userUser: UserUserProfile): ProfileUserProfile => {
+    return {
+      id: userUser.id,
+      name: userUser.nome,
+      email: userUser.email,
+      phone: userUser.telefone || null,
+      avatar_url: null,
+      role: userUser.role,
+      created_at: userUser.created_at,
+      updated_at: userUser.updated_at
+    };
+  };
+
   // Verificar se usuário tem permissão para acessar a página
   if (!currentUserProfile) {
     return (
@@ -186,7 +219,7 @@ export const Usuarios = () => {
                 </DialogTitle>
               </DialogHeader>
               <UserForm
-                user={editingUser}
+                user={editingUser ? convertToUserUserProfile(editingUser) : null}
                 onSubmit={handleFormSubmit}
                 onCancel={handleCloseForm}
                 loading={formLoading}
@@ -199,45 +232,11 @@ export const Usuarios = () => {
 
       {/* Lista de Usuários - Convertendo tipos */}
       <UserList
-        users={users.map(user => ({
-          id: user.id,
-          user_id: user.id, // Mapeando id para user_id
-          nome: user.name || '', // Mapeando name para nome
-          email: user.email || '',
-          telefone: user.phone || undefined,
-          role: (user.role as any) || 'secretaria',
-          especialidade: undefined,
-          crm: undefined,
-          ativo: user.role !== 'inactive', // Determinando ativo baseado no role
-          created_at: user.created_at || '',
-          updated_at: user.updated_at || ''
-        }))}
+        users={users.map(convertToUserUserProfile)}
         loading={loading}
-        currentUserProfile={currentUserProfile ? {
-          id: currentUserProfile.id,
-          user_id: currentUserProfile.id,
-          nome: currentUserProfile.name || '',
-          email: currentUserProfile.email || '',
-          telefone: currentUserProfile.phone || undefined,
-          role: (currentUserProfile.role as any) || 'secretaria',
-          especialidade: undefined,
-          crm: undefined,
-          ativo: currentUserProfile.role !== 'inactive',
-          created_at: currentUserProfile.created_at || '',
-          updated_at: currentUserProfile.updated_at || ''
-        } : null}
+        currentUserProfile={currentUserProfile ? convertToUserUserProfile(currentUserProfile) : null}
         onEdit={(user) => {
-          // Convertendo de volta para o tipo UserProfile do profile.ts
-          const profileUser: UserProfile = {
-            id: user.id,
-            name: user.nome,
-            email: user.email,
-            phone: user.telefone || null,
-            avatar_url: null,
-            role: user.role,
-            created_at: user.created_at,
-            updated_at: user.updated_at
-          };
+          const profileUser = convertToProfileUserProfile(user);
           handleEdit(profileUser);
         }}
         onDelete={handleDelete}

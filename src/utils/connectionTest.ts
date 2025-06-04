@@ -30,7 +30,7 @@ export const testSupabaseConnection = async () => {
     // Teste 3: Verificar acesso ao banco de dados
     try {
       const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
+        .from('profiles' as any)
         .select('id, name, email')
         .limit(1);
 
@@ -53,7 +53,7 @@ export const testSupabaseConnection = async () => {
     for (const table of tablesToTest) {
       try {
         const { error } = await supabase
-          .from(table)
+          .from(table as any)
           .select('id')
           .limit(1);
         
@@ -89,7 +89,7 @@ export const debugTable = async (tableName: string) => {
   
   try {
     const { data, error, count } = await supabase
-      .from(tableName)
+      .from(tableName as any)
       .select('*', { count: 'exact' })
       .limit(5);
 
