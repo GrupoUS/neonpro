@@ -7,32 +7,31 @@ import ServicoTable from '@/components/servicos/ServicoTable';
 import ServicoModal from '@/components/servicos/ServicoModal';
 import ServicoEmptyState from '@/components/servicos/ServicoEmptyState';
 import { Button } from '@/components/ui/button';
+import { Database } from '@/types/supabase';
 
-interface Servico {
-  id: string;
-  user_id: string;
-  nome_servico: string;
-  preco: number;
-  created_at: string;
-}
+type ServiceRow = Database['public']['Tables']['services']['Row'];
 
 const Servicos: React.FC = () => {
   const { user } = useAuth();
   const { servicos, loading, createServico, updateServico, deleteServico } = useServicos();
   
   const [showModal, setShowModal] = useState(false);
-  const [editingServico, setEditingServico] = useState<Servico | null>(null);
+  const [editingServico, setEditingServico] = useState<ServiceRow | null>(null);
   const [formData, setFormData] = useState({
-    nome_servico: '',
-    preco: ''
+    name: '',
+    price: '',
+    duration_minutes: '60',
+    description: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const servicoData = {
-      nome_servico: formData.nome_servico,
-      preco: parseFloat(formData.preco)
+      name: formData.name,
+      price: parseFloat(formData.price),
+      duration_minutes: parseInt(formData.duration_minutes) || 60,
+      description: formData.description || undefined
     };
 
     let success = false;
@@ -43,17 +42,19 @@ const Servicos: React.FC = () => {
     }
 
     if (success) {
-      setFormData({ nome_servico: '', preco: '' });
+      setFormData({ name: '', price: '', duration_minutes: '60', description: '' });
       setShowModal(false);
       setEditingServico(null);
     }
   };
 
-  const handleEdit = (servico: Servico) => {
+  const handleEdit = (servico: ServiceRow) => {
     setEditingServico(servico);
     setFormData({
-      nome_servico: servico.nome_servico,
-      preco: servico.preco.toString()
+      name: servico.name,
+      price: servico.price.toString(),
+      duration_minutes: servico.duration_minutes.toString(),
+      description: servico.description || ''
     });
     setShowModal(true);
   };
@@ -68,7 +69,7 @@ const Servicos: React.FC = () => {
 
   const openNewModal = () => {
     setEditingServico(null);
-    setFormData({ nome_servico: '', preco: '' });
+    setFormData({ name: '', price: '', duration_minutes: '60', description: '' });
     setShowModal(true);
   };
 

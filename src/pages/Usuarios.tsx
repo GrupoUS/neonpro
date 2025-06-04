@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -6,7 +7,7 @@ import { UserForm } from '@/components/users/UserForm';
 import { UserList } from '@/components/users/UserList';
 import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/contexts/auth/useAuth';
-import { UserProfile, CreateUserProfileData, UpdateUserProfileData, UserRole } from '@/types/user';
+import { CreateUserProfileData, UpdateUserProfileData } from '@/types/profile';
 import { toast } from 'sonner';
 
 export const Usuarios = () => {
@@ -24,7 +25,7 @@ export const Usuarios = () => {
   } = useUsers();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [editingUser, setEditingUser] = useState<any | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   const isCurrentUserAdmin = currentUserProfile?.role === 'admin';
@@ -82,7 +83,7 @@ export const Usuarios = () => {
     }
   };
 
-  const handleEdit = (user: UserProfile) => {
+  const handleEdit = (user: any) => {
     setEditingUser(user);
     setIsFormOpen(true);
   };
@@ -121,7 +122,7 @@ export const Usuarios = () => {
     }
   };
 
-  const handleChangeRole = async (userId: string, newRole: UserRole): Promise<boolean> => {
+  const handleChangeRole = async (userId: string, newRole: string): Promise<boolean> => {
     try {
       const success = await changeUserRole(userId, newRole);
       if (success) {

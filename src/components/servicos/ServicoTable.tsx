@@ -1,92 +1,58 @@
 
 import React from 'react';
-import { Edit, Trash2, DollarSign, Briefcase } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Database } from '@/types/supabase';
 
-interface Servico {
-  id: string;
-  user_id: string;
-  nome_servico: string;
-  preco: number;
-  created_at: string;
-}
+type ServiceRow = Database['public']['Tables']['services']['Row'];
 
 interface ServicoTableProps {
-  servicos: Servico[];
-  onEdit: (servico: Servico) => void;
+  servicos: ServiceRow[];
+  onEdit: (servico: ServiceRow) => void;
   onDelete: (id: string) => void;
 }
 
-const ServicoTable: React.FC<ServicoTableProps> = ({
-  servicos,
-  onEdit,
-  onDelete
-}) => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
+const ServicoTable: React.FC<ServicoTableProps> = ({ servicos, onEdit, onDelete }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-border">
-        <thead className="bg-muted/50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Serviço
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Preço
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Data de Criação
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Ações
-            </th>
+      <table className="w-full">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="text-left p-4 font-medium">Nome</th>
+            <th className="text-left p-4 font-medium">Preço</th>
+            <th className="text-left p-4 font-medium">Duração</th>
+            <th className="text-left p-4 font-medium">Descrição</th>
+            <th className="text-right p-4 font-medium">Ações</th>
           </tr>
         </thead>
-        <tbody className="bg-card divide-y divide-border">
+        <tbody>
           {servicos.map((servico) => (
-            <tr key={servico.id} className="hover:bg-muted/30 transition-colors">
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10">
-                    <div className="h-10 w-10 rounded-lg bg-gold/10 flex items-center justify-center">
-                      <Briefcase className="h-5 w-5 text-gold" />
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-foreground">
-                      {servico.nome_servico}
-                    </div>
-                  </div>
-                </div>
+            <tr key={servico.id} className="border-b border-border hover:bg-muted/50">
+              <td className="p-4 font-medium">{servico.name}</td>
+              <td className="p-4">
+                R$ {servico.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center text-sm text-foreground">
-                  <DollarSign className="h-4 w-4 text-muted-foreground mr-1" />
-                  {formatCurrency(servico.preco)}
-                </div>
+              <td className="p-4">{servico.duration_minutes} min</td>
+              <td className="p-4 text-muted-foreground">
+                {servico.description || 'Sem descrição'}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                {new Date(servico.created_at).toLocaleDateString('pt-BR')}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex items-center justify-end space-x-2">
-                  <button
+              <td className="p-4">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => onEdit(servico)}
-                    className="text-gold hover:text-gold/80 transition-colors"
                   >
                     <Edit className="h-4 w-4" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => onDelete(servico.id)}
-                    className="text-red-500 hover:text-red-400 transition-colors"
+                    className="text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </td>
             </tr>
