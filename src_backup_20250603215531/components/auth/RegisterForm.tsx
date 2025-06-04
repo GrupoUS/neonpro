@@ -1,0 +1,158 @@
+
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuth } from '@/contexts/auth';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { registerSchema, RegisterFormValues } from './schemas';
+import { FormHeader } from './FormHeader';
+import { FormDivider } from './FormDivider';
+import { GoogleSignInButton } from './GoogleSignInButton';
+import { PasswordInput } from './PasswordInput';
+import { LoadingSpinner } from './LoadingSpinner';
+import { toast } from 'sonner';
+
+type RegisterFormProps = {
+  onSuccess: () => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+  handleGoogleSignIn: () => void;
+};
+
+export const RegisterForm: React.FC<RegisterFormProps> = ({ 
+  onSuccess, 
+  isLoading, 
+  setIsLoading, 
+  handleGoogleSignIn 
+}) => {
+  const { signUp } = useAuth();
+  
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const onSubmit = async (values: RegisterFormValues) => {
+    setIsLoading(true);
+    try {
+      await signUp(values.email, values.password, values.fullName);
+      toast.success("Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.");
+      onSuccess();
+    } catch (error: unknown) {
+      console.error("Signup error:", error);
+      if (!navigator.onLine) {
+        toast.error("Verifique sua conexão com a internet e tente novamente.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <FormHeader 
+        title="Junte-se ao NEON PRO"
+        subtitle="Crie sua conta e transforme sua clínica"
+      />
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            control={form.control}
+            name="fullName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel 
+                  className="text-foreground font-medium"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Nome Completo
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="João da Silva" 
+                    className="input-neon" 
+                    style={{ fontFamily: 'Inter, sans-serif' }}
+                    {...field} 
+                    aria-label="Nome completo"
+                  />
+                </FormControl>
+                <FormMessage className="text-destructive text-xs" />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel 
+                  className="text-foreground font-medium"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  E-mail
+                </FormLabel>
+                <FormControl>
+                  <Input 
+                    type="email" 
+                    placeholder="seu@email.com" 
+                    className="input-neon" 
+                    style={{ fontFamily: 'Inter, sans-serif' }}
+                    {...field} 
+                    aria-label="Endereço de e-mail"
+                  />
+                </FormControl>
+                <FormMessage className="text-destructive text-xs" />
+              </FormItem>
+            )}
+          />
+          
+          <PasswordInput
+            control={form.control}
+            name="password"
+            label="Senha"
+            placeholder="••••••"
+          />
+          
+          <PasswordInput
+            control={form.control}
+            name="confirmPassword"
+            label="Confirmar Senha"
+            placeholder="••••••"
+          />
+          
+          <Button 
+            type="submit" 
+            className="btn-neon-primary w-full h-12 mt-6" 
+            style={{ fontFamily: 'Inter, sans-serif' }}
+            disabled={isLoading}
+          >
+            {isLoading ? <LoadingSpinner /> : 'Criar Conta NEON PRO'}
+          </Button>
+        </form>
+      </Form>
+      
+      <FormDivider text="Ou continue com" />
+      
+      <GoogleSignInButton
+        onClick={handleGoogleSignIn}
+        isLoading={isLoading}
+      />
+    </div>
+  );
+};

@@ -11,13 +11,14 @@ import Financeiro from '@/pages/Financeiro';
 import Relatorios from '@/pages/Relatorios';
 import Servicos from '@/pages/Servicos';
 import Configuracoes from '@/pages/Configuracoes';
+import ChatbotPage from '@/pages/ChatbotPage'; // Importar ChatbotPage
 
 const AppRouter: React.FC = () => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold mx-auto mb-4"></div>
           <p className="text-gray-600">Carregando...</p>
@@ -41,6 +42,7 @@ const AppRouter: React.FC = () => {
         <Route path="servicos" element={<Servicos />} />
         <Route path="relatorios" element={<Relatorios />} />
         <Route path="configuracoes" element={<Configuracoes />} />
+        <Route path="chatbot" element={<ChatbotPage />} /> {/* Usar ChatbotPage */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

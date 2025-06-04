@@ -1,0 +1,21 @@
+
+/* NEON PRO - Sistema de Estilos Modular */
+/* Importação dos módulos CSS organizados por funcionalidade */
+
+/* 1. Base - Configuração fundamental, variáveis CSS e estilos básicos */
+@import './styles/base.css';
+
+/* 2. Typography - Hierarquia tipográfica e configuração de fontes */
+@import './styles/typography.css';
+
+/* 3. Components - Estilos específicos de componentes */
+@import './styles/components.css';
+
+/* 4. Utilities - Classes utilitárias e efeitos visuais */
+@import './styles/utilities.css';
+
+/* 5. Animations - Keyframes e animações personalizadas */
+@import './styles/animations.css';
+
+/* 6. Responsive - Media queries e adaptações para diferentes telas */
+@import './styles/responsive.css';

@@ -1,0 +1,138 @@
+
+/* Importação das fontes institucionais "NEON PRO" */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* Optima será carregada como fallback do sistema ou fonte local */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Paleta "NEON PRO" - Modo Claro */
+    --background: 253 252 250; /* Branco quente #FDFCFA */
+    --foreground: 210 40% 12%; /* Azul escuro #112031 */
+
+    /* Cores principais "NEON PRO" */
+    --neon-dark-blue: 210 40% 12%; /* #112031 */
+    --neon-blue: 210 25% 31%; /* #294359 */
+    --neon-gold: 38 25% 55%; /* #AC9469 */
+    --neon-gray-dark: 30 10% 65%; /* #B4AC9C */
+    --neon-gray-light: 40 15% 82%; /* #D2D0C8 */
+
+    /* Sistema de cores principais "NEON PRO" */
+    --primary: 38 25% 55%; /* Dourado "NEON PRO" #AC9469 */
+    --primary-foreground: 210 40% 12%; /* Azul escuro */
+    
+    --secondary: 210 40% 12%; /* Azul escuro #112031 */
+    --secondary-foreground: 253 252 250; /* Branco quente */
+
+    /* Cores de componentes - Modo Claro */
+    --card: 253 252 250; /* Branco quente */
+    --card-foreground: 210 40% 12%; /* Azul escuro */
+
+    --popover: 253 252 250;
+    --popover-foreground: 210 40% 12%;
+
+    --muted: 245 243 240; /* Creme suave #F5F3F0 */
+    --muted-foreground: 30 10% 65%; /* Cinza escuro */
+
+    --accent: 38 25% 55%; /* Dourado "NEON PRO" para destaques */
+    --accent-foreground: 210 40% 12%;
+
+    --destructive: 0 84% 60%; /* Vermelho para ações destrutivas */
+    --destructive-foreground: 253 252 250;
+
+    --success: 120 60% 50%; /* Verde para sucesso */
+    --warning: 38 92% 50%; /* Laranja para avisos */
+    --info: 210 25% 31%; /* Azul para informações */
+
+    --border: 40 15% 82%; /* Cinza claro para bordas */
+    --input: 245 243 240; /* Creme suave para inputs */
+    --ring: 38 25% 55%; /* Dourado "NEON PRO" para focus rings */
+
+    --radius: 0.75rem; /* Raio padrão para bordas arredondadas */
+
+    /* Sidebar - Modo Claro */
+    --sidebar-background: 253 252 250;
+    --sidebar-foreground: 210 40% 12%;
+    --sidebar-primary: 38 25% 55%;
+    --sidebar-primary-foreground: 210 40% 12%;
+    --sidebar-accent: 210 25% 31%;
+    --sidebar-accent-foreground: 253 252 250;
+    --sidebar-border: 40 15% 82%;
+    --sidebar-ring: 38 25% 55%;
+  }
+
+  .dark {
+    /* Paleta "NEON PRO" - Modo Escuro */
+    --background: 210 40% 12%; /* Azul escuro #112031 */
+    --foreground: 245 243 240; /* Creme suave para texto */
+
+    /* Cores principais adaptadas para modo escuro */
+    --primary: 38 35% 65%; /* Dourado "NEON PRO" mais claro para contraste */
+    --primary-foreground: 210 40% 12%;
+    
+    --secondary: 210 25% 31%; /* Azul médio */
+    --secondary-foreground: 253 252 250;
+
+    /* Componentes - Modo Escuro */
+    --card: 210 35% 15%; /* Azul escuro mais claro */
+    --card-foreground: 245 243 240;
+
+    --popover: 210 35% 15%;
+    --popover-foreground: 245 243 240;
+
+    --muted: 210 30% 18%; /* Azul escuro intermediário */
+    --muted-foreground: 30 10% 65%; /* Cinza escuro */
+
+    --accent: 38 35% 65%; /* Dourado "NEON PRO" mais claro para melhor contraste */
+    --accent-foreground: 210 40% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 245 243 240;
+
+    --success: 120 60% 60%; /* Verde mais claro */
+    --warning: 38 92% 60%; /* Laranja mais claro */
+    --info: 210 25% 41%; /* Azul mais claro */
+
+    --border: 210 25% 31%; /* Azul médio para bordas */
+    --input: 210 30% 18%; /* Azul escuro para inputs */
+    --ring: 38 35% 65%; /* Dourado "NEON PRO" claro para focus */
+
+    /* Sidebar - Modo Escuro */
+    --sidebar-background: 210 45% 8%; /* Ainda mais escuro */
+    --sidebar-foreground: 245 243 240;
+    --sidebar-primary: 38 35% 65%;
+    --sidebar-primary-foreground: 210 40% 12%;
+    --sidebar-accent: 210 25% 31%;
+    --sidebar-accent-foreground: 245 243 240;
+    --sidebar-border: 210 30% 18%;
+    --sidebar-ring: 38 35% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    /* Fontes institucionais "NEON PRO" */
+    font-family: 'Inter', sans-serif; /* Fonte principal para textos */
+    font-weight: 400;
+    line-height: 1.6;
+    /* Melhor renderização de texto */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Evitar scroll horizontal */
+    overflow-x: hidden;
+  }
+}

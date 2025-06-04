@@ -1,0 +1,123 @@
+
+/* Classes utilitárias "NEON PRO" - Identidade Visual Oficial */
+
+@layer utilities {
+  /* Gradientes "NEON PRO" */
+  .gradient-neon {
+    background: linear-gradient(135deg, #112031 0%, #294359 50%, #AC9469 100%);
+  }
+  
+  .gradient-neon-gold {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
+  }
+  
+  .gradient-neon-blue {
+    background: linear-gradient(135deg, #112031 0%, #294359 100%);
+  }
+  
+  .gradient-neon-vertical {
+    background: linear-gradient(180deg, #112031 0%, #AC9469 100%);
+  }
+  
+  .gradient-neon-radial {
+    background: radial-gradient(circle, #AC9469 0%, #112031 100%);
+  }
+  
+  /* Sombras personalizadas "NEON PRO" */
+  .shadow-neon {
+    box-shadow: 0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06);
+  }
+  
+  .shadow-neon-lg {
+    box-shadow: 0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05);
+  }
+  
+  .shadow-neon-xl {
+    box-shadow: 0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04);
+  }
+  
+  .shadow-neon-gold {
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
+  }
+  
+  .shadow-neon-gold-glow {
+    box-shadow: 0 0 20px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
+  }
+  
+  /* Brilho e efeitos especiais "NEON PRO" */
+  .glow-neon {
+    box-shadow: 0 0 10px rgba(172, 148, 105, 0.4), 0 0 20px rgba(172, 148, 105, 0.2);
+  }
+  
+  .glow-neon-intense {
+    box-shadow: 0 0 20px rgba(172, 148, 105, 0.6), 0 0 30px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
+  }
+  
+  /* Estados de carregamento com a identidade visual "NEON PRO" */
+  .loading-neon {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 25%, 
+      hsl(var(--accent) / 0.1) 50%, 
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  .shimmer-neon {
+    background: linear-gradient(90deg, 
+      hsl(var(--muted)) 25%, 
+      hsl(var(--accent) / 0.1) 50%, 
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Texto com gradiente "NEON PRO" */
+  .text-gradient-neon {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Utilitários para acessibilidade "NEON PRO" */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Estilização de scrollbar "NEON PRO" */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.5);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent));
+  }
+  
+  /* Seleção de texto "NEON PRO" */
+  ::selection {
+    background: hsl(var(--accent) / 0.2);
+    color: hsl(var(--foreground));
+  }
+}

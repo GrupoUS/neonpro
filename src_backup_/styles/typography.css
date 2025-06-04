@@ -1,0 +1,64 @@
+
+/* Hierarquia tipográfica "NEON PRO" - Identidade Visual Oficial */
+
+@layer base {
+  /* Hierarquia tipográfica seguindo a identidade visual "NEON PRO" */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Segoe UI', sans-serif; /* Optima para títulos */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+  }
+
+  h4 {
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold;
+  }
+
+  h5 {
+    @apply text-lg md:text-xl lg:text-2xl font-medium;
+  }
+
+  h6 {
+    @apply text-base md:text-lg lg:text-xl font-medium;
+  }
+
+  /* Textos de corpo usando Inter */
+  p, span, div, li {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  }
+  
+  /* Classes especiais para branding "NEON PRO" */
+  .text-neon-brand {
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-neon-subtitle {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .text-neon-heading {
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    color: hsl(var(--primary));
+  }
+}

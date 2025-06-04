@@ -1,0 +1,96 @@
+
+/* Estilos de componentes "NEON PRO" - Identidade Visual Oficial */
+
+@layer components {
+  /* Estados de foco melhorados para acessibilidade */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-background transition-all duration-200;
+  }
+  
+  /* Elementos interativos melhorados */
+  button, a, [role="button"] {
+    @apply outline-none select-none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Transições suaves para elementos interativos */
+  a, button, input, select, textarea {
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  /* Estados de foco melhorados para formulários "NEON PRO" */
+  input:focus, 
+  textarea:focus, 
+  select:focus {
+    @apply outline-none ring-2 ring-accent border-accent;
+    box-shadow: 0 0 0 3px rgba(172, 148, 105, 0.1);
+  }
+  
+  /* Estilos de botão "NEON PRO" */
+  .btn-neon-primary {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
+  }
+  
+  .btn-neon-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
+  }
+  
+  .btn-neon-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
+  }
+  
+  .btn-neon-outline {
+    @apply border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-300;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
+  }
+  
+  .btn-neon-gradient {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
+    @apply text-neon-dark hover:opacity-90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon-lg;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
+  }
+  
+  /* Estilos de card "NEON PRO" */
+  .card-neon {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-neon;
+  }
+  
+  .card-neon-interactive {
+    @apply card-neon card-hover;
+  }
+  
+  .card-neon-gradient {
+    @apply bg-gradient-to-br from-accent/5 to-secondary/10 border border-accent/20 rounded-2xl p-6 shadow-neon-lg;
+  }
+  
+  /* Efeitos hover melhorados "NEON PRO" */
+  .card-hover {
+    @apply transition-all duration-300 ease-out cursor-pointer;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(172, 148, 105, 0.25), 0 10px 10px -5px rgba(172, 148, 105, 0.15);
+  }
+  
+  /* Layout components "NEON PRO" */
+  .sidebar-neon {
+    @apply bg-sidebar border-r border-sidebar-border h-full;
+  }
+  
+  .header-neon {
+    @apply bg-card border-b border-border shadow-sm;
+  }
+  
+  /* Input styles "NEON PRO" */
+  .input-neon {
+    @apply bg-input border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground;
+  }
+  
+  .input-neon:focus {
+    @apply border-accent ring-2 ring-accent/20;
+  }
+}
