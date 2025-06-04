@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,34 +37,31 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Agendamento, StatusAgendamento, getTipoConsultaLabel, getStatusLabel } from '@/types/appointment';
-import { useAppointments } from '@/hooks/useAppointments';
+import { useAppointments, AgendamentoSimplificado } from '@/hooks/useAppointments';
 import AppointmentForm from './AppointmentForm';
 import { toast } from 'sonner';
 
 interface AppointmentListProps {
   selectedDate?: Date;
-  onAppointmentSelect?: (appointment: Agendamento) => void;
+  onAppointmentSelect?: (appointment: AgendamentoSimplificado) => void;
 }
 
 const AppointmentList: React.FC<AppointmentListProps> = ({ 
   selectedDate = new Date(),
   onAppointmentSelect 
 }) => {
-  const { appointments, loading, deleteAppointment } = useAppointments();
+  const { agendamentos, isLoading, deleteAgendamento } = useAppointments();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAppointment, setSelectedAppointment] = useState<Agendamento | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<AgendamentoSimplificado | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [appointmentToDelete, setAppointmentToDelete] = useState<Agendamento | null>(null);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<AgendamentoSimplificado | null>(null);
 
   // Filtrar agendamentos por data selecionada e termo de busca
-  const filteredAppointments = appointments.filter(appointment => {
-    const appointmentDate = new Date(appointment.data_agendamento);
+  const filteredAppointments = agendamentos.filter(appointment => {
+    const appointmentDate = new Date(appointment.data_hora);
     const isSameDay = appointmentDate.toDateString() === selectedDate.toDateString();
     
     const matchesSearch = searchTerm === '' || 
-      appointment.paciente?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      getTipoConsultaLabel(appointment.tipo_consulta).toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.observacoes?.toLowerCase().includes(searchTerm.toLowerCase());
 
     return isSameDay && matchesSearch;
@@ -71,10 +69,10 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
 
   // Ordenar por horário
   const sortedAppointments = filteredAppointments.sort((a, b) => {
-    return a.hora_inicio.localeCompare(b.hora_inicio);
+    return new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime();
   });
 
-  const getStatusIcon = (status: StatusAgendamento) => {
+  const getStatusIcon = (status: string | null) => {
     switch (status) {
       case 'confirmado':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
@@ -84,16 +82,12 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'concluido':
         return <CheckCircle className="h-4 w-4 text-blue-500" />;
-      case 'em_andamento':
-        return <Clock className="h-4 w-4 text-blue-500" />;
-      case 'faltou':
-        return <XCircle className="h-4 w-4 text-orange-500" />;
       default:
         return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const getStatusVariant = (status: StatusAgendamento) => {
+  const getStatusVariant = (status: string | null) => {
     switch (status) {
       case 'confirmado':
         return 'default' as const;
@@ -103,23 +97,19 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
         return 'destructive' as const;
       case 'concluido':
         return 'outline' as const;
-      case 'em_andamento':
-        return 'default' as const;
-      case 'faltou':
-        return 'destructive' as const;
       default:
         return 'secondary' as const;
     }
   };
 
-  const handleEdit = (appointment: Agendamento) => {
+  const handleEdit = (appointment: AgendamentoSimplificado) => {
     setSelectedAppointment(appointment);
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (appointment: Agendamento) => {
+  const handleDelete = async (appointment: AgendamentoSimplificado) => {
     try {
-      await deleteAppointment(appointment.id);
+      await deleteAgendamento(appointment.id);
       toast.success('Agendamento excluído com sucesso!');
     } catch (error) {
       console.error('Erro ao excluir agendamento:', error);
@@ -134,7 +124,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
     setSelectedAppointment(null);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
@@ -169,7 +159,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por paciente ou procedimento..."
+                  placeholder="Buscar por observações..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8 w-full sm:w-[300px]"
@@ -232,23 +222,20 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                   <div className="flex items-center space-x-4">
                     <div className="flex flex-col items-center min-w-[60px]">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{appointment.hora_inicio.substring(0, 5)}</span>
-                      {appointment.hora_fim && (
-                        <span className="text-xs text-muted-foreground">até {appointment.hora_fim.substring(0, 5)}</span>
-                      )}
+                      <span className="text-sm font-medium">
+                        {new Date(appointment.data_hora).toLocaleTimeString('pt-BR', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </span>
                     </div>
                     <div className="space-y-1 flex-1 min-w-0">
                       <div className="flex items-center space-x-2">
                         <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <span className="font-medium truncate">{appointment.paciente?.nome || 'Sem nome'}</span>
+                        <span className="font-medium truncate">
+                          {appointment.paciente_id || 'Paciente não informado'}
+                        </span>
                       </div>
-                      {appointment.paciente?.telefone && (
-                        <div className="flex items-center space-x-2">
-                          <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                          <span className="text-sm text-muted-foreground">{appointment.paciente.telefone}</span>
-                        </div>
-                      )}
-                      <p className="text-sm text-muted-foreground truncate">{getTipoConsultaLabel(appointment.tipo_consulta)}</p>
                       {appointment.observacoes && (
                         <p className="text-xs text-muted-foreground truncate">{appointment.observacoes}</p>
                       )}
@@ -258,7 +245,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                     <div className="flex items-center gap-1">
                       {getStatusIcon(appointment.status)}
                       <Badge variant={getStatusVariant(appointment.status)}>
-                        {appointment.status}
+                        {appointment.status || 'agendado'}
                       </Badge>
                     </div>
                     <div className="flex space-x-1">
@@ -297,9 +284,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir o agendamento de{' '}
-              <strong>{appointmentToDelete?.paciente?.nome}</strong> para{' '}
-              <strong>{appointmentToDelete?.hora_inicio.substring(0, 5)}</strong>?
+              Tem certeza que deseja excluir este agendamento?
               <br />
               Esta ação não pode ser desfeita.
             </AlertDialogDescription>
