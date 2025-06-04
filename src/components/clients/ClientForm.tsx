@@ -70,7 +70,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onSave, onCancel }) => 
         const { data, error } = await supabase
           .from("clients")
           .insert({
-            ...values,
+            full_name: values.full_name,
+            email: values.email || undefined,
+            phone: values.phone || undefined,
+            instagram_handle: values.instagram_handle || undefined,
+            birthdate: values.birthdate || undefined,
+            notes: values.notes || undefined,
             user_id: user.id,
           })
           .select()
@@ -82,7 +87,14 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onSave, onCancel }) => 
       } else {
         const { data, error } = await supabase
           .from("clients")
-          .update(values)
+          .update({
+            full_name: values.full_name,
+            email: values.email || undefined,
+            phone: values.phone || undefined,
+            instagram_handle: values.instagram_handle || undefined,
+            birthdate: values.birthdate || undefined,
+            notes: values.notes || undefined,
+          })
           .eq("id", client.id)
           .select()
           .single();

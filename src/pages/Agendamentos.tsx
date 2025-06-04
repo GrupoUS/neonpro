@@ -13,21 +13,22 @@ import {
 import AppointmentList from '@/components/appointments/AppointmentList';
 import AppointmentForm from '@/components/appointments/AppointmentForm';
 import { useAppointments } from '@/hooks/useAppointments';
-import { CreateAgendamentoData } from '@/types/appointment';
+import { CreateAgendamentoData } from '@/hooks/useAppointments';
 
 const Agendamentos: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const { appointments, loading, createAppointment, deleteAppointment } = useAppointments();
+  const { agendamentos, isLoading, createAgendamento, deleteAgendamento } = useAppointments();
   
   // Filtrar agendamentos para hoje
   const today = new Date().toISOString().split('T')[0];
-  const todayAppointments = appointments.filter(apt => 
-    new Date(apt.data_agendamento).toISOString().split('T')[0] === today
-  );
+  const todayAppointments = agendamentos.filter(apt => {
+    const appointmentDate = new Date(apt.data_hora).toISOString().split('T')[0];
+    return appointmentDate === today;
+  });
   
   const handleCreateAppointment = async (data: CreateAgendamentoData) => {
     try {
-      await createAppointment(data);
+      await createAgendamento(data);
       setIsFormOpen(false);
     } catch (error) {
       console.error('Erro ao criar agendamento:', error);
@@ -36,13 +37,13 @@ const Agendamentos: React.FC = () => {
 
   const handleDeleteAppointment = async (id: string) => {
     try {
-      await deleteAppointment(id);
+      await deleteAgendamento(id);
     } catch (error) {
       console.error('Erro ao excluir agendamento:', error);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
@@ -165,16 +166,32 @@ const Agendamentos: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-sm font-medium text-foreground">
-                  {todayAppointments[0]?.paciente?.nome || 'N/A'}
+                  Próximo paciente
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {todayAppointments[0]?.hora_inicio} - {todayAppointments[0]?.tipo_consulta}
+                  {new Date(todayAppointments[0]?.data_hora).toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
                 </p>
               </CardContent>
             </Card>
           )}
         </div>
       </div>
+
+      {/* Appointment Form Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-4">Novo Agendamento</h2>
+            <AppointmentForm
+              onSubmit={handleCreateAppointment}
+              onCancel={() => setIsFormOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
