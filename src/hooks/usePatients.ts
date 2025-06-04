@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { 
@@ -18,37 +19,9 @@ export const usePatients = (filters?: PatientFilters) => {
       setLoading(true);
       setError(null);
 
-      let query = supabase
-        .from('pacientes')
-        .select('*')
-        .order('nome');
-
-      // Apply filters
-      if (filters?.search) {
-        query = query.or(`nome.ilike.%${filters.search}%,email.ilike.%${filters.search}%,telefone.ilike.%${filters.search}%`);
-      }
-
-      if (filters?.ativo !== undefined) {
-        query = query.eq('ativo', filters.ativo);
-      }
-
-      if (filters?.convenio) {
-        query = query.eq('convenio', filters.convenio);
-      }
-
-      if (filters?.dataInicio) {
-        query = query.gte('created_at', filters.dataInicio);
-      }
-
-      if (filters?.dataFim) {
-        query = query.lte('created_at', filters.dataFim);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      setPatients(data || []);
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Pacientes não implementado - tabela não existe no banco de dados');
+      setPatients([]);
     } catch (err) {
       console.error('Error fetching patients:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar pacientes');
@@ -65,16 +38,9 @@ export const usePatients = (filters?: PatientFilters) => {
     try {
       setError(null);
 
-      const { data, error } = await supabase
-        .from('pacientes')
-        .insert([{ ...patientData, ativo: patientData.ativo ?? true }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      await fetchPatients(); // Refresh list
-      return data;
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Create patient não implementado - tabela não existe no banco de dados');
+      return null;
     } catch (err) {
       console.error('Error creating patient:', err);
       setError(err instanceof Error ? err.message : 'Erro ao criar paciente');
@@ -86,18 +52,9 @@ export const usePatients = (filters?: PatientFilters) => {
     try {
       setError(null);
 
-      const { id, ...updateData } = patientData;
-      const { data, error } = await supabase
-        .from('pacientes')
-        .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      await fetchPatients(); // Refresh list
-      return data;
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Update patient não implementado - tabela não existe no banco de dados');
+      return null;
     } catch (err) {
       console.error('Error updating patient:', err);
       setError(err instanceof Error ? err.message : 'Erro ao atualizar paciente');
@@ -109,15 +66,9 @@ export const usePatients = (filters?: PatientFilters) => {
     try {
       setError(null);
 
-      const { error } = await supabase
-        .from('pacientes')
-        .delete()
-        .eq('id', patientId);
-
-      if (error) throw error;
-
-      await fetchPatients(); // Refresh list
-      return true;
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Delete patient não implementado - tabela não existe no banco de dados');
+      return false;
     } catch (err) {
       console.error('Error deleting patient:', err);
       setError(err instanceof Error ? err.message : 'Erro ao deletar paciente');
@@ -129,15 +80,9 @@ export const usePatients = (filters?: PatientFilters) => {
     try {
       setError(null);
 
-      const { data, error } = await supabase
-        .from('pacientes')
-        .select('*')
-        .eq('id', patientId)
-        .single();
-
-      if (error) throw error;
-
-      return data;
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Get patient by ID não implementado - tabela não existe no banco de dados');
+      return null;
     } catch (err) {
       console.error('Error fetching patient:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar paciente');
@@ -173,39 +118,15 @@ export const usePatientStats = () => {
       setLoading(true);
       setError(null);
 
-      // Get total patients
-      const { count: total } = await supabase
-        .from('pacientes')
-        .select('*', { count: 'exact', head: true });
-
-      // Get active patients
-      const { count: ativos } = await supabase
-        .from('pacientes')
-        .select('*', { count: 'exact', head: true })
-        .eq('ativo', true);
-
-      // Get patients with insurance
-      const { count: comConvenio } = await supabase
-        .from('pacientes')
-        .select('*', { count: 'exact', head: true })
-        .not('convenio', 'is', null);
-
-      // Get new patients this month
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-
-      const { count: novosEstesMes } = await supabase
-        .from('pacientes')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', startOfMonth.toISOString());
+      // TODO: Implementar quando a tabela pacientes for criada no banco de dados
+      console.log('Patient stats não implementado - tabela não existe no banco de dados');
 
       setStats({
-        total: total || 0,
-        ativos: ativos || 0,
-        inativos: (total || 0) - (ativos || 0),
-        novosEstesMes: novosEstesMes || 0,
-        comConvenio: comConvenio || 0
+        total: 0,
+        ativos: 0,
+        inativos: 0,
+        novosEstesMes: 0,
+        comConvenio: 0
       });
     } catch (err) {
       console.error('Error fetching patient stats:', err);

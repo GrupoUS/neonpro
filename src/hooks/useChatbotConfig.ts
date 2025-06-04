@@ -14,18 +14,9 @@ export const useChatbotConfig = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('chatbot_config')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Erro ao buscar configuração:', error);
-        return;
-      }
-
-      setConfig(data);
+      // TODO: Implementar quando a tabela chatbot_config for criada no banco de dados
+      console.log('Chatbot config não implementado - tabela não existe no banco de dados');
+      setConfig(null);
     } catch (error) {
       console.error('Erro ao buscar configuração:', error);
     } finally {
@@ -37,23 +28,9 @@ export const useChatbotConfig = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from('chatbot_config')
-        .upsert({
-          user_id: user.id,
-          ...updates,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Erro ao atualizar configuração:', error);
-        toast.error('Erro ao salvar configurações');
-        return;
-      }
-
-      setConfig(data);
-      toast.success('Configurações salvas com sucesso!');
+      // TODO: Implementar quando a tabela chatbot_config for criada no banco de dados
+      console.log('Update config não implementado - tabela não existe no banco de dados');
+      toast.error('Funcionalidade de configuração ainda não implementada');
     } catch (error) {
       console.error('Erro ao atualizar configuração:', error);
       toast.error('Erro ao salvar configurações');
