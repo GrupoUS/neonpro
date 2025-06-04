@@ -282,7 +282,7 @@ export const BillingSection: React.FC = () => {
                     {invoice.status === 'paid' ? (
                       <CheckCircle className="w-5 h-5 text-green-600" />
                     ) : (
-                      <AlertCircle className="w-5 h-5 text-yellow-600" />
+                      <AlertCircle className="w-5 h-5 text-accent" />
                     )}
                   </div>
                   <div>

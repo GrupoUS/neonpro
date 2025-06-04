@@ -81,37 +81,9 @@ const ChatSidePanel = ({ isOpen, onClose }: ChatSidePanelProps) => {
 
   const loadChatHistory = async () => {
     try {
-      // Adaptar para usar as tabelas do neonpro se existirem
-      const { data, error } = await supabase
-        .from('chat_sessions')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(50);
-
-      if (error && error.code !== 'PGRST116') { // Table not found
-        console.error('Error loading chat history:', error);
-        return;
-      }
-
-      if (data) {
-        const chatMessages: ChatMessage[] = [];
-        data.forEach((chat) => {
-          chatMessages.push({
-            id: `${chat.id}-user`,
-            role: 'user',
-            content: chat.user_message || chat.message,
-            timestamp: new Date(chat.created_at)
-          });
-          chatMessages.push({
-            id: `${chat.id}-assistant`,
-            role: 'assistant',
-            content: chat.ai_response || chat.response,
-            timestamp: new Date(chat.created_at),
-            model: chat.model_used
-          });
-        });
-        setMessages(chatMessages);
-      }
+      // Por enquanto, manter histórico vazio até implementar tabela de mensagens específica
+      console.log('Chat history loading disabled - implementing table structure');
+      setMessages([]);
     } catch (error) {
       console.error('Error loading chat history:', error);
     }
@@ -269,7 +241,7 @@ const ChatSidePanel = ({ isOpen, onClose }: ChatSidePanelProps) => {
                           <span>{model.name}</span>
                           {model.tier === 'premium' && (
                             canUse ? (
-                              <Crown className="h-2 w-2 text-yellow-500" />
+                              <Crown className="h-2 w-2 text-accent" />
                             ) : (
                               <Lock className="h-2 w-2 text-gray-400" />
                             )

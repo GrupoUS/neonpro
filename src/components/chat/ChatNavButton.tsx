@@ -1,17 +1,23 @@
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
-const ChatNavButton = () => {
-  const navigate = useNavigate();
+interface ChatNavButtonProps {
+  isOpen: boolean;
+  onClick: () => void;
+}
 
+const ChatNavButton = ({ isOpen, onClick }: ChatNavButtonProps) => {
   return (
     <Button
       variant="ghost"
-      onClick={() => navigate("/chatbot")}
+      onClick={onClick}
       className="flex items-center gap-2"
     >
-      <MessageSquare className="h-4 w-4" />
+      {isOpen ? (
+        <X className="h-4 w-4" />
+      ) : (
+        <MessageSquare className="h-4 w-4" />
+      )}
       Assistente IA
     </Button>
   );

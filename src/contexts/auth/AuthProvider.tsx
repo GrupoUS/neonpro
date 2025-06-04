@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           
           // Redirecionar se necessário
           if (location.pathname === '/auth' || location.pathname.includes('access_token')) {
-            navigate('/', { replace: true });
+            navigate('/dashboard', { replace: true });
           }
         } else {
           console.log('Auth: Nenhuma sessão encontrada');
@@ -101,8 +101,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         
         if (event === 'SIGNED_IN') {
-          const targetPath = location.pathname === '/auth' ? '/' : location.pathname;
-          navigate(targetPath, { replace: true });
+          // Sempre redirecionar para o dashboard após login bem-sucedido
+          // A menos que haja uma rota específica que o usuário estava tentando acessar antes de ser redirecionado para o login
+          const redirectTo = location.pathname === '/auth' || location.pathname.includes('access_token') ? '/dashboard' : location.pathname;
+          navigate(redirectTo, { replace: true });
         }
       } else if (!currentSession) {
         setProfile(null);

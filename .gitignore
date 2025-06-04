@@ -34,3 +34,15 @@ supabase/functions/*/deno.lock
 .env.local
 .env.example
 fix-supabase-types.cjs
+
+# Added by Task Master AI
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.env
+.vscode
+# OS specific
+# Task files
+tasks.json
+tasks/ 

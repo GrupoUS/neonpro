@@ -67,7 +67,7 @@ const SuggestedQuestions = ({ onQuestionSelect }: SuggestedQuestionsProps) => {
     "Paciente": "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800",
     "Serviço": "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800",
     "Insights": "bg-pink-50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800",
-    "Lembretes": "bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800" // Manter se relevante
+    "Lembretes": "bg-accent/10 dark:bg-accent/20 border-accent/30 dark:border-accent" // Manter se relevante
   };
 
   return (

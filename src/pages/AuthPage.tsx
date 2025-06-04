@@ -23,7 +23,7 @@ const AuthPage: React.FC = () => {
   // Handle redirection after login
   useEffect(() => {
     if (session) {
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [session, navigate]);
 
