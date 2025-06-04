@@ -1,18 +1,17 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { Profile } from './types';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 export const useAuthOperations = () => {
-  const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -21,7 +20,6 @@ export const useAuthOperations = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        // PGRST116 is "not found" error, which is expected for new users
         console.error('Erro ao carregar perfil:', error);
         return;
       }
@@ -31,12 +29,10 @@ export const useAuthOperations = () => {
       }
     } catch (error) {
       console.error('Erro ao carregar perfil:', error);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, []);
 
-  const createProfile = async (userId: string, userData: { full_name?: string; name?: string; email: string }) => {
+  const createProfile = useCallback(async (userId: string, userData: { full_name?: string; name?: string; email: string }) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -48,15 +44,13 @@ export const useAuthOperations = () => {
 
       if (error) {
         console.error('Erro ao criar perfil:', error);
-        // Don't throw error here as the profile creation is handled by trigger
       }
     } catch (error) {
       console.error('Erro ao criar perfil:', error);
-      // Don't throw error here as the profile creation is handled by trigger
     }
-  };
+  }, []);
 
-  const signUp = async (email: string, password: string, full_name: string) => {
+  const signUp = useCallback(async (email: string, password: string, full_name: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({ 
         email, 
@@ -66,24 +60,16 @@ export const useAuthOperations = () => {
             full_name,
             name: full_name
           },
-          emailRedirectTo: `${window.location.origin}/dashboard`
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
       
       if (error) throw error;
       
       if (data.user && !data.session) {
-        toast({
-          title: "Sucesso!",
-          description: "Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.",
-          variant: "default"
-        });
+        toast.success("Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.");
       } else if (data.session) {
-        toast({
-          title: "Sucesso!",
-          description: "Cadastro realizado com sucesso!",
-          variant: "default"
-        });
+        toast.success("Cadastro realizado com sucesso!");
       }
       
     } catch (error: unknown) {
@@ -99,26 +85,18 @@ export const useAuthOperations = () => {
         userMessage = 'Este e-mail já está cadastrado.';
       }
       
-      toast({
-        title: "Erro",
-        description: userMessage,
-        variant: "destructive"
-      });
+      toast.error(userMessage);
       throw error;
     }
-  };
+  }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) throw error;
       
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso!",
-        variant: "default"
-      });
+      toast.success("Login realizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro no login:', errorMessage);
@@ -130,21 +108,17 @@ export const useAuthOperations = () => {
         userMessage = 'Confirme seu e-mail antes de fazer login.';
       }
       
-      toast({
-        title: "Erro",
-        description: userMessage,
-        variant: "destructive"
-      });
+      toast.error(userMessage);
       throw error;
     }
-  };
+  }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = useCallback(async () => {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/`
         }
       });
       
@@ -152,37 +126,25 @@ export const useAuthOperations = () => {
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao fazer login com Google:', errorMessage);
-      toast({
-        title: "Erro",
-        description: "Erro ao fazer login com Google. Tente novamente.",
-        variant: "destructive"
-      });
+      toast.error("Erro ao fazer login com Google. Tente novamente.");
       throw error;
     }
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      toast({
-        title: "Sucesso!",
-        description: "Logout realizado com sucesso!",
-        variant: "default"
-      });
+      toast.success("Logout realizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao fazer logout:', errorMessage);
-      toast({
-        title: "Erro",
-        description: "Erro ao fazer logout. Tente novamente.",
-        variant: "destructive"
-      });
+      toast.error("Erro ao fazer logout. Tente novamente.");
       throw error;
     }
-  };
+  }, []);
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/redefinir-senha`,
@@ -190,24 +152,16 @@ export const useAuthOperations = () => {
       
       if (error) throw error;
       
-      toast({
-        title: "Sucesso!",
-        description: "E-mail para redefinição de senha enviado!",
-        variant: "default"
-      });
+      toast.success("E-mail para redefinição de senha enviado!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao solicitar redefinição de senha:', errorMessage);
-      toast({
-        title: "Erro",
-        description: "Erro ao solicitar redefinição de senha. Tente novamente.",
-        variant: "destructive"
-      });
+      toast.error("Erro ao solicitar redefinição de senha. Tente novamente.");
       throw error;
     }
-  };
+  }, []);
 
-  const updateProfile = async (updates: Partial<Profile>) => {
+  const updateProfile = useCallback(async (updates: Partial<Profile>) => {
     try {
       if (!user) throw new Error('Usuário não autenticado');
 
@@ -222,22 +176,14 @@ export const useAuthOperations = () => {
         setProfile({ ...profile, ...updates });
       }
       
-      toast({
-        title: "Sucesso!",
-        description: "Perfil atualizado com sucesso!",
-        variant: "default"
-      });
+      toast.success("Perfil atualizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('Erro ao atualizar perfil:', errorMessage);
-      toast({
-        title: "Erro",
-        description: "Erro ao atualizar perfil. Tente novamente.",
-        variant: "destructive"
-      });
+      toast.error("Erro ao atualizar perfil. Tente novamente.");
       throw error;
     }
-  };
+  }, [user, profile]);
 
   return {
     session,

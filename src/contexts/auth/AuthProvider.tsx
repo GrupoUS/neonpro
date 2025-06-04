@@ -31,37 +31,59 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   } = useAuthOperations();
 
   useEffect(() => {
-    const handleInitialSession = async () => {
-      setIsLoading(true); // Start loading
-      console.log('Auth: Starting initial session check. isLoading = true');
+    let mounted = true;
 
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
-      
-      if (initialSession?.user) {
-        await fetchProfile(initialSession.user.id); // Wait for profile
-        console.log('Auth: Initial session has user. Profile fetched. isLoading = false');
-        // If user is authenticated and on auth page, redirect to dashboard
-        if (location.pathname === '/auth' || location.pathname.includes('access_token') || location.hash) {
-          navigate('/', { replace: true });
+    const initializeAuth = async () => {
+      try {
+        console.log('Auth: Inicializando autenticação...');
+        
+        // Buscar sessão atual primeiro
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
+
+        if (initialSession?.user) {
+          console.log('Auth: Sessão encontrada, carregando perfil...');
+          setSession(initialSession);
+          setUser(initialSession.user);
+          
+          // Buscar perfil de forma assíncrona
+          fetchProfile(initialSession.user.id).finally(() => {
+            if (mounted) {
+              setIsLoading(false);
+              console.log('Auth: Perfil carregado, loading = false');
+            }
+          });
+          
+          // Redirecionar se necessário
+          if (location.pathname === '/auth' || location.pathname.includes('access_token')) {
+            navigate('/', { replace: true });
+          }
+        } else {
+          console.log('Auth: Nenhuma sessão encontrada');
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setIsLoading(false);
+          
+          // Redirecionar para auth se não estiver lá
+          if (location.pathname !== '/auth') {
+            navigate('/auth', { replace: true });
+          }
         }
-      } else {
-        console.log('Auth: Initial session has no user. isLoading = false');
-        // If no user and not on auth page, redirect to auth
-        if (location.pathname !== '/auth') {
-          navigate('/auth', { replace: true });
+      } catch (error) {
+        console.error('Auth: Erro na inicialização:', error);
+        if (mounted) {
+          setIsLoading(false);
         }
       }
-      setIsLoading(false); // End loading after all checks
     };
 
-    handleInitialSession();
-
-    // Set up auth state listener
+    // Configurar listener de mudanças de auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log('Auth state change:', event, currentSession?.user?.id);
+      if (!mounted) return;
+
+      console.log('Auth: Mudança de estado:', event, currentSession?.user?.id);
       
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
@@ -69,52 +91,44 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (event === 'SIGNED_OUT') {
         setProfile(null);
         setIsLoading(false);
-        console.log('Auth: Signed out. isLoading = false');
         navigate('/auth', { replace: true });
       } else if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-        setIsLoading(true); // Start loading for profile fetch
-        console.log('Auth: Signed in/refreshed. Starting profile fetch. isLoading = true');
-        await fetchProfile(currentSession.user.id); // Wait for profile
-        console.log('Auth: Profile fetched after state change. isLoading = false');
-        setIsLoading(false); // End loading
+        // Buscar perfil de forma assíncrona
+        fetchProfile(currentSession.user.id).finally(() => {
+          if (mounted) {
+            setIsLoading(false);
+          }
+        });
         
         if (event === 'SIGNED_IN') {
-          const cleanPath = location.pathname === '/auth' ? '/' : location.pathname;
-          navigate(cleanPath, { replace: true });
+          const targetPath = location.pathname === '/auth' ? '/' : location.pathname;
+          navigate(targetPath, { replace: true });
         }
-      } else {
+      } else if (!currentSession) {
+        setProfile(null);
         setIsLoading(false);
-        console.log('Auth: No user after state change. isLoading = false');
       }
     });
 
+    // Inicializar
+    initializeAuth();
+
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname, fetchProfile]); // Add fetchProfile to dependencies
+  }, [navigate, location.pathname, fetchProfile, setSession, setUser, setProfile, setIsLoading]);
 
-  // Handle OAuth redirects and errors
+  // Limpar parâmetros OAuth da URL
   useEffect(() => {
-    const handleAuthRedirect = () => {
-      const url = new URL(window.location.href);
-      const error = url.searchParams.get('error');
-      const errorDescription = url.searchParams.get('error_description');
-      
-      if (error) {
-        console.error('Auth error:', error, errorDescription);
-        // Clean the URL and redirect to auth page
-        navigate('/auth', { replace: true });
-      }
-      
-      // Clean hash and search params from OAuth redirects
-      if (url.hash || url.searchParams.has('access_token') || url.searchParams.has('refresh_token')) {
-        const cleanUrl = `${window.location.origin}${window.location.pathname}`;
-        window.history.replaceState({}, document.title, cleanUrl);
-      }
-    };
-
-    handleAuthRedirect();
-  }, [navigate]);
+    const url = new URL(window.location.href);
+    const hasAuthParams = url.hash || url.searchParams.has('access_token') || url.searchParams.has('refresh_token');
+    
+    if (hasAuthParams) {
+      const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, []);
 
   const value = {
     session,

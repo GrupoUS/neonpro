@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { Client, Appointment } from "@/types/database";
+import { Client } from "@/types/database";
 import { supabase } from "../../lib/supabase";
 import {
   Dialog,
@@ -26,8 +26,19 @@ interface ClientDetailsProps {
   onEdit: () => void;
 }
 
+// Interface simplificada para agendamentos do cliente
+interface ClientAppointment {
+  id: string;
+  data_hora: string;
+  duracao: number;
+  status: string;
+  observacoes?: string;
+  servico_id?: string;
+  profissional_id?: string;
+}
+
 const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onClose, onEdit }) => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<ClientAppointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,17 +48,18 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onClose, onEdit }
   const fetchClientAppointments = async () => {
     try {
       setIsLoading(true);
+      // Buscar agendamentos usando a tabela 'agendamentos' que existe no schema
       const { data, error } = await supabase
-        .from("appointments")
-        .select(`
-          *,
-          service:services(*),
-          professional:professionals(*)
-        `)
-        .eq("client_id", client.id)
-        .order("start_time", { ascending: false });
+        .from("agendamentos")
+        .select("*")
+        .eq("paciente_id", client.id)
+        .order("data_hora", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao buscar agendamentos:", error);
+        return;
+      }
+      
       setAppointments(data || []);
     } catch (error) {
       console.error("Erro ao buscar agendamentos do cliente:", error);
@@ -74,11 +86,10 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onClose, onEdit }
 
   const getStatusLabel = (status: string) => {
     const statusLabels: Record<string, { label: string; className: string }> = {
-      scheduled: { label: "Agendado", className: "bg-blue-100 text-blue-800" },
-      confirmed: { label: "Confirmado", className: "bg-green-100 text-green-800" },
-      completed: { label: "Concluído", className: "bg-indigo-100 text-indigo-800" },
-      cancelled: { label: "Cancelado", className: "bg-red-100 text-red-800" },
-      no_show: { label: "Não Compareceu", className: "bg-orange-100 text-orange-800" },
+      agendado: { label: "Agendado", className: "bg-blue-100 text-blue-800" },
+      confirmado: { label: "Confirmado", className: "bg-green-100 text-green-800" },
+      concluido: { label: "Concluído", className: "bg-indigo-100 text-indigo-800" },
+      cancelado: { label: "Cancelado", className: "bg-red-100 text-red-800" },
     };
 
     return statusLabels[status] || { label: status, className: "bg-gray-100 text-gray-800" };
@@ -144,19 +155,11 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onClose, onEdit }
                       <div>
                         <div className="flex items-center mb-1">
                           <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                          <span className="font-medium">{formatDateTime(appointment.start_time)}</span>
+                          <span className="font-medium">{formatDateTime(appointment.data_hora)}</span>
                         </div>
                         <div className="flex items-center text-sm text-gray-600 mb-1">
                           <Clock className="h-4 w-4 mr-2 text-gray-500" />
-                          <span>Duração: {appointment.service?.duration_minutes} minutos</span>
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium">Serviço: </span>
-                          {appointment.service?.name}
-                        </div>
-                        <div className="text-sm">
-                          <span className="font-medium">Profissional: </span>
-                          {appointment.professional?.full_name}
+                          <span>Duração: {appointment.duracao || 60} minutos</span>
                         </div>
                       </div>
                       
@@ -166,17 +169,13 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onClose, onEdit }
                         >
                           {getStatusLabel(appointment.status).label}
                         </span>
-                        <div className="text-sm mt-1">
-                          <span className="font-medium">Valor: </span>
-                          R$ {appointment.price_at_booking.toFixed(2)}
-                        </div>
                       </div>
                     </div>
                     
-                    {appointment.notes && (
+                    {appointment.observacoes && (
                       <div className="mt-2 pt-2 border-t text-sm">
                         <p className="text-gray-500">Observações:</p>
-                        <p>{appointment.notes}</p>
+                        <p>{appointment.observacoes}</p>
                       </div>
                     )}
                   </div>

@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "../../lib/supabase";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ClientFormProps {
   client: Client | null;
@@ -43,6 +44,7 @@ const clientSchema = z.object({
 type ClientFormValues = z.infer<typeof clientSchema>;
 
 const ClientForm: React.FC<ClientFormProps> = ({ client, onSave, onCancel }) => {
+  const { user } = useAuth();
   const isNewClient = !client;
 
   const form = useForm<ClientFormValues>({
@@ -58,11 +60,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ client, onSave, onCancel }) => 
   });
 
   const handleSubmit = async (values: ClientFormValues) => {
+    if (!user) {
+      toast.error("Usuário não autenticado");
+      return;
+    }
+
     try {
       if (isNewClient) {
         const { data, error } = await supabase
           .from("clients")
-          .insert([values])
+          .insert({
+            ...values,
+            user_id: user.id,
+          })
           .select()
           .single();
 
