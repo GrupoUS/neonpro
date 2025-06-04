@@ -1,60 +1,60 @@
 
-/* Classes utilitárias "Universo da Sacha" - Identidade Visual Oficial */
+/* Classes utilitárias "NEON PRO" - Identidade Visual Oficial */
 
 @layer utilities {
-  /* Gradientes "Universo da Sacha" */
-  .gradient-sacha {
+  /* Gradientes "NEON PRO" */
+  .gradient-neon {
     background: linear-gradient(135deg, #112031 0%, #294359 50%, #AC9469 100%);
   }
   
-  .gradient-sacha-gold {
+  .gradient-neon-gold {
     background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
   }
   
-  .gradient-sacha-blue {
+  .gradient-neon-blue {
     background: linear-gradient(135deg, #112031 0%, #294359 100%);
   }
   
-  .gradient-sacha-vertical {
+  .gradient-neon-vertical {
     background: linear-gradient(180deg, #112031 0%, #AC9469 100%);
   }
   
-  .gradient-sacha-radial {
+  .gradient-neon-radial {
     background: radial-gradient(circle, #AC9469 0%, #112031 100%);
   }
   
-  /* Sombras personalizadas "Universo da Sacha" */
-  .shadow-sacha {
+  /* Sombras personalizadas "NEON PRO" */
+  .shadow-neon {
     box-shadow: 0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06);
   }
   
-  .shadow-sacha-lg {
+  .shadow-neon-lg {
     box-shadow: 0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05);
   }
   
-  .shadow-sacha-xl {
+  .shadow-neon-xl {
     box-shadow: 0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04);
   }
   
-  .shadow-sacha-gold {
+  .shadow-neon-gold {
     box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
   }
   
-  .shadow-sacha-gold-glow {
+  .shadow-neon-gold-glow {
     box-shadow: 0 0 20px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
   }
   
-  /* Brilho e efeitos especiais "Universo da Sacha" */
-  .glow-sacha {
+  /* Brilho e efeitos especiais "NEON PRO" */
+  .glow-neon {
     box-shadow: 0 0 10px rgba(172, 148, 105, 0.4), 0 0 20px rgba(172, 148, 105, 0.2);
   }
   
-  .glow-sacha-intense {
+  .glow-neon-intense {
     box-shadow: 0 0 20px rgba(172, 148, 105, 0.6), 0 0 30px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
   }
   
-  /* Estados de carregamento com a identidade visual "Universo da Sacha" */
-  .loading-sacha {
+  /* Estados de carregamento com a identidade visual "NEON PRO" */
+  .loading-neon {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -64,7 +64,7 @@
     animation: shimmer 2s infinite;
   }
   
-  .shimmer-sacha {
+  .shimmer-neon {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -74,15 +74,15 @@
     animation: shimmer 2s infinite;
   }
   
-  /* Texto com gradiente "Universo da Sacha" */
-  .text-gradient-sacha {
+  /* Texto com gradiente "NEON PRO" */
+  .text-gradient-neon {
     background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  /* Utilitários para acessibilidade "Universo da Sacha" */
+  /* Utilitários para acessibilidade "NEON PRO" */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -95,7 +95,7 @@
     border: 0;
   }
   
-  /* Estilização de scrollbar "Universo da Sacha" */
+  /* Estilização de scrollbar "NEON PRO" */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -115,7 +115,7 @@
     background: hsl(var(--accent));
   }
   
-  /* Seleção de texto "Universo da Sacha" */
+  /* Seleção de texto "NEON PRO" */
   ::selection {
     background: hsl(var(--accent) / 0.2);
     color: hsl(var(--foreground));

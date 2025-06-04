@@ -1,8 +1,8 @@
 
-/* Hierarquia tipográfica "Universo da Sacha" - Identidade Visual Oficial */
+/* Hierarquia tipográfica "NEON PRO" - Identidade Visual Oficial */
 
 @layer base {
-  /* Hierarquia tipográfica seguindo a identidade visual "Universo da Sacha" */
+  /* Hierarquia tipográfica seguindo a identidade visual "NEON PRO" */
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Segoe UI', sans-serif; /* Optima para títulos */
     font-weight: 700;
@@ -40,8 +40,8 @@
     font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
   }
   
-  /* Classes especiais para branding "Universo da Sacha" */
-  .text-sacha-brand {
+  /* Classes especiais para branding "NEON PRO" */
+  .text-neon-brand {
     font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
     font-weight: 700;
     background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
@@ -50,13 +50,13 @@
     background-clip: text;
   }
   
-  .text-sacha-subtitle {
+  .text-neon-subtitle {
     font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
   }
 
-  .text-sacha-heading {
+  .text-neon-heading {
     font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
     font-weight: 600;
     color: hsl(var(--primary));

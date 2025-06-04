@@ -17,11 +17,11 @@ const Layout: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-sacha-gold rounded-lg flex items-center justify-center shadow-sacha-gold">
-                    <span className="text-sacha-dark font-bold text-sm">U</span>
+                  <div className="w-8 h-8 bg-gradient-neon-gold rounded-lg flex items-center justify-center shadow-neon-gold">
+                    <span className="text-neon-dark font-bold text-sm">N</span>
                   </div>
-                  <span className="font-bold text-xl text-gradient-sacha text-sacha-brand">
-                    Universo da Sacha
+                  <span className="font-bold text-xl text-gradient-neon text-neon-brand">
+                    NEON PRO
                   </span>
                 </div>
               </div>

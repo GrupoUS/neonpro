@@ -1,14 +1,14 @@
 
-// Configuração de tipografia "Universo da Sacha" - Identidade Visual Oficial
+// Configuração de tipografia "NEON PRO" - Identidade Visual Oficial
 
 export const fontFamily = {
-  // Tipografias institucionais da identidade visual "Universo da Sacha"
+  // Tipografias institucionais da identidade visual "NEON PRO"
   'sans': ['Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'], // Para textos de corpo
   'display': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Para títulos e destaques
   'optima': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Explícita para títulos
   'inter': ['Inter', 'Segoe UI', 'Roboto', 'sans-serif'], // Explícita para textos
-  'sacha-heading': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Fonte principal para títulos "Universo da Sacha"
-  'sacha-body': ['Inter', 'Segoe UI', 'Roboto', 'system-ui', 'sans-serif'], // Fonte para corpo de texto "Universo da Sacha"
+  'neon-heading': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Fonte principal para títulos "NEON PRO"
+  'neon-body': ['Inter', 'Segoe UI', 'Roboto', 'system-ui', 'sans-serif'], // Fonte para corpo de texto "NEON PRO"
 };
 
 export const fontWeight = {

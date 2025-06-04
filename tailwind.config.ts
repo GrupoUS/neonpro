@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 // Importações dos módulos de tema
-import { sachaColors, primaryColors, secondaryColors, systemColors } from "./src/config/theme/colors";
+import { neonColors, primaryColors, secondaryColors, systemColors } from "./src/config/theme/colors";
 import { keyframes, animations } from "./src/config/theme/animations";
 import { fontFamily, fontWeight } from "./src/config/theme/typography";
 import { backgroundImage, boxShadow, transitionTimingFunction, spacing, zIndex } from "./src/config/theme/effects";
@@ -29,13 +29,13 @@ export default {
 			fontFamily,
 			fontWeight,
 			colors: {
-				// Paleta "Universo da Sacha" - Identidade Oficial
-				'sacha': sachaColors,
+				// Paleta "NEON PRO" - Identidade Oficial
+				'neon': neonColors,
 				
-				// Cores específicas do branding "Universo da Sacha"
-				'sacha-brand': '#AC9469', // Dourado principal
-				'sacha-subtitle': '#B4AC9C', // Cinza escuro para subtítulos  
-				'sacha-dark': '#112031', // Azul escuro principal
+				// Cores específicas do branding "NEON PRO"
+				'neon-brand': '#AC9469', // Dourado principal
+				'neon-subtitle': '#B4AC9C', // Cinza escuro para subtítulos  
+				'neon-dark': '#112031', // Azul escuro principal
 				
 				// Cores principais
 				'primary': primaryColors,

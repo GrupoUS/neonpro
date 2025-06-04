@@ -1,12 +1,12 @@
 
-// Configuração de cores "Universo da Sacha" - Identidade Visual Oficial
-export const sachaColors = {
-  // Cores principais da paleta "Universo da Sacha"
+// Configuração de cores "NEON PRO" - Identidade Visual Oficial
+export const neonColors = {
+  // Cores principais da paleta "NEON PRO"
   'dark-blue': '#112031', // Azul escuro principal
   'dark-blue-rgb': '17, 32, 49',
   'blue': '#294359', // Azul médio
   'blue-rgb': '41, 67, 89',
-  'gold': '#AC9469', // Dourado principal "Universo da Sacha"
+  'gold': '#AC9469', // Dourado principal "NEON PRO"
   'gold-rgb': '172, 148, 105',
   'gray-dark': '#B4AC9C', // Cinza escuro
   'gray-light': '#D2D0C8', // Cinza claro
@@ -26,7 +26,7 @@ export const sachaColors = {
 };
 
 export const primaryColors = {
-  DEFAULT: '#AC9469', // Dourado "Universo da Sacha" como cor principal
+  DEFAULT: '#AC9469', // Dourado "NEON PRO" como cor principal
   50: '#faf8f5',
   100: '#f5f1ea',
   200: '#ebe2d1',
@@ -95,4 +95,4 @@ export const systemColors = {
 };
 
 // Manter compatibilidade com possível código existente
-export const neonColors = sachaColors;
+export const sachaColors = neonColors;
