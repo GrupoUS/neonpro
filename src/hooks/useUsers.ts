@@ -1,18 +1,64 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { UserProfile, CreateUserProfileData, UpdateUserProfileData, UserRole } from '@/types/user';
+import { useAuth } from '@/contexts/auth';
+import { Database } from '../types/supabase';
+
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+
+// Interface baseada na estrutura real da tabela profiles
+export interface UserProfile {
+  id: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  role: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface CreateUserProfileData {
+  name: string;
+  email: string;
+  phone?: string;
+  role?: string;
+  senha: string; // Para criar novo usuário
+}
+
+export interface UpdateUserProfileData {
+  name?: string;
+  phone?: string;
+  role?: string;
+  avatar_url?: string;
+}
+
+// Função para converter da estrutura do banco para a interface do componente
+const convertToUserProfile = (profile: ProfileRow): UserProfile => ({
+  id: profile.id,
+  name: profile.name,
+  email: profile.email,
+  phone: profile.phone,
+  avatar_url: profile.avatar_url,
+  role: profile.role,
+  created_at: profile.created_at,
+  updated_at: profile.updated_at,
+});
 
 export const useUsers = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null);
+  const { user } = useAuth();
 
   // Carregar usuários
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -21,7 +67,8 @@ export const useUsers = () => {
         return;
       }
 
-      setUsers(data || []);
+      const convertedData = (data || []).map(convertToUserProfile);
+      setUsers(convertedData);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
     } finally {
@@ -32,13 +79,12 @@ export const useUsers = () => {
   // Carregar perfil do usuário atual
   const fetchCurrentUserProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('id', user.id)
         .single();
 
       if (error) {
@@ -46,7 +92,8 @@ export const useUsers = () => {
         return;
       }
 
-      setCurrentUserProfile(data);
+      const convertedData = convertToUserProfile(data);
+      setCurrentUserProfile(convertedData);
     } catch (error) {
       console.error('Erro ao carregar perfil do usuário:', error);
     }
@@ -61,8 +108,8 @@ export const useUsers = () => {
         password: userData.senha,
         options: {
           data: {
-            nome: userData.nome,
-            role: userData.role
+            name: userData.name,
+            role: userData.role || 'user'
           }
         }
       });
@@ -82,15 +129,16 @@ export const useUsers = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // 3. Atualizar dados adicionais se necessário
-      if (userData.telefone || userData.especialidade || userData.crm) {
+      if (userData.phone || userData.role) {
+        const updateData: ProfileUpdate = {
+          phone: userData.phone,
+          role: userData.role || 'user'
+        };
+
         const { error: updateError } = await supabase
-          .from('user_profiles')
-          .update({
-            telefone: userData.telefone,
-            especialidade: userData.especialidade,
-            crm: userData.crm
-          })
-          .eq('user_id', authData.user.id);
+          .from('profiles')
+          .update(updateData)
+          .eq('id', authData.user.id);
 
         if (updateError) {
           console.error('Erro ao atualizar perfil:', updateError);
@@ -109,9 +157,16 @@ export const useUsers = () => {
   // Atualizar usuário
   const updateUser = async (id: string, userData: UpdateUserProfileData): Promise<boolean> => {
     try {
+      const updateData: ProfileUpdate = {
+        name: userData.name,
+        phone: userData.phone,
+        role: userData.role,
+        avatar_url: userData.avatar_url,
+      };
+
       const { error } = await supabase
-        .from('user_profiles')
-        .update(userData)
+        .from('profiles')
+        .update(updateData)
         .eq('id', id);
 
       if (error) {
@@ -131,17 +186,13 @@ export const useUsers = () => {
     }
   };
 
-  // Deletar usuário
+  // Deletar usuário (soft delete através do role)
   const deleteUser = async (id: string): Promise<boolean> => {
     try {
-      // Primeiro obter o user_id para deletar do auth
-      const user = users.find(u => u.id === id);
-      if (!user) return false;
-
-      // Desativar usuário em vez de deletar (soft delete)
+      // Marcar como inativo alterando o role
       const { error } = await supabase
-        .from('user_profiles')
-        .update({ ativo: false })
+        .from('profiles')
+        .update({ role: 'inactive' })
         .eq('id', id);
 
       if (error) {
@@ -151,7 +202,7 @@ export const useUsers = () => {
 
       // Atualizar lista local
       setUsers(prev => prev.map(u => 
-        u.id === id ? { ...u, ativo: false } : u
+        u.id === id ? { ...u, role: 'inactive' } : u
       ));
 
       return true;
@@ -165,8 +216,8 @@ export const useUsers = () => {
   const reactivateUser = async (id: string): Promise<boolean> => {
     try {
       const { error } = await supabase
-        .from('user_profiles')
-        .update({ ativo: true })
+        .from('profiles')
+        .update({ role: 'user' })
         .eq('id', id);
 
       if (error) {
@@ -176,7 +227,7 @@ export const useUsers = () => {
 
       // Atualizar lista local
       setUsers(prev => prev.map(u => 
-        u.id === id ? { ...u, ativo: true } : u
+        u.id === id ? { ...u, role: 'user' } : u
       ));
 
       return true;
@@ -186,11 +237,11 @@ export const useUsers = () => {
     }
   };
 
-  // Alterar role do usuário (apenas admins)
-  const changeUserRole = async (id: string, newRole: UserRole): Promise<boolean> => {
+  // Alterar role do usuário
+  const changeUserRole = async (id: string, newRole: string): Promise<boolean> => {
     try {
       const { error } = await supabase
-        .from('user_profiles')
+        .from('profiles')
         .update({ role: newRole })
         .eq('id', id);
 
@@ -212,14 +263,14 @@ export const useUsers = () => {
   };
 
   // Filtros e estatísticas
-  const getActiveUsers = () => users.filter(user => user.ativo);
-  const getUsersByRole = (role: UserRole) => users.filter(user => user.role === role && user.ativo);
+  const getActiveUsers = () => users.filter(user => user.role !== 'inactive');
+  const getUsersByRole = (role: string) => users.filter(user => user.role === role);
   const getTotalUsersByRole = () => {
     const active = getActiveUsers();
     return {
       admin: active.filter(u => u.role === 'admin').length,
-      medico: active.filter(u => u.role === 'medico').length,
-      secretaria: active.filter(u => u.role === 'secretaria').length,
+      user: active.filter(u => u.role === 'user').length,
+      moderator: active.filter(u => u.role === 'moderator').length,
       total: active.length
     };
   };
@@ -233,7 +284,7 @@ export const useUsers = () => {
   useEffect(() => {
     fetchUsers();
     fetchCurrentUserProfile();
-  }, []);
+  }, [user]);
 
   return {
     users,
