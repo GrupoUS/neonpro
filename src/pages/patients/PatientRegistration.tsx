@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { PatientForm } from '@/components/patients/PatientForm';
+import PatientForm from '@/components/patients/PatientForm';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 

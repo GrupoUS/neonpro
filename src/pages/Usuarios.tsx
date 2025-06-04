@@ -7,7 +7,7 @@ import { UserForm } from '@/components/users/UserForm';
 import { UserList } from '@/components/users/UserList';
 import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/contexts/auth/useAuth';
-import { CreateUserProfileData, UpdateUserProfileData } from '@/types/profile';
+import { CreateUserProfileData, UpdateUserProfileData, UserProfile } from '@/types/profile';
 import { toast } from 'sonner';
 
 export const Usuarios = () => {
@@ -25,7 +25,7 @@ export const Usuarios = () => {
   } = useUsers();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<any | null>(null);
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   const isCurrentUserAdmin = currentUserProfile?.role === 'admin';
@@ -83,7 +83,7 @@ export const Usuarios = () => {
     }
   };
 
-  const handleEdit = (user: any) => {
+  const handleEdit = (user: UserProfile) => {
     setEditingUser(user);
     setIsFormOpen(true);
   };
