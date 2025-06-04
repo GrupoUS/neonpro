@@ -1,52 +1,60 @@
 
-/* Classes utilitárias NEON PRO */
+/* Classes utilitárias "Universo da Sacha" - Identidade Visual Oficial */
 
 @layer utilities {
-  /* Gradientes NEON PRO */
-  .gradient-neon {
-    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
+  /* Gradientes "Universo da Sacha" */
+  .gradient-sacha {
+    background: linear-gradient(135deg, #112031 0%, #294359 50%, #AC9469 100%);
   }
   
-  .gradient-neon-dark {
-    background: linear-gradient(135deg, #00D4DD 0%, #00D882 100%);
+  .gradient-sacha-gold {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
   }
   
-  .gradient-neon-vertical {
-    background: linear-gradient(180deg, #00F5FF 0%, #00FA9A 100%);
+  .gradient-sacha-blue {
+    background: linear-gradient(135deg, #112031 0%, #294359 100%);
   }
   
-  .gradient-neon-radial {
-    background: radial-gradient(circle, #00F5FF 0%, #00FA9A 100%);
+  .gradient-sacha-vertical {
+    background: linear-gradient(180deg, #112031 0%, #AC9469 100%);
   }
   
-  /* Sombras personalizadas NEON PRO */
-  .shadow-neon {
-    box-shadow: 0 4px 6px -1px rgba(0, 245, 255, 0.2), 0 2px 4px -1px rgba(0, 250, 154, 0.1);
+  .gradient-sacha-radial {
+    background: radial-gradient(circle, #AC9469 0%, #112031 100%);
   }
   
-  .shadow-neon-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 245, 255, 0.3), 0 4px 6px -2px rgba(0, 250, 154, 0.2);
+  /* Sombras personalizadas "Universo da Sacha" */
+  .shadow-sacha {
+    box-shadow: 0 4px 6px -1px rgba(17, 32, 49, 0.1), 0 2px 4px -1px rgba(17, 32, 49, 0.06);
   }
   
-  .shadow-neon-xl {
-    box-shadow: 0 20px 25px -5px rgba(0, 245, 255, 0.4), 0 10px 10px -5px rgba(0, 250, 154, 0.3);
+  .shadow-sacha-lg {
+    box-shadow: 0 10px 15px -3px rgba(17, 32, 49, 0.1), 0 4px 6px -2px rgba(17, 32, 49, 0.05);
   }
   
-  .shadow-neon-glow {
-    box-shadow: 0 0 20px rgba(0, 245, 255, 0.5), 0 0 40px rgba(0, 250, 154, 0.3);
+  .shadow-sacha-xl {
+    box-shadow: 0 20px 25px -5px rgba(17, 32, 49, 0.1), 0 10px 10px -5px rgba(17, 32, 49, 0.04);
   }
   
-  /* Brilho e efeitos especiais NEON PRO */
-  .glow-neon {
-    box-shadow: 0 0 10px rgba(0, 245, 255, 0.4), 0 0 20px rgba(0, 250, 154, 0.2);
+  .shadow-sacha-gold {
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
   }
   
-  .glow-neon-intense {
-    box-shadow: 0 0 20px rgba(0, 245, 255, 0.6), 0 0 30px rgba(0, 250, 154, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
+  .shadow-sacha-gold-glow {
+    box-shadow: 0 0 20px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
   }
   
-  /* Estados de carregamento com a identidade visual NEON PRO */
-  .loading-neon {
+  /* Brilho e efeitos especiais "Universo da Sacha" */
+  .glow-sacha {
+    box-shadow: 0 0 10px rgba(172, 148, 105, 0.4), 0 0 20px rgba(172, 148, 105, 0.2);
+  }
+  
+  .glow-sacha-intense {
+    box-shadow: 0 0 20px rgba(172, 148, 105, 0.6), 0 0 30px rgba(172, 148, 105, 0.4), 0 0 40px rgba(172, 148, 105, 0.2);
+  }
+  
+  /* Estados de carregamento com a identidade visual "Universo da Sacha" */
+  .loading-sacha {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -56,7 +64,7 @@
     animation: shimmer 2s infinite;
   }
   
-  .shimmer-neon {
+  .shimmer-sacha {
     background: linear-gradient(90deg, 
       hsl(var(--muted)) 25%, 
       hsl(var(--accent) / 0.1) 50%, 
@@ -66,15 +74,15 @@
     animation: shimmer 2s infinite;
   }
   
-  /* Texto com gradiente NEON */
-  .text-gradient-neon {
-    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
+  /* Texto com gradiente "Universo da Sacha" */
+  .text-gradient-sacha {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  /* Utilitários para acessibilidade NEON PRO */
+  /* Utilitários para acessibilidade "Universo da Sacha" */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -87,7 +95,7 @@
     border: 0;
   }
   
-  /* Estilização de scrollbar NEON PRO */
+  /* Estilização de scrollbar "Universo da Sacha" */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -107,7 +115,7 @@
     background: hsl(var(--accent));
   }
   
-  /* Seleção de texto NEON PRO */
+  /* Seleção de texto "Universo da Sacha" */
   ::selection {
     background: hsl(var(--accent) / 0.2);
     color: hsl(var(--foreground));

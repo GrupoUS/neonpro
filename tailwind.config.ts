@@ -3,7 +3,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 // Importações dos módulos de tema
-import { neonColors, sachaColors, primaryColors, secondaryColors, systemColors } from "./src/config/theme/colors";
+import { sachaColors, primaryColors, secondaryColors, systemColors } from "./src/config/theme/colors";
 import { keyframes, animations } from "./src/config/theme/animations";
 import { fontFamily, fontWeight } from "./src/config/theme/typography";
 import { backgroundImage, boxShadow, transitionTimingFunction, spacing, zIndex } from "./src/config/theme/effects";
@@ -29,23 +29,17 @@ export default {
 			fontFamily,
 			fontWeight,
 			colors: {
-				// Paleta NEON PRO
-				'neon': neonColors,
-				
-				// Cores específicas do branding NEON PRO
-				'neon-brand': '#00F5FF', // Cor principal da marca
-				'neon-subtitle': '#B0B0B8', // Cor para subtítulos  
-				'neon-dark': '#0A0A0F', // Azul muito escuro
-				
-				// Paleta Sacha (compatibilidade)
+				// Paleta "Universo da Sacha" - Identidade Oficial
 				'sacha': sachaColors,
 				
-				// Cores principais NEON PRO
+				// Cores específicas do branding "Universo da Sacha"
+				'sacha-brand': '#AC9469', // Dourado principal
+				'sacha-subtitle': '#B4AC9C', // Cinza escuro para subtítulos  
+				'sacha-dark': '#112031', // Azul escuro principal
+				
+				// Cores principais
 				'primary': primaryColors,
 				'secondary': secondaryColors,
-				
-				// Alias para compatibilidade
-				'gold': '#00F5FF', // Mapeado para o novo cyan
 				
 				// Cores do sistema
 				...systemColors

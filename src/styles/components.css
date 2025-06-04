@@ -1,5 +1,5 @@
 
-/* Estilos de componentes NEON PRO */
+/* Estilos de componentes "Universo da Sacha" - Identidade Visual Oficial */
 
 @layer components {
   /* Estados de foco melhorados para acessibilidade */
@@ -18,79 +18,79 @@
     @apply transition-all duration-300 ease-out;
   }
   
-  /* Estados de foco melhorados para formulários NEON PRO */
+  /* Estados de foco melhorados para formulários "Universo da Sacha" */
   input:focus, 
   textarea:focus, 
   select:focus {
     @apply outline-none ring-2 ring-accent border-accent;
-    box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(172, 148, 105, 0.1);
   }
   
-  /* Estilos de botão NEON PRO */
-  .btn-neon-primary {
-    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon;
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  /* Estilos de botão "Universo da Sacha" */
+  .btn-sacha-primary {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
   }
   
-  .btn-neon-primary:hover {
+  .btn-sacha-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(0, 245, 255, 0.3), 0 4px 6px -2px rgba(0, 250, 154, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.3), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
   }
   
-  .btn-neon-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon;
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  .btn-sacha-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
   }
   
-  .btn-neon-outline {
+  .btn-sacha-outline {
     @apply border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-6 py-3 rounded-xl transition-all duration-300;
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
   }
   
-  .btn-neon-gradient {
-    background: linear-gradient(135deg, #00F5FF 0%, #00FA9A 100%);
-    @apply text-neon-dark hover:opacity-90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-neon-lg;
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  .btn-sacha-gradient {
+    background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
+    @apply text-sacha-dark hover:opacity-90 font-semibold px-6 py-3 rounded-xl transition-all duration-300 shadow-sacha-lg;
+    font-family: 'Optima', 'Space Grotesk', 'Inter', sans-serif;
   }
   
-  /* Estilos de card NEON PRO */
-  .card-neon {
-    @apply bg-card border border-border rounded-2xl p-6 shadow-neon;
+  /* Estilos de card "Universo da Sacha" */
+  .card-sacha {
+    @apply bg-card border border-border rounded-2xl p-6 shadow-sacha;
   }
   
-  .card-neon-interactive {
-    @apply card-neon card-hover;
+  .card-sacha-interactive {
+    @apply card-sacha card-hover;
   }
   
-  .card-neon-gradient {
-    @apply bg-gradient-to-br from-accent/5 to-secondary/10 border border-accent/20 rounded-2xl p-6 shadow-neon-lg;
+  .card-sacha-gradient {
+    @apply bg-gradient-to-br from-accent/5 to-secondary/10 border border-accent/20 rounded-2xl p-6 shadow-sacha-lg;
   }
   
-  /* Efeitos hover melhorados NEON PRO */
+  /* Efeitos hover melhorados "Universo da Sacha" */
   .card-hover {
     @apply transition-all duration-300 ease-out cursor-pointer;
   }
   
   .card-hover:hover {
     transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgba(0, 245, 255, 0.25), 0 10px 10px -5px rgba(0, 250, 154, 0.15);
+    box-shadow: 0 20px 25px -5px rgba(172, 148, 105, 0.25), 0 10px 10px -5px rgba(172, 148, 105, 0.15);
   }
   
-  /* Layout components NEON PRO */
-  .sidebar-neon {
+  /* Layout components "Universo da Sacha" */
+  .sidebar-sacha {
     @apply bg-sidebar border-r border-sidebar-border h-full;
   }
   
-  .header-neon {
+  .header-sacha {
     @apply bg-card border-b border-border shadow-sm;
   }
   
-  /* Input styles NEON PRO */
-  .input-neon {
+  /* Input styles "Universo da Sacha" */
+  .input-sacha {
     @apply bg-input border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground;
   }
   
-  .input-neon:focus {
+  .input-sacha:focus {
     @apply border-accent ring-2 ring-accent/20;
   }
 }

@@ -1,7 +1,8 @@
 
-/* Importação das fontes institucionais da identidade "NEON PRO" */
+/* Importação das fontes institucionais "Universo da Sacha" */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+/* Optima será carregada como fallback do sistema ou fonte local */
 
 @tailwind base;
 @tailwind components;
@@ -9,105 +10,106 @@
 
 @layer base {
   :root {
-    /* Nova Paleta NEON PRO - Modo Claro */
-    --background: 0 0% 100%; /* Branco puro para fundo claro */
-    --foreground: 240 10% 3%; /* Azul escuro quase preto para texto principal */
+    /* Paleta "Universo da Sacha" - Modo Claro */
+    --background: 253 252 250; /* Branco quente #FDFCFA */
+    --foreground: 210 40% 12%; /* Azul escuro #112031 */
 
-    /* Cores principais NEON PRO */
-    --neon-cyan: 187 100% 50%; /* #00F5FF - Cyan brilhante */
-    --neon-green: 157 100% 49%; /* #00FA9A - Verde brilhante */
-    --neon-dark: 240 25% 6%; /* #0A0A0F - Azul muito escuro */
-    --neon-gray: 240 7% 21%; /* #2D2D3A - Cinza azulado */
+    /* Cores principais "Universo da Sacha" */
+    --sacha-dark-blue: 210 40% 12%; /* #112031 */
+    --sacha-blue: 210 25% 31%; /* #294359 */
+    --sacha-gold: 38 25% 55%; /* #AC9469 */
+    --sacha-gray-dark: 30 10% 65%; /* #B4AC9C */
+    --sacha-gray-light: 40 15% 82%; /* #D2D0C8 */
 
-    /* Sistema de cores principais - NEON PRO */
-    --primary: 187 100% 50%; /* Cyan brilhante #00F5FF */
-    --primary-foreground: 240 25% 6%; /* #0A0A0F */
+    /* Sistema de cores principais "Universo da Sacha" */
+    --primary: 38 25% 55%; /* Dourado "Universo da Sacha" #AC9469 */
+    --primary-foreground: 210 40% 12%; /* Azul escuro */
     
-    --secondary: 157 100% 49%; /* Verde brilhante #00FA9A */
-    --secondary-foreground: 240 25% 6%; /* #0A0A0F */
+    --secondary: 210 40% 12%; /* Azul escuro #112031 */
+    --secondary-foreground: 253 252 250; /* Branco quente */
 
-    /* Cores de componentes - Modo Claro NEON PRO */
-    --card: 0 0% 100%; /* Branco */
-    --card-foreground: 240 10% 3%; /* Azul escuro quase preto */
+    /* Cores de componentes - Modo Claro */
+    --card: 253 252 250; /* Branco quente */
+    --card-foreground: 210 40% 12%; /* Azul escuro */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3%;
+    --popover: 253 252 250;
+    --popover-foreground: 210 40% 12%;
 
-    --muted: 240 5% 96%; /* Cinza muito claro com toque azulado */
-    --muted-foreground: 240 7% 35%; /* Cinza médio azulado */
+    --muted: 245 243 240; /* Creme suave #F5F3F0 */
+    --muted-foreground: 30 10% 65%; /* Cinza escuro */
 
-    --accent: 187 100% 50%; /* Cyan para destaques */
-    --accent-foreground: 240 25% 6%;
+    --accent: 38 25% 55%; /* Dourado "Universo da Sacha" para destaques */
+    --accent-foreground: 210 40% 12%;
 
     --destructive: 0 84% 60%; /* Vermelho para ações destrutivas */
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 253 252 250;
 
-    --success: 157 100% 49%; /* Verde NEON para sucesso */
+    --success: 120 60% 50%; /* Verde para sucesso */
     --warning: 38 92% 50%; /* Laranja para avisos */
-    --info: 187 100% 50%; /* Cyan NEON para informações */
+    --info: 210 25% 31%; /* Azul para informações */
 
-    --border: 240 5% 90%; /* Cinza claro azulado para bordas */
-    --input: 240 5% 95%; /* Fundo de inputs */
-    --ring: 187 100% 50%; /* Cyan para focus rings */
+    --border: 40 15% 82%; /* Cinza claro para bordas */
+    --input: 245 243 240; /* Creme suave para inputs */
+    --ring: 38 25% 55%; /* Dourado "Universo da Sacha" para focus rings */
 
     --radius: 0.75rem; /* Raio padrão para bordas arredondadas */
 
-    /* Sidebar - Modo Claro NEON PRO */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 10% 3%;
-    --sidebar-primary: 187 100% 50%;
-    --sidebar-primary-foreground: 240 25% 6%;
-    --sidebar-accent: 157 100% 49%;
-    --sidebar-accent-foreground: 240 25% 6%;
-    --sidebar-border: 240 5% 90%;
-    --sidebar-ring: 187 100% 50%;
+    /* Sidebar - Modo Claro */
+    --sidebar-background: 253 252 250;
+    --sidebar-foreground: 210 40% 12%;
+    --sidebar-primary: 38 25% 55%;
+    --sidebar-primary-foreground: 210 40% 12%;
+    --sidebar-accent: 210 25% 31%;
+    --sidebar-accent-foreground: 253 252 250;
+    --sidebar-border: 40 15% 82%;
+    --sidebar-ring: 38 25% 55%;
   }
 
   .dark {
-    /* Nova Paleta NEON PRO - Modo Escuro */
-    --background: 240 25% 6%; /* #0A0A0F - Azul muito escuro */
-    --foreground: 240 5% 90%; /* Cinza claro azulado para texto */
+    /* Paleta "Universo da Sacha" - Modo Escuro */
+    --background: 210 40% 12%; /* Azul escuro #112031 */
+    --foreground: 245 243 240; /* Creme suave para texto */
 
-    /* Cores principais adaptadas para modo escuro NEON PRO */
-    --primary: 187 100% 55%; /* Cyan um pouco mais claro para contraste */
-    --primary-foreground: 240 25% 6%;
+    /* Cores principais adaptadas para modo escuro */
+    --primary: 38 35% 65%; /* Dourado "Universo da Sacha" mais claro para contraste */
+    --primary-foreground: 210 40% 12%;
     
-    --secondary: 157 100% 54%; /* Verde um pouco mais claro para contraste */
-    --secondary-foreground: 240 25% 6%;
+    --secondary: 210 25% 31%; /* Azul médio */
+    --secondary-foreground: 253 252 250;
 
-    /* Componentes - Modo Escuro NEON PRO */
-    --card: 240 12% 12%; /* Azul escuro */
-    --card-foreground: 240 5% 90%; /* Cinza claro azulado */
+    /* Componentes - Modo Escuro */
+    --card: 210 35% 15%; /* Azul escuro mais claro */
+    --card-foreground: 245 243 240;
 
-    --popover: 240 12% 12%;
-    --popover-foreground: 240 5% 90%;
+    --popover: 210 35% 15%;
+    --popover-foreground: 245 243 240;
 
-    --muted: 240 7% 18%; /* Cinza escuro azulado */
-    --muted-foreground: 240 5% 65%; /* Cinza médio azulado */
+    --muted: 210 30% 18%; /* Azul escuro intermediário */
+    --muted-foreground: 30 10% 65%; /* Cinza escuro */
 
-    --accent: 187 100% 55%; /* Cyan mais claro para melhor contraste */
-    --accent-foreground: 240 25% 6%;
+    --accent: 38 35% 65%; /* Dourado "Universo da Sacha" mais claro para melhor contraste */
+    --accent-foreground: 210 40% 12%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 240 5% 90%;
+    --destructive-foreground: 245 243 240;
 
-    --success: 157 100% 54%; /* Verde NEON mais claro */
+    --success: 120 60% 60%; /* Verde mais claro */
     --warning: 38 92% 60%; /* Laranja mais claro */
-    --info: 187 100% 55%; /* Cyan NEON mais claro */
+    --info: 210 25% 41%; /* Azul mais claro */
 
-    --border: 240 7% 21%; /* Cinza azulado para bordas */
-    --input: 240 7% 18%; /* Fundo escuro azulado para inputs */
-    --ring: 187 100% 55%; /* Cyan claro para focus */
+    --border: 210 25% 31%; /* Azul médio para bordas */
+    --input: 210 30% 18%; /* Azul escuro para inputs */
+    --ring: 38 35% 65%; /* Dourado "Universo da Sacha" claro para focus */
 
-    /* Sidebar - Modo Escuro NEON PRO */
-    --sidebar-background: 240 25% 4%; /* Ainda mais escuro que o fundo */
-    --sidebar-foreground: 240 5% 90%;
-    --sidebar-primary: 187 100% 55%;
-    --sidebar-primary-foreground: 240 25% 6%;
-    --sidebar-accent: 157 100% 54%;
-    --sidebar-accent-foreground: 240 25% 6%;
-    --sidebar-border: 240 7% 18%;
-    --sidebar-ring: 187 100% 55%;
+    /* Sidebar - Modo Escuro */
+    --sidebar-background: 210 45% 8%; /* Ainda mais escuro */
+    --sidebar-foreground: 245 243 240;
+    --sidebar-primary: 38 35% 65%;
+    --sidebar-primary-foreground: 210 40% 12%;
+    --sidebar-accent: 210 25% 31%;
+    --sidebar-accent-foreground: 245 243 240;
+    --sidebar-border: 210 30% 18%;
+    --sidebar-ring: 38 35% 65%;
   }
 }
 
@@ -123,7 +125,7 @@
 
   body {
     @apply bg-background text-foreground;
-    /* Fontes institucionais da identidade "NEON PRO" */
+    /* Fontes institucionais "Universo da Sacha" */
     font-family: 'Inter', sans-serif; /* Fonte principal para textos */
     font-weight: 400;
     line-height: 1.6;
