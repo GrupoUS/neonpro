@@ -39,6 +39,11 @@ const PatientRegistration = () => {
     }
   };
 
+  const handleCancel = () => {
+    // Implementar lógica de cancelamento se necessário
+    console.log('Cancelando cadastro de paciente');
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-6">
@@ -48,7 +53,11 @@ const PatientRegistration = () => {
         </p>
       </div>
 
-      <PatientForm onSubmit={handleSubmit} loading={loading} />
+      <PatientForm 
+        onSubmit={handleSubmit} 
+        onCancel={handleCancel}
+        isSubmitting={loading} 
+      />
     </div>
   );
 };

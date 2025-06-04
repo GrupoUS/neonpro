@@ -197,12 +197,49 @@ export const Usuarios = () => {
         )}
       </div>
 
-      {/* Lista de Usuários */}
+      {/* Lista de Usuários - Convertendo tipos */}
       <UserList
-        users={users}
+        users={users.map(user => ({
+          id: user.id,
+          user_id: user.id, // Mapeando id para user_id
+          nome: user.name || '', // Mapeando name para nome
+          email: user.email || '',
+          telefone: user.phone || undefined,
+          role: (user.role as any) || 'secretaria',
+          especialidade: undefined,
+          crm: undefined,
+          ativo: user.role !== 'inactive', // Determinando ativo baseado no role
+          created_at: user.created_at || '',
+          updated_at: user.updated_at || ''
+        }))}
         loading={loading}
-        currentUserProfile={currentUserProfile}
-        onEdit={handleEdit}
+        currentUserProfile={currentUserProfile ? {
+          id: currentUserProfile.id,
+          user_id: currentUserProfile.id,
+          nome: currentUserProfile.name || '',
+          email: currentUserProfile.email || '',
+          telefone: currentUserProfile.phone || undefined,
+          role: (currentUserProfile.role as any) || 'secretaria',
+          especialidade: undefined,
+          crm: undefined,
+          ativo: currentUserProfile.role !== 'inactive',
+          created_at: currentUserProfile.created_at || '',
+          updated_at: currentUserProfile.updated_at || ''
+        } : null}
+        onEdit={(user) => {
+          // Convertendo de volta para o tipo UserProfile do profile.ts
+          const profileUser: UserProfile = {
+            id: user.id,
+            name: user.nome,
+            email: user.email,
+            phone: user.telefone || null,
+            avatar_url: null,
+            role: user.role,
+            created_at: user.created_at,
+            updated_at: user.updated_at
+          };
+          handleEdit(profileUser);
+        }}
         onDelete={handleDelete}
         onReactivate={handleReactivate}
         onChangeRole={handleChangeRole}
