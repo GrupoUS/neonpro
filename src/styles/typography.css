@@ -1,10 +1,10 @@
 
-/* Hierarquia tipográfica "Universo da Sacha" */
+/* Hierarquia tipográfica "Universo da Sacha" - Identidade Visual Oficial */
 
 @layer base {
-  /* Hierarquia tipográfica seguindo a identidade visual */
+  /* Hierarquia tipográfica seguindo a identidade visual "Universo da Sacha" */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif; /* Optima para títulos */
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'Segoe UI', sans-serif; /* Optima para títulos */
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.025em;
@@ -37,12 +37,12 @@
 
   /* Textos de corpo usando Inter */
   p, span, div, li {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
   }
   
   /* Classes especiais para branding "Universo da Sacha" */
   .text-sacha-brand {
-    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif;
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
     font-weight: 700;
     background: linear-gradient(135deg, #AC9469 0%, #c4aa7d 100%);
     -webkit-background-clip: text;
@@ -51,13 +51,13 @@
   }
   
   .text-sacha-subtitle {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
   }
 
   .text-sacha-heading {
-    font-family: 'Optima', 'Avenir', 'Helvetica Neue', sans-serif;
+    font-family: 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif;
     font-weight: 600;
     color: hsl(var(--primary));
   }

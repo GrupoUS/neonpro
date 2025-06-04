@@ -51,18 +51,18 @@ const AppSidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 sidebar-neon">
+    <aside className="w-64 sidebar-sacha">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
-          {/* Ícone hexagonal NEON PRO com nova identidade visual */}
+          {/* Ícone hexagonal com identidade visual "Universo da Sacha" */}
           <div className="relative">
             <svg 
               viewBox="0 0 32 32" 
-              className="w-10 h-10 glow-neon transition-all duration-300 hover:glow-neon-intense"
+              className="w-10 h-10 glow-sacha transition-all duration-300 hover:glow-sacha-intense"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                <linearGradient id="neon-gradient-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="sacha-gradient-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#AC9469"/>
                   <stop offset="100%" stopColor="#c4aa7d"/>
                 </linearGradient>
@@ -70,7 +70,7 @@ const AppSidebar: React.FC = () => {
               <polygon 
                 points="16,4 28,12 28,20 16,28 4,20 4,12" 
                 fill="none" 
-                stroke="url(#neon-gradient-sidebar)" 
+                stroke="url(#sacha-gradient-sidebar)" 
                 strokeWidth="2"
                 className="drop-shadow-lg"
               />
@@ -78,21 +78,19 @@ const AppSidebar: React.FC = () => {
                 cx="16" 
                 cy="16" 
                 r="6" 
-                fill="url(#neon-gradient-sidebar)"
-                className="animate-pulse-neon"
+                fill="url(#sacha-gradient-sidebar)"
+                className="animate-pulse"
               />
             </svg>
           </div>
           <div className="flex flex-col">
             <span 
-              className="text-xl font-bold text-gradient-neon transition-all duration-300 hover:animate-gradient-shift"
-              style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              className="text-xl font-bold text-gradient-sacha transition-all duration-300 hover:animate-gradient-shift text-sacha-brand"
             >
-              NEON PRO
+              Universo da Sacha
             </span>
             <span 
-              className="text-xs text-muted-foreground"
-              style={{ fontFamily: 'Inter, sans-serif' }}
+              className="text-xs text-sacha-subtitle"
             >
               Gestão Premium
             </span>
@@ -109,8 +107,8 @@ const AppSidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 group ${
                     isActive
-                      ? 'bg-gradient-neon-gold text-accent-foreground shadow-neon-gold border border-primary/20'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md hover:shadow-neon/20'
+                      ? 'bg-gradient-sacha-gold text-accent-foreground shadow-sacha-gold border border-primary/20'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:shadow-md hover:shadow-sacha/20'
                   }`
                 }
                 style={{ fontFamily: 'Inter, sans-serif' }}

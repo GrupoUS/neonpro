@@ -1,14 +1,14 @@
 
-// Configuração de tipografia "Universo da Sacha"
+// Configuração de tipografia "Universo da Sacha" - Identidade Visual Oficial
 
 export const fontFamily = {
   // Tipografias institucionais da identidade visual "Universo da Sacha"
-  'sans': ['Inter', 'sans-serif'], // Para textos de corpo
-  'display': ['Optima', 'Inter', 'sans-serif'], // Para títulos e destaques
-  'optima': ['Optima', 'Inter', 'sans-serif'], // Explícita para títulos
-  'inter': ['Inter', 'sans-serif'], // Explícita para textos
-  'sacha-heading': ['Optima', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Fonte principal para títulos
-  'sacha-body': ['Inter', 'system-ui', 'sans-serif'], // Fonte para corpo de texto
+  'sans': ['Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'], // Para textos de corpo
+  'display': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Para títulos e destaques
+  'optima': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Explícita para títulos
+  'inter': ['Inter', 'Segoe UI', 'Roboto', 'sans-serif'], // Explícita para textos
+  'sacha-heading': ['Optima Fallback', 'Crimson Text', 'Optima', 'Avenir Next', 'Avenir', 'Helvetica Neue', 'sans-serif'], // Fonte principal para títulos "Universo da Sacha"
+  'sacha-body': ['Inter', 'Segoe UI', 'Roboto', 'system-ui', 'sans-serif'], // Fonte para corpo de texto "Universo da Sacha"
 };
 
 export const fontWeight = {
