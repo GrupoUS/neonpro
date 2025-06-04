@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/auth';
 import { ChatbotConfig } from '@/types/chatbot';
 import { toast } from 'sonner';

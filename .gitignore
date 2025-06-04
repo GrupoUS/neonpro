@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Supabase
+supabase/.temp/
+supabase/db/
+supabase/functions/*/node_modules/
+supabase/functions/*/dist/
+supabase/functions/*/deno.lock
+
+# Local Environment and Temporary Files
+.env.local
+.env.example
+fix-supabase-types.cjs

@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChatSession, ChatMessage } from '@/types/chatbot';
 import { useChatSessions } from '@/hooks/useChatSessions';
 import { useChatbotConfig } from '@/hooks/useChatbotConfig';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/auth';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
