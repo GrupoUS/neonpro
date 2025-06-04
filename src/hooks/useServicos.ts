@@ -3,18 +3,15 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '@/contexts/auth';
 import { toast } from 'sonner';
+import { Database } from '../types/supabase';
 
-interface Servico {
-  id: string;
-  user_id: string;
-  nome_servico: string;
-  preco: number;
-  created_at: string;
-}
+type ServiceRow = Database['public']['Tables']['services']['Row'];
+type ServiceInsert = Database['public']['Tables']['services']['Insert'];
+type ServiceUpdate = Database['public']['Tables']['services']['Update'];
 
 export const useServicos = () => {
   const { user } = useAuth();
-  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [servicos, setServicos] = useState<ServiceRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchServicos = async () => {
@@ -22,7 +19,7 @@ export const useServicos = () => {
     
     try {
       const { data, error } = await supabase
-        .from('servicos')
+        .from('services')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -41,16 +38,24 @@ export const useServicos = () => {
     }
   };
 
-  const createServico = async (servicoData: { nome_servico: string; preco: number }) => {
+  const createServico = async (servicoData: { name: string; price: number; duration_minutes?: number; description?: string }) => {
     if (!user) {
       toast.error('Usuário não autenticado');
       return false;
     }
     
     try {
+      const insertData: ServiceInsert = {
+        name: servicoData.name,
+        price: servicoData.price,
+        duration_minutes: servicoData.duration_minutes || 60,
+        description: servicoData.description,
+        user_id: user.id
+      };
+
       const { error } = await supabase
-        .from('servicos')
-        .insert([{ ...servicoData, user_id: user.id }]);
+        .from('services')
+        .insert([insertData]);
 
       if (error) {
         console.error('Erro ao criar serviço:', error);
@@ -68,11 +73,18 @@ export const useServicos = () => {
     }
   };
 
-  const updateServico = async (id: string, servicoData: { nome_servico: string; preco: number }) => {
+  const updateServico = async (id: string, servicoData: { name: string; price: number; duration_minutes?: number; description?: string }) => {
     try {
+      const updateData: ServiceUpdate = {
+        name: servicoData.name,
+        price: servicoData.price,
+        duration_minutes: servicoData.duration_minutes,
+        description: servicoData.description
+      };
+
       const { error } = await supabase
-        .from('servicos')
-        .update(servicoData)
+        .from('services')
+        .update(updateData)
         .eq('id', id);
 
       if (error) {
@@ -94,7 +106,7 @@ export const useServicos = () => {
   const deleteServico = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('servicos')
+        .from('services')
         .delete()
         .eq('id', id);
 
