@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Bot, User, Loader2, ArrowLeft, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useClinicAI, type ChatMessage } from "@/hooks/useClinicAI"; // Alterado de useFinancialAI
-import SuggestedQuestions from "@/components/chatbot/SuggestedQuestions"; // Ajustado o caminho
-import AudioRecorder from "@/components/chatbot/AudioRecorder"; // Ajustado o caminho
+import { useClinicAI, type ChatMessage } from "@/hooks/useClinicAI";
+import SuggestedQuestions from "@/components/chatbot/SuggestedQuestions";
+import AudioRecorder from "@/components/chatbot/AudioRecorder";
 
-const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
+const ChatbotPage = () => {
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
     getLastSuggestions,
     isReady,
     user
-  } = useClinicAI(); // Alterado de useFinancialAI
+  } = useClinicAI();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -100,13 +100,13 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
               <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-semibold mb-2">Faça login para continuar</h3>
               <p className="text-muted-foreground">
-                Você precisa estar logado para usar o assistente clínico. {/* Alterado o texto */}
+                Você precisa estar logado para usar o assistente clínico.
               </p>
               <Button 
-                onClick={() => navigate("/")} 
+                onClick={() => navigate("/login")} 
                 className="mt-4"
               >
-                Ir para o Login {/* Alterado o texto */}
+                Ir para Login
               </Button>
             </div>
           </CardContent>
@@ -124,13 +124,13 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/dashboard")}
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <CardTitle className="flex items-center gap-2">
                 <Bot className="h-6 w-6 text-primary" />
-                Assistente Clínico IA {/* Alterado o texto */}
+                Assistente Clínico IA
               </CardTitle>
             </div>
             <Button
@@ -144,7 +144,7 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
             </Button>
           </div>
           <div className="text-sm text-muted-foreground mt-2">
-            🏥 Seu assistente pessoal para análise de dados de pacientes, agendamentos, histórico médico e gestão da clínica {/* Alterado o texto */}
+            🏥 Seu assistente pessoal para gestão clínica e agendamentos
           </div>
         </CardHeader>
 
@@ -155,13 +155,13 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
               <div className="text-center py-4">
                 <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-2">Olá! Sou seu assistente clínico pessoal.</h3> {/* Alterado o texto */}
+                  <h3 className="text-lg font-semibold mb-2">Olá! Sou seu assistente clínico pessoal.</h3>
                   <p className="text-muted-foreground mb-4">
-                    Posso te ajudar a analisar dados de pacientes, agendamentos, histórico médico e dar insights sobre a gestão da clínica. {/* Alterado o texto */}
+                    Posso te ajudar a gerenciar consultas, pacientes, criar lembretes e dar insights sobre sua prática clínica.
                   </p>
                   <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      ✨ <strong>Recursos Disponíveis:</strong> Gerenciar pacientes, agendamentos, histórico médico, financeiro e muito mais! {/* Alterado o texto */}
+                      ✨ <strong>Recursos Disponíveis:</strong> Agendar consultas, gerenciar pacientes, criar lembretes, análise de atendimentos e muito mais!
                     </p>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
                   <div className="rounded-lg p-3 bg-background border">
                     <div className="flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Analisando dados da clínica...</span> {/* Alterado o texto */}
+                      <span>Analisando seus dados clínicos...</span>
                     </div>
                   </div>
                 </div>
@@ -272,7 +272,7 @@ const ChatbotPage = () => { // Renomeado de ChatPage para ChatbotPage
 
           {!isReady && user && (
             <div className="text-center text-sm text-muted-foreground">
-              Inicializando assistente clínico... {/* Alterado o texto */}
+              Inicializando assistente clínico...
             </div>
           )}
         </CardContent>

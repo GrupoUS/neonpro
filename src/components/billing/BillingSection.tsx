@@ -134,7 +134,7 @@ export const BillingSection: React.FC = () => {
       case 'paid':
         return <Badge className="bg-green-100 text-green-800">Pago</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
+        return <Badge className="bg-neon-brand/10 text-neon-brand">Pendente</Badge>;
       case 'failed':
         return <Badge className="bg-red-100 text-red-800">Falhou</Badge>;
       case 'canceled':

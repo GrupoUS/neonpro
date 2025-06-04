@@ -9,7 +9,7 @@ import { useUsers } from '@/hooks/useUsers';
 import { useAuth } from '@/contexts/auth/useAuth';
 import { CreateUserProfileData, UpdateUserProfileData } from '@/types/profile';
 import { UserProfile as ProfileUserProfile } from '@/types/profile';
-import { UserProfile as UserUserProfile } from '@/types/user';
+import { UserProfile as UserUserProfile, UserRole } from '@/types/user';
 import { toast } from 'sonner';
 
 export const Usuarios = () => {
@@ -154,7 +154,7 @@ export const Usuarios = () => {
       nome: profileUser.name || '',
       email: profileUser.email || '',
       telefone: profileUser.phone || undefined,
-      role: (profileUser.role as any) || 'secretaria',
+      role: (profileUser.role as UserRole) || 'secretaria',
       especialidade: undefined,
       crm: undefined,
       ativo: profileUser.role !== 'inactive',
@@ -248,15 +248,15 @@ export const Usuarios = () => {
 
       {/* Informações adicionais para usuários não-admin */}
       {!isCurrentUserAdmin && (
-        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="bg-neutral-light/20 dark:bg-primary-dark/40 border border-neutral-dark/30 dark:border-accent/20 rounded-lg p-4">
           <div className="flex items-start">
-            <UserCog className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-3" />
+            <UserCog className="h-5 w-5 text-accent dark:text-accent mt-0.5 mr-3" />
             <div>
-              <h3 className="font-medium text-blue-900 dark:text-blue-100">
+              <h3 className="font-medium text-primary-dark dark:text-neutral-light">
                 Acesso Limitado
               </h3>
-              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                Você pode visualizar usuários e editar seu próprio perfil. 
+              <p className="text-sm text-primary-medium dark:text-neutral-dark mt-1">
+                Você pode visualizar usuários e editar seu próprio perfil.
                 Para gerenciar outros usuários, entre em contato com um administrador.
               </p>
             </div>

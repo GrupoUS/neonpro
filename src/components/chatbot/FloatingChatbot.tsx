@@ -85,7 +85,7 @@ export const FloatingChatbot: React.FC = () => {
       onClick={handleOpenChatbot} // Chamar a função de navegação
     >
       <div className="relative">
-        <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
+        <div className="w-14 h-14 bg-gradient-to-br from-neon-brand to-neon-subtitle rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <MessageCircle className="w-6 h-6 text-white" />
         </div>
         {sessions.length > 0 && ( // Manter a badge de contagem de sessões

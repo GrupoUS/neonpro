@@ -35,9 +35,22 @@ export const transitionTimingFunction = {
 };
 
 export const spacing = {
-  '18': '4.5rem',
-  '88': '22rem',
-  '128': '32rem',
+  // Grid base de 8px - Padrão GRUPOUS
+  '1': '0.125rem', // 2px
+  '2': '0.25rem',  // 4px
+  '4': '0.5rem',   // 8px
+  '6': '0.75rem',  // 12px
+  '8': '1rem',     // 16px
+  '10': '1.25rem', // 20px
+  '12': '1.5rem',  // 24px
+  '16': '2rem',    // 32px
+  '20': '2.5rem',  // 40px
+  '24': '3rem',    // 48px
+  '32': '4rem',    // 64px
+  '40': '5rem',    // 80px
+  '48': '6rem',    // 96px
+  '56': '7rem',    // 112px
+  '64': '8rem',    // 128px
 };
 
 export const zIndex = {

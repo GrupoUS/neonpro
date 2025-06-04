@@ -8,7 +8,8 @@ import {
   DollarSign, 
   BarChart3, 
   Settings,
-  Briefcase
+  Briefcase,
+  MessageCircle
 } from 'lucide-react';
 
 const AppSidebar: React.FC = () => {
@@ -42,6 +43,11 @@ const AppSidebar: React.FC = () => {
       icon: BarChart3,
       label: 'Relatórios',
       path: '/relatorios'
+    },
+    {
+      icon: MessageCircle,
+      label: 'Assistente IA',
+      path: '/chatbot'
     },
     {
       icon: Settings,

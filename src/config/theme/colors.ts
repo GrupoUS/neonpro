@@ -2,46 +2,47 @@
 // Configuração de cores "NEON PRO" - Identidade Visual Oficial
 export const neonColors = {
   // Cores principais da paleta "NEON PRO"
-  'dark-blue': '#112031', // Azul escuro principal
-  'dark-blue-rgb': '17, 32, 49',
-  'blue': '#294359', // Azul médio
-  'blue-rgb': '41, 67, 89',
-  'gold': '#AC9469', // Dourado principal "NEON PRO"
-  'gold-rgb': '172, 148, 105',
-  'gray-dark': '#B4AC9C', // Cinza escuro
-  'gray-light': '#D2D0C8', // Cinza claro
+  // Mapeamento para o Tema "GRUPOUS"
+  'primary-dark': '#112031', // --color-primary-dark (Azul-Noite)
+  'primary-dark-rgb': '17, 32, 49',
+  'primary-medium': '#294359', // --color-primary-medium (Azul-Cosmos)
+  'primary-medium-rgb': '41, 67, 89',
+  'accent': '#AC9469', // --color-accent (Dourado-Celestial / Neon-Gold)
+  'accent-rgb': '172, 148, 105',
+  'neutral-dark': '#B4AC9C', // --color-neutral-dark (Cinza-Estelar)
+  'neutral-light': '#D2D0C8', // --color-neutral-light (Cinza-Neblina)
   
-  // Variações da paleta principal
-  'dark-blue-lighter': '#1a2b42',
-  'dark-blue-darker': '#0a1520',
-  'blue-lighter': '#3a5a7a',
-  'blue-darker': '#1e3347',
-  'gold-lighter': '#c4aa7d',
-  'gold-darker': '#8a7852',
+  // Variações da paleta principal (ajustadas para GRUPOUS)
+  'primary-dark-lighter': '#1a2b42',
+  'primary-dark-darker': '#0a1520',
+  'primary-medium-lighter': '#3a5a7a',
+  'primary-medium-darker': '#1e3347',
+  'accent-lighter': '#c4aa7d',
+  'accent-darker': '#8a7852',
   
-  // Tons neutros complementares
-  'cream': '#F5F3F0', // Creme suave
-  'warm-white': '#FDFCFA', // Branco quente
-  'charcoal': '#2C2C2C', // Carvão
+  // Cores de texto (ajustadas para GRUPOUS)
+  'text-light': '#FFFFFF', // --color-text-light (Branco)
+  'text-light-alt': '#D2D0C8', // --color-text-light (Cinza-Neblina)
+  'text-dark': '#112031', // --color-text-dark (Azul-Noite)
 };
 
 export const primaryColors = {
-  DEFAULT: '#AC9469', // Dourado "NEON PRO" como cor principal
+  DEFAULT: '#AC9469', // --color-accent (Dourado-Celestial)
   50: '#faf8f5',
   100: '#f5f1ea',
   200: '#ebe2d1',
   300: '#ddd0b3',
   400: '#ccb88f',
-  500: '#AC9469', // Cor principal
+  500: '#AC9469', // Cor principal (Dourado-Celestial)
   600: '#9a7f52',
   700: '#7d6642',
   800: '#665438',
   900: '#544530',
-  foreground: '#112031' // Azul escuro para contraste
+  foreground: '#112031' // --color-primary-dark (Azul-Noite)
 };
 
 export const secondaryColors = {
-  DEFAULT: '#112031', // Azul escuro como secundária
+  DEFAULT: '#112031', // --color-primary-dark (Azul-Noite)
   50: '#f6f7f8',
   100: '#eaedf1',
   200: '#d1d8e0',
@@ -50,9 +51,9 @@ export const secondaryColors = {
   500: '#607691',
   600: '#4d5f78',
   700: '#3f4e62',
-  800: '#294359', // Azul médio
-  900: '#112031', // Azul escuro principal
-  foreground: '#FDFCFA'
+  800: '#294359', // --color-primary-medium (Azul-Cosmos)
+  900: '#112031', // --color-primary-dark (Azul-Noite)
+  foreground: '#FDFCFA' // --color-text-light (Branco)
 };
 
 export const systemColors = {
@@ -93,6 +94,3 @@ export const systemColors = {
     ring: 'hsl(var(--sidebar-ring))'
   }
 };
-
-// Manter compatibilidade com possível código existente
-export const sachaColors = neonColors;

@@ -11,7 +11,7 @@ export interface ChatMessage {
   isUser: boolean;
   timestamp: Date;
   suggestions?: string[];
-  data?: any;
+  data?: Record<string, unknown> | unknown[];
 }
 
 export function useClinicAI() { // Renomeado de useFinancialAI

@@ -7,6 +7,7 @@ import { neonColors, primaryColors, secondaryColors, systemColors } from "./src/
 import { keyframes, animations } from "./src/config/theme/animations";
 import { fontFamily, fontWeight } from "./src/config/theme/typography";
 import { backgroundImage, boxShadow, transitionTimingFunction, spacing, zIndex } from "./src/config/theme/effects";
+import { buttons } from "./src/config/theme/components";
 
 export default {
 	darkMode: ["class"],
@@ -65,7 +66,9 @@ export default {
 				'600': '600ms',
 			},
 			transitionTimingFunction,
-			zIndex
+			zIndex,
+			// Componentes
+			buttons,
 		}
 	},
 	plugins: [tailwindcssAnimate],
