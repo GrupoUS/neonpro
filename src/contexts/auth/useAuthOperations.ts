@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { Profile } from './types';
 import { useToast } from '@/components/ui/use-toast';
 
