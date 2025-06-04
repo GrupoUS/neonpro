@@ -1,3 +1,4 @@
+
 import { supabase } from '../lib/supabase';
 import { SupabaseDebugger } from './supabaseDebugger';
 
@@ -54,28 +55,28 @@ export const runCompleteDiagnostic = async () => {
         console.log('✅ Update de profile funcionando:', data);
       }
       
-      // Teste de inserção em transacoes
+      // Teste de inserção em transactions (usando a tabela correta)
       console.log('Testando inserção de transação...');
-      const { data: transacaoData, error: transacaoError } = await supabase
-        .from('transacoes')
+      const { data: transactionData, error: transactionError } = await supabase
+        .from('transactions')
         .insert({
-          descricao: 'Teste Debug',
-          valor: 100.00,
-          tipo: 'receita',
-          categoria: 'Teste',
-          data_transacao: new Date().toISOString().split('T')[0],
+          description: 'Teste Debug',
+          amount: 100.00,
+          type: 'income',
+          category: 'Teste',
+          transaction_date: new Date().toISOString(),
           user_id: user.id
         })
         .select();
       
-      if (transacaoError) {
-        console.error('❌ Erro na inserção de transação:', transacaoError);
+      if (transactionError) {
+        console.error('❌ Erro na inserção de transação:', transactionError);
       } else {
-        console.log('✅ Inserção de transação funcionando:', transacaoData);
+        console.log('✅ Inserção de transação funcionando:', transactionData);
         
         // Limpar dados de teste
-        if (transacaoData && transacaoData[0]) {
-          await supabase.from('transacoes').delete().eq('id', transacaoData[0].id);
+        if (transactionData && transactionData[0]) {
+          await supabase.from('transactions').delete().eq('id', transactionData[0].id);
           console.log('🧹 Dados de teste removidos');
         }
       }

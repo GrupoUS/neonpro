@@ -1,3 +1,4 @@
+
 import { supabase } from '../lib/supabase';
 
 // Tipos para debugging
@@ -119,17 +120,17 @@ export class SupabaseDebugger {
         };
       }
 
-      // Testa SELECT em transacoes
-      const { data: transacoesData, error: transacoesError } = await supabase
-        .from('transacoes')
+      // Testa SELECT em transactions (usando a tabela correta)
+      const { data: transactionsData, error: transactionsError } = await supabase
+        .from('transactions')
         .select('id')
         .limit(1);
 
-      if (transacoesError && !transacoesError.message.includes('does not exist')) {
+      if (transactionsError && !transactionsError.message.includes('does not exist')) {
         return {
           success: false,
-          error: `Erro RLS em transacoes: ${transacoesError.message}`,
-          details: `Código: ${transacoesError.code}`
+          error: `Erro RLS em transactions: ${transactionsError.message}`,
+          details: `Código: ${transactionsError.code}`
         };
       }
 
@@ -151,13 +152,13 @@ export class SupabaseDebugger {
    * Verifica se as tabelas necessárias existem
    */
   static async checkTables(): Promise<DebugResult> {
-    const requiredTables = ['profiles', 'transacoes', 'clinicas'];
+    const requiredTables = ['profiles', 'transactions', 'clients'];
     const results: { [key: string]: boolean } = {};
     
     try {
       for (const table of requiredTables) {
         const { error } = await supabase
-          .from(table)
+          .from(table as any)
           .select('*')
           .limit(1);
         
@@ -233,7 +234,7 @@ export class SupabaseDebugger {
       switch (operation) {
         case 'select': {
           const { data: selectData, error: selectError } = await supabase
-            .from(table)
+            .from(table as any)
             .select('*')
             .limit(1);
           
@@ -261,7 +262,7 @@ export class SupabaseDebugger {
           }
           
           const { error: insertError } = await supabase
-            .from(table)
+            .from(table as any)
             .insert({ ...data, user_id: user.id });
           
           if (insertError) {

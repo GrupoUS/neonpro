@@ -1,3 +1,4 @@
+
 import { supabase } from '../lib/supabase';
 
 export const testTransactionInsertion = async () => {
@@ -19,22 +20,21 @@ export const testTransactionInsertion = async () => {
     
     console.log('✅ Usuário autenticado:', session.user.id);
     
-    // Tentar inserir uma transação de teste
-    const transacaoTeste = {
-      descricao: 'Teste de Transação - Debug',
-      valor: 100.50,
-      tipo: 'receita' as const,
-      categoria: 'Procedimentos Estéticos',
-      data_transacao: new Date().toISOString().split('T')[0],
-      observacoes: 'Transação criada pelo debugger',
+    // Tentar inserir uma transação de teste usando a estrutura correta
+    const transactionTest = {
+      description: 'Teste de Transação - Debug',
+      amount: 100.50,
+      type: 'income' as const,
+      category: 'Procedimentos Estéticos',
+      transaction_date: new Date().toISOString(),
       user_id: session.user.id
     };
     
-    console.log('📝 Tentando inserir transação:', transacaoTeste);
+    console.log('📝 Tentando inserir transação:', transactionTest);
     
     const { data, error } = await supabase
-      .from('transacoes')
-      .insert(transacaoTeste)
+      .from('transactions')
+      .insert(transactionTest)
       .select();
     
     if (error) {
@@ -52,7 +52,7 @@ export const testTransactionInsertion = async () => {
     
     // Verificar se a transação foi realmente salva
     const { data: retrievedData, error: retrieveError } = await supabase
-      .from('transacoes')
+      .from('transactions')
       .select('*')
       .eq('id', data[0].id)
       .single();
@@ -66,7 +66,7 @@ export const testTransactionInsertion = async () => {
     
     // Limpar a transação de teste
     const { error: deleteError } = await supabase
-      .from('transacoes')
+      .from('transactions')
       .delete()
       .eq('id', data[0].id);
     
@@ -99,7 +99,7 @@ export const testTransactionRetrieval = async () => {
     
     // Tentar buscar todas as transações do usuário
     const { data, error, count } = await supabase
-      .from('transacoes')
+      .from('transactions')
       .select('*', { count: 'exact' })
       .eq('user_id', session.user.id)
       .order('created_at', { ascending: false });
@@ -133,7 +133,7 @@ export const testTransactionPermissions = async () => {
     
     // Tentar buscar todas as transações (sem filtro de user_id)
     const { data, error } = await supabase
-      .from('transacoes')
+      .from('transactions')
       .select('*')
       .limit(10);
     
