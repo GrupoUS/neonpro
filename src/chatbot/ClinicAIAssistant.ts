@@ -1,4 +1,3 @@
-
 import { 
   clinicDataService, 
   appointmentService, 
@@ -122,18 +121,15 @@ export class ClinicAIAssistant {
           let servicosData = null;
           const servicosRaw = apt.servicos;
           
-          // Primeira verificação: não é null/undefined
-          if (servicosRaw !== null && servicosRaw !== undefined) {
-            // Segunda verificação: é um objeto e tem as propriedades necessárias
-            if (typeof servicosRaw === 'object' && 
-                servicosRaw !== null &&
-                'nome_servico' in servicosRaw && 
-                'preco' in servicosRaw) {
-              const servicos = servicosRaw as { nome_servico: unknown; preco: unknown };
-              if (servicos.nome_servico && servicos.preco !== undefined) {
+          // Verificação mais explícita com type guard
+          if (servicosRaw && typeof servicosRaw === 'object') {
+            // Agora TypeScript sabe que servicosRaw não é null
+            const servicosObj = servicosRaw as Record<string, unknown>;
+            if ('nome_servico' in servicosObj && 'preco' in servicosObj) {
+              if (servicosObj.nome_servico && servicosObj.preco !== undefined) {
                 servicosData = { 
-                  nome_servico: servicos.nome_servico as string, 
-                  preco: servicos.preco as number 
+                  nome_servico: servicosObj.nome_servico as string, 
+                  preco: servicosObj.preco as number 
                 };
               }
             }
