@@ -66,6 +66,19 @@
     @apply bg-gradient-to-br from-accent/5 to-secondary/10 border border-accent/20 rounded-2xl p-6 shadow-neon-lg;
   }
   
+  /* Card melhorado para autenticação */
+  .card-neon-enhanced {
+    @apply bg-card/80 backdrop-blur-md border border-border/50 rounded-3xl p-8 shadow-neon-xl;
+    background: linear-gradient(135deg, 
+      hsl(var(--card)) 0%, 
+      hsl(var(--card)/0.95) 50%, 
+      hsl(var(--card)/0.9) 100%);
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(172, 148, 105, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
   /* Efeitos hover melhorados "NEON PRO" */
   .card-hover {
     @apply transition-all duration-300 ease-out cursor-pointer;
@@ -87,10 +100,27 @@
   
   /* Input styles "NEON PRO" */
   .input-neon {
-    @apply bg-input border border-border rounded-lg px-3 py-2 text-foreground placeholder:text-muted-foreground;
+    @apply bg-input border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground;
+    transition: all 0.3s ease;
   }
   
   .input-neon:focus {
     @apply border-accent ring-2 ring-accent/20;
+    box-shadow: 0 0 0 3px rgba(172, 148, 105, 0.1);
+  }
+  
+  /* Sombras customizadas */
+  .shadow-neon {
+    box-shadow: 0 4px 6px -1px rgba(172, 148, 105, 0.1), 0 2px 4px -1px rgba(172, 148, 105, 0.06);
+  }
+  
+  .shadow-neon-lg {
+    box-shadow: 0 10px 15px -3px rgba(172, 148, 105, 0.2), 0 4px 6px -2px rgba(172, 148, 105, 0.1);
+  }
+  
+  .shadow-neon-xl {
+    box-shadow: 
+      0 25px 50px -12px rgba(172, 148, 105, 0.25),
+      0 0 0 1px rgba(172, 148, 105, 0.05);
   }
 }

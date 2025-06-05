@@ -49,7 +49,7 @@ const AuthPage: React.FC = () => {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/dashboard`,
         }
       });
     } catch (error: unknown) {
@@ -82,13 +82,15 @@ const AuthPage: React.FC = () => {
           <AuthHeader />
           
           <main className="flex-1 flex items-center justify-center p-6">
-            <div className="w-full max-w-md card-neon animate-fade-in">
-              <ResetPasswordForm 
-                onCancel={() => setShowResetPassword(false)} 
-                onSuccess={() => setShowResetPassword(false)}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-              />
+            <div className="w-full max-w-md">
+              <div className="card-neon-enhanced animate-fade-in">
+                <ResetPasswordForm 
+                  onCancel={() => setShowResetPassword(false)} 
+                  onSuccess={() => setShowResetPassword(false)}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                />
+              </div>
             </div>
           </main>
           
@@ -109,44 +111,46 @@ const AuthPage: React.FC = () => {
         <AuthHeader />
         
         <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md card-neon animate-fade-in backdrop-blur-sm">
-            <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="transition-all duration-300">
-              <TabsList className="grid grid-cols-2 w-full mb-8 bg-muted border border-border rounded-lg">
-                <TabsTrigger 
-                  value="login" 
-                  className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                >
-                  Login
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="register" 
-                  className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold"
-                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-                >
-                  Cadastro
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login" className="animate-fade-in">
-                <LoginForm 
-                  onSuccess={handleLoginSuccess} 
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  handleGoogleSignIn={handleGoogleSignIn}
-                  onResetPassword={handleResetPassword}
-                />
-              </TabsContent>
-              
-              <TabsContent value="register" className="animate-fade-in">
-                <RegisterForm 
-                  onSuccess={() => setActiveTab("login")} 
-                  isLoading={isLoading}
-                  setIsLoading={setIsLoading}
-                  handleGoogleSignIn={handleGoogleSignIn}
-                />
-              </TabsContent>
-            </Tabs>
+          <div className="w-full max-w-md">
+            <div className="card-neon-enhanced animate-fade-in backdrop-blur-sm">
+              <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="transition-all duration-300">
+                <TabsList className="grid grid-cols-2 w-full mb-8 bg-muted/50 border border-border/50 rounded-xl h-12">
+                  <TabsTrigger 
+                    value="login" 
+                    className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold rounded-lg h-10"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
+                    Login
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="register" 
+                    className="transition-all data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-foreground font-semibold rounded-lg h-10"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
+                    Cadastro
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="login" className="animate-fade-in">
+                  <LoginForm 
+                    onSuccess={handleLoginSuccess} 
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    handleGoogleSignIn={handleGoogleSignIn}
+                    onResetPassword={handleResetPassword}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="register" className="animate-fade-in">
+                  <RegisterForm 
+                    onSuccess={() => setActiveTab("login")} 
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    handleGoogleSignIn={handleGoogleSignIn}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         </main>
         

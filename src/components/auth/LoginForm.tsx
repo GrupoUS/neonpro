@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -58,25 +59,24 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     } finally {
       setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <FormHeader 
         title="Bem-vindo ao NEON PRO"
         subtitle="Entre na sua conta para continuar"
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel 
-                  className="text-foreground font-medium"
+                  className="text-foreground font-medium text-sm"
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
                   E-mail
@@ -85,13 +85,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                   <Input 
                     type="email" 
                     placeholder="seu@email.com" 
-                    className="input-neon" 
+                    className="input-neon h-12 text-base" 
                     style={{ fontFamily: 'Inter, sans-serif' }}
                     {...field} 
                     aria-label="Endereço de e-mail"
                   />
                 </FormControl>
-                <FormMessage className="text-destructive text-xs" />
+                <FormMessage className="text-destructive text-sm" />
               </FormItem>
             )}
           />
@@ -100,14 +100,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             control={form.control}
             name="password"
             label="Senha"
-            placeholder="••••••"
+            placeholder="••••••••"
             showForgotPassword={true}
             onForgotPassword={onResetPassword}
           />
           
           <Button 
             type="submit" 
-            className="btn-neon-primary w-full h-12 mt-6" 
+            className="btn-neon-primary w-full h-12 mt-8 text-base font-semibold" 
             style={{ fontFamily: 'Inter, sans-serif' }}
             disabled={isLoading}
           >

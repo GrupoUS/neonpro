@@ -9,6 +9,64 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      Agendamento: {
+        Row: {
+          clienteId: string
+          createdAt: string
+          data: string
+          hora: string
+          id: string
+          profissionalId: string
+          servicoId: string
+          status: string
+          updatedAt: string
+        }
+        Insert: {
+          clienteId: string
+          createdAt?: string
+          data: string
+          hora: string
+          id?: string
+          profissionalId: string
+          servicoId: string
+          status: string
+          updatedAt?: string
+        }
+        Update: {
+          clienteId?: string
+          createdAt?: string
+          data?: string
+          hora?: string
+          id?: string
+          profissionalId?: string
+          servicoId?: string
+          status?: string
+          updatedAt?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Agendamento_clienteId_fkey"
+            columns: ["clienteId"]
+            isOneToOne: false
+            referencedRelation: "Cliente"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Agendamento_profissionalId_fkey"
+            columns: ["profissionalId"]
+            isOneToOne: false
+            referencedRelation: "Profissional"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Agendamento_servicoId_fkey"
+            columns: ["servicoId"]
+            isOneToOne: false
+            referencedRelation: "Servico"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agendamentos: {
         Row: {
           created_at: string | null
@@ -671,6 +729,30 @@ export type Database = {
           updated_at?: string
           user_id?: string
           welcome_message?: string | null
+        }
+        Relationships: []
+      }
+      Cliente: {
+        Row: {
+          contato: string
+          createdAt: string
+          id: string
+          nome: string
+          updatedAt: string
+        }
+        Insert: {
+          contato: string
+          createdAt?: string
+          id?: string
+          nome: string
+          updatedAt?: string
+        }
+        Update: {
+          contato?: string
+          createdAt?: string
+          id?: string
+          nome?: string
+          updatedAt?: string
         }
         Relationships: []
       }
@@ -1446,6 +1528,33 @@ export type Database = {
         }
         Relationships: []
       }
+      Profissional: {
+        Row: {
+          createdAt: string
+          especialidade: string
+          horariosDisponiveis: string
+          id: string
+          nome: string
+          updatedAt: string
+        }
+        Insert: {
+          createdAt?: string
+          especialidade: string
+          horariosDisponiveis: string
+          id?: string
+          nome: string
+          updatedAt?: string
+        }
+        Update: {
+          createdAt?: string
+          especialidade?: string
+          horariosDisponiveis?: string
+          id?: string
+          nome?: string
+          updatedAt?: string
+        }
+        Relationships: []
+      }
       security_settings: {
         Row: {
           backup_codes: string[] | null
@@ -1518,6 +1627,30 @@ export type Database = {
           price?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      Servico: {
+        Row: {
+          createdAt: string
+          duracao: number
+          id: string
+          nome: string
+          updatedAt: string
+        }
+        Insert: {
+          createdAt?: string
+          duracao: number
+          id?: string
+          nome: string
+          updatedAt?: string
+        }
+        Update: {
+          createdAt?: string
+          duracao?: number
+          id?: string
+          nome?: string
+          updatedAt?: string
         }
         Relationships: []
       }
@@ -1690,6 +1823,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      User: {
+        Row: {
+          createdAt: string
+          email: string
+          id: string
+          name: string
+          passwordHash: string
+          updatedAt: string
+        }
+        Insert: {
+          createdAt?: string
+          email: string
+          id?: string
+          name: string
+          passwordHash: string
+          updatedAt?: string
+        }
+        Update: {
+          createdAt?: string
+          email?: string
+          id?: string
+          name?: string
+          passwordHash?: string
+          updatedAt?: string
+        }
+        Relationships: []
       }
       user_profiles: {
         Row: {
