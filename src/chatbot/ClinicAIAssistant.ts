@@ -1,4 +1,3 @@
-
 import { 
   clinicDataService, 
   appointmentService, 
@@ -130,8 +129,16 @@ export class ClinicAIAssistant {
           updated_at: apt.updated_at,
           user_id: apt.user_id,
           pacientes: apt.pacientes || null,
-          servicos: apt.servicos && typeof apt.servicos === 'object' && 'nome_servico' in apt.servicos && 'preco' in apt.servicos
-            ? { nome_servico: apt.servicos.nome_servico, preco: apt.servicos.preco } 
+          servicos: apt.servicos && 
+                   typeof apt.servicos === 'object' && 
+                   'nome_servico' in apt.servicos && 
+                   'preco' in apt.servicos && 
+                   apt.servicos.nome_servico && 
+                   apt.servicos.preco !== undefined
+            ? { 
+                nome_servico: apt.servicos.nome_servico as string, 
+                preco: apt.servicos.preco as number 
+              } 
             : null
         })),
         patients: (context.patients || []).map(patient => ({
