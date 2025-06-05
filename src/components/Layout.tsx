@@ -1,25 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
 import { UserMenu } from '@/components/UserMenu';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { FloatingChatbot } from '@/components/chatbot/FloatingChatbot';
-import ChatNavButton from '@/components/chat/ChatNavButton';
-import ChatSidePanel from '@/components/chat/ChatSidePanel';
+import { AuthDebugPanel } from '@/components/debug/AuthDebugPanel';
 
 const Layout: React.FC = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const handleChatToggle = () => {
-    setIsChatOpen(!isChatOpen);
-  };
-
-  const handleChatClose = () => {
-    setIsChatOpen(false);
-  };
-
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -38,10 +27,6 @@ const Layout: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <ChatNavButton 
-                  isOpen={isChatOpen} 
-                  onClick={handleChatToggle} 
-                />
                 <ThemeToggle />
                 <UserMenu />
               </div>
@@ -51,12 +36,9 @@ const Layout: React.FC = () => {
             <Outlet />
           </main>
         </div>
-        <ChatSidePanel 
-          isOpen={isChatOpen} 
-          onClose={handleChatClose} 
-        />
       </div>
       <FloatingChatbot />
+      <AuthDebugPanel />
     </SidebarProvider>
   );
 };

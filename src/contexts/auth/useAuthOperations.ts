@@ -11,6 +11,9 @@ export const useAuthOperations = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // URL padrão para redirecionamento
+  const getRedirectUrl = () => `${window.location.origin}/dashboard`;
+
   const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -52,6 +55,8 @@ export const useAuthOperations = () => {
 
   const signUp = useCallback(async (email: string, password: string, full_name: string) => {
     try {
+      console.log('📝 Auth: Iniciando cadastro...', { email });
+      
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
@@ -60,7 +65,7 @@ export const useAuthOperations = () => {
             full_name,
             name: full_name
           },
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: getRedirectUrl()
         }
       });
       
@@ -69,12 +74,13 @@ export const useAuthOperations = () => {
       if (data.user && !data.session) {
         toast.success("Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.");
       } else if (data.session) {
+        console.log('✅ Auth: Cadastro com sessão imediata');
         toast.success("Cadastro realizado com sucesso!");
       }
       
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro no cadastro:', errorMessage);
+      console.error('❌ Auth: Erro no cadastro:', errorMessage);
       
       let userMessage = 'Erro ao criar conta. Tente novamente.';
       if (errorMessage.includes('email')) {
@@ -92,14 +98,17 @@ export const useAuthOperations = () => {
 
   const signIn = useCallback(async (email: string, password: string) => {
     try {
+      console.log('🔑 Auth: Iniciando login...', { email });
+      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) throw error;
       
+      console.log('✅ Auth: Login bem-sucedido');
       toast.success("Login realizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro no login:', errorMessage);
+      console.error('❌ Auth: Erro no login:', errorMessage);
       
       let userMessage = 'Erro ao fazer login. Tente novamente.';
       if (errorMessage.includes('Invalid login credentials')) {
@@ -115,17 +124,21 @@ export const useAuthOperations = () => {
 
   const signInWithGoogle = useCallback(async () => {
     try {
+      console.log('🔑 Auth: Iniciando login com Google...');
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo: getRedirectUrl()
         }
       });
       
       if (error) throw error;
+      
+      console.log('✅ Auth: Redirecionamento Google iniciado');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro ao fazer login com Google:', errorMessage);
+      console.error('❌ Auth: Erro ao fazer login com Google:', errorMessage);
       toast.error("Erro ao fazer login com Google. Tente novamente.");
       throw error;
     }
@@ -133,12 +146,16 @@ export const useAuthOperations = () => {
 
   const signOut = useCallback(async () => {
     try {
+      console.log('👋 Auth: Iniciando logout...');
+      
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      
+      console.log('✅ Auth: Logout realizado');
       toast.success("Logout realizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro ao fazer logout:', errorMessage);
+      console.error('❌ Auth: Erro ao fazer logout:', errorMessage);
       toast.error("Erro ao fazer logout. Tente novamente.");
       throw error;
     }
@@ -146,16 +163,19 @@ export const useAuthOperations = () => {
 
   const resetPassword = useCallback(async (email: string) => {
     try {
+      console.log('🔄 Auth: Iniciando reset de senha...', { email });
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/redefinir-senha`,
+        redirectTo: getRedirectUrl(),
       });
       
       if (error) throw error;
       
+      console.log('✅ Auth: E-mail de reset enviado');
       toast.success("E-mail para redefinição de senha enviado!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro ao solicitar redefinição de senha:', errorMessage);
+      console.error('❌ Auth: Erro ao solicitar redefinição de senha:', errorMessage);
       toast.error("Erro ao solicitar redefinição de senha. Tente novamente.");
       throw error;
     }
@@ -164,6 +184,8 @@ export const useAuthOperations = () => {
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
     try {
       if (!user) throw new Error('Usuário não autenticado');
+
+      console.log('📝 Auth: Atualizando perfil...', { userId: user.id });
 
       const { error } = await supabase
         .from('profiles')
@@ -176,10 +198,11 @@ export const useAuthOperations = () => {
         setProfile({ ...profile, ...updates });
       }
       
+      console.log('✅ Auth: Perfil atualizado');
       toast.success("Perfil atualizado com sucesso!");
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      console.error('Erro ao atualizar perfil:', errorMessage);
+      console.error('❌ Auth: Erro ao atualizar perfil:', errorMessage);
       toast.error("Erro ao atualizar perfil. Tente novamente.");
       throw error;
     }

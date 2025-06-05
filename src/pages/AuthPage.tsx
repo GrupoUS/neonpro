@@ -23,6 +23,7 @@ const AuthPage: React.FC = () => {
   // Handle redirection after login
   useEffect(() => {
     if (session) {
+      console.log('🔀 AuthPage: Usuário autenticado, redirecionando para dashboard');
       navigate('/dashboard', { replace: true });
     }
   }, [session, navigate]);
@@ -36,6 +37,7 @@ const AuthPage: React.FC = () => {
                          url.hash;
     
     if (hasAuthParams) {
+      console.log('🧹 AuthPage: Limpando parâmetros OAuth da URL');
       // Clean the URL without triggering a page reload
       const cleanUrl = `${window.location.origin}${window.location.pathname}`;
       window.history.replaceState({}, document.title, cleanUrl);
@@ -46,6 +48,8 @@ const AuthPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      console.log('🔑 AuthPage: Iniciando Google OAuth...');
+      
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -54,6 +58,7 @@ const AuthPage: React.FC = () => {
       });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      console.error('❌ AuthPage: Erro no Google OAuth:', errorMessage);
       toast.error(`Erro ao entrar com Google: ${errorMessage}`);
     } finally {
       setIsLoading(false);
@@ -67,6 +72,7 @@ const AuthPage: React.FC = () => {
 
   // Handle login success
   const handleLoginSuccess = () => {
+    console.log('✅ AuthPage: Login bem-sucedido');
     toast.success("Login realizado com sucesso!");
   };
 
