@@ -1,3 +1,4 @@
+
 import { 
   clinicDataService, 
   patientService, 
@@ -6,8 +7,8 @@ import {
   clinicAnalyticsService,
   type PatientInsert,
   type AppointmentInsert,
-  type MedicalHistoryInsert
-} from './clinic-services'; // Alterado para clinic-services
+  type MedicalDocumentInsert
+} from './clinic-services';
 
 // Tipos específicos para dados das ações
 interface PatientData {
@@ -33,7 +34,7 @@ interface AppointmentData {
   created_at?: string;
   updated_at?: string;
   user_id?: string;
-  patients?: { name: string }; // Para exibir o nome do paciente
+  patients?: { name: string };
 }
 
 interface MedicalHistoryData {
@@ -61,7 +62,7 @@ interface ServiceAnalysis {
 }
 
 // Importar tipos de clinic-services
-import type { Profile } from './clinic-services'; // Mantido Profile, mas pode ser adaptado se necessário
+import type { Profile } from './clinic-services';
 
 interface ClinicContext {
   profile: Profile | null;
@@ -96,7 +97,7 @@ export interface AIResponse {
 }
 
 // Classe principal do Assistente Clínico AI
-export class ClinicAIAssistant { // Renomeado
+export class ClinicAIAssistant {
   private userId: string;
 
   constructor(userId: string) {
@@ -107,7 +108,16 @@ export class ClinicAIAssistant { // Renomeado
   async processMessage(message: string): Promise<AIResponse> {
     try {
       // Obter contexto clínico completo do usuário
-      const context = await clinicDataService.getUserClinicContext(this.userId); // Alterado
+      const contextData = await clinicDataService.getUserClinicContext(this.userId);
+      
+      // Transformar dados para o formato esperado do ClinicContext
+      const context: ClinicContext = {
+        profile: contextData.profile,
+        patients: contextData.patients || [],
+        appointments: contextData.appointments || [],
+        medicalHistories: contextData.medicalDocuments || [], // Mapear medicalDocuments para medicalHistories
+        summary: contextData.summary
+      };
 
       // Analisar a intenção da mensagem
       const intent = this.analyzeIntent(message);
