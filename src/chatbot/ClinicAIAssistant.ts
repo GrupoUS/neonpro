@@ -1,3 +1,4 @@
+
 import { 
   clinicDataService, 
   appointmentService, 
@@ -125,6 +126,7 @@ export class ClinicAIAssistant {
           if (servicosRaw !== null && servicosRaw !== undefined) {
             // Segunda verificação: é um objeto e tem as propriedades necessárias
             if (typeof servicosRaw === 'object' && 
+                servicosRaw !== null &&
                 'nome_servico' in servicosRaw && 
                 'preco' in servicosRaw) {
               const servicos = servicosRaw as { nome_servico: unknown; preco: unknown };
