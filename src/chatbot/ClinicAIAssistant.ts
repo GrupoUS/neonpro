@@ -1,4 +1,3 @@
-
 import { 
   clinicDataService, 
   appointmentService, 
@@ -122,17 +121,19 @@ export class ClinicAIAssistant {
           let servicosData = null;
           const servicosRaw = apt.servicos;
           
-          if (servicosRaw && 
-              typeof servicosRaw === 'object' && 
-              servicosRaw !== null &&
-              'nome_servico' in servicosRaw && 
-              'preco' in servicosRaw) {
-            const servicos = servicosRaw as { nome_servico: unknown; preco: unknown };
-            if (servicos.nome_servico && servicos.preco !== undefined) {
-              servicosData = { 
-                nome_servico: servicos.nome_servico as string, 
-                preco: servicos.preco as number 
-              };
+          // Primeira verificação: não é null/undefined
+          if (servicosRaw !== null && servicosRaw !== undefined) {
+            // Segunda verificação: é um objeto e tem as propriedades necessárias
+            if (typeof servicosRaw === 'object' && 
+                'nome_servico' in servicosRaw && 
+                'preco' in servicosRaw) {
+              const servicos = servicosRaw as { nome_servico: unknown; preco: unknown };
+              if (servicos.nome_servico && servicos.preco !== undefined) {
+                servicosData = { 
+                  nome_servico: servicos.nome_servico as string, 
+                  preco: servicos.preco as number 
+                };
+              }
             }
           }
 
