@@ -1,3 +1,4 @@
+
 import { 
   clinicDataService, 
   appointmentService, 
@@ -119,12 +120,14 @@ export class ClinicAIAssistant {
         appointments: (context.appointments || []).map(apt => {
           // Verificar e transformar servicos de forma mais robusta
           let servicosData = null;
-          if (apt.servicos && 
-              typeof apt.servicos === 'object' && 
-              apt.servicos !== null &&
-              'nome_servico' in apt.servicos && 
-              'preco' in apt.servicos) {
-            const servicos = apt.servicos as { nome_servico: unknown; preco: unknown };
+          const servicosRaw = apt.servicos;
+          
+          if (servicosRaw && 
+              typeof servicosRaw === 'object' && 
+              servicosRaw !== null &&
+              'nome_servico' in servicosRaw && 
+              'preco' in servicosRaw) {
+            const servicos = servicosRaw as { nome_servico: unknown; preco: unknown };
             if (servicos.nome_servico && servicos.preco !== undefined) {
               servicosData = { 
                 nome_servico: servicos.nome_servico as string, 
