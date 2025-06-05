@@ -35,18 +35,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const initializeAuth = async () => {
       try {
-        console.log('🔐 Auth: Iniciando autenticação...');
+        console.log('🔐 Auth: Iniciando autenticação...', {
+          currentPath: location.pathname,
+          timestamp: new Date().toISOString()
+        });
         
         // Buscar sessão atual primeiro
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
         
+        if (error) {
+          console.error('❌ Auth: Erro ao buscar sessão inicial:', error);
+          if (mounted) {
+            setIsLoading(false);
+          }
+          return;
+        }
+
         if (!mounted) return;
 
         if (initialSession?.user) {
-          console.log('✅ Auth: Sessão encontrada, carregando perfil...', {
+          console.log('✅ Auth: Sessão encontrada, configurando usuário...', {
             userId: initialSession.user.id,
-            email: initialSession.user.email
+            email: initialSession.user.email,
+            currentPath: location.pathname,
+            timestamp: new Date().toISOString()
           });
+          
           setSession(initialSession);
           setUser(initialSession.user);
           
@@ -58,13 +72,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
           });
           
-          // Redirecionar para dashboard se estiver na página de auth
+          // Lógica de redirecionamento melhorada
           const currentPath = location.pathname;
-          console.log('🔀 Auth: Verificando redirecionamento...', { currentPath });
+          const isAuthPath = currentPath === '/auth';
+          const hasOAuthParams = currentPath.includes('access_token') || location.hash;
           
-          if (currentPath === '/auth' || currentPath === '/' || currentPath.includes('access_token')) {
-            console.log('🔀 Auth: Redirecionando para dashboard...');
-            navigate('/dashboard', { replace: true });
+          console.log('🔀 Auth: Verificando redirecionamento...', { 
+            currentPath, 
+            isAuthPath, 
+            hasOAuthParams,
+            shouldRedirect: isAuthPath || hasOAuthParams
+          });
+          
+          if (isAuthPath || hasOAuthParams) {
+            console.log('🔀 Auth: Redirecionando usuário autenticado para dashboard...');
+            setTimeout(() => {
+              if (mounted) {
+                navigate('/dashboard', { replace: true });
+              }
+            }, 100);
           }
         } else {
           console.log('❌ Auth: Nenhuma sessão encontrada');
@@ -73,9 +99,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setProfile(null);
           setIsLoading(false);
           
-          // Redirecionar para auth se não estiver lá e não estiver em rotas autenticadas
+          // Redirecionar para auth se não estiver lá e não estiver em rotas públicas
           const publicRoutes = ['/auth'];
-          if (!publicRoutes.includes(location.pathname)) {
+          const currentPath = location.pathname;
+          
+          if (!publicRoutes.includes(currentPath)) {
             console.log('🔀 Auth: Redirecionando para auth...');
             navigate('/auth', { replace: true });
           }
@@ -83,6 +111,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } catch (error) {
         console.error('❌ Auth: Erro na inicialização:', error);
         if (mounted) {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
           setIsLoading(false);
         }
       }
@@ -95,7 +126,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.log('🔔 Auth: Mudança de estado:', event, {
         userId: currentSession?.user?.id,
         hasSession: !!currentSession,
-        currentPath: location.pathname
+        currentPath: location.pathname,
+        timestamp: new Date().toISOString()
       });
       
       setSession(currentSession);
@@ -107,7 +139,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsLoading(false);
         navigate('/auth', { replace: true });
       } else if (currentSession?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-        console.log('✅ Auth: Usuário logado/token renovado');
+        console.log(`✅ Auth: ${event} - Processando...`);
         
         // Buscar perfil de forma assíncrona
         fetchProfile(currentSession.user.id).finally(() => {
@@ -117,14 +149,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
         
         if (event === 'SIGNED_IN') {
-          // Sempre redirecionar para o dashboard após login bem-sucedido
-          console.log('🔀 Auth: Login bem-sucedido, redirecionando para dashboard...');
-          navigate('/dashboard', { replace: true });
+          // Verificar se estamos em uma página de auth ou com parâmetros OAuth
+          const currentPath = location.pathname;
+          const isAuthPath = currentPath === '/auth';
+          const hasOAuthParams = currentPath.includes('access_token') || location.hash;
+          
+          console.log('🔀 Auth: Login detectado, verificando redirecionamento...', {
+            currentPath,
+            isAuthPath,
+            hasOAuthParams,
+            shouldRedirect: isAuthPath || hasOAuthParams || currentPath === '/'
+          });
+          
+          // Redirecionar apenas se necessário
+          if (isAuthPath || hasOAuthParams || currentPath === '/') {
+            console.log('🔀 Auth: Redirecionando após login para dashboard...');
+            setTimeout(() => {
+              if (mounted) {
+                navigate('/dashboard', { replace: true });
+              }
+            }, 100);
+          }
         }
       } else if (!currentSession) {
         console.log('❌ Auth: Sessão perdida');
         setProfile(null);
         setIsLoading(false);
+        
+        // Redirecionar para auth apenas se não estivermos já lá
+        if (location.pathname !== '/auth') {
+          navigate('/auth', { replace: true });
+        }
       }
     });
 
@@ -147,7 +202,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const cleanUrl = `${window.location.origin}${window.location.pathname}`;
       window.history.replaceState({}, document.title, cleanUrl);
     }
-  }, []);
+  }, [location.pathname]);
 
   const value = {
     session,

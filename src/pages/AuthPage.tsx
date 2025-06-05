@@ -16,19 +16,29 @@ const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isLoading, setIsLoading] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Handle redirection after login
+  // Handle redirection after login with improved logging
   useEffect(() => {
-    if (session) {
-      console.log('🔀 AuthPage: Usuário autenticado, redirecionando para dashboard');
-      navigate('/dashboard', { replace: true });
-    }
-  }, [session, navigate]);
+    console.log('🔍 AuthPage: Verificando estado de autenticação...', {
+      hasSession: !!session,
+      hasUser: !!user,
+      currentPath: location.pathname,
+      timestamp: new Date().toISOString()
+    });
 
-  // Clean up URL parameters from OAuth redirects
+    if (session && user) {
+      console.log('🔀 AuthPage: Usuário autenticado detectado, redirecionando para dashboard');
+      // Adicionar um pequeno delay para garantir que a navegação aconteça
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 50);
+    }
+  }, [session, user, navigate, location.pathname]);
+
+  // Clean up URL parameters from OAuth redirects with improved handling
   useEffect(() => {
     const url = new URL(window.location.href);
     const hasAuthParams = url.searchParams.has('access_token') || 
@@ -37,25 +47,39 @@ const AuthPage: React.FC = () => {
                          url.hash;
     
     if (hasAuthParams) {
-      console.log('🧹 AuthPage: Limpando parâmetros OAuth da URL');
+      console.log('🧹 AuthPage: Limpando parâmetros OAuth da URL', {
+        hash: url.hash,
+        searchParams: url.search,
+        timestamp: new Date().toISOString()
+      });
+      
       // Clean the URL without triggering a page reload
       const cleanUrl = `${window.location.origin}${window.location.pathname}`;
       window.history.replaceState({}, document.title, cleanUrl);
     }
   }, []);
 
-  // Handle Google Sign In
+  // Handle Google Sign In with improved error handling
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      console.log('🔑 AuthPage: Iniciando Google OAuth...');
+      console.log('🔑 AuthPage: Iniciando Google OAuth...', {
+        redirectTo: `${window.location.origin}/dashboard`,
+        timestamp: new Date().toISOString()
+      });
       
-      await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/dashboard`,
         }
       });
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('✅ AuthPage: Google OAuth iniciado com sucesso');
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       console.error('❌ AuthPage: Erro no Google OAuth:', errorMessage);
@@ -75,6 +99,12 @@ const AuthPage: React.FC = () => {
     console.log('✅ AuthPage: Login bem-sucedido');
     toast.success("Login realizado com sucesso!");
   };
+
+  // Se o usuário está autenticado, não renderizar a página de auth
+  if (session && user) {
+    console.log('🔄 AuthPage: Usuário autenticado, não renderizando página de auth');
+    return null;
+  }
 
   if (showResetPassword) {
     return (

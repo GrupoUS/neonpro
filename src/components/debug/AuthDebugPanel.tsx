@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,9 +10,16 @@ import { useSupabaseDebugger } from '@/utils/supabaseDebugger';
 export const AuthDebugPanel: React.FC = () => {
   const { user, session, profile, isLoading } = useAuth();
   const { runHealthCheck } = useSupabaseDebugger();
+  const location = useLocation();
 
   const handleHealthCheck = async () => {
     await runHealthCheck();
+  };
+
+  const handleClearSession = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
   };
 
   // Só mostrar em desenvolvimento
@@ -69,7 +77,7 @@ export const AuthDebugPanel: React.FC = () => {
           </div>
         )}
         
-        <div className="pt-2 border-t">
+        <div className="pt-2 border-t space-y-2">
           <Button 
             size="sm" 
             variant="outline" 
@@ -78,10 +86,27 @@ export const AuthDebugPanel: React.FC = () => {
           >
             Run Health Check
           </Button>
+          
+          <Button 
+            size="sm" 
+            variant="destructive" 
+            onClick={handleClearSession}
+            className="w-full text-xs"
+          >
+            Clear All Sessions
+          </Button>
         </div>
         
         <div className="text-xs text-muted-foreground">
-          <strong>Current Path:</strong> {window.location.pathname}
+          <strong>Current Path:</strong> {location.pathname}
+        </div>
+        
+        <div className="text-xs text-muted-foreground">
+          <strong>URL:</strong> {window.location.href.slice(0, 40)}...
+        </div>
+        
+        <div className="text-xs text-muted-foreground">
+          <strong>Timestamp:</strong> {new Date().toLocaleTimeString()}
         </div>
       </CardContent>
     </Card>
