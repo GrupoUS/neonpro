@@ -9,30 +9,32 @@ import {
   type ServiceInsert
 } from './clinic-services'; 
 
-// Tipos específicos para dados das ações (adaptados para o contexto clínico)
+// Tipos específicos para dados das ações (alinhados com o schema real do banco)
 interface AppointmentData {
   id?: string;
-  patient_id?: string;
-  service_id?: string;
-  date?: string;
-  time?: string;
+  paciente_id?: string;
+  servico_id?: string;
+  profissional_id?: string;
+  data_hora?: string;
+  duracao?: number;
   status?: string;
-  notes?: string;
+  observacoes?: string;
   created_at?: string;
   updated_at?: string;
   user_id?: string;
-  pacientes?: { nome: string }; // Adicionado para facilitar a exibição
-  servicos?: { nome: string, preco: number }; // Adicionado para facilitar a exibição
+  pacientes?: { nome: string } | null;
+  servicos?: { nome_servico: string; preco: number } | null;
 }
 
 interface PatientData {
   id?: string;
-  name?: string;
+  nome?: string;
   email?: string;
-  phone?: string;
-  date_of_birth?: string;
-  gender?: string;
-  address?: string;
+  telefone?: string;
+  data_nascimento?: string;
+  cpf?: string;
+  endereco?: any;
+  observacoes?: string;
   created_at?: string;
   updated_at?: string;
   user_id?: string;
@@ -40,10 +42,11 @@ interface PatientData {
 
 interface ServiceData {
   id?: string;
-  name?: string;
-  description?: string;
-  preco?: number; // Alterado de price para preco
-  duration?: number;
+  nome_servico?: string;
+  descricao?: string;
+  preco?: number;
+  duracao?: number;
+  ativo?: boolean;
   created_at?: string;
   updated_at?: string;
   user_id?: string;
@@ -53,7 +56,6 @@ interface ClinicSummary {
   totalAppointments: number;
   totalPatients: number;
   totalRevenue: number;
-  // Adicionar outras métricas relevantes para a clínica
 }
 
 interface ServiceAnalysis {
@@ -62,7 +64,7 @@ interface ServiceAnalysis {
   revenue: number;
 }
 
-// Importar tipos de clinic-services (adaptado)
+// Importar tipos de clinic-services
 import type { Profile } from './clinic-services';
 
 interface ClinicContext {
@@ -70,7 +72,6 @@ interface ClinicContext {
   appointments: AppointmentData[];
   patients: PatientData[];
   services: ServiceData[];
-  // billReminders: BillReminderInsert[]; // Removido
   summary: ClinicSummary;
 }
 
@@ -79,16 +80,15 @@ interface IntentData {
   data?: Record<string, unknown>;
 }
 
-type ActionData = AppointmentData | PatientData | ServiceData | Record<string, unknown>; // Removido BillReminderInsert
+type ActionData = AppointmentData | PatientData | ServiceData | Record<string, unknown>;
 
-// Tipos para as ações que o AI pode executar (adaptados para o contexto clínico)
+// Tipos para as ações que o AI pode executar
 export interface AIAction {
   type: 'create_appointment' | 'update_appointment' | 'delete_appointment' | 
         'create_patient' | 'update_patient' | 'delete_patient' |
         'create_service' | 'update_service' | 'delete_service' |
-        // 'create_bill_reminder' | 'update_bill_reminder' | 'delete_bill_reminder' | // Removido
         'analyze_appointments' | 'get_clinic_insights' | 'categorize_service' |
-        'list_appointments' | 'list_patients' | 'list_services'; // Removido list_bill_reminders
+        'list_appointments' | 'list_patients' | 'list_services';
   data: ActionData;
 }
 
@@ -113,13 +113,60 @@ export class ClinicAIAssistant {
       // Obter contexto clínico completo do usuário
       const context = await clinicDataService.getUserClinicContext(this.userId);
       
+      // Transformar dados para o formato esperado
+      const transformedContext: ClinicContext = {
+        profile: context.profile,
+        appointments: (context.appointments || []).map(apt => ({
+          id: apt.id,
+          paciente_id: apt.paciente_id,
+          servico_id: apt.servico_id,
+          profissional_id: apt.profissional_id,
+          data_hora: apt.data_hora,
+          duracao: apt.duracao,
+          status: apt.status,
+          observacoes: apt.observacoes,
+          created_at: apt.created_at,
+          updated_at: apt.updated_at,
+          user_id: apt.user_id,
+          pacientes: apt.pacientes || null,
+          servicos: apt.servicos && typeof apt.servicos === 'object' && 'nome_servico' in apt.servicos 
+            ? { nome_servico: apt.servicos.nome_servico, preco: apt.servicos.preco } 
+            : null
+        })),
+        patients: (context.patients || []).map(patient => ({
+          id: patient.id,
+          nome: patient.nome,
+          email: patient.email,
+          telefone: patient.telefone,
+          data_nascimento: patient.data_nascimento,
+          cpf: patient.cpf,
+          endereco: patient.endereco,
+          observacoes: patient.observacoes,
+          created_at: patient.created_at,
+          updated_at: patient.updated_at,
+          user_id: patient.user_id
+        })),
+        services: (context.services || []).map(service => ({
+          id: service.id,
+          nome_servico: service.nome_servico,
+          descricao: service.descricao,
+          preco: service.preco,
+          duracao: service.duracao,
+          ativo: service.ativo,
+          created_at: service.created_at,
+          updated_at: service.updated_at,
+          user_id: service.user_id
+        })),
+        summary: context.summary
+      };
+      
       // Analisar a intenção da mensagem
       const intent = this.analyzeIntent(message);
       
       // Processar baseado na intenção
       switch (intent.type) {
         case 'add_appointment':
-          return await this.handleAddAppointment(message, intent.data, context);
+          return await this.handleAddAppointment(message, intent.data, transformedContext);
         case 'delete_appointment':
           return await this.handleDeleteAppointment(message, intent.data);
         case 'create_patient':
@@ -130,25 +177,19 @@ export class ClinicAIAssistant {
           return await this.handleCreateService(message, intent.data);
         case 'delete_service':
           return await this.handleDeleteService(message, intent.data);
-        // case 'create_bill_reminder': // Removido
-        //   return await this.handleCreateBillReminder(message, intent.data);
-        // case 'delete_bill_reminder': // Removido
-        //   return await this.handleDeleteBillReminder(message, intent.data);
         case 'list_appointments':
-          return await this.handleListAppointments(message, context);
+          return await this.handleListAppointments(message, transformedContext);
         case 'list_patients':
-          return await this.handleListPatients(message, context);
+          return await this.handleListPatients(message, transformedContext);
         case 'list_services':
-          return await this.handleListServices(message, context);
-        // case 'list_bill_reminders': // Removido
-        //   return await this.handleListBillReminders(message, context);
+          return await this.handleListServices(message, transformedContext);
         case 'analyze_appointments':
-          return await this.handleAnalyzeAppointments(message, context);
+          return await this.handleAnalyzeAppointments(message, transformedContext);
         case 'clinic_insights':
-          return await this.handleClinicInsights(context);
+          return await this.handleClinicInsights(transformedContext);
         case 'categorize_service':
         default:
-          return await this.handleGeneralQuery(message, context);
+          return await this.handleGeneralQuery(message, transformedContext);
       }
     } catch (error) {
       console.error('Erro no processamento da mensagem:', error);
@@ -156,14 +197,14 @@ export class ClinicAIAssistant {
         message: 'Desculpe, ocorreu um erro ao processar sua solicitação. Tente novamente.',
         suggestions: [
           'Analise meus atendimentos do mês',
-          'Agende uma consulta',
-          'Mostre meus pacientes'
+          'Agende uma consulta para João Silva amanhã',
+          'Cadastre um novo paciente'
         ]
       };
     }
   }
 
-  // Analisar a intenção da mensagem do usuário (adaptado para o contexto clínico)
+  // Analisar a intenção da mensagem do usuário
   private analyzeIntent(message: string): IntentData {
     const lowerMessage = message.toLowerCase();
 
@@ -203,7 +244,6 @@ export class ClinicAIAssistant {
       return { type: 'delete_service' };
     }
 
-
     // Padrões para listar agendamentos
     if (lowerMessage.includes('mostrar agendamentos') || lowerMessage.includes('ver consultas') ||
         lowerMessage.includes('quais minhas consultas')) {
@@ -220,12 +260,6 @@ export class ClinicAIAssistant {
     if (lowerMessage.includes('mostrar serviços') || lowerMessage.includes('ver serviços') ||
         lowerMessage.includes('listar serviços')) {
       return { type: 'list_services' };
-    }
-
-    // Padrões para listar lembretes (manter se relevante)
-    if (lowerMessage.includes('mostrar lembretes') || lowerMessage.includes('ver lembretes') ||
-        lowerMessage.includes('listar lembretes')) {
-      return { type: 'list_bill_reminders' };
     }
 
     // Padrões para análise de atendimentos
@@ -314,7 +348,7 @@ export class ClinicAIAssistant {
       };
     }
 
-    const patient = context.patients.find(p => p.name?.toLowerCase().includes(patientName.toLowerCase()));
+    const patient = context.patients.find(p => p.nome?.toLowerCase().includes(patientName.toLowerCase()));
     if (!patient) {
       return {
         message: `Paciente "${patientName}" não encontrado. Por favor, cadastre-o primeiro.`,
@@ -322,7 +356,7 @@ export class ClinicAIAssistant {
       };
     }
 
-    const service = context.services.find(s => s.name?.toLowerCase().includes(serviceName.toLowerCase()));
+    const service = context.services.find(s => s.nome_servico?.toLowerCase().includes(serviceName.toLowerCase()));
     if (!service) {
       return {
         message: `Serviço "${serviceName}" não encontrado. Por favor, cadastre-o primeiro.`,
@@ -332,18 +366,18 @@ export class ClinicAIAssistant {
 
     const appointment: AppointmentInsert = {
       user_id: this.userId,
-      patient_id: patient.id!,
-      service_id: service.id!,
-      date: date,
-      time: time,
-      status: 'scheduled',
+      paciente_id: patient.id!,
+      servico_id: service.id!,
+      data_hora: `${date} ${time}:00`,
+      status: 'agendado',
+      duracao: service.duracao || 60
     };
 
     try {
       const result = await appointmentService.create(appointment);
       
       return {
-        message: `✅ Consulta agendada com sucesso!\n\nPaciente: ${patient.name}\nServiço: ${service.name}\nData: ${date}\nHora: ${time}`,
+        message: `✅ Consulta agendada com sucesso!\n\nPaciente: ${patient.nome}\nServiço: ${service.nome_servico}\nData: ${date}\nHora: ${time}`,
         actions: [{
           type: 'create_appointment',
           data: result.data as AppointmentData
@@ -403,9 +437,9 @@ export class ClinicAIAssistant {
   // Lidar com criação de pacientes
   private async handleCreatePatient(message: string, data?: Record<string, unknown>): Promise<AIResponse> {
     const nameMatch = message.match(/(?:cadastrar paciente|novo paciente|adicionar paciente)\s*(.+)/i);
-    const name = nameMatch ? nameMatch[1].trim() : null;
+    const nome = nameMatch ? nameMatch[1].trim() : null;
 
-    if (!name) {
+    if (!nome) {
       return {
         message: 'Para cadastrar um paciente, preciso do nome dele. Ex: "Cadastrar paciente João Silva"',
         suggestions: [
@@ -417,14 +451,13 @@ export class ClinicAIAssistant {
 
     const patient: PatientInsert = {
       user_id: this.userId,
-      name: name,
-      // Adicionar outros campos se puderem ser extraídos da mensagem ou forem opcionais
+      nome: nome
     };
 
     try {
       const result = await patientService.create(patient);
       return {
-        message: `✅ Paciente "${name}" cadastrado com sucesso!`,
+        message: `✅ Paciente "${nome}" cadastrado com sucesso!`,
         actions: [{
           type: 'create_patient',
           data: result.data as PatientData
@@ -437,7 +470,7 @@ export class ClinicAIAssistant {
     } catch (error) {
       console.error('Erro ao cadastrar paciente:', error);
       return {
-        message: `Erro ao cadastrar o paciente "${name}". Tente novamente.`,
+        message: `Erro ao cadastrar o paciente "${nome}". Tente novamente.`,
         suggestions: ['Tente cadastrar novamente']
       };
     }
@@ -446,9 +479,9 @@ export class ClinicAIAssistant {
   // Lidar com exclusão de pacientes
   private async handleDeletePatient(message: string, data?: Record<string, unknown>): Promise<AIResponse> {
     const nameMatch = message.match(/(?:remover paciente|excluir paciente|apagar paciente)\s*(.+)/i);
-    const name = nameMatch ? nameMatch[1].trim() : null;
+    const nome = nameMatch ? nameMatch[1].trim() : null;
 
-    if (!name) {
+    if (!nome) {
       return {
         message: 'Para apagar um paciente, preciso do nome dele. Ex: "Apagar paciente João Silva"',
         suggestions: [
@@ -460,18 +493,18 @@ export class ClinicAIAssistant {
 
     try {
       const patients = await patientService.getAll(this.userId);
-      const patientToDelete = patients.data?.find(p => p.name?.toLowerCase() === name.toLowerCase());
+      const patientToDelete = patients.data?.find(p => p.nome?.toLowerCase() === nome.toLowerCase());
 
       if (!patientToDelete) {
         return {
-          message: `Paciente "${name}" não encontrado. Verifique o nome e tente novamente.`,
+          message: `Paciente "${nome}" não encontrado. Verifique o nome e tente novamente.`,
           suggestions: ['Mostrar meus pacientes']
         };
       }
 
       await patientService.delete(patientToDelete.id);
       return {
-        message: `✅ Paciente "${name}" apagado com sucesso!`,
+        message: `✅ Paciente "${nome}" apagado com sucesso!`,
         actions: [{
           type: 'delete_patient',
           data: { id: patientToDelete.id }
@@ -484,7 +517,7 @@ export class ClinicAIAssistant {
     } catch (error) {
       console.error('Erro ao apagar paciente:', error);
       return {
-        message: `Erro ao apagar o paciente "${name}". Tente novamente.`,
+        message: `Erro ao apagar o paciente "${nome}". Tente novamente.`,
         suggestions: ['Tente apagar novamente']
       };
     }
@@ -493,9 +526,9 @@ export class ClinicAIAssistant {
   // Lidar com criação de serviços
   private async handleCreateService(message: string, data?: Record<string, unknown>): Promise<AIResponse> {
     const nameMatch = message.match(/(?:cadastrar serviço|novo serviço|adicionar serviço)\s*(.+)/i);
-    const name = nameMatch ? nameMatch[1].trim() : null;
+    const nome = nameMatch ? nameMatch[1].trim() : null;
 
-    if (!name) {
+    if (!nome) {
       return {
         message: 'Para cadastrar um serviço, preciso do nome dele. Ex: "Cadastrar serviço Odontologia"',
         suggestions: [
@@ -507,14 +540,15 @@ export class ClinicAIAssistant {
 
     const service: ServiceInsert = {
       user_id: this.userId,
-      name: name,
-      // Adicionar outros campos se puderem ser extraídos da mensagem ou forem opcionais
+      nome_servico: nome,
+      preco: 0,
+      duracao: 60
     };
 
     try {
       const result = await serviceService.create(service);
       return {
-        message: `✅ Serviço "${name}" cadastrado com sucesso!`,
+        message: `✅ Serviço "${nome}" cadastrado com sucesso!`,
         actions: [{
           type: 'create_service',
           data: result.data as ServiceData
@@ -527,7 +561,7 @@ export class ClinicAIAssistant {
     } catch (error) {
       console.error('Erro ao cadastrar serviço:', error);
       return {
-        message: `Erro ao cadastrar o serviço "${name}". Tente novamente.`,
+        message: `Erro ao cadastrar o serviço "${nome}". Tente novamente.`,
         suggestions: ['Tente cadastrar novamente']
       };
     }
@@ -536,9 +570,9 @@ export class ClinicAIAssistant {
   // Lidar com exclusão de serviços
   private async handleDeleteService(message: string, data?: Record<string, unknown>): Promise<AIResponse> {
     const nameMatch = message.match(/(?:remover serviço|excluir serviço|apagar serviço)\s*(.+)/i);
-    const name = nameMatch ? nameMatch[1].trim() : null;
+    const nome = nameMatch ? nameMatch[1].trim() : null;
 
-    if (!name) {
+    if (!nome) {
       return {
         message: 'Para apagar um serviço, preciso do nome dele. Ex: "Apagar serviço Odontologia"',
         suggestions: [
@@ -550,18 +584,18 @@ export class ClinicAIAssistant {
 
     try {
       const services = await serviceService.getAll(this.userId);
-      const serviceToDelete = services.data?.find(s => s.name?.toLowerCase() === name.toLowerCase());
+      const serviceToDelete = services.data?.find(s => s.nome_servico?.toLowerCase() === nome.toLowerCase());
 
       if (!serviceToDelete) {
         return {
-          message: `Serviço "${name}" não encontrado. Verifique o nome e tente novamente.`,
+          message: `Serviço "${nome}" não encontrado. Verifique o nome e tente novamente.`,
           suggestions: ['Mostrar meus serviços']
         };
       }
 
       await serviceService.delete(serviceToDelete.id);
       return {
-        message: `✅ Serviço "${name}" apagado com sucesso!`,
+        message: `✅ Serviço "${nome}" apagado com sucesso!`,
         actions: [{
           type: 'delete_service',
           data: { id: serviceToDelete.id }
@@ -574,13 +608,11 @@ export class ClinicAIAssistant {
     } catch (error) {
       console.error('Erro ao apagar serviço:', error);
       return {
-        message: `Erro ao apagar o serviço "${name}". Tente novamente.`,
+        message: `Erro ao apagar o serviço "${nome}". Tente novamente.`,
         suggestions: ['Tente apagar novamente']
       };
     }
   }
-
-
 
   // Lidar com listagem de agendamentos
   private async handleListAppointments(message: string, context: ClinicContext): Promise<AIResponse> {
@@ -598,9 +630,8 @@ export class ClinicAIAssistant {
 
     let responseMessage = '📅 **Seus próximos agendamentos:**\n\n';
     appointments.slice(0, 5).forEach(appointment => {
-      responseMessage += `• **${appointment.pacientes?.nome || 'Paciente Desconhecido'}** - ${appointment.servicos?.nome || 'Serviço Desconhecido'}\n`;
-      responseMessage += `  Data: ${new Date(appointment.date || '').toLocaleDateString('pt-BR')}\n`;
-      responseMessage += `  Hora: ${appointment.time}\n`;
+      responseMessage += `• **${appointment.pacientes?.nome || 'Paciente Desconhecido'}** - ${appointment.servicos?.nome_servico || 'Serviço Desconhecido'}\n`;
+      responseMessage += `  Data: ${appointment.data_hora ? new Date(appointment.data_hora).toLocaleDateString('pt-BR') : 'N/A'}\n`;
       responseMessage += `  Status: ${appointment.status}\n\n`;
     });
 
@@ -635,9 +666,9 @@ export class ClinicAIAssistant {
 
     let responseMessage = '👥 **Seus pacientes cadastrados:**\n\n';
     patients.slice(0, 5).forEach(patient => {
-      responseMessage += `• **${patient.name}** (ID: ${patient.id})\n`;
+      responseMessage += `• **${patient.nome}** (ID: ${patient.id})\n`;
       responseMessage += `  Email: ${patient.email || 'N/A'}\n`;
-      responseMessage += `  Telefone: ${patient.phone || 'N/A'}\n\n`;
+      responseMessage += `  Telefone: ${patient.telefone || 'N/A'}\n\n`;
     });
 
     if (patients.length > 5) {
@@ -670,9 +701,9 @@ export class ClinicAIAssistant {
 
     let responseMessage = '🏥 **Seus serviços cadastrados:**\n\n';
     services.slice(0, 5).forEach(service => {
-      responseMessage += `• **${service.name}** (ID: ${service.id})\n`;
+      responseMessage += `• **${service.nome_servico}** (ID: ${service.id})\n`;
       responseMessage += `  Preço: R$ ${(service.preco || 0).toFixed(2)}\n`;
-      responseMessage += `  Duração: ${service.duration || 'N/A'} minutos\n\n`;
+      responseMessage += `  Duração: ${service.duracao || 'N/A'} minutos\n\n`;
     });
 
     if (services.length > 5) {
@@ -688,8 +719,6 @@ export class ClinicAIAssistant {
       ]
     };
   }
-
-  // Método removido - billReminders não está implementado no contexto clínico
 
   // Gerar insights de atendimentos
   private generateAppointmentInsights(summary: ClinicSummary, serviceAnalysis: ServiceAnalysis[]): string[] {
@@ -738,7 +767,7 @@ export class ClinicAIAssistant {
 
   // Placeholder para insights clínicos
   private async handleClinicInsights(context: ClinicContext): Promise<AIResponse> {
-    const insights = this.generateAppointmentInsights(context.summary, []); // Passar análise de serviço real aqui
+    const insights = this.generateAppointmentInsights(context.summary, []);
     return {
       message: 'Aqui estão alguns insights sobre sua clínica:\n\n' + insights.join('\n') + '\n\n(funcionalidade em desenvolvimento)',
       suggestions: ['Como posso aumentar minha receita?', 'Quais são os horários de pico?']
