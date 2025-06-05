@@ -116,31 +116,39 @@ export class ClinicAIAssistant {
       // Transformar dados para o formato esperado
       const transformedContext: ClinicContext = {
         profile: context.profile,
-        appointments: (context.appointments || []).map(apt => ({
-          id: apt.id,
-          paciente_id: apt.paciente_id,
-          servico_id: apt.servico_id,
-          profissional_id: apt.profissional_id,
-          data_hora: apt.data_hora,
-          duracao: apt.duracao,
-          status: apt.status,
-          observacoes: apt.observacoes,
-          created_at: apt.created_at,
-          updated_at: apt.updated_at,
-          user_id: apt.user_id,
-          pacientes: apt.pacientes || null,
-          servicos: apt.servicos && 
-                   typeof apt.servicos === 'object' && 
-                   'nome_servico' in apt.servicos && 
-                   'preco' in apt.servicos && 
-                   apt.servicos.nome_servico && 
-                   apt.servicos.preco !== undefined
-            ? { 
-                nome_servico: apt.servicos.nome_servico as string, 
-                preco: apt.servicos.preco as number 
-              } 
-            : null
-        })),
+        appointments: (context.appointments || []).map(apt => {
+          // Verificar e transformar servicos de forma mais robusta
+          let servicosData = null;
+          if (apt.servicos && 
+              typeof apt.servicos === 'object' && 
+              apt.servicos !== null &&
+              'nome_servico' in apt.servicos && 
+              'preco' in apt.servicos) {
+            const servicos = apt.servicos as { nome_servico: unknown; preco: unknown };
+            if (servicos.nome_servico && servicos.preco !== undefined) {
+              servicosData = { 
+                nome_servico: servicos.nome_servico as string, 
+                preco: servicos.preco as number 
+              };
+            }
+          }
+
+          return {
+            id: apt.id,
+            paciente_id: apt.paciente_id,
+            servico_id: apt.servico_id,
+            profissional_id: apt.profissional_id,
+            data_hora: apt.data_hora,
+            duracao: apt.duracao,
+            status: apt.status,
+            observacoes: apt.observacoes,
+            created_at: apt.created_at,
+            updated_at: apt.updated_at,
+            user_id: apt.user_id,
+            pacientes: apt.pacientes || null,
+            servicos: servicosData
+          };
+        }),
         patients: (context.patients || []).map(patient => ({
           id: patient.id,
           nome: patient.nome,
