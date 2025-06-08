@@ -1,10 +1,9 @@
+import React from "react";
+import { Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Database } from "@/types/supabase";
 
-import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Database } from '@/types/supabase';
-
-type ServiceRow = Database['public']['Tables']['services']['Row'];
+type ServiceRow = Database["public"]["Tables"]["services"]["Row"];
 
 interface ServicoTableProps {
   servicos: ServiceRow[];
@@ -12,7 +11,11 @@ interface ServicoTableProps {
   onDelete: (id: string) => void;
 }
 
-const ServicoTable: React.FC<ServicoTableProps> = ({ servicos, onEdit, onDelete }) => {
+const ServicoTable: React.FC<ServicoTableProps> = ({
+  servicos,
+  onEdit,
+  onDelete,
+}) => {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -27,14 +30,20 @@ const ServicoTable: React.FC<ServicoTableProps> = ({ servicos, onEdit, onDelete 
         </thead>
         <tbody>
           {servicos.map((servico) => (
-            <tr key={servico.id} className="border-b border-border hover:bg-muted/50">
+            <tr
+              key={servico.id}
+              className="border-b border-border hover:bg-muted/50"
+            >
               <td className="p-4 font-medium">{servico.name}</td>
               <td className="p-4">
-                R$ {servico.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R${" "}
+                {servico.price.toLocaleString("pt-BR", {
+                  minimumFractionDigits: 2,
+                })}
               </td>
-              <td className="p-4">{servico.duration_minutes} min</td>
+              <td className="p-4">{servico.duration} min</td>
               <td className="p-4 text-muted-foreground">
-                {servico.description || 'Sem descrição'}
+                {servico.description || "Sem descrição"}
               </td>
               <td className="p-4">
                 <div className="flex justify-end gap-2">

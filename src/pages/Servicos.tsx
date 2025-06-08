@@ -1,37 +1,37 @@
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { useAuth } from "@/contexts/auth";
+import { useServicos } from "@/hooks/useServicos";
+import ServicoTable from "@/components/servicos/ServicoTable";
+import ServicoModal from "@/components/servicos/ServicoModal";
+import ServicoEmptyState from "@/components/servicos/ServicoEmptyState";
+import { Button } from "@/components/ui/button";
+import { Database } from "@/types/supabase";
 
-import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { useAuth } from '@/contexts/auth';
-import { useServicos } from '@/hooks/useServicos';
-import ServicoTable from '@/components/servicos/ServicoTable';
-import ServicoModal from '@/components/servicos/ServicoModal';
-import ServicoEmptyState from '@/components/servicos/ServicoEmptyState';
-import { Button } from '@/components/ui/button';
-import { Database } from '@/types/supabase';
-
-type ServiceRow = Database['public']['Tables']['services']['Row'];
+type ServiceRow = Database["public"]["Tables"]["services"]["Row"];
 
 const Servicos: React.FC = () => {
   const { user } = useAuth();
-  const { servicos, loading, createServico, updateServico, deleteServico } = useServicos();
-  
+  const { servicos, loading, createServico, updateServico, deleteServico } =
+    useServicos();
+
   const [showModal, setShowModal] = useState(false);
   const [editingServico, setEditingServico] = useState<ServiceRow | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    price: '',
-    duration_minutes: '60',
-    description: ''
+    name: "",
+    price: "",
+    duration_minutes: "60",
+    description: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const servicoData = {
       name: formData.name,
       price: parseFloat(formData.price),
       duration_minutes: parseInt(formData.duration_minutes) || 60,
-      description: formData.description || undefined
+      description: formData.description || undefined,
     };
 
     let success = false;
@@ -42,7 +42,12 @@ const Servicos: React.FC = () => {
     }
 
     if (success) {
-      setFormData({ name: '', price: '', duration_minutes: '60', description: '' });
+      setFormData({
+        name: "",
+        price: "",
+        duration_minutes: "60",
+        description: "",
+      });
       setShowModal(false);
       setEditingServico(null);
     }
@@ -53,30 +58,37 @@ const Servicos: React.FC = () => {
     setFormData({
       name: servico.name,
       price: servico.price.toString(),
-      duration_minutes: servico.duration_minutes.toString(),
-      description: servico.description || ''
+      duration_minutes: servico.duration.toString(),
+      description: servico.description || "",
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este serviço?')) {
+    if (!window.confirm("Tem certeza que deseja excluir este serviço?")) {
       return;
     }
-    
+
     await deleteServico(id);
   };
 
   const openNewModal = () => {
     setEditingServico(null);
-    setFormData({ name: '', price: '', duration_minutes: '60', description: '' });
+    setFormData({
+      name: "",
+      price: "",
+      duration_minutes: "60",
+      description: "",
+    });
     setShowModal(true);
   };
 
   if (!user) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Você precisa estar logado para acessar esta página.</p>
+        <p className="text-muted-foreground">
+          Você precisa estar logado para acessar esta página.
+        </p>
       </div>
     );
   }
@@ -99,10 +111,7 @@ const Servicos: React.FC = () => {
             Gerencie os serviços oferecidos pela clínica
           </p>
         </div>
-        <Button
-          onClick={openNewModal}
-          className="btn-neon-gradient"
-        >
+        <Button onClick={openNewModal} className="btn-neon-gradient">
           <Plus className="h-4 w-4 mr-2" />
           Novo Serviço
         </Button>
