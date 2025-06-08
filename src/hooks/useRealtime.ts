@@ -1,13 +1,12 @@
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import { Database } from "../types/supabase";
 
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import { Database } from '../types/supabase';
-
-type Tables = Database['public']['Tables'];
+type Tables = Database["public"]["Tables"];
 
 // Specific hooks for each table with proper typing
 export const useRealtimeAgendamentos = () => {
-  const [data, setData] = useState<Tables['agendamentos']['Row'][]>([]);
+  const [data, setData] = useState<Tables["agendamentos"]["Row"][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,12 +15,12 @@ export const useRealtimeAgendamentos = () => {
     setError(null);
 
     const channel = supabase
-      .channel('public:agendamentos')
+      .channel("public:agendamentos")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'agendamentos' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "agendamentos" },
         (payload) => {
-          console.log('Realtime change received!', payload);
+          console.log("Realtime change received!", payload);
           fetchData();
         }
       )
@@ -30,8 +29,8 @@ export const useRealtimeAgendamentos = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error: fetchError } = await supabase
-          .from('agendamentos')
-          .select('*');
+          .from("agendamentos")
+          .select("*");
 
         if (fetchError) {
           setError(fetchError.message);
@@ -39,8 +38,8 @@ export const useRealtimeAgendamentos = () => {
           setData(fetchedData || []);
         }
       } catch (err) {
-        setError('Erro ao buscar dados');
-        console.error('Fetch error:', err);
+        setError("Erro ao buscar dados");
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -57,7 +56,7 @@ export const useRealtimeAgendamentos = () => {
 };
 
 export const useRealtimeClients = () => {
-  const [data, setData] = useState<Tables['clients']['Row'][]>([]);
+  const [data, setData] = useState<Tables["pacientes"]["Row"][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,12 +65,12 @@ export const useRealtimeClients = () => {
     setError(null);
 
     const channel = supabase
-      .channel('public:clients')
+      .channel("public:pacientes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'clients' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "pacientes" },
         (payload) => {
-          console.log('Realtime change received!', payload);
+          console.log("Realtime change received!", payload);
           fetchData();
         }
       )
@@ -80,8 +79,8 @@ export const useRealtimeClients = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error: fetchError } = await supabase
-          .from('clients')
-          .select('*');
+          .from("pacientes")
+          .select("*");
 
         if (fetchError) {
           setError(fetchError.message);
@@ -89,8 +88,8 @@ export const useRealtimeClients = () => {
           setData(fetchedData || []);
         }
       } catch (err) {
-        setError('Erro ao buscar dados');
-        console.error('Fetch error:', err);
+        setError("Erro ao buscar dados");
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -107,7 +106,7 @@ export const useRealtimeClients = () => {
 };
 
 export const useRealtimeServices = () => {
-  const [data, setData] = useState<Tables['services']['Row'][]>([]);
+  const [data, setData] = useState<Tables["services"]["Row"][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,12 +115,12 @@ export const useRealtimeServices = () => {
     setError(null);
 
     const channel = supabase
-      .channel('public:services')
+      .channel("public:services")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'services' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "services" },
         (payload) => {
-          console.log('Realtime change received!', payload);
+          console.log("Realtime change received!", payload);
           fetchData();
         }
       )
@@ -130,8 +129,8 @@ export const useRealtimeServices = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error: fetchError } = await supabase
-          .from('services')
-          .select('*');
+          .from("services")
+          .select("*");
 
         if (fetchError) {
           setError(fetchError.message);
@@ -139,8 +138,8 @@ export const useRealtimeServices = () => {
           setData(fetchedData || []);
         }
       } catch (err) {
-        setError('Erro ao buscar dados');
-        console.error('Fetch error:', err);
+        setError("Erro ao buscar dados");
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -157,7 +156,7 @@ export const useRealtimeServices = () => {
 };
 
 export const useRealtimeProfessionals = () => {
-  const [data, setData] = useState<Tables['professionals']['Row'][]>([]);
+  const [data, setData] = useState<Tables["professionals"]["Row"][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,12 +165,12 @@ export const useRealtimeProfessionals = () => {
     setError(null);
 
     const channel = supabase
-      .channel('public:professionals')
+      .channel("public:professionals")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'professionals' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "professionals" },
         (payload) => {
-          console.log('Realtime change received!', payload);
+          console.log("Realtime change received!", payload);
           fetchData();
         }
       )
@@ -180,8 +179,8 @@ export const useRealtimeProfessionals = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error: fetchError } = await supabase
-          .from('professionals')
-          .select('*');
+          .from("professionals")
+          .select("*");
 
         if (fetchError) {
           setError(fetchError.message);
@@ -189,8 +188,8 @@ export const useRealtimeProfessionals = () => {
           setData(fetchedData || []);
         }
       } catch (err) {
-        setError('Erro ao buscar dados');
-        console.error('Fetch error:', err);
+        setError("Erro ao buscar dados");
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -207,7 +206,7 @@ export const useRealtimeProfessionals = () => {
 };
 
 export const useRealtimeTransactions = () => {
-  const [data, setData] = useState<Tables['transactions']['Row'][]>([]);
+  const [data, setData] = useState<Tables["transacoes"]["Row"][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -216,12 +215,12 @@ export const useRealtimeTransactions = () => {
     setError(null);
 
     const channel = supabase
-      .channel('public:transactions')
+      .channel("public:transacoes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'transactions' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "transacoes" },
         (payload) => {
-          console.log('Realtime change received!', payload);
+          console.log("Realtime change received!", payload);
           fetchData();
         }
       )
@@ -230,8 +229,8 @@ export const useRealtimeTransactions = () => {
     const fetchData = async () => {
       try {
         const { data: fetchedData, error: fetchError } = await supabase
-          .from('transactions')
-          .select('*');
+          .from("transacoes")
+          .select("*");
 
         if (fetchError) {
           setError(fetchError.message);
@@ -239,8 +238,8 @@ export const useRealtimeTransactions = () => {
           setData(fetchedData || []);
         }
       } catch (err) {
-        setError('Erro ao buscar dados');
-        console.error('Fetch error:', err);
+        setError("Erro ao buscar dados");
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
