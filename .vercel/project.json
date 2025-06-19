@@ -1,1 +1,15 @@
-{"projectId":"prj_64FCmux5AJquGaiteZ0h8tbV55iB","orgId":"team_bjVDLqo42Gb3p28RelxJia6x"}
+{
+  "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
+  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "settings": {
+    "createdAt": 1750299142397,
+    "framework": "nextjs",
+    "devCommand": null,
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
+    "outputDirectory": ".next",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}
