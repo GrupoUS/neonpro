@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
 
   // === TYPESCRIPT CONFIGURATION ===
   typescript: {
-    // Type checking during build (temporarily disabled for validation)
+    // Type checking during build (temporarily disabled for UI component compatibility)
     ignoreBuildErrors: true,
   },
 

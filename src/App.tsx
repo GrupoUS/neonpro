@@ -1,48 +1,21 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useAuthContext } from '@/components/auth/auth-provider'
-import { AuthForm } from '@/components/auth/auth-form'
-import DashboardLayout from '@/app/dashboard/layout'
-import DashboardPage from '@/app/dashboard/page'
+// NEONPRO App Component - Legacy file for Vite compatibility
+// This file is not used in Next.js App Router but kept for compatibility
+
+import React from 'react'
 
 function App() {
-  const { user, loading } = useAuthContext()
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
   return (
-    <Router>
-      <div className="min-h-screen bg-background text-text">
-        <Routes>
-          <Route 
-            path="/login" 
-            element={user ? <Navigate to="/dashboard" /> : <AuthForm />} 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              user ? (
-                <DashboardLayout>
-                  <DashboardPage />
-                </DashboardLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            } 
-          />
-          <Route 
-            path="/" 
-            element={<Navigate to={user ? "/dashboard" : "/login"} />} 
-          />
-        </Routes>
+    <div className="min-h-screen bg-background text-text">
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">NEONPRO</h1>
+          <p className="text-muted-foreground">
+            This app uses Next.js App Router. Please navigate to the appropriate routes.
+          </p>
+        </div>
       </div>
-    </Router>
+    </div>
   )
 }
 

@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         }
       ],
       metadata: {
-        uptime_seconds: Math.floor(process.uptime())
+        uptime_seconds: Math.floor(Date.now() / 1000)
       }
     };
     
