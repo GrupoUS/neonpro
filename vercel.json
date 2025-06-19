@@ -5,17 +5,8 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "npm install --legacy-peer-deps --force",
   "devCommand": "npm run dev",
-
-  "functions": {
-    "app/api/ai/treatments/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/ai-recommendations/route.ts": {
-      "maxDuration": 30
-    }
-  },
 
   "headers": [
     {

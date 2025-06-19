@@ -74,40 +74,36 @@ const nextConfig: NextConfig = {
       use: ["@svgr/webpack"],
     });
 
-    // Fix for node:process and other node: URIs
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        process: require.resolve("process/browser"),
-        buffer: require.resolve("buffer"),
-        util: require.resolve("util"),
-        url: require.resolve("url"),
-        querystring: require.resolve("querystring-es3"),
-        fs: false,
-        net: false,
-        tls: false,
-        child_process: false,
-      };
-    }
+    // Fix for process and buffer polyfills - Vercel compatible
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      process: require.resolve("process/browser"),
+      buffer: require.resolve("buffer/"),
+      util: require.resolve("util/"),
+      url: require.resolve("url/"),
+      querystring: require.resolve("querystring-es3"),
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+    };
 
-    // Provide polyfills only for client-side
-    if (!isServer) {
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          process: "process/browser",
-          Buffer: ["buffer", "Buffer"],
-        })
-      );
-    }
+    // Provide plugin configuration
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        process: "process/browser",
+        Buffer: ["buffer", "Buffer"],
+      })
+    );
 
-    // Handle node: protocol imports
+    // Alias configuration for node: protocol
     config.resolve.alias = {
       ...config.resolve.alias,
-      "node:process": require.resolve("process/browser"),
-      "node:buffer": require.resolve("buffer"),
-      "node:util": require.resolve("util"),
-      "node:url": require.resolve("url"),
-      "node:querystring": require.resolve("querystring-es3"),
+      "node:process": "process/browser",
+      "node:buffer": "buffer",
+      "node:util": "util",
+      "node:url": "url",
+      "node:querystring": "querystring-es3",
     };
 
     // Bundle analyzer (development only)
