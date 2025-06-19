@@ -1,0 +1,10 @@
+# NEONPRO Redirects - Fixed Version
+/home /  301
+/login /  301
+/dashboard /  301
+/dashboard/* /  301
+/auth /  301
+/api/* /  301
+
+# Force HTTPS
+http://neonproapp.netlify.app/* https://neonproapp.netlify.app/:splat 301!

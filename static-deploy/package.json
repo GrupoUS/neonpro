@@ -1,0 +1,13 @@
+{
+  "name": "neonpro-static",
+  "version": "1.0.0",
+  "description": "NEONPRO Static Demo for Vercel Deploy",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static build complete'",
+    "start": "echo 'Static site ready'"
+  },
+  "keywords": ["neonpro", "healthcare", "saas", "grupo-us"],
+  "author": "GRUPO US",
+  "license": "MIT"
+}

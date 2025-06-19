@@ -1,0 +1,57 @@
+# NEONPRO Netlify Configuration
+# Otimizado para performance e SEO
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/*.{css,js,png,jpg,jpeg,gif,svg,webp,avif,ico,woff,woff2}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/signin"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/signup"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/login"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/"
+  status = 301
+
+# Force HTTPS
+[[redirects]]
+  from = "http://neonpro.netlify.app/*"
+  to = "https://neonpro.netlify.app/:splat"
+  status = 301
+  force = true

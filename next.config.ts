@@ -28,21 +28,12 @@ const nextConfig: NextConfig = {
   },
 
   // === SERVER EXTERNAL PACKAGES ===
-<<<<<<< Updated upstream
   serverExternalPackages: ["@prisma/client", "@opentelemetry/api"],
 
   // === TYPESCRIPT CONFIGURATION ===
   typescript: {
     // Type checking during build (enabled for production)
     ignoreBuildErrors: false,
-=======
-  serverExternalPackages: ["@prisma/client"],
-
-  // === TYPESCRIPT CONFIGURATION ===
-  typescript: {
-    // Type checking during build (temporarily disabled for validation)
-    ignoreBuildErrors: true,
->>>>>>> Stashed changes
   },
 
   // === ESLint CONFIGURATION ===
@@ -68,7 +59,6 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
-<<<<<<< Updated upstream
       {
         protocol: "https",
         hostname: "*.supabase.co",
@@ -77,16 +67,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.com",
       },
-=======
->>>>>>> Stashed changes
     ],
     // Image formats
     formats: ["image/webp", "image/avif"],
     // Image sizes for responsive images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // Enable image optimization
-    unoptimized: false,
+    // Enable image optimization (disabled for static export)
+    unoptimized: true,
   },
 
   // === WEBPACK CONFIGURATION ===
@@ -206,13 +194,14 @@ const nextConfig: NextConfig = {
   generateEtags: true,
 
   // === OUTPUT CONFIGURATION ===
-  output: "standalone",
+  output: "export",
+  trailingSlash: true,
+  skipTrailingSlashRedirect: true,
 
   // === SASS CONFIGURATION ===
   sassOptions: {
     includePaths: ["./src/styles"],
     prependData: `
-<<<<<<< Updated upstream
       $primary-color: #112031;
       $primary-medium-color: #294359;
       $accent-gold-color: #AC9469;
@@ -222,13 +211,6 @@ const nextConfig: NextConfig = {
       $background-color: #FFFFFF;
       $text-color: #112031;
       $border-color: #D2D0C8;
-=======
-      $primary-color: #052CC9;
-      $secondary-color: #4FD1C7;
-      $background-color: #FFFFFF;
-      $text-color: #0B1437;
-      $border-color: #E5E7EB;
->>>>>>> Stashed changes
     `,
   },
 
@@ -250,9 +232,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
-  // === TRAILING SLASH ===
-  trailingSlash: false,
 
   // === REACT STRICT MODE ===
   reactStrictMode: true,

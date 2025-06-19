@@ -1,0 +1,118 @@
+# NEONPRO Netlify Configuration
+# Otimizado para performance, SEO e experiência do usuário
+
+[build]
+  # Comando de build para Next.js
+  command = "npm run build"
+  # Diretório de publicação
+  publish = "out"
+  # Diretório base do projeto
+  base = "."
+
+[build.environment]
+  # Variáveis de ambiente para build
+  NODE_ENV = "production"
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Versão do Node.js
+  NODE_VERSION = "18"
+
+# Plugin Next.js para Netlify
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Configurações de headers para performance e segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Segurança
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+    # Performance
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers específicos para HTML
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Headers para assets estáticos
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers para imagens
+[[headers]]
+  for = "/*.{png,jpg,jpeg,gif,svg,webp,avif,ico}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers para CSS e JS
+[[headers]]
+  for = "/*.{css,js}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirects para SEO e UX
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/signin"
+  to = "/login"
+  status = 301
+
+[[redirects]]
+  from = "/signup"
+  to = "/login"
+  status = 301
+
+# Redirect para forçar HTTPS
+[[redirects]]
+  from = "http://neonpro.netlify.app/*"
+  to = "https://neonpro.netlify.app/:splat"
+  status = 301
+  force = true
+
+# SPA fallback para rotas do Next.js
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Configurações de formulários (para contato futuro)
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+# Configurações de contexto para diferentes ambientes
+[context.production]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.branch-deploy]
+  command = "npm run build"
+
+# Configurações de Edge Functions (futuro)
+# [[edge_functions]]
+#   path = "/api/*"
+#   function = "api-handler"

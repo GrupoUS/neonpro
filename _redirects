@@ -1,0 +1,51 @@
+# NEONPRO Netlify Redirects
+# Otimizado para SEO e experiência do usuário
+
+# Forçar HTTPS
+http://neonpro.netlify.app/* https://neonpro.netlify.app/:splat 301!
+
+# Redirects de URLs antigas/alternativas
+/home /  301
+/signin /login  301
+/signup /login  301
+/auth /login  301
+/authentication /login  301
+
+# Redirects do dashboard
+/dash /dashboard  301
+/admin /dashboard  301
+/panel /dashboard  301
+
+# Redirects de páginas específicas do dashboard
+/patients /dashboard/patients  301
+/appointments /dashboard/appointments  301
+/treatments /dashboard/treatments  301
+/payments /dashboard/payments  301
+/ai /dashboard/ai-recommendations  301
+/recommendations /dashboard/ai-recommendations  301
+
+# Redirects para compatibilidade com extensões
+/login.html /login  301
+/dashboard.html /dashboard  301
+/index.html /  301
+
+# Redirects para URLs com trailing slash
+/login/ /login  301
+/dashboard/ /dashboard  301
+
+# API redirects (futuro)
+/api/v1/* /api/:splat  301
+
+# Redirects para recursos antigos
+/assets/* /static/:splat  301
+/images/* /static/images/:splat  301
+/css/* /static/css/:splat  301
+/js/* /static/js/:splat  301
+
+# Redirects para documentação (futuro)
+/docs /  301
+/help /  301
+/support /  301
+
+# Fallback para SPA (Single Page Application)
+/* /index.html 200

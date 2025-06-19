@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neonpro.netlify.app/sitemap.xml
