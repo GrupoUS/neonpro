@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { HTMLMotionProps, motion } from "framer-motion";
 import * as React from "react";
 
 const cardVariants = cva(
@@ -42,18 +41,14 @@ const cardVariants = cva(
 );
 
 export interface CardProps
-  extends HTMLMotionProps<"div">,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, ...props }, ref) => {
     return (
-      <motion.div
+      <div
         ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        whileHover={{ scale: variant === "interactive" ? 1.02 : 1 }}
         className={cn(cardVariants({ variant }), className)}
         {...props}
       />
