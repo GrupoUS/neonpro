@@ -1,20 +1,16 @@
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // === EXPERIMENTAL FEATURES ===
   experimental: {
-    // Partial Prerendering (PPR) - Next.js 15 Performance Boost
-    ppr: "incremental",
-
     // Performance optimizations
     optimizePackageImports: [
-      "@heroicons/react",
-      "@headlessui/react",
-      "framer-motion",
-      "lucide-react",
       "@supabase/supabase-js",
-      "drizzle-orm",
+      "@supabase/ssr",
+      "@ai-sdk/openai",
+      "@neondatabase/serverless",
+      "lucide-react",
+      "ai",
     ],
   },
 
@@ -77,6 +73,37 @@ const nextConfig: NextConfig = {
       test: /\.svg$/,
       use: ["@svgr/webpack"],
     });
+
+    // Fix for node:process and other node: URIs in OpenTelemetry
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      process: require.resolve("process/browser"),
+      buffer: require.resolve("buffer"),
+      util: require.resolve("util"),
+      url: require.resolve("url"),
+      querystring: require.resolve("querystring-es3"),
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+    };
+
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        process: "process/browser",
+        Buffer: ["buffer", "Buffer"],
+      })
+    );
+
+    // Handle node: protocol imports
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "node:process": require.resolve("process/browser"),
+      "node:buffer": require.resolve("buffer"),
+      "node:util": require.resolve("util"),
+      "node:url": require.resolve("url"),
+      "node:querystring": require.resolve("querystring-es3"),
+    };
 
     // Bundle analyzer (development only)
     if (dev && !isServer) {

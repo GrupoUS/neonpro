@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -34,6 +33,3 @@
     "node_modules"
   ]
 }
-=======
-{"extends": "../../configs/typescript/tsconfig.nextjs.json", "compilerOptions": {"baseUrl": ".", "paths": {"@/*": ["./src/*"]}}, "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"], "exclude": ["node_modules"]}
->>>>>>> Stashed changes

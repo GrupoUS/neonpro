@@ -38,7 +38,7 @@ export const DEFAULT_NEONPRO_CONFIG: NEONPROObservabilityConfig = {
   jaegerEndpoint:
     process.env.JAEGER_ENDPOINT || "http://localhost:14268/api/traces",
   samplingRate: 0.1, // 10% sampling rate for production
-  enableAutoInstrumentation: true,
+  enableAutoInstrumentation: false, // Disabled for Vercel compatibility
   enableMetrics: true,
   enableLogging: true,
 };
@@ -97,6 +97,13 @@ export class NEONPROObservability {
       return;
     }
 
+    // Skip initialization in browser environment
+    if (typeof window !== "undefined") {
+      console.log("🔍 Skipping OpenTelemetry initialization in browser");
+      this.initialized = true;
+      return;
+    }
+
     try {
       console.log("🔍 Initializing NEONPRO OpenTelemetry Observability...");
 
@@ -118,8 +125,11 @@ export class NEONPROObservability {
         await this.setupMetrics(resource);
       }
 
-      // Setup auto-instrumentation
-      if (this.config.enableAutoInstrumentation) {
+      // Setup auto-instrumentation (only in server environment)
+      if (
+        this.config.enableAutoInstrumentation &&
+        typeof window === "undefined"
+      ) {
         await this.setupAutoInstrumentation(resource);
       }
 
@@ -129,7 +139,10 @@ export class NEONPROObservability {
       );
     } catch (error) {
       console.error("❌ Failed to initialize NEONPRO Observability:", error);
-      throw error;
+      // Don't throw error in production to avoid breaking the app
+      if (this.config.environment === "development") {
+        throw error;
+      }
     }
   }
 
