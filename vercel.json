@@ -1,12 +1,18 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "name": "neonpro",
   "alias": ["neonpro"],
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm install --legacy-peer-deps --force",
+  "installCommand": "npm ci --prefer-offline",
   "devCommand": "npm run dev",
+  "functions": {
+    "app/**": {
+      "runtime": "nodejs20.x"
+    }
+  },
 
   "headers": [
     {
@@ -67,19 +73,6 @@
       "destination": "/api/test-connection"
     }
   ],
-
-  "env": {
-    "NODE_ENV": "production",
-    "NEXT_TELEMETRY_DISABLED": "1",
-    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
-  },
-
-  "build": {
-    "env": {
-      "NODE_ENV": "production",
-      "NEXT_TELEMETRY_DISABLED": "1"
-    }
-  },
 
   "crons": [
     {
