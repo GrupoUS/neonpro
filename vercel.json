@@ -8,6 +8,15 @@
   "installCommand": "npm install --legacy-peer-deps",
   "devCommand": "npm run dev",
 
+  "functions": {
+    "app/api/ai/treatments/route.ts": {
+      "maxDuration": 30
+    },
+    "app/api/ai-recommendations/route.ts": {
+      "maxDuration": 30
+    }
+  },
+
   "headers": [
     {
       "source": "/(.*)",
