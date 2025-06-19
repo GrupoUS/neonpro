@@ -1,0 +1,102 @@
+# NEONPRO Vercel Ignore Configuration
+# Optimized for faster builds and smaller deployments
+
+# Development files
+.env.local
+.env.development
+.env.test
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output
+test-results/
+playwright-report/
+e2e/test-results/
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+README.md
+DEVELOPMENT.md
+DEPLOYMENT-REPORT.md
+docs/
+design-system/
+
+# Scripts (keep only essential ones)
+scripts/deploy.sh
+scripts/validate-implementation.js
+scripts/final-test-report.js
+
+# Docker files (not needed for Vercel)
+docker/
+Dockerfile
+docker-compose*.yml
+
+# Static demo files
+static-demo/
+
+# Build artifacts that will be regenerated
+.next/
+out/
+dist/
+build/
+
+# Dependencies (will be installed by Vercel)
+node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Monitoring and observability (keep config, ignore logs)
+logs/
+*.log
+monitoring/logs/
+
+# Database files (not needed in deployment)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup
+*.bak
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# Keep essential config files
+!next.config.ts
+!tailwind.config.ts
+!tsconfig.json
+!package.json
+!package-lock.json
+!vercel.json
+!drizzle.config.ts
+!playwright.config.ts
+!jest.config.js
