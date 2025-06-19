@@ -61,6 +61,13 @@ const config: Config = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // GRUPO US Brand Colors
+        grupous: {
+          primary: "#112031",
+          secondary: "#AC9469",
+          accent: "#294359",
+          surface: "#F8F9FA",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -93,6 +100,13 @@ const config: Config = {
           "Courier New",
           "monospace",
         ],
+        display: [
+          "Optima",
+          "Segoe UI",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif",
+        ],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1.25" }],
@@ -105,6 +119,7 @@ const config: Config = {
         "4xl": ["2.25rem", { lineHeight: "1.25" }],
         "5xl": ["3rem", { lineHeight: "1.25" }],
         "6xl": ["3.75rem", { lineHeight: "1.25" }],
+        "7xl": ["4.5rem", { lineHeight: "1.25" }],
       },
       boxShadow: {
         "2xs": "var(--shadow-2xs)",
@@ -115,12 +130,54 @@ const config: Config = {
         lg: "var(--shadow-lg)",
         xl: "var(--shadow-xl)",
         "2xl": "var(--shadow-2xl)",
+        // Glass morphism shadows
+        glass: "0 8px 32px rgba(17, 32, 49, 0.08)",
+        "glass-hover": "0 8px 40px rgba(172, 148, 105, 0.12)",
+        glow: "0 0 60px rgba(172, 148, 105, 0.15)",
+      },
+      backdropBlur: {
+        xs: "2px",
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px",
+        "2xl": "24px",
+        "3xl": "40px",
+      },
+      backgroundImage: {
+        "gradient-primary": "linear-gradient(135deg, #112031 0%, #294359 100%)",
+        "gradient-accent": "linear-gradient(135deg, #AC9469 0%, #B4AC9C 100%)",
+        "gradient-surface": "linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%)",
+        "gradient-card": "linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%)",
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
       animation: {
-        "fade-in": "fadeIn 300ms cubic-bezier(0, 0, 0.2, 1)",
-        "fade-out": "fadeOut 300ms cubic-bezier(0.4, 0, 1, 1)",
-        "slide-in": "slideIn 300ms cubic-bezier(0, 0, 0.2, 1)",
-        "slide-out": "slideOut 300ms cubic-bezier(0.4, 0, 1, 1)",
+        // Fade animations
+        "fade-in": "fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "fade-out": "fadeOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+
+        // Slide animations
+        "slide-in": "slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "slide-out": "slideOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "slide-up": "slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "slide-down": "slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "slide-left": "slideLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "slide-right": "slideRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+
+        // Scale animations
+        "scale-in": "scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "scale-out": "scaleOut 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+
+        // Spin and pulse
+        spin: "spin 1s linear infinite",
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "pulse-glow": "pulseGlow 2s ease-in-out infinite",
+
+        // Bounce
+        bounce: "bounce 1s infinite",
+
+        // Shimmer effect
+        shimmer: "shimmer 2s linear infinite",
       },
       keyframes: {
         fadeIn: {
@@ -139,6 +196,61 @@ const config: Config = {
           "0%": { transform: "translateY(0)", opacity: "1" },
           "100%": { transform: "translateY(-10px)", opacity: "0" },
         },
+        slideUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideDown: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideLeft: {
+          "0%": { opacity: "0", transform: "translateX(20px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        slideRight: {
+          "0%": { opacity: "0", transform: "translateX(-20px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        scaleOut: {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "100%": { opacity: "0", transform: "scale(0.95)" },
+        },
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: ".5" },
+        },
+        pulseGlow: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
+        },
+        bounce: {
+          "0%, 100%": {
+            transform: "translateY(-25%)",
+            "animation-timing-function": "cubic-bezier(0.8, 0, 1, 1)",
+          },
+          "50%": {
+            transform: "none",
+            "animation-timing-function": "cubic-bezier(0, 0, 0.2, 1)",
+          },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      transitionTimingFunction: {
+        smooth: "cubic-bezier(0.4, 0, 0.2, 1)",
+        "in-expo": "cubic-bezier(0.95, 0.05, 0.795, 0.035)",
+        "out-expo": "cubic-bezier(0.19, 1, 0.22, 1)",
       },
       zIndex: {
         "0": "0",
@@ -155,6 +267,7 @@ const config: Config = {
     require("@tailwindcss/forms"),
     require("@tailwindcss/typography"),
     require("@tailwindcss/aspect-ratio"),
+    require("tailwindcss-animate"),
   ],
 };
 

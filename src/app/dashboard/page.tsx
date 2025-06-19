@@ -1,172 +1,357 @@
-import { Suspense } from 'react'
-import { createClient } from '@/lib/supabase/server'
-import { MetricCard } from '@/components/dashboard/metric-card'
-import { RecentActivity } from '@/components/dashboard/recent-activity'
-import { AppointmentChart } from '@/components/dashboard/appointment-chart'
-import { 
-  Calendar, 
-  Users, 
-  Stethoscope, 
+import ChartCard from "@/components/dashboard/ChartCard";
+import { MetricCardProps } from "@/components/dashboard/MetricCard";
+import MetricCardGroup from "@/components/dashboard/MetricCardGroup";
+import RecentActivity from "@/components/dashboard/RecentActivity";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import {
+  Activity,
+  BarChart3,
   CreditCard,
+  DollarSign,
+  LineChart as LineChartIcon,
+  Package,
+  PieChart as PieChartIcon,
+  ShoppingCart,
   TrendingUp,
-  Activity
-} from 'lucide-react'
+  UserCheck,
+  Users,
+} from "lucide-react";
 
-// Enable Partial Prerendering for this page
-export const experimental_ppr = true
+// Generate sample sparkline data
+const generateSparklineData = (points: number = 7) => {
+  return Array.from({ length: points }, (_, i) => ({
+    value: Math.floor(Math.random() * 100) + 50,
+  }));
+};
 
-// Static components that can be prerendered
-function DashboardHeader() {
-  return (
-    <div className="space-y-2">
-      <h1 className="text-3xl font-bold text-foreground">
-        Dashboard Overview
-      </h1>
-      <p className="text-muted-foreground">
-        Welcome back! Here's what's happening with your clinic today.
-      </p>
-    </div>
-  )
-}
+const mainMetrics: MetricCardProps[] = [
+  {
+    title: "Total Revenue",
+    value: 45231.89,
+    previousValue: 37654.32,
+    change: 20.1,
+    trend: "up",
+    icon: DollarSign,
+    color: "green",
+    variant: "detailed",
+    sparklineData: generateSparklineData(),
+    prefix: "$",
+    decimals: 2,
+  },
+  {
+    title: "Active Users",
+    value: 2350,
+    previousValue: 2041,
+    change: 15.3,
+    trend: "up",
+    icon: Users,
+    color: "blue",
+    variant: "detailed",
+    sparklineData: generateSparklineData(),
+  },
+  {
+    title: "Conversion Rate",
+    value: 12.5,
+    previousValue: 12.8,
+    change: -2.4,
+    trend: "down",
+    icon: TrendingUp,
+    color: "purple",
+    variant: "detailed",
+    sparklineData: generateSparklineData(),
+    suffix: "%",
+    decimals: 1,
+  },
+  {
+    title: "Active Sessions",
+    value: 1234,
+    previousValue: 1175,
+    change: 5.1,
+    trend: "up",
+    icon: Activity,
+    color: "yellow",
+    variant: "detailed",
+    sparklineData: generateSparklineData(),
+  },
+];
 
-function MetricsGrid() {
-  return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-      <MetricCard
-        title="Today's Appointments"
-        value="12"
-        change="+2 from yesterday"
-        icon={Calendar}
-        trend="up"
-      />
-      
-      <MetricCard
-        title="Total Patients"
-        value="1,234"
-        change="+15 this month"
-        icon={Users}
-        trend="up"
-      />
-      
-      <MetricCard
-        title="Active Treatments"
-        value="45"
-        change="+8 this week"
-        icon={Stethoscope}
-        trend="up"
-      />
-      
-      <MetricCard
-        title="Revenue (Month)"
-        value="$12,450"
-        change="+12% from last month"
-        icon={CreditCard}
-        trend="up"
-      />
-    </div>
-  )
-}
+const secondaryMetrics: MetricCardProps[] = [
+  {
+    title: "Total Orders",
+    value: 342,
+    change: 12.3,
+    trend: "up",
+    icon: ShoppingCart,
+    color: "green",
+    variant: "compact",
+  },
+  {
+    title: "Products Sold",
+    value: 1543,
+    change: 8.7,
+    trend: "up",
+    icon: Package,
+    color: "blue",
+    variant: "compact",
+  },
+  {
+    title: "Pending Payments",
+    value: 23,
+    change: -15.2,
+    trend: "down",
+    icon: CreditCard,
+    color: "red",
+    variant: "compact",
+  },
+  {
+    title: "New Customers",
+    value: 89,
+    change: 23.1,
+    trend: "up",
+    icon: UserCheck,
+    color: "purple",
+    variant: "compact",
+  },
+];
 
-// Skeleton components for loading states
-function MetricCardSkeleton() {
-  return (
-    <div className="p-6 bg-white rounded-lg border border-gray-200 animate-pulse">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <div className="h-4 bg-gray-200 rounded w-24"></div>
-          <div className="h-8 bg-gray-200 rounded w-16"></div>
-          <div className="h-3 bg-gray-200 rounded w-20"></div>
-        </div>
-        <div className="h-8 w-8 bg-gray-200 rounded"></div>
-      </div>
-    </div>
-  )
-}
+// Sample chart data
+const revenueData = [
+  { name: "Jan", revenue: 4000 },
+  { name: "Feb", revenue: 3000 },
+  { name: "Mar", revenue: 5000 },
+  { name: "Apr", revenue: 2780 },
+  { name: "May", revenue: 1890 },
+  { name: "Jun", revenue: 2390 },
+  { name: "Jul", revenue: 3490 },
+];
 
-function ChartSkeleton() {
-  return (
-    <div className="p-6 bg-white rounded-lg border border-gray-200 animate-pulse">
-      <div className="space-y-4">
-        <div className="h-6 bg-gray-200 rounded w-32"></div>
-        <div className="h-64 bg-gray-200 rounded"></div>
-      </div>
-    </div>
-  )
-}
+const trafficData = [
+  { name: "Mon", visits: 2400 },
+  { name: "Tue", visits: 1398 },
+  { name: "Wed", visits: 9800 },
+  { name: "Thu", visits: 3908 },
+  { name: "Fri", visits: 4800 },
+  { name: "Sat", visits: 3800 },
+  { name: "Sun", visits: 4300 },
+];
 
-function ActivitySkeleton() {
-  return (
-    <div className="p-6 bg-white rounded-lg border border-gray-200 animate-pulse">
-      <div className="space-y-4">
-        <div className="h-6 bg-gray-200 rounded w-32"></div>
-        <div className="space-y-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-3">
-              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-              <div className="space-y-1 flex-1">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
+const categoryData = [
+  { name: "Electronics", value: 400 },
+  { name: "Clothing", value: 300 },
+  { name: "Food", value: 300 },
+  { name: "Books", value: 200 },
+  { name: "Other", value: 100 },
+];
+
+// Sample activities
+const recentActivities = [
+  {
+    id: "1",
+    type: "order" as const,
+    title: "New Order #12345",
+    description: "Order placed by John Doe for $299.99",
+    timestamp: "2 min ago",
+    user: "John Doe",
+  },
+  {
+    id: "2",
+    type: "user" as const,
+    title: "New User Registration",
+    description: "Sarah Johnson joined the platform",
+    timestamp: "15 min ago",
+    user: "Sarah Johnson",
+  },
+  {
+    id: "3",
+    type: "payment" as const,
+    title: "Payment Received",
+    description: "Invoice #INV-2024-001 paid in full",
+    timestamp: "1 hour ago",
+    user: "Michael Brown",
+  },
+  {
+    id: "4",
+    type: "delivery" as const,
+    title: "Order Shipped",
+    description: "Order #12344 shipped via FedEx",
+    timestamp: "2 hours ago",
+  },
+  {
+    id: "5",
+    type: "success" as const,
+    title: "Goal Achieved",
+    description: "Monthly revenue target exceeded by 20%",
+    timestamp: "3 hours ago",
+  },
+];
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      {/* Static Header - Prerendered */}
-      <DashboardHeader />
-      
-      {/* Static Metrics Grid - Prerendered */}
-      <MetricsGrid />
-      
-      {/* Dynamic Content Grid - Streamed */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Suspense fallback={<ChartSkeleton />}>
-          <AppointmentChart />
-        </Suspense>
-        
-        <Suspense fallback={<ActivitySkeleton />}>
-          <RecentActivity />
-        </Suspense>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Dashboard Overview
+          </h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            Welcome back! Here's what's happening with your business today.
+          </p>
+        </div>
+
+        {/* Main Metrics */}
+        <MetricCardGroup cards={mainMetrics} columns={4} className="mb-8" />
+
+        {/* Secondary Metrics */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            Secondary Metrics
+          </h2>
+          <MetricCardGroup cards={secondaryMetrics} columns={4} />
+        </div>
+
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chart Section */}
+          <div className="lg:col-span-2 glass-card p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Revenue Overview
+              </h2>
+              <select className="glass-input px-3 py-1.5 text-sm">
+                <option>Last 7 days</option>
+                <option>Last 30 days</option>
+                <option>Last 90 days</option>
+              </select>
+            </div>
+            <div className="h-64 flex items-center justify-center text-gray-400">
+              {/* Chart placeholder */}
+              <div className="text-center">
+                <Activity className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Chart visualization here</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="glass-card p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+              Recent Activity
+            </h2>
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="h-2 w-2 rounded-full bg-grupous-secondary mt-2" />
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900 dark:text-gray-100">
+                      New user registered
+                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                      {i} hour{i > 1 ? "s" : ""} ago
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Table Section */}
+        <div className="glass-card overflow-hidden">
+          <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              Recent Transactions
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50 dark:bg-gray-800/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Customer
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Amount
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200/50 dark:divide-gray-700/50">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <tr
+                    key={i}
+                    className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      Customer {i}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                      Dec {i}, 2024
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                      ${(Math.random() * 1000).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        Completed
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Chart Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ChartCard
+            title="Revenue Overview"
+            subtitle="Monthly revenue trends"
+            icon={LineChartIcon}
+            data={revenueData}
+            chartType="area"
+            dataKey="revenue"
+            color="#AC9469"
+            height={350}
+          />
+
+          <ChartCard
+            title="Traffic Analytics"
+            subtitle="Daily website visits"
+            icon={BarChart3}
+            data={trafficData}
+            chartType="bar"
+            dataKey="visits"
+            color="#112031"
+            height={350}
+          />
+        </div>
+
+        {/* Bottom Section - Activity and More Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <div className="lg:col-span-2">
+            <ChartCard
+              title="Sales by Category"
+              subtitle="Product category distribution"
+              icon={PieChartIcon}
+              data={categoryData}
+              chartType="pie"
+              dataKey="value"
+              xKey="name"
+              height={400}
+              showLegend={true}
+            />
+          </div>
+
+          <RecentActivity activities={recentActivities} className="h-full" />
+        </div>
       </div>
-      
-      {/* Additional Metrics Row */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <Suspense fallback={<MetricCardSkeleton />}>
-          <MetricCard
-            title="Patient Satisfaction"
-            value="4.8/5"
-            change="+0.2 this month"
-            icon={TrendingUp}
-            trend="up"
-          />
-        </Suspense>
-        
-        <Suspense fallback={<MetricCardSkeleton />}>
-          <MetricCard
-            title="Treatment Success Rate"
-            value="94%"
-            change="+2% this quarter"
-            icon={Activity}
-            trend="up"
-          />
-        </Suspense>
-        
-        <Suspense fallback={<MetricCardSkeleton />}>
-          <MetricCard
-            title="Average Wait Time"
-            value="8 min"
-            change="-3 min improved"
-            icon={Calendar}
-            trend="down"
-          />
-        </Suspense>
-      </div>
-    </div>
-  )
+    </DashboardLayout>
+  );
 }

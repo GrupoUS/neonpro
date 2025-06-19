@@ -1,6 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import * as React from "react";
 
 const cardVariants = cva(
@@ -42,7 +44,7 @@ const cardVariants = cva(
 );
 
 export interface CardProps
-  extends HTMLMotionProps<"div">,
+  extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {}
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
