@@ -2,20 +2,19 @@
   "version": 2,
   "name": "neonpro",
   "alias": ["neonpro"],
-  "regions": ["gru1", "iad1"],
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm ci",
   "devCommand": "npm run dev",
-  
+
   "functions": {
     "src/app/api/**/*.ts": {
       "runtime": "nodejs20.x",
       "maxDuration": 30
     }
   },
-  
+
   "headers": [
     {
       "source": "/(.*)",
@@ -60,7 +59,7 @@
       ]
     }
   ],
-  
+
   "redirects": [
     {
       "source": "/",
@@ -68,26 +67,26 @@
       "permanent": false
     }
   ],
-  
+
   "rewrites": [
     {
       "source": "/api/health",
       "destination": "/api/test-connection"
     }
   ],
-  
+
   "env": {
     "NODE_ENV": "production",
     "NEXT_TELEMETRY_DISABLED": "1"
   },
-  
+
   "build": {
     "env": {
       "NODE_ENV": "production",
       "NEXT_TELEMETRY_DISABLED": "1"
     }
   },
-  
+
   "crons": [
     {
       "path": "/api/cron/cleanup",
