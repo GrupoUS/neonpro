@@ -74,37 +74,69 @@ const nextConfig: NextConfig = {
       use: ["@svgr/webpack"],
     });
 
-    // Fix for process and buffer polyfills - Vercel compatible
+    // ✅ POLYFILLS APLICADOS GLOBALMENTE (SEM CONDICIONAIS) - VERCEL COMPATIBLE
     config.resolve.fallback = {
       ...config.resolve.fallback,
+      // Core polyfills
       process: require.resolve("process/browser"),
       buffer: require.resolve("buffer/"),
       util: require.resolve("util/"),
       url: require.resolve("url/"),
       querystring: require.resolve("querystring-es3"),
+      // Additional polyfills for OpenTelemetry and Vercel compatibility
+      stream: require.resolve("stream-browserify"),
+      crypto: require.resolve("crypto-browserify"),
+      os: require.resolve("os-browserify/browser"),
+      path: require.resolve("path-browserify"),
+      // Node.js modules disabled
       fs: false,
       net: false,
       tls: false,
       child_process: false,
     };
 
-    // Provide plugin configuration
+    // ✅ PROVIDE PLUGIN GLOBAL - VERCEL OPTIMIZED
     config.plugins.push(
       new webpack.ProvidePlugin({
         process: "process/browser",
         Buffer: ["buffer", "Buffer"],
+        global: "global",
       })
     );
 
-    // Alias configuration for node: protocol
+    // ✅ ALIAS CONFIGURATION COMPLETA - NODE.JS PROTOCOL SUPPORT
     config.resolve.alias = {
       ...config.resolve.alias,
+      // Node.js protocol aliases
       "node:process": "process/browser",
       "node:buffer": "buffer",
       "node:util": "util",
       "node:url": "url",
       "node:querystring": "querystring-es3",
+      "node:stream": "stream-browserify",
+      "node:crypto": "crypto-browserify",
+      "node:os": "os-browserify/browser",
+      "node:path": "path-browserify",
     };
+
+    // ✅ VERCEL-SPECIFIC OPTIMIZATIONS
+    if (process.env.VERCEL) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          cacheGroups: {
+            ...config.optimization.splitChunks?.cacheGroups,
+            polyfills: {
+              name: "polyfills",
+              test: /[\\/]node_modules[\\/](process|buffer|util|url|querystring-es3|stream-browserify|crypto-browserify|os-browserify|path-browserify)[\\/]/,
+              chunks: "all",
+              priority: 20,
+            },
+          },
+        },
+      };
+    }
 
     // Bundle analyzer (development only)
     if (dev && !isServer) {
