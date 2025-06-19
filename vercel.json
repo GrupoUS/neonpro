@@ -8,12 +8,6 @@
   "installCommand": "npm install --legacy-peer-deps",
   "devCommand": "npm run dev",
 
-  "functions": {
-    "api/**/*": {
-      "maxDuration": 30
-    }
-  },
-
   "headers": [
     {
       "source": "/(.*)",
