@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEONPRO - Advanced Business SaaS Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#112031',
+                            dark: '#112031',
+                            medium: '#294359',
+                        },
+                        accent: {
+                            DEFAULT: '#AC9469',
+                            gold: '#AC9469',
+                        },
+                        neutral: {
+                            warm: '#B4AC9C',
+                            light: '#D2D0C8',
+                        },
+                        background: '#FFFFFF',
+                        surface: '#F8F9FA',
+                        foreground: '#112031',
+                        muted: {
+                            DEFAULT: '#B4AC9C',
+                            foreground: '#B4AC9C',
+                        },
+                        border: '#D2D0C8',
+                        success: '#10B981',
+                        error: '#EF4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Optima', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, #112031 0%, #294359 100%)',
+                        'gradient-accent': 'linear-gradient(135deg, #AC9469 0%, #B4AC9C 100%)',
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px rgba(17, 32, 49, 0.07), 0 1px 3px rgba(17, 32, 49, 0.06)',
+                        'lg': '0 10px 15px rgba(17, 32, 49, 0.1), 0 4px 6px rgba(17, 32, 49, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .font-display {
+            font-family: 'Optima', 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
+        }
+        
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+        
+        .transition-all {
+            transition: all 0.2s ease-out;
+        }
+        
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Focus states */
+        .focus-ring:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #112031;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #B4AC9C;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #AC9469;
+        }
+        
+        /* Hover effects */
+        .hover-lift:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background">
+    <div class="min-h-screen bg-background flex">
+        <!-- Left Side - Branding -->
+        <div class="hidden lg:flex lg:w-1/2 bg-gradient-primary relative overflow-hidden">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="relative z-10 flex flex-col justify-center px-12 text-white">
+                <div class="mb-10">
+                    <div class="flex items-center space-x-4 mb-8">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/10">
+                            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-4xl font-bold font-display tracking-tight">NEONPRO</h1>
+                    </div>
+                    <h2 class="text-5xl font-bold font-display mb-6 leading-tight tracking-tight">
+                        Advanced Business<br>
+                        SaaS Platform
+                    </h2>
+                    <p class="text-lg text-white/90 mb-10 leading-relaxed max-w-md">
+                        Streamline your clinic operations with AI-powered insights and
+                        modern management tools designed for healthcare professionals.
+                    </p>
+                </div>
+
+                <div class="space-y-5">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-2.5 h-2.5 bg-white/60 rounded-full shadow-sm"></div>
+                        <span class="text-white/90 text-base font-medium">
+                            Patient Management System
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-2.5 h-2.5 bg-white/60 rounded-full shadow-sm"></div>
+                        <span class="text-white/90 text-base font-medium">
+                            AI-Powered Recommendations
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-2.5 h-2.5 bg-white/60 rounded-full shadow-sm"></div>
+                        <span class="text-white/90 text-base font-medium">
+                            Advanced Analytics Dashboard
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decorative elements -->
+            <div class="absolute top-16 right-16 w-40 h-40 bg-white/8 rounded-full blur-2xl"></div>
+            <div class="absolute bottom-16 left-16 w-32 h-32 bg-white/8 rounded-full blur-2xl"></div>
+            <div class="absolute top-1/2 right-8 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
+        </div>
+
+        <!-- Right Side - Auth Form -->
+        <div class="flex-1 flex items-center justify-center p-8">
+            <div class="w-full max-w-md space-y-8">
+                <!-- Mobile Logo -->
+                <div class="lg:hidden text-center">
+                    <div class="flex items-center justify-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-2xl font-bold font-display text-foreground">NEONPRO</h1>
+                    </div>
+                    <p class="text-muted-foreground">
+                        Advanced Business SaaS Platform
+                    </p>
+                </div>
+
+                <!-- Auth Card -->
+                <div class="w-full border border-border/50 shadow-lg rounded-lg bg-white">
+                    <div class="text-center pb-6 pt-6 px-6">
+                        <h2 class="text-3xl font-bold font-display text-foreground mb-2">Welcome Back</h2>
+                        <p class="text-muted-foreground">Sign in to your account to continue</p>
+                    </div>
+                    <div class="px-6 pb-6 space-y-6">
+                        <!-- Toggle Buttons -->
+                        <div class="flex bg-surface rounded-lg p-1" role="tablist" aria-label="Authentication mode">
+                            <button id="signin-tab" type="button" role="tab" aria-selected="true" 
+                                    class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring bg-background text-foreground shadow-sm">
+                                Sign In
+                            </button>
+                            <button id="signup-tab" type="button" role="tab" aria-selected="false"
+                                    class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring text-muted-foreground hover:text-foreground">
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <!-- Sign In Form -->
+                        <form class="space-y-6" aria-label="Sign in form">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="signin-email" class="text-sm font-medium text-foreground block mb-1">
+                                        Email
+                                    </label>
+                                    <div class="relative">
+                                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" 
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <input id="signin-email" name="email" type="email" placeholder="Enter your email"
+                                               class="pl-10 h-12 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-ring"
+                                               required autocomplete="email">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="signin-password" class="text-sm font-medium text-foreground block mb-1">
+                                        Password
+                                    </label>
+                                    <div class="relative">
+                                        <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                        <input id="signin-password" name="password" type="password" placeholder="Enter your password"
+                                               class="pl-10 pr-10 h-12 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-ring"
+                                               required autocomplete="current-password">
+                                        <button type="button" 
+                                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus-ring rounded-sm"
+                                                aria-label="Show password">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" 
+                                    class="w-full h-12 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-all focus-ring hover-lift">
+                                Sign In
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Success Message Demo -->
+                <div class="border border-success/20 bg-success/5 rounded-lg p-4" role="status" aria-live="polite">
+                    <p class="text-success text-sm">
+                        ✅ Demo: All components successfully implemented with GRUPO US design system!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple demo functionality
+        document.getElementById('signup-tab').addEventListener('click', function() {
+            document.getElementById('signin-tab').setAttribute('aria-selected', 'false');
+            document.getElementById('signin-tab').className = 'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring text-muted-foreground hover:text-foreground';
+            
+            this.setAttribute('aria-selected', 'true');
+            this.className = 'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring bg-background text-foreground shadow-sm';
+        });
+        
+        document.getElementById('signin-tab').addEventListener('click', function() {
+            document.getElementById('signup-tab').setAttribute('aria-selected', 'false');
+            document.getElementById('signup-tab').className = 'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring text-muted-foreground hover:text-foreground';
+            
+            this.setAttribute('aria-selected', 'true');
+            this.className = 'flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all focus-ring bg-background text-foreground shadow-sm';
+        });
+    </script>
+</body>
+</html>

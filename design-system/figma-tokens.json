@@ -1,0 +1,824 @@
+{
+  "$metadata": {
+    "tokenSetOrder": [
+      "global",
+      "semantic",
+      "component"
+    ]
+  },
+  "global": {
+    "colors": {
+      "primary": {
+<<<<<<< Updated upstream
+        "value": "#112031",
+        "type": "color",
+        "description": "Primary brand color - PANTONE 5395 C"
+      },
+      "primary-medium": {
+        "value": "#294359",
+        "type": "color",
+        "description": "Primary medium color - PANTONE 2168 C"
+      },
+      "accent-gold": {
+        "value": "#AC9469",
+        "type": "color",
+        "description": "Gold accent color - PANTONE 4007 C"
+      },
+      "neutral-warm": {
+        "value": "#B4AC9C",
+        "type": "color",
+        "description": "Warm neutral color - PANTONE 7535 C"
+      },
+      "neutral-light": {
+        "value": "#D2D0C8",
+        "type": "color",
+        "description": "Light neutral color - PANTONE 400 C"
+=======
+        "value": "#052CC9",
+        "type": "color",
+        "description": "Primary brand color"
+>>>>>>> Stashed changes
+      },
+      "secondary": {
+        "value": "#4FD1C7",
+        "type": "color",
+<<<<<<< Updated upstream
+        "description": "Secondary brand color (legacy support)"
+=======
+        "description": "Secondary brand color"
+>>>>>>> Stashed changes
+      },
+      "background": {
+        "value": "#FFFFFF",
+        "type": "color",
+        "description": "Main background color"
+      },
+      "surface": {
+        "value": "#F8F9FA",
+        "type": "color",
+        "description": "Surface background color"
+      },
+      "surface-variant": {
+        "value": "#F1F3F4",
+        "type": "color",
+        "description": "Surface variant background color"
+      },
+      "text": {
+        "value": "#0B1437",
+        "type": "color",
+        "description": "Primary text color"
+      },
+      "text-secondary": {
+        "value": "#6B7280",
+        "type": "color",
+        "description": "Secondary text color"
+      },
+      "text-muted": {
+        "value": "#9CA3AF",
+        "type": "color",
+        "description": "Muted text color"
+      },
+      "border": {
+        "value": "#E5E7EB",
+        "type": "color",
+        "description": "Default border color"
+      },
+      "border-light": {
+        "value": "#F3F4F6",
+        "type": "color",
+        "description": "Light border color"
+      },
+      "success": {
+        "value": "#10B981",
+        "type": "color",
+        "description": "Success state color"
+      },
+      "warning": {
+        "value": "#F59E0B",
+        "type": "color",
+        "description": "Warning state color"
+      },
+      "error": {
+        "value": "#EF4444",
+        "type": "color",
+        "description": "Error state color"
+      },
+      "info": {
+        "value": "#3B82F6",
+        "type": "color",
+        "description": "Info state color"
+      }
+    },
+    "typography": {
+      "font-family": {
+        "sans": {
+          "value": "["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "sans-serif"]",
+          "type": "fontFamilies",
+<<<<<<< Updated upstream
+          "description": "Body text, paragraphs, and general content"
+        },
+        "display": {
+          "value": "["Optima", "Segoe UI", "Helvetica Neue", "Arial", "sans-serif"]",
+          "type": "fontFamilies",
+          "description": "Titles, headings, and highlighted text elements"
+=======
+          "description": "Sans-serif font family"
+>>>>>>> Stashed changes
+        },
+        "mono": {
+          "value": "["JetBrains Mono", "Fira Code", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]",
+          "type": "fontFamilies",
+          "description": "Monospace font family"
+<<<<<<< Updated upstream
+=======
+        },
+        "display": {
+          "value": "["Inter", "system-ui", "sans-serif"]",
+          "type": "fontFamilies",
+          "description": "Display font family"
+>>>>>>> Stashed changes
+        }
+      },
+      "font-size": {
+        "xs": {
+          "value": "0.75rem",
+          "type": "fontSizes",
+          "description": "Extra small font size"
+        },
+        "sm": {
+          "value": "0.875rem",
+          "type": "fontSizes",
+          "description": "Small font size"
+        },
+        "base": {
+          "value": "1rem",
+          "type": "fontSizes",
+          "description": "Base font size"
+        },
+        "lg": {
+          "value": "1.125rem",
+          "type": "fontSizes",
+          "description": "Large font size"
+        },
+        "xl": {
+          "value": "1.25rem",
+          "type": "fontSizes",
+          "description": "Extra large font size"
+        },
+        "2xl": {
+          "value": "1.5rem",
+          "type": "fontSizes",
+          "description": "2X large font size"
+        },
+        "3xl": {
+          "value": "1.875rem",
+          "type": "fontSizes",
+          "description": "3X large font size"
+        },
+        "4xl": {
+          "value": "2.25rem",
+          "type": "fontSizes",
+          "description": "4X large font size"
+        },
+        "5xl": {
+          "value": "3rem",
+          "type": "fontSizes",
+          "description": "5X large font size"
+        },
+        "6xl": {
+          "value": "3.75rem",
+          "type": "fontSizes",
+          "description": "6X large font size"
+        }
+      },
+      "font-weight": {
+        "thin": {
+          "value": "100",
+          "type": "fontWeights",
+          "description": "Thin font weight"
+        },
+        "light": {
+          "value": "300",
+          "type": "fontWeights",
+          "description": "Light font weight"
+        },
+        "normal": {
+          "value": "400",
+          "type": "fontWeights",
+          "description": "Normal font weight"
+        },
+        "medium": {
+          "value": "500",
+          "type": "fontWeights",
+          "description": "Medium font weight"
+        },
+        "semibold": {
+          "value": "600",
+          "type": "fontWeights",
+          "description": "Semibold font weight"
+        },
+        "bold": {
+          "value": "700",
+          "type": "fontWeights",
+          "description": "Bold font weight"
+        },
+        "extrabold": {
+          "value": "800",
+          "type": "fontWeights",
+          "description": "Extra bold font weight"
+        },
+        "black": {
+          "value": "900",
+          "type": "fontWeights",
+          "description": "Black font weight"
+        }
+      },
+      "line-height": {
+        "tight": {
+          "value": "1.25",
+          "type": "lineHeights",
+          "description": "Tight line height"
+        },
+        "snug": {
+          "value": "1.375",
+          "type": "lineHeights",
+          "description": "Snug line height"
+        },
+        "normal": {
+          "value": "1.5",
+          "type": "lineHeights",
+          "description": "Normal line height"
+        },
+        "relaxed": {
+          "value": "1.625",
+          "type": "lineHeights",
+          "description": "Relaxed line height"
+        },
+        "loose": {
+          "value": "2",
+          "type": "lineHeights",
+          "description": "Loose line height"
+        }
+      }
+    },
+    "spacing": {
+      "0": {
+        "value": "0",
+        "type": "spacing",
+        "description": "Zero spacing"
+      },
+      "px": {
+        "value": "1px",
+        "type": "spacing",
+        "description": "1px spacing"
+      },
+      "0.5": {
+        "value": "{{spacing.0.5}}",
+        "type": "spacing",
+        "description": "0.5 unit spacing"
+      },
+      "1": {
+        "value": "0.25rem",
+        "type": "spacing",
+        "description": "1 unit spacing"
+      },
+      "1.5": {
+        "value": "{{spacing.1.5}}",
+        "type": "spacing",
+        "description": "1.5 unit spacing"
+      },
+      "2": {
+        "value": "0.5rem",
+        "type": "spacing",
+        "description": "2 unit spacing"
+      },
+      "2.5": {
+        "value": "{{spacing.2.5}}",
+        "type": "spacing",
+        "description": "2.5 unit spacing"
+      },
+      "3": {
+        "value": "0.75rem",
+        "type": "spacing",
+        "description": "3 unit spacing"
+      },
+      "3.5": {
+        "value": "{{spacing.3.5}}",
+        "type": "spacing",
+        "description": "3.5 unit spacing"
+      },
+      "4": {
+        "value": "1rem",
+        "type": "spacing",
+        "description": "4 unit spacing"
+      },
+      "5": {
+        "value": "1.25rem",
+        "type": "spacing",
+        "description": "5 unit spacing"
+      },
+      "6": {
+        "value": "1.5rem",
+        "type": "spacing",
+        "description": "6 unit spacing"
+      },
+      "8": {
+        "value": "2rem",
+        "type": "spacing",
+        "description": "8 unit spacing"
+      },
+      "10": {
+        "value": "2.5rem",
+        "type": "spacing",
+        "description": "10 unit spacing"
+      },
+      "12": {
+        "value": "3rem",
+        "type": "spacing",
+        "description": "12 unit spacing"
+      },
+      "16": {
+        "value": "4rem",
+        "type": "spacing",
+        "description": "16 unit spacing"
+      },
+      "20": {
+        "value": "5rem",
+        "type": "spacing",
+        "description": "20 unit spacing"
+      },
+      "24": {
+        "value": "6rem",
+        "type": "spacing",
+        "description": "24 unit spacing"
+      },
+      "32": {
+        "value": "8rem",
+        "type": "spacing",
+        "description": "32 unit spacing"
+      },
+      "40": {
+        "value": "10rem",
+        "type": "spacing",
+        "description": "40 unit spacing"
+      },
+      "48": {
+        "value": "12rem",
+        "type": "spacing",
+        "description": "48 unit spacing"
+      },
+      "56": {
+        "value": "14rem",
+        "type": "spacing",
+        "description": "56 unit spacing"
+      },
+      "64": {
+        "value": "16rem",
+        "type": "spacing",
+        "description": "64 unit spacing"
+      }
+    },
+    "border-radius": {
+      "none": {
+        "value": "0",
+        "type": "borderRadius",
+        "description": "No border radius"
+      },
+      "sm": {
+        "value": "0.125rem",
+        "type": "borderRadius",
+        "description": "Small border radius"
+      },
+      "base": {
+        "value": "0.25rem",
+        "type": "borderRadius",
+        "description": "Base border radius"
+      },
+      "md": {
+        "value": "0.375rem",
+        "type": "borderRadius",
+        "description": "Medium border radius"
+      },
+      "lg": {
+        "value": "0.5rem",
+        "type": "borderRadius",
+        "description": "Large border radius"
+      },
+      "xl": {
+        "value": "0.75rem",
+        "type": "borderRadius",
+        "description": "Extra large border radius"
+      },
+      "2xl": {
+        "value": "1rem",
+        "type": "borderRadius",
+        "description": "2X large border radius"
+      },
+      "3xl": {
+        "value": "1.5rem",
+        "type": "borderRadius",
+        "description": "3X large border radius"
+      },
+      "full": {
+        "value": "9999px",
+        "type": "borderRadius",
+        "description": "Full border radius (circle)"
+      }
+    },
+    "shadows": {
+      "xs": {
+        "value": "0 1px 2px rgba(5, 44, 201, 0.05)",
+        "type": "boxShadow",
+        "description": "Extra small shadow"
+      },
+      "sm": {
+        "value": "0 1px 3px rgba(5, 44, 201, 0.1), 0 1px 2px rgba(5, 44, 201, 0.06)",
+        "type": "boxShadow",
+        "description": "Small shadow"
+      },
+      "md": {
+        "value": "0 4px 6px rgba(5, 44, 201, 0.1), 0 2px 4px rgba(5, 44, 201, 0.06)",
+        "type": "boxShadow",
+        "description": "Medium shadow"
+      },
+      "lg": {
+        "value": "0 10px 15px rgba(5, 44, 201, 0.1), 0 4px 6px rgba(5, 44, 201, 0.05)",
+        "type": "boxShadow",
+        "description": "Large shadow"
+      },
+      "xl": {
+        "value": "0 20px 25px rgba(5, 44, 201, 0.1), 0 10px 10px rgba(5, 44, 201, 0.04)",
+        "type": "boxShadow",
+        "description": "Extra large shadow"
+      },
+      "card": {
+        "value": "0 4px 6px rgba(5, 44, 201, 0.07), 0 1px 3px rgba(5, 44, 201, 0.06)",
+        "type": "boxShadow",
+        "description": "Card shadow"
+      },
+      "dropdown": {
+        "value": "0 10px 15px rgba(5, 44, 201, 0.1), 0 4px 6px rgba(5, 44, 201, 0.05)",
+        "type": "boxShadow",
+        "description": "Dropdown shadow"
+      }
+    },
+    "gradients": {
+      "primary": {
+        "value": "linear-gradient(135deg, #052CC9 0%, #4FD1C7 100%)",
+        "type": "color",
+        "description": "Primary gradient"
+      },
+      "surface": {
+        "value": "linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%)",
+        "type": "color",
+        "description": "Surface gradient"
+      },
+      "card": {
+        "value": "linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%)",
+        "type": "color",
+        "description": "Card gradient"
+      }
+    },
+    "breakpoints": {
+      "sm": {
+        "value": "640px",
+        "type": "dimension",
+        "description": "Small breakpoint"
+      },
+      "md": {
+        "value": "768px",
+        "type": "dimension",
+        "description": "Medium breakpoint"
+      },
+      "lg": {
+        "value": "1024px",
+        "type": "dimension",
+        "description": "Large breakpoint"
+      },
+      "xl": {
+        "value": "1280px",
+        "type": "dimension",
+        "description": "Extra large breakpoint"
+      },
+      "2xl": {
+        "value": "1536px",
+        "type": "dimension",
+        "description": "2X large breakpoint"
+      }
+    },
+    "animation": {
+      "duration": {
+        "75": {
+          "value": "75ms",
+          "type": "duration",
+          "description": "75ms duration"
+        },
+        "100": {
+          "value": "100ms",
+          "type": "duration",
+          "description": "100ms duration"
+        },
+        "150": {
+          "value": "150ms",
+          "type": "duration",
+          "description": "150ms duration"
+        },
+        "200": {
+          "value": "200ms",
+          "type": "duration",
+          "description": "200ms duration"
+        },
+        "300": {
+          "value": "300ms",
+          "type": "duration",
+          "description": "300ms duration"
+        },
+        "500": {
+          "value": "500ms",
+          "type": "duration",
+          "description": "500ms duration"
+        },
+        "700": {
+          "value": "700ms",
+          "type": "duration",
+          "description": "700ms duration"
+        },
+        "1000": {
+          "value": "1000ms",
+          "type": "duration",
+          "description": "1000ms duration"
+        }
+      },
+      "easing": {
+        "linear": {
+          "value": "linear",
+          "type": "cubicBezier",
+          "description": "Linear easing"
+        },
+        "in": {
+          "value": "cubic-bezier(0.4, 0, 1, 1)",
+          "type": "cubicBezier",
+          "description": "Ease in"
+        },
+        "out": {
+          "value": "cubic-bezier(0, 0, 0.2, 1)",
+          "type": "cubicBezier",
+          "description": "Ease out"
+        },
+        "in-out": {
+          "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+          "type": "cubicBezier",
+          "description": "Ease in-out"
+        }
+      }
+    },
+    "z-index": {
+      "0": {
+        "value": "0",
+        "type": "other",
+        "description": "Z-index 0"
+      },
+      "10": {
+        "value": "10",
+        "type": "other",
+        "description": "Z-index 10"
+      },
+      "20": {
+        "value": "20",
+        "type": "other",
+        "description": "Z-index 20"
+      },
+      "30": {
+        "value": "30",
+        "type": "other",
+        "description": "Z-index 30"
+      },
+      "40": {
+        "value": "40",
+        "type": "other",
+        "description": "Z-index 40"
+      },
+      "50": {
+        "value": "50",
+        "type": "other",
+        "description": "Z-index 50"
+      },
+      "auto": {
+        "value": "auto",
+        "type": "other",
+        "description": "Z-index auto"
+      }
+    }
+  },
+  "semantic": {
+    "color": {
+      "text": {
+        "primary": {
+          "value": "{global.colors.text}",
+          "type": "color",
+          "description": "Primary text color"
+        },
+        "secondary": {
+          "value": "{global.colors.text-secondary}",
+          "type": "color",
+          "description": "Secondary text color"
+        },
+        "muted": {
+          "value": "{global.colors.text-muted}",
+          "type": "color",
+          "description": "Muted text color"
+        },
+        "inverse": {
+          "value": "{global.colors.background}",
+          "type": "color",
+          "description": "Inverse text color"
+        }
+      },
+      "background": {
+        "primary": {
+          "value": "{global.colors.background}",
+          "type": "color",
+          "description": "Primary background"
+        },
+        "secondary": {
+          "value": "{global.colors.surface}",
+          "type": "color",
+          "description": "Secondary background"
+        },
+        "tertiary": {
+          "value": "{global.colors.surface-variant}",
+          "type": "color",
+          "description": "Tertiary background"
+        }
+      },
+      "border": {
+        "default": {
+          "value": "{global.colors.border}",
+          "type": "color",
+          "description": "Default border color"
+        },
+        "light": {
+          "value": "{global.colors.border-light}",
+          "type": "color",
+          "description": "Light border color"
+        },
+        "focus": {
+          "value": "{global.colors.primary}",
+          "type": "color",
+          "description": "Focus border color"
+        }
+      },
+      "status": {
+        "success": {
+          "value": "{global.colors.success}",
+          "type": "color",
+          "description": "Success color"
+        },
+        "warning": {
+          "value": "{global.colors.warning}",
+          "type": "color",
+          "description": "Warning color"
+        },
+        "error": {
+          "value": "{global.colors.error}",
+          "type": "color",
+          "description": "Error color"
+        },
+        "info": {
+          "value": "{global.colors.info}",
+          "type": "color",
+          "description": "Info color"
+        }
+      }
+    }
+  },
+  "component": {
+    "button": {
+      "primary": {
+        "background": {
+          "value": "{global.colors.primary}",
+          "type": "color",
+          "description": "Primary button background"
+        },
+        "text": {
+          "value": "{global.colors.background}",
+          "type": "color",
+          "description": "Primary button text"
+        },
+        "border-radius": {
+          "value": "{global.border-radius.md}",
+          "type": "borderRadius",
+          "description": "Primary button border radius"
+        },
+        "padding": {
+          "value": "{global.spacing.3} {global.spacing.6}",
+          "type": "spacing",
+          "description": "Primary button padding"
+        },
+        "shadow": {
+          "value": "{global.shadows.sm}",
+          "type": "boxShadow",
+          "description": "Primary button shadow"
+        }
+      },
+      "secondary": {
+        "background": {
+          "value": "{global.colors.secondary}",
+          "type": "color",
+          "description": "Secondary button background"
+        },
+        "text": {
+          "value": "{global.colors.background}",
+          "type": "color",
+          "description": "Secondary button text"
+        },
+        "border-radius": {
+          "value": "{global.border-radius.md}",
+          "type": "borderRadius",
+          "description": "Secondary button border radius"
+        },
+        "padding": {
+          "value": "{global.spacing.3} {global.spacing.6}",
+          "type": "spacing",
+          "description": "Secondary button padding"
+        },
+        "shadow": {
+          "value": "{global.shadows.sm}",
+          "type": "boxShadow",
+          "description": "Secondary button shadow"
+        }
+      }
+    },
+    "card": {
+      "background": {
+        "value": "{global.colors.surface}",
+        "type": "color",
+        "description": "Card background"
+      },
+      "border": {
+        "value": "{global.colors.border-light}",
+        "type": "color",
+        "description": "Card border"
+      },
+      "border-radius": {
+        "value": "{global.border-radius.lg}",
+        "type": "borderRadius",
+        "description": "Card border radius"
+      },
+      "padding": {
+        "value": "{global.spacing.6}",
+        "type": "spacing",
+        "description": "Card padding"
+      },
+      "shadow": {
+        "value": "{global.shadows.card}",
+        "type": "boxShadow",
+        "description": "Card shadow"
+      }
+    },
+    "input": {
+      "background": {
+        "value": "{global.colors.background}",
+        "type": "color",
+        "description": "Input background"
+      },
+      "border": {
+        "value": "{global.colors.border}",
+        "type": "color",
+        "description": "Input border"
+      },
+      "border-focus": {
+        "value": "{global.colors.primary}",
+        "type": "color",
+        "description": "Input focus border"
+      },
+      "text": {
+        "value": "{global.colors.text}",
+        "type": "color",
+        "description": "Input text"
+      },
+      "placeholder": {
+        "value": "{global.colors.text-muted}",
+        "type": "color",
+        "description": "Input placeholder"
+      },
+      "border-radius": {
+        "value": "{global.border-radius.md}",
+        "type": "borderRadius",
+        "description": "Input border radius"
+      },
+      "padding": {
+        "value": "{global.spacing.3}",
+        "type": "spacing",
+        "description": "Input padding"
+      }
+    }
+  }
+}
+
+// Generated by VIBECODE Theming System Universal
+// Theme: Horizon UI Pro v1.0.0
+// Generated: 2025-06-13T13:27:59.110229
+// Source: @project-core/memory/horizon_ui_design_system.md
+// Compliance: VIBECODE V4.0 + EHS V1
+// Figma Design Tokens optimized for Horizon UI Pro design system
