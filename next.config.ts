@@ -74,26 +74,31 @@ const nextConfig: NextConfig = {
       use: ["@svgr/webpack"],
     });
 
-    // Fix for node:process and other node: URIs in OpenTelemetry
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      process: require.resolve("process/browser"),
-      buffer: require.resolve("buffer"),
-      util: require.resolve("util"),
-      url: require.resolve("url"),
-      querystring: require.resolve("querystring-es3"),
-      fs: false,
-      net: false,
-      tls: false,
-      child_process: false,
-    };
+    // Fix for node:process and other node: URIs
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        process: require.resolve("process/browser"),
+        buffer: require.resolve("buffer"),
+        util: require.resolve("util"),
+        url: require.resolve("url"),
+        querystring: require.resolve("querystring-es3"),
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
+      };
+    }
 
-    config.plugins.push(
-      new webpack.ProvidePlugin({
-        process: "process/browser",
-        Buffer: ["buffer", "Buffer"],
-      })
-    );
+    // Provide polyfills only for client-side
+    if (!isServer) {
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          process: "process/browser",
+          Buffer: ["buffer", "Buffer"],
+        })
+      );
+    }
 
     // Handle node: protocol imports
     config.resolve.alias = {
@@ -214,7 +219,8 @@ const nextConfig: NextConfig = {
   generateEtags: true,
 
   // === OUTPUT CONFIGURATION ===
-  output: "standalone",
+  // Removido output: "standalone" - não necessário para Vercel
+  // O Vercel gerencia automaticamente o output
 
   // === SASS CONFIGURATION ===
   sassOptions: {
