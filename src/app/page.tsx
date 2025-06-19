@@ -1,29 +1,9 @@
-<<<<<<< Updated upstream
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { AuthForm } from '@/components/auth/auth-form'
-=======
+
 import { Suspense } from "react";
->>>>>>> Stashed changes
 
 // Enable Partial Prerendering for this page
 export const experimental_ppr = true;
 
-<<<<<<< Updated upstream
-export default async function Home() {
-  const supabase = createClient()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (user) {
-    redirect('/dashboard')
-  }
-
-  return <AuthForm />
-}
-=======
 // Static Components (Prerendered)
 function StaticHeroSection() {
   return (
@@ -129,4 +109,3 @@ export default function Home() {
     </main>
   );
 }
->>>>>>> Stashed changes

@@ -1,10 +1,7 @@
+
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '../styles/globals.css'
-<<<<<<< Updated upstream
-import { StagewiseProvider } from "@project-core/shared/stagewise"
-=======
->>>>>>> Stashed changes
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,10 +21,6 @@ export default function RootLayout({
         <div className="min-h-screen bg-background text-text">
           {children}
         </div>
-<<<<<<< Updated upstream
-        <StagewiseProvider projectName="neonpro" debug={process.env.NODE_ENV === 'development'} />
-=======
->>>>>>> Stashed changes
       </body>
     </html>
   )

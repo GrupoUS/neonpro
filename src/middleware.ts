@@ -1,64 +1,3 @@
-<<<<<<< Updated upstream
-/**
- * NEONPRO Middleware Configuration
- * Authentication and monitoring middleware for clinic SaaS
- * Implements best practices from Supabase and Clerk research
- */
-
-import { createMiddlewareClient } from "@/lib/supabase/middleware";
-import { NextResponse, type NextRequest } from "next/server";
-
-export async function middleware(request: NextRequest) {
-  const res = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
-
-  // Create a Supabase client configured for middleware
-  const supabase = createMiddlewareClient(request, res);
-
-  // Refresh session if expired - required for Server Components
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
-    if (!user) {
-      // Preserve the original request URL for redirect after login
-      const redirectUrl = new URL("/login", request.url);
-      redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
-      return NextResponse.redirect(redirectUrl);
-    }
-  }
-
-  // Redirect authenticated users away from auth pages
-  if (
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/"
-  ) {
-    if (user) {
-      const redirectTo =
-        request.nextUrl.searchParams.get("redirectTo") || "/dashboard";
-      return NextResponse.redirect(new URL(redirectTo, request.url));
-    }
-  }
-
-  // Add security headers
-  res.headers.set("X-Frame-Options", "DENY");
-  res.headers.set("X-Content-Type-Options", "nosniff");
-  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-
-  // Add CSP header for enhanced security
-  res.headers.set(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;"
-  );
-
-  return res;
-=======
 // NEONPRO Middleware - AI Integration V2.0 + OpenTelemetry Observability
 // GRUPO US VIBECODE SYSTEM V5.0 - Phase 8 Production Monitoring
 // Next.js middleware with shared AI services integration and comprehensive observability
@@ -210,14 +149,10 @@ export async function middleware(request: NextRequest) {
     // Always end the span
     span?.end();
   }
->>>>>>> Stashed changes
 }
 
 export const config = {
   matcher: [
-<<<<<<< Updated upstream
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-=======
     /*
      * Match all request paths except for the ones starting with:
      * - api (API routes)
@@ -226,6 +161,5 @@ export const config = {
      * - favicon.ico (favicon file)
      */
     "/((?!_next/static|_next/image|favicon.ico).*)",
->>>>>>> Stashed changes
   ],
 };
