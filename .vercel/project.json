@@ -4,12 +4,12 @@
   "settings": {
     "createdAt": 1750299142397,
     "framework": "nextjs",
-    "devCommand": null,
-    "installCommand": "npm ci",
+    "devCommand": "npm run dev",
+    "installCommand": "npm install --legacy-peer-deps",
     "buildCommand": "npm run build",
     "outputDirectory": ".next",
     "rootDirectory": null,
     "directoryListing": false,
-    "nodeVersion": "22.x"
+    "nodeVersion": "20.x"
   }
 }
