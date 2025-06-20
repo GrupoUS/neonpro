@@ -1,5 +1,5 @@
-import DashboardLayout from "@/components/layout/DashboardLayout";
-import { PageLoading } from "@/components/ui/loading";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { Loading } from "@/components/ui/loading";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -21,7 +21,7 @@ export default async function Layout({
 
   return (
     <DashboardLayout>
-      <Suspense fallback={<PageLoading />}>{children}</Suspense>
+      <Suspense fallback={<Loading />}>{children}</Suspense>
     </DashboardLayout>
   );
 }
