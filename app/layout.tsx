@@ -1,59 +1,31 @@
-import { ThemeProvider } from "@/components/theme-provider";
-import type { Metadata } from "next";
-import { Inter, Libre_Baskerville, Lora } from "next/font/google";
-import { Toaster } from "sonner";
-import "./globals.css";
-
-// Configure Inter as the main sans-serif font
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-// Configure Lora as the serif font
-const lora = Lora({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-// Configure Libre Baskerville as the monospace font (artistic choice)
-const libreBaskerville = Libre_Baskerville({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-mono",
-  display: "swap",
-});
+import type React from "react"
+import type { Metadata } from "next"
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export const metadata: Metadata = {
-  title: "NEON PRO - Gestão de Clínicas de Estética",
-  description:
-    "Plataforma SaaS completa para gestão de clínicas de estética",
-  generator: "Next.js 15 + shadcn/ui",
-};
+  title: "v0 App",
+  description: "Created with v0",
+  generator: "v0.dev",
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${inter.variable} ${lora.variable} ${libreBaskerville.variable}`}
-    >
-      <body className="font-sans antialiased">
+    <html lang="en">
+      <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange={false}
+          defaultTheme="dark" // Define o modo escuro como padrão
+          enableSystem={false} // Opcional: desabilita a opção "System" se você só quer claro/escuro
+          disableTransitionOnChange
         >
           {children}
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
