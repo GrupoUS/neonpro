@@ -1,17 +1,17 @@
 import type { Config } from "tailwindcss"
-import defaultTheme from "tailwindcss/defaultTheme"
-import shadcnConfig from "shadcn/ui/tailwind.config"
+import defaultTheme from "tailwindcss/defaultTheme" // Keep this for font fallbacks
+import shadcnConfig from "shadcn/ui/tailwind.config" // Import shadcn/ui's default config
 
-const config = {
-  ...shadcnConfig,
+const config: Config = {
+  ...shadcnConfig, // Extend from shadcn/ui's default config
   content: [
-    ...shadcnConfig.content,
+    ...shadcnConfig.content, // Keep existing content paths and extend with new ones
     "./pages/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}", // Your custom content path
   ],
   theme: {
-    ...shadcnConfig.theme,
+    ...shadcnConfig.theme, // Extend from shadcn/ui's default theme
     container: {
       center: true,
       padding: "2rem",
@@ -20,7 +20,35 @@ const config = {
       },
     },
     extend: {
-      ...shadcnConfig.theme.extend,
+      ...shadcnConfig.theme.extend, // Extend from shadcn/ui's default theme extend
+      colors: {
+        ...shadcnConfig.theme.extend.colors, // Keep existing colors and extend with new ones
+        chart: {
+          "1": "oklch(var(--chart-1))",
+          "2": "oklch(var(--chart-2))",
+          "3": "oklch(var(--chart-3))",
+          "4": "oklch(var(--chart-4))",
+          "5": "oklch(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "oklch(var(--sidebar))",
+          foreground: "oklch(var(--sidebar-foreground))",
+          primary: {
+            DEFAULT: "oklch(var(--sidebar-primary))",
+            foreground: "oklch(var(--sidebar-primary-foreground))",
+          },
+          accent: {
+            DEFAULT: "oklch(var(--sidebar-accent))",
+            foreground: "oklch(var(--sidebar-accent-foreground))",
+          },
+          border: "oklch(var(--sidebar-border))",
+          ring: "oklch(var(--sidebar-ring))",
+        },
+      },
+      borderRadius: {
+        ...shadcnConfig.theme.extend.borderRadius, // Keep existing borderRadius and extend with new ones
+        xl: "var(--radius-xl)", // Using the specific variable from your globals.css
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
         serif: ["var(--font-serif)", ...defaultTheme.fontFamily.serif],
@@ -52,7 +80,7 @@ const config = {
       },
     },
   },
-  plugins: [...shadcnConfig.plugins, require("tailwindcss-animate")],
-} satisfies Config
+  plugins: [...shadcnConfig.plugins, require("tailwindcss-animate")], // Keep existing plugins and add new ones
+}
 
 export default config
