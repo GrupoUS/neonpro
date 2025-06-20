@@ -1,3 +1,4 @@
+
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Libre_Baskerville, Lora } from "next/font/google";
@@ -27,9 +28,9 @@ const libreBaskerville = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
-  title: "NeonPro - Professional Business Dashboard",
+  title: "NEON PRO - Gestão de Clínicas de Estética",
   description:
-    "Advanced business management platform with modern glass morphism design",
+    "Plataforma SaaS completa para gestão de clínicas de estética",
   generator: "Next.js 15 + shadcn/ui",
 };
 
@@ -46,7 +47,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange={false}
         >

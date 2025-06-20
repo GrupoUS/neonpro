@@ -1,10 +1,10 @@
+
 "use client";
 
-// Login page with two-column layout and background
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -28,9 +29,10 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { signIn, signInWithGoogle, user, loading } = useAuth();
 
   const {
     register,
@@ -40,16 +42,25 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  useEffect(() => {
+    if (user && !loading) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
+
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     try {
-      // Simular login por email
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("Login realizado com sucesso!");
-      router.push("/dashboard");
+      const { error } = await signIn(data.email, data.password);
+      
+      if (error) {
+        toast.error("Erro ao fazer login. Verifique suas credenciais.");
+      } else {
+        toast.success("Login realizado com sucesso!");
+        router.push("/dashboard");
+      }
     } catch (error) {
-      toast.error("Erro ao fazer login. Verifique suas credenciais.");
+      toast.error("Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -58,17 +69,28 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      // Simular login com Google
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("Login com Google realizado!");
-      router.push("/dashboard");
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        toast.error("Erro ao fazer login com Google.");
+      }
     } catch (error) {
       toast.error("Erro ao fazer login com Google.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2 relative">
@@ -82,6 +104,11 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8">
           <Card className="w-full rounded-2xl shadow-2xl border-0 bg-card/95 backdrop-blur-sm p-8">
             <CardHeader className="space-y-1 text-center pb-6">
+              <div className="mb-4">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  NEON PRO
+                </h1>
+              </div>
               <CardTitle className="text-3xl font-bold tracking-tight">
                 Login
               </CardTitle>
@@ -96,7 +123,7 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="seu@email.com"
                     {...register("email")}
                     disabled={isLoading}
                   />
@@ -133,7 +160,7 @@ export default function LoginPage() {
                   className="w-full rounded-lg"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Fazendo login..." : "Login"}
+                  {isLoading ? "Fazendo login..." : "Entrar"}
                 </Button>
                 <Button
                   type="button"
@@ -142,12 +169,12 @@ export default function LoginPage() {
                   onClick={handleGoogleLogin}
                   disabled={isLoading}
                 >
-                  {isLoading ? "Aguarde..." : "Login com Google"}
+                  {isLoading ? "Aguarde..." : "Entrar com Google"}
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm">
                 Não tem uma conta?{" "}
-                <Link href="/signup" className="underline">
+                <Link href="/signup" className="underline text-primary hover:text-primary/80">
                   Criar conta
                 </Link>
               </div>
@@ -166,13 +193,21 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white p-8">
-            <h2 className="text-4xl font-bold mb-4">Bem-vindo de volta!</h2>
+            <h2 className="text-4xl font-bold mb-4">Bem-vindo ao NEON PRO!</h2>
             <p className="text-lg">
-              Acesse sua conta e continue sua jornada conosco.
+              A plataforma completa para gestão da sua clínica de estética.
             </p>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <AuthProvider>
+      <LoginContent />
+    </AuthProvider>
   );
 }

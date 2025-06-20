@@ -1,71 +1,105 @@
-"use client"
 
-import Image from "next/image"
-import Link from "next/link"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
+import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
-const signupSchema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Senhas não coincidem",
-  path: ["confirmPassword"],
-})
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
 
-type SignupForm = z.infer<typeof signupSchema>
+const signupSchema = z
+  .object({
+    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+    email: z.string().email("Email inválido"),
+    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 
-export default function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  
+type SignupForm = z.infer<typeof signupSchema>;
+
+function SignupContent() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { signUp, signInWithGoogle, user, loading } = useAuth();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
-  })
+  });
+
+  useEffect(() => {
+    if (user && !loading) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      // Simular cadastro por email
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Conta criada com sucesso!")
-      router.push("/dashboard")
+      const { error } = await signUp(data.email, data.password);
+
+      if (error) {
+        if (error.message.includes("already registered")) {
+          toast.error("Este email já está cadastrado. Faça login.");
+        } else {
+          toast.error("Erro ao criar conta. Tente novamente.");
+        }
+      } else {
+        toast.success("Conta criada com sucesso! Verifique seu email.");
+      }
     } catch (error) {
-      toast.error("Erro ao criar conta. Tente novamente.")
+      toast.error("Erro ao criar conta. Tente novamente.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignup = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      // Simular cadastro com Google
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Conta criada com Google!")
-      router.push("/dashboard")
+      const { error } = await signInWithGoogle();
+
+      if (error) {
+        toast.error("Erro ao criar conta com Google.");
+      }
     } catch (error) {
-      toast.error("Erro ao criar conta com Google.")
+      toast.error("Erro ao criar conta com Google.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -73,8 +107,15 @@ export default function SignupPage() {
       <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-sm rounded-2xl shadow-lg">
           <CardHeader>
+            <div className="mb-4 text-center">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                NEON PRO
+              </h1>
+            </div>
             <CardTitle className="text-2xl">Criar Conta</CardTitle>
-            <CardDescription>Preencha os dados abaixo para criar sua conta</CardDescription>
+            <CardDescription>
+              Preencha os dados abaixo para criar sua conta
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -88,24 +129,28 @@ export default function SignupPage() {
                   disabled={isLoading}
                 />
                 {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="seu@email.com"
                   {...register("email")}
                   disabled={isLoading}
                 />
                 {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="password">Senha</Label>
                 <Input
@@ -115,10 +160,12 @@ export default function SignupPage() {
                   disabled={isLoading}
                 />
                 {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
                 <Input
@@ -128,17 +175,23 @@ export default function SignupPage() {
                   disabled={isLoading}
                 />
                 {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.confirmPassword.message}
+                  </p>
                 )}
               </div>
-              
-              <Button type="submit" className="w-full rounded-lg" disabled={isLoading}>
+
+              <Button
+                type="submit"
+                className="w-full rounded-lg"
+                disabled={isLoading}
+              >
                 {isLoading ? "Criando conta..." : "Criar Conta"}
               </Button>
-              
-              <Button 
+
+              <Button
                 type="button"
-                variant="outline" 
+                variant="outline"
                 className="w-full bg-background text-foreground rounded-lg"
                 onClick={handleGoogleSignup}
                 disabled={isLoading}
@@ -146,17 +199,17 @@ export default function SignupPage() {
                 {isLoading ? "Aguarde..." : "Criar conta com Google"}
               </Button>
             </form>
-            
+
             <div className="mt-4 text-center text-sm">
               Já tem uma conta?{" "}
-              <Link href="/" className="underline">
+              <Link href="/" className="underline text-primary hover:text-primary/80">
                 Fazer login
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
-      
+
       <div className="hidden bg-muted lg:block relative">
         <Image
           src="/spectral-dark-bg.jpg"
@@ -167,7 +220,23 @@ export default function SignupPage() {
           priority
         />
         <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white p-8">
+            <h2 className="text-4xl font-bold mb-4">Junte-se ao NEON PRO!</h2>
+            <p className="text-lg">
+              Transforme a gestão da sua clínica de estética.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <AuthProvider>
+      <SignupContent />
+    </AuthProvider>
+  );
 }
