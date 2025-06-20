@@ -74,7 +74,7 @@ NEONPRO is a comprehensive clinic management SaaS platform built with cutting-ed
 
 ## 🏗 Project Structure
 
-```
+\`\`\`
 src/
 ├── app/                          # Next.js App Router
 │   ├── dashboard/               # Dashboard pages
@@ -98,7 +98,7 @@ src/
 │   ├── supabase/             # Supabase client configuration
 │   └── utils.ts              # Utility functions
 └── middleware.ts             # Authentication middleware
-```
+\`\`\`
 
 ## 🚀 Getting Started
 
@@ -111,25 +111,25 @@ src/
 ### Installation
 
 1. **Clone and install dependencies**:
-```bash
+\`\`\`bash
 cd @project-core/projects/neonpro
 npm install
-```
+\`\`\`
 
 2. **Environment Setup**:
-```bash
+\`\`\`bash
 cp .env.example .env.local
-```
+\`\`\`
 
 3. **Configure environment variables**:
-```env
+\`\`\`env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 DATABASE_URL=your_neon_postgres_connection_string
 OPENAI_API_KEY=your_openai_api_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
+\`\`\`
 
 4. **Database Setup**:
 - Create tables using the schema in `src/lib/supabase/types.ts`
@@ -137,9 +137,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - Set up authentication triggers
 
 5. **Run the application**:
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 ## 📱 Application Flow
 
@@ -184,7 +184,7 @@ npm run dev
 
 ## 🧪 Testing
 
-```bash
+\`\`\`bash
 # Unit tests
 npm run test
 
@@ -196,7 +196,7 @@ npm run type-check
 
 # Linting
 npm run lint
-```
+\`\`\`
 
 ## 🚀 Deployment
 

@@ -1,27 +1,12 @@
-"use client";
+"use client"
 
-import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  CalendarDays,
-  Check,
-  ChevronDown,
-  Plus,
-  Search,
-  Settings,
-  Star,
-  User,
-  X,
-} from "lucide-react";
-import { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle"
+import { CalendarDays, Check, ChevronDown, Plus, Search, Settings, Star, User, X } from "lucide-react"
+import { useState } from "react"
 
 // Import all shadcn/ui components for testing
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,9 +17,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/ui/alert-dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -42,26 +27,12 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+} from "@/components/ui/breadcrumb"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import {
   Dialog,
   DialogContent,
@@ -70,7 +41,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,19 +49,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Input } from "@/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/dropdown-menu"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { Input } from "@/components/ui/input"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
+import { Label } from "@/components/ui/label"
 import {
   Pagination,
   PaginationContent,
@@ -99,62 +62,32 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Progress } from "@/components/ui/progress";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Toggle } from "@/components/ui/toggle";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+} from "@/components/ui/pagination"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Progress } from "@/components/ui/progress"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { Toggle } from "@/components/ui/toggle"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 
 export default function TestComponentsPage() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
-  const [sliderValue, setSliderValue] = useState([50]);
-  const [progress, setProgress] = useState(33);
-  const [isOpen, setIsOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date())
+  const [sliderValue, setSliderValue] = useState([50])
+  const [progress, setProgress] = useState(33)
+  const [isOpen, setIsOpen] = useState(false)
 
-  const form = useForm();
+  const form = useForm()
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -165,12 +98,8 @@ export default function TestComponentsPage() {
 
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-foreground">
-            NEONPROV1 Theme Compatibility Test
-          </h1>
-          <p className="text-muted-foreground">
-            Testing all 50+ shadcn/ui components with the new theme
-          </p>
+          <h1 className="text-4xl font-bold text-foreground">NEONPROV1 Theme Compatibility Test</h1>
+          <p className="text-muted-foreground">Testing all 50+ shadcn/ui components with the new theme</p>
         </div>
 
         {/* Buttons Section */}
@@ -249,9 +178,7 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Form Components</CardTitle>
-            <CardDescription>
-              Inputs, selects, and form elements
-            </CardDescription>
+            <CardDescription>Inputs, selects, and form elements</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,11 +188,7 @@ export default function TestComponentsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter password"
-                />
+                <Input id="password" type="password" placeholder="Enter password" />
               </div>
             </div>
 
@@ -336,9 +259,7 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Interactive Components</CardTitle>
-            <CardDescription>
-              Dialogs, dropdowns, and interactive elements
-            </CardDescription>
+            <CardDescription>Dialogs, dropdowns, and interactive elements</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-wrap gap-4">
@@ -349,9 +270,7 @@ export default function TestComponentsPage() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Dialog Title</DialogTitle>
-                    <DialogDescription>
-                      This is a sample dialog content to test the theme.
-                    </DialogDescription>
+                    <DialogDescription>This is a sample dialog content to test the theme.</DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
                     <Button variant="outline">Cancel</Button>
@@ -367,9 +286,7 @@ export default function TestComponentsPage() {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone.
-                    </AlertDialogDescription>
+                    <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -400,9 +317,7 @@ export default function TestComponentsPage() {
                 <SheetContent>
                   <SheetHeader>
                     <SheetTitle>Sheet Title</SheetTitle>
-                    <SheetDescription>
-                      Sheet description and content goes here.
-                    </SheetDescription>
+                    <SheetDescription>Sheet description and content goes here.</SheetDescription>
                   </SheetHeader>
                 </SheetContent>
               </Sheet>
@@ -416,9 +331,7 @@ export default function TestComponentsPage() {
                 <PopoverContent>
                   <div className="space-y-2">
                     <h4 className="font-medium">Popover Title</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Popover content with some text
-                    </p>
+                    <p className="text-sm text-muted-foreground">Popover content with some text</p>
                   </div>
                 </PopoverContent>
               </Popover>
@@ -448,9 +361,7 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Navigation & Structure</CardTitle>
-            <CardDescription>
-              Navigation menus and structural components
-            </CardDescription>
+            <CardDescription>Navigation menus and structural components</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <Breadcrumb>
@@ -489,15 +400,11 @@ export default function TestComponentsPage() {
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Accordion Item 1</AccordionTrigger>
-                <AccordionContent>
-                  Content for accordion item 1
-                </AccordionContent>
+                <AccordionContent>Content for accordion item 1</AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>Accordion Item 2</AccordionTrigger>
-                <AccordionContent>
-                  Content for accordion item 2
-                </AccordionContent>
+                <AccordionContent>Content for accordion item 2</AccordionContent>
               </AccordionItem>
             </Accordion>
           </CardContent>
@@ -507,31 +414,20 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Progress & Data Display</CardTitle>
-            <CardDescription>
-              Progress bars, sliders, and data components
-            </CardDescription>
+            <CardDescription>Progress bars, sliders, and data components</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label>Progress: {progress}%</Label>
               <Progress value={progress} className="w-full" />
-              <Button
-                onClick={() => setProgress(Math.min(100, progress + 10))}
-                size="sm"
-              >
+              <Button onClick={() => setProgress(Math.min(100, progress + 10))} size="sm">
                 Increase Progress
               </Button>
             </div>
 
             <div className="space-y-2">
               <Label>Slider: {sliderValue[0]}</Label>
-              <Slider
-                value={sliderValue}
-                onValueChange={setSliderValue}
-                max={100}
-                step={1}
-                className="w-full"
-              />
+              <Slider value={sliderValue} onValueChange={setSliderValue} max={100} step={1} className="w-full" />
             </div>
 
             <div className="grid grid-cols-4 gap-4">
@@ -585,25 +481,19 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Alerts & Feedback</CardTitle>
-            <CardDescription>
-              Alert messages and feedback components
-            </CardDescription>
+            <CardDescription>Alert messages and feedback components</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Alert>
               <CalendarDays className="h-4 w-4" />
               <AlertTitle>Info Alert</AlertTitle>
-              <AlertDescription>
-                This is an informational alert message.
-              </AlertDescription>
+              <AlertDescription>This is an informational alert message.</AlertDescription>
             </Alert>
 
             <Alert variant="destructive">
               <X className="h-4 w-4" />
               <AlertTitle>Error Alert</AlertTitle>
-              <AlertDescription>
-                This is an error alert message.
-              </AlertDescription>
+              <AlertDescription>This is an error alert message.</AlertDescription>
             </Alert>
 
             <Button
@@ -622,9 +512,7 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Toggle & Controls</CardTitle>
-            <CardDescription>
-              Toggle buttons and control components
-            </CardDescription>
+            <CardDescription>Toggle buttons and control components</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <ToggleGroup type="multiple">
@@ -651,20 +539,13 @@ export default function TestComponentsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Special Components</CardTitle>
-            <CardDescription>
-              Calendar, command palette, and other special components
-            </CardDescription>
+            <CardDescription>Calendar, command palette, and other special components</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="text-sm font-medium mb-2">Calendar</h4>
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="rounded-md border"
-                />
+                <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
               </div>
 
               <div>
@@ -745,13 +626,10 @@ export default function TestComponentsPage() {
         {/* Summary */}
         <Card className="border-2 border-primary">
           <CardHeader>
-            <CardTitle className="text-primary">
-              🎉 NEONPROV1 Theme Compatibility Test Complete
-            </CardTitle>
+            <CardTitle className="text-primary">🎉 NEONPROV1 Theme Compatibility Test Complete</CardTitle>
             <CardDescription>
-              All 50+ shadcn/ui components have been rendered and tested with
-              the new theme. Switch between light and dark modes using the
-              toggle in the top-right corner.
+              All 50+ shadcn/ui components have been rendered and tested with the new theme. Switch between light and
+              dark modes using the toggle in the top-right corner.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -796,5 +674,5 @@ export default function TestComponentsPage() {
         </Tooltip>
       </TooltipProvider>
     </div>
-  );
+  )
 }

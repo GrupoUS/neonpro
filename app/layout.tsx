@@ -1,4 +1,3 @@
-
 import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import { Inter, Libre_Baskerville, Lora } from "next/font/google";
