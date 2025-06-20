@@ -1,17 +1,16 @@
-import type { Config } from "tailwindcss"
-import defaultTheme from "tailwindcss/defaultTheme" // Keep this for font fallbacks
-import shadcnConfig from "shadcn/ui/tailwind.config" // Import shadcn/ui's default config
+import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme"; // For font fallbacks
 
 const config: Config = {
-  ...shadcnConfig, // Extend from shadcn/ui's default config
+  darkMode: "class",
   content: [
-    ...shadcnConfig.content, // Keep existing content paths and extend with new ones
     "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "*.{js,ts,jsx,tsx,mdx}", // Your custom content path
+    "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    ...shadcnConfig.theme, // Extend from shadcn/ui's default theme
     container: {
       center: true,
       padding: "2rem",
@@ -20,10 +19,42 @@ const config: Config = {
       },
     },
     extend: {
-      ...shadcnConfig.theme.extend, // Extend from shadcn/ui's default theme extend
       colors: {
-        ...shadcnConfig.theme.extend.colors, // Keep existing colors and extend with new ones
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
         chart: {
+          // Your custom chart colors
           "1": "oklch(var(--chart-1))",
           "2": "oklch(var(--chart-2))",
           "3": "oklch(var(--chart-3))",
@@ -31,6 +62,7 @@ const config: Config = {
           "5": "oklch(var(--chart-5))",
         },
         sidebar: {
+          // Your custom sidebar colors
           DEFAULT: "oklch(var(--sidebar))",
           foreground: "oklch(var(--sidebar-foreground))",
           primary: {
@@ -46,8 +78,10 @@ const config: Config = {
         },
       },
       borderRadius: {
-        ...shadcnConfig.theme.extend.borderRadius, // Keep existing borderRadius and extend with new ones
-        xl: "var(--radius-xl)", // Using the specific variable from your globals.css
+        lg: "var(--radius-lg)", // Using var(--radius-lg) from globals.css
+        md: "var(--radius-md)", // Using var(--radius-md) from globals.css
+        sm: "var(--radius-sm)", // Using var(--radius-sm) from globals.css
+        xl: "var(--radius-xl)", // Using var(--radius-xl) from globals.css
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
@@ -80,7 +114,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [...shadcnConfig.plugins, require("tailwindcss-animate")], // Keep existing plugins and add new ones
-}
+  plugins: [require("tailwindcss-animate")],
+};
 
-export default config
+export default config;
