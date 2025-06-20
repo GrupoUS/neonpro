@@ -198,7 +198,7 @@ export default function TestComponentsPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Button disabled>Disabled</Button>
-              <Button loading>Loading</Button>
+              <Button disabled>Loading State</Button>
             </div>
           </CardContent>
         </Card>
