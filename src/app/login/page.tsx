@@ -1,17 +1,15 @@
-import { AuthForm } from '@/components/auth/auth-form'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+"use client";
 
-export default async function LoginPage() {
-  const supabase = createClient()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-  if (user) {
-    redirect('/dashboard')
-  }
+export default function LoginPage() {
+  const router = useRouter();
 
-  return <AuthForm />
+  useEffect(() => {
+    // Redirect to new auth login page
+    router.replace("/auth/login");
+  }, [router]);
+
+  return null;
 }

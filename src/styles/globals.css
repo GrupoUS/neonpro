@@ -8,6 +8,27 @@
 /* Modern Glass Morphism Variables */
 @layer base {
   :root {
+    /* Theme Colors - Dark Mode Default */
+    --primary: 172 148 105; /* #AC9469 */
+    --secondary: 17 32 49; /* #112031 */
+    --background: 10 10 11; /* #0a0a0b */
+    --foreground: 249 250 251; /* #f9fafb */
+    --card: 17 32 49 / 0.5;
+    --card-foreground: 249 250 251;
+    --popover: 10 10 11 / 0.95;
+    --popover-foreground: 249 250 251;
+    --primary-2: 196 176 132; /* #c4b084 */
+    --secondary-2: 26 45 71; /* #1a2d47 */
+    --muted: 249 250 251 / 0.1;
+    --muted-foreground: 249 250 251 / 0.7;
+    --accent: 172 148 105;
+    --accent-foreground: 10 10 11;
+    --destructive: 239 68 68; /* #ef4444 */
+    --destructive-foreground: 249 250 251;
+    --border: 249 250 251 / 0.1;
+    --input: 249 250 251 / 0.1;
+    --ring: 172 148 105;
+
     /* Glass Morphism Effects */
     --glass-blur: 16px;
     --glass-saturation: 180%;
@@ -24,6 +45,28 @@
     --transition-base: 300ms;
     --transition-slow: 500ms;
     --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .light {
+    --primary: 172 148 105;
+    --secondary: 17 32 49;
+    --background: 255 255 255;
+    --foreground: 10 10 11;
+    --card: 255 255 255 / 0.8;
+    --card-foreground: 10 10 11;
+    --popover: 255 255 255 / 0.95;
+    --popover-foreground: 10 10 11;
+    --primary-2: 138 120 84; /* #8a7854 */
+    --secondary-2: 31 58 95; /* #1f3a5f */
+    --muted: 10 10 11 / 0.05;
+    --muted-foreground: 10 10 11 / 0.6;
+    --accent: 172 148 105;
+    --accent-foreground: 255 255 255;
+    --destructive: 220 38 38; /* #dc2626 */
+    --destructive-foreground: 255 255 255;
+    --border: 10 10 11 / 0.1;
+    --input: 10 10 11 / 0.05;
+    --ring: 172 148 105;
   }
 
   html {
@@ -60,14 +103,18 @@
   .glass {
     @apply backdrop-blur-md bg-white/10 dark:bg-gray-900/10 border border-white/20 dark:border-gray-700/20;
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+    contain: layout style paint;
+    will-change: backdrop-filter;
   }
 
   .glass-subtle {
     @apply backdrop-blur-sm bg-white/5 dark:bg-gray-900/5 border border-white/10 dark:border-gray-700/10;
+    contain: layout style paint;
   }
 
   .glass-strong {
     @apply backdrop-blur-xl bg-white/15 dark:bg-gray-900/15 border border-white/25 dark:border-gray-700/25;
+    contain: layout style paint;
   }
 
   /* Button Styles with Glass Morphism */
@@ -97,6 +144,8 @@
   .card-glass {
     @apply glass rounded-xl p-6 shadow-glass transition-all duration-300;
     @apply hover:shadow-glass-hover hover:bg-white/15 dark:hover:bg-gray-900/15;
+    contain: layout style;
+    transform: translateZ(0); /* Enable GPU acceleration */
   }
 
   /* Input Styles with Glass Effect */

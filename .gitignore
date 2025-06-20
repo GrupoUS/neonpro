@@ -156,5 +156,21 @@ yarn.lock
 .env.test
 .env.staging
 
+# SECURITY: Documentation files with potential API keys
+**/VERCEL_ENV_SETUP_CRITICAL.md
+**/VERCEL_DEPLOY_CONFIG.md
+**/VERCEL_DEPLOYMENT_CHECKLIST.md
+**/PRODUCTION_ENV_CONFIG.md
+**/FASE*_DEPLOY_LOG.md
+**/FASE*_CORRECOES_LOG.md
+**/CONCLUSAO_DEPLOY_VERCEL.md
+**/RELATORIO_DEPLOY_FINAL.md
+
+# SECURITY: Any file that might contain API keys
+**/*API_KEY*
+**/*SECRET*
+**/*TOKEN*
+**/*CREDENTIAL*
+
 # Local Netlify folder
 .netlify

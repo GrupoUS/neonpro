@@ -1,61 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  Menu, 
-  X, 
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BarChart3,
+  Bell,
   ChevronRight,
   Home,
-  BarChart3,
-  Users,
-  Settings,
-  Bell,
-  Search,
-  User,
   LogOut,
-  Moon,
-  Sun
-} from 'lucide-react';
+  Menu,
+  Search,
+  Settings,
+  User,
+  Users,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const sidebarItems = [
-  { icon: Home, label: 'Dashboard', href: '/dashboard' },
-  { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-  { icon: Users, label: 'Team', href: '/team' },
-  { icon: Settings, label: 'Settings', href: '/settings' },
+  { icon: Home, label: "Dashboard", href: "/dashboard" },
+  {
+    icon: BarChart3,
+    label: "Visualizations",
+    href: "/dashboard/visualizations",
+  },
+  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  { icon: Users, label: "Team", href: "/team" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    // Check for saved theme preference or default to dark mode
-    const savedTheme = localStorage.getItem('theme');
-    setIsDarkMode(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches));
-  }, []);
-
-  useEffect(() => {
-    // Update document class for dark mode
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -80,7 +64,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="glass-button p-2 !px-2 !py-2"
             >
-              <ChevronRight className={`h-5 w-5 transition-transform ${sidebarOpen ? 'rotate-180' : ''}`} />
+              <ChevronRight
+                className={`h-5 w-5 transition-transform ${
+                  sidebarOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
           </div>
 
@@ -96,21 +84,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       className={`
                         group relative flex items-center gap-3 rounded-lg px-3 py-2.5
                         transition-all duration-200
-                        ${isActive 
-                          ? 'glass-card !bg-grupous-secondary/20 text-grupous-secondary' 
-                          : 'hover:glass-card hover:!bg-white/5'
+                        ${
+                          isActive
+                            ? "glass-card !bg-grupous-secondary/20 text-grupous-secondary"
+                            : "hover:glass-card hover:!bg-white/5"
                         }
                       `}
                     >
                       <item.icon className="h-5 w-5 flex-shrink-0" />
                       <motion.span
-                        animate={{ opacity: sidebarOpen ? 1 : 0, x: sidebarOpen ? 0 : -10 }}
+                        animate={{
+                          opacity: sidebarOpen ? 1 : 0,
+                          x: sidebarOpen ? 0 : -10,
+                        }}
                         transition={{ duration: 0.2 }}
-                        className={`${sidebarOpen ? 'block' : 'hidden'} font-medium`}
+                        className={`${
+                          sidebarOpen ? "block" : "hidden"
+                        } font-medium`}
                       >
                         {item.label}
                       </motion.span>
-                      
+
                       {/* Tooltip for collapsed sidebar */}
                       {!sidebarOpen && (
                         <div className="absolute left-full ml-2 hidden group-hover:block">
@@ -176,9 +170,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                           className={`
                             flex items-center gap-3 rounded-lg px-3 py-2.5
                             transition-all duration-200
-                            ${isActive 
-                              ? 'glass-card !bg-grupous-secondary/20 text-grupous-secondary' 
-                              : 'hover:glass-card hover:!bg-white/5'
+                            ${
+                              isActive
+                                ? "glass-card !bg-grupous-secondary/20 text-grupous-secondary"
+                                : "hover:glass-card hover:!bg-white/5"
                             }
                           `}
                         >
@@ -196,7 +191,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'}`}>
+      <div
+        className={`transition-all duration-300 ${
+          sidebarOpen ? "lg:ml-[280px]" : "lg:ml-20"
+        }`}
+      >
         {/* Header */}
         <header className="sticky top-0 z-30 h-16 backdrop-blur-md bg-white/50 dark:bg-gray-900/50 border-b border-gray-200/50 dark:border-gray-800/50">
           <div className="flex h-full items-center justify-between px-4 sm:px-6">
@@ -210,11 +209,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Breadcrumb */}
             <div className="hidden sm:flex items-center gap-2 text-sm">
-              <Link href="/dashboard" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+              <Link
+                href="/dashboard"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+              >
                 Dashboard
               </Link>
               <ChevronRight className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-900 dark:text-gray-100 font-medium">Overview</span>
+              <span className="text-gray-900 dark:text-gray-100 font-medium">
+                Overview
+              </span>
             </div>
 
             {/* Right Section */}
@@ -232,12 +236,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </div>
 
               {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="glass-button p-2 !px-2 !py-2"
-              >
-                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </button>
+              <ThemeToggle />
 
               {/* Notifications */}
               <button className="glass-button p-2 !px-2 !py-2 relative">
@@ -271,16 +270,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         className="absolute right-0 mt-2 w-48 glass-card p-2 z-20"
                       >
                         <div className="py-1">
-                          <a href="#" className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all">
+                          <a
+                            href="#"
+                            className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all"
+                          >
                             <User className="h-4 w-4" />
                             Profile
                           </a>
-                          <a href="#" className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all">
+                          <a
+                            href="#"
+                            className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all"
+                          >
                             <Settings className="h-4 w-4" />
                             Settings
                           </a>
                           <hr className="my-2 border-gray-200/50 dark:border-gray-700/50" />
-                          <a href="#" className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all text-red-600 dark:text-red-400">
+                          <a
+                            href="#"
+                            className="flex items-center gap-2 px-3 py-2 text-sm hover:glass-card rounded-lg transition-all text-red-600 dark:text-red-400"
+                          >
                             <LogOut className="h-4 w-4" />
                             Logout
                           </a>
