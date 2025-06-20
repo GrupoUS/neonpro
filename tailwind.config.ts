@@ -20,41 +20,40 @@ const config: Config = {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        border: "oklch(var(--border))",
+        input: "oklch(var(--input))",
+        ring: "oklch(var(--ring))",
+        background: "oklch(var(--background))",
+        foreground: "oklch(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "oklch(var(--primary))",
+          foreground: "oklch(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "oklch(var(--secondary))",
+          foreground: "oklch(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "oklch(var(--destructive))",
+          foreground: "oklch(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "oklch(var(--muted))",
+          foreground: "oklch(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "oklch(var(--accent))",
+          foreground: "oklch(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "oklch(var(--popover))",
+          foreground: "oklch(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "oklch(var(--card))",
+          foreground: "oklch(var(--card-foreground))",
         },
         chart: {
-          // Your custom chart colors
           "1": "oklch(var(--chart-1))",
           "2": "oklch(var(--chart-2))",
           "3": "oklch(var(--chart-3))",
@@ -62,8 +61,7 @@ const config: Config = {
           "5": "oklch(var(--chart-5))",
         },
         sidebar: {
-          // Your custom sidebar colors
-          DEFAULT: "oklch(var(--sidebar))",
+          DEFAULT: "oklch(var(--sidebar-background))",
           foreground: "oklch(var(--sidebar-foreground))",
           primary: {
             DEFAULT: "oklch(var(--sidebar-primary))",
@@ -78,10 +76,9 @@ const config: Config = {
         },
       },
       borderRadius: {
-        lg: "var(--radius-lg)", // Using var(--radius-lg) from globals.css
-        md: "var(--radius-md)", // Using var(--radius-md) from globals.css
-        sm: "var(--radius-sm)", // Using var(--radius-sm) from globals.css
-        xl: "var(--radius-xl)", // Using var(--radius-xl) from globals.css
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
