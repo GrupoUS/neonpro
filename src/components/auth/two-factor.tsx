@@ -104,7 +104,7 @@ export function TwoFactorInput({
               disabled={loading}
               className={cn(
                 "w-12 h-14 text-center text-lg font-semibold",
-                "bg-glass-light/50 dark:bg-glass-dark/50",
+                "bg-white/50 dark:bg-gray-900/50",
                 "backdrop-blur-md border-2 rounded-xl",
                 "transition-all duration-200",
                 "focus:ring-2 focus:ring-primary/50",
@@ -151,7 +151,7 @@ export function TwoFactorStatus({
       animate={{ opacity: 1, scale: 1 }}
       className={cn(
         "p-4 rounded-xl",
-        "bg-glass-light/50 dark:bg-glass-dark/50",
+        "bg-white/50 dark:bg-gray-900/50",
         "backdrop-blur-md border border-white/20",
         className
       )}

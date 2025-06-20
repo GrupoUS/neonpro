@@ -200,7 +200,7 @@
     @apply border border-white/30 dark:border-gray-700/30;
     @apply shadow-2xl shadow-black/10 dark:shadow-black/30;
     @apply transition-all duration-300;
-    @apply hover:shadow-3xl hover:shadow-black/15 dark:hover:shadow-black/40;
+    @apply hover:shadow-2xl hover:shadow-black/15 dark:hover:shadow-black/40;
     @apply hover:bg-white/90 dark:hover:bg-gray-900/90;
     contain: layout style;
     transform: translateZ(0); /* Enable GPU acceleration */
@@ -215,11 +215,6 @@
   .glass-medium {
     @apply backdrop-blur-md bg-white/10 dark:bg-gray-900/10;
     @apply border border-white/20 dark:border-gray-700/20;
-  }
-
-  .glass-strong {
-    @apply backdrop-blur-xl bg-white/20 dark:bg-gray-900/20;
-    @apply border border-white/30 dark:border-gray-700/30;
   }
 
   /* Input Styles with Glass Effect */

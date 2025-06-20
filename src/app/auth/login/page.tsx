@@ -6,7 +6,14 @@ import { TwoFactorInput, TwoFactorStatus } from "@/components/auth/two-factor";
 import { NeonProLogo } from "@/components/ui/neonpro-logo";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Loader2, Lock, Mail, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Loader2,
+  Lock,
+  Mail,
+  Shield,
+  Sparkles,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
