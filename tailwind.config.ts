@@ -4,7 +4,14 @@ import shadcnConfig from "shadcn/ui/tailwind.config"
 
 const config = {
   ...shadcnConfig,
-  content: [...shadcnConfig.content, "./pages/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}", "*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    ...shadcnConfig.content,
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "*.{js,ts,jsx,tsx,mdx}", // Added this from your previous config
+  ],
   theme: {
     ...shadcnConfig.theme,
     container: {
@@ -16,6 +23,30 @@ const config = {
     },
     extend: {
       ...shadcnConfig.theme.extend,
+      colors: {
+        ...shadcnConfig.theme.extend.colors,
+        chart: {
+          "1": "oklch(var(--chart-1))",
+          "2": "oklch(var(--chart-2))",
+          "3": "oklch(var(--chart-3))",
+          "4": "oklch(var(--chart-4))",
+          "5": "oklch(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "oklch(var(--sidebar))",
+          foreground: "oklch(var(--sidebar-foreground))",
+          primary: {
+            DEFAULT: "oklch(var(--sidebar-primary))",
+            foreground: "oklch(var(--sidebar-primary-foreground))",
+          },
+          accent: {
+            DEFAULT: "oklch(var(--sidebar-accent))",
+            foreground: "oklch(var(--sidebar-accent-foreground))",
+          },
+          border: "oklch(var(--sidebar-border))",
+          ring: "oklch(var(--sidebar-ring))",
+        },
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
         serif: ["var(--font-serif)", ...defaultTheme.fontFamily.serif],
@@ -32,6 +63,7 @@ const config = {
         "2xl": "var(--shadow-2xl)",
       },
       keyframes: {
+        ...shadcnConfig.theme.extend.keyframes,
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -42,6 +74,7 @@ const config = {
         },
       },
       animation: {
+        ...shadcnConfig.theme.extend.animation,
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
