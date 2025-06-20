@@ -100,32 +100,65 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full space-y-8">
-      {/* NeonPro Logo & Branding */}
+    <div className="w-full max-w-md mx-auto space-y-8">
+      {/* Enhanced Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center space-y-4"
+        className="text-center space-y-6"
       >
-        {/* Logo with glow effect */}
-        <NeonProLogo size="lg" animated={true} />
+        {/* Logo Container with Enhanced Styling */}
+        <div className="relative">
+          <motion.div
+            animate={{
+              scale: [1, 1.05, 1],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="relative inline-block"
+          >
+            <NeonProLogo size="lg" animated={true} />
+            {/* Subtle glow effect around logo */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-grupous-secondary/20 blur-xl opacity-50 -z-10" />
+          </motion.div>
+        </div>
 
-        {/* Brand Name & Tagline */}
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold">
+        {/* Brand Identity */}
+        <div className="space-y-3">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-3xl font-bold tracking-tight"
+          >
             <span className="bg-gradient-to-br from-grupous-primary via-primary to-grupous-secondary bg-clip-text text-transparent">
               NeonPro
             </span>
-          </h1>
-          <div className="flex items-center justify-center gap-2 text-lg font-medium text-gray-600 dark:text-gray-400">
-            <Sparkles className="w-4 h-4 text-primary" />
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="flex items-center justify-center gap-2 text-base font-medium text-gray-600 dark:text-gray-400"
+          >
+            <Shield className="w-4 h-4 text-primary" />
             <span>Bem-vindo de volta</span>
-            <Sparkles className="w-4 h-4 text-primary" />
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-500 max-w-sm mx-auto">
+            <Shield className="w-4 h-4 text-primary" />
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-sm text-gray-500 dark:text-gray-400 max-w-xs mx-auto leading-relaxed"
+          >
             A plataforma profissional que revoluciona a gestão de projetos
-          </p>
+          </motion.p>
         </div>
       </motion.div>
 
@@ -139,125 +172,144 @@ export default function LoginPage() {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
-            {/* Main Form Card */}
+            {/* Enhanced Main Form Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="card-glass space-y-6"
+              className="relative"
             >
-              {/* Form Header */}
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                  Entrar na sua conta
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Continue sua jornada profissional
-                </p>
+              {/* Enhanced glass card with better styling */}
+              <div className="relative overflow-hidden rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 shadow-2xl shadow-black/10 dark:shadow-black/30">
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 dark:from-gray-800/20 dark:to-primary/10" />
+
+                {/* Content */}
+                <div className="relative p-8 space-y-6">
+                  {/* Form Header */}
+                  <div className="text-center space-y-3">
+                    <motion.h2
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.6 }}
+                      className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight"
+                    >
+                      Entrar na sua conta
+                    </motion.h2>
+                    <motion.p
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4, duration: 0.6 }}
+                      className="text-gray-600 dark:text-gray-400 text-sm"
+                    >
+                      Continue sua jornada profissional
+                    </motion.p>
+                  </div>
+
+                  {/* Login Form */}
+                  <form onSubmit={handleSubmit} className="space-y-5">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <GlassInput
+                        label="Seu email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                        error={errors.email}
+                        icon={<Mail className="w-4 h-4 text-primary" />}
+                        autoComplete="email"
+                        placeholder="exemplo@neonpro.com"
+                      />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <GlassInput
+                        label="Sua senha"
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
+                        error={errors.password}
+                        icon={<Lock className="w-4 h-4 text-primary" />}
+                        autoComplete="current-password"
+                        placeholder="Mínimo 8 caracteres"
+                      />
+                    </motion.div>
+
+                    {/* Remember & Forgot */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="flex items-center justify-between"
+                    >
+                      <GlassCheckbox
+                        label="Lembrar de mim"
+                        checked={formData.rememberMe}
+                        onChange={(checked) =>
+                          setFormData({ ...formData, rememberMe: checked })
+                        }
+                      />
+
+                      <Link
+                        href="/auth/forgot-password"
+                        className="text-sm text-primary hover:text-primary/80 font-medium transition-colors hover:underline"
+                      >
+                        Esqueceu a senha?
+                      </Link>
+                    </motion.div>
+
+                    {/* Login Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="submit"
+                        disabled={loading}
+                        className={cn(
+                          "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl",
+                          "bg-gradient-to-r from-grupous-primary via-primary to-grupous-secondary",
+                          "text-white font-semibold text-lg",
+                          "shadow-[0_8px_30px_rgba(172,148,105,0.3)]",
+                          "hover:shadow-[0_12px_40px_rgba(172,148,105,0.4)]",
+                          "transition-all duration-300",
+                          "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100",
+                          "relative overflow-hidden group"
+                        )}
+                      >
+                        {/* Button glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <span>Entrando...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Entrar no NeonPro</span>
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          </>
+                        )}
+                      </motion.button>
+                    </motion.div>
+                  </form>
+                </div>
               </div>
-
-              {/* Login Form */}
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <GlassInput
-                    label="Seu email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    error={errors.email}
-                    icon={<Mail className="w-4 h-4 text-primary" />}
-                    autoComplete="email"
-                    placeholder="exemplo@neonpro.com"
-                  />
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <GlassInput
-                    label="Sua senha"
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    error={errors.password}
-                    icon={<Lock className="w-4 h-4 text-primary" />}
-                    autoComplete="current-password"
-                    placeholder="Mínimo 8 caracteres"
-                  />
-                </motion.div>
-
-                {/* Remember & Forgot */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="flex items-center justify-between"
-                >
-                  <GlassCheckbox
-                    label="Lembrar de mim"
-                    checked={formData.rememberMe}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, rememberMe: checked })
-                    }
-                  />
-
-                  <Link
-                    href="/auth/forgot-password"
-                    className="text-sm text-primary hover:text-primary/80 font-medium transition-colors hover:underline"
-                  >
-                    Esqueceu a senha?
-                  </Link>
-                </motion.div>
-
-                {/* Login Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  <motion.button
-                    whileHover={{ scale: 1.02, y: -1 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    disabled={loading}
-                    className={cn(
-                      "w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl",
-                      "bg-gradient-to-r from-grupous-primary via-primary to-grupous-secondary",
-                      "text-white font-semibold text-lg",
-                      "shadow-[0_8px_30px_rgba(172,148,105,0.3)]",
-                      "hover:shadow-[0_12px_40px_rgba(172,148,105,0.4)]",
-                      "transition-all duration-300",
-                      "disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100",
-                      "relative overflow-hidden group"
-                    )}
-                  >
-                    {/* Button glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        <span>Entrando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Entrar no NeonPro</span>
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                      </>
-                    )}
-                  </motion.button>
-                </motion.div>
-              </form>
             </motion.div>
 
             {/* Social Login Section */}
@@ -274,33 +326,39 @@ export default function LoginPage() {
               />
             </motion.div>
 
-            {/* Sign up link */}
+            {/* Enhanced Sign up link */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="text-center"
+              className="text-center space-y-4"
             >
+              {/* Elegant divider */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent" />
+                  <div className="w-full border-t border-gray-200 dark:border-gray-700" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="px-4 bg-gray-50 dark:bg-gray-900 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="px-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm text-sm font-medium text-gray-500 dark:text-gray-400 rounded-full">
                     Novo no NeonPro?
                   </span>
                 </div>
               </div>
-              <div className="mt-4">
+
+              {/* Call to action */}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Link
                   href="/auth/register"
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors hover:underline"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary/10 to-grupous-secondary/10 border border-primary/20 text-primary hover:text-primary/80 font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-primary/20"
                 >
                   <Sparkles className="w-4 h-4" />
                   Criar conta gratuita
-                  <Sparkles className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
         ) : (

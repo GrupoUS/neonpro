@@ -9,13 +9,18 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
       {/* Left Side - Content */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 relative overflow-hidden">
         {/* Enhanced background with multiple layers */}
         <div className="absolute inset-0">
-          {/* Base gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800" />
+          {/* Subtle pattern overlay */}
+          <div
+            className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          />
 
           {/* Mesh pattern overlay */}
           <div
@@ -90,18 +95,15 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           ))}
         </div>
 
-        {/* Content container with glass effect */}
+        {/* Enhanced Content container */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="relative z-10 w-full max-w-md"
+          className="relative z-10 w-full max-w-lg"
         >
-          <div className="relative">
-            {/* Subtle glass container */}
-            <div className="absolute inset-0 bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/20" />
-            <div className="relative p-8">{children}</div>
-          </div>
+          {/* Clean container without extra glass effects - let the page components handle styling */}
+          <div className="relative">{children}</div>
         </motion.div>
       </div>
 

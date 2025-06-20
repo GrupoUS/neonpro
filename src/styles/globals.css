@@ -193,12 +193,33 @@
     @apply btn bg-transparent hover:glass;
   }
 
-  /* Modern Card Styles */
+  /* Enhanced Modern Card Styles - Horizon UI Inspired */
   .card-glass {
-    @apply glass rounded-xl p-6 shadow-glass transition-all duration-300;
-    @apply hover:shadow-glass-hover hover:bg-white/15 dark:hover:bg-gray-900/15;
+    @apply relative overflow-hidden rounded-2xl;
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl;
+    @apply border border-white/30 dark:border-gray-700/30;
+    @apply shadow-2xl shadow-black/10 dark:shadow-black/30;
+    @apply transition-all duration-300;
+    @apply hover:shadow-3xl hover:shadow-black/15 dark:hover:shadow-black/40;
+    @apply hover:bg-white/90 dark:hover:bg-gray-900/90;
     contain: layout style;
     transform: translateZ(0); /* Enable GPU acceleration */
+  }
+
+  /* Enhanced Glass Effects for better visual hierarchy */
+  .glass-subtle {
+    @apply backdrop-blur-sm bg-white/5 dark:bg-gray-900/5;
+    @apply border border-white/10 dark:border-gray-700/10;
+  }
+
+  .glass-medium {
+    @apply backdrop-blur-md bg-white/10 dark:bg-gray-900/10;
+    @apply border border-white/20 dark:border-gray-700/20;
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-xl bg-white/20 dark:bg-gray-900/20;
+    @apply border border-white/30 dark:border-gray-700/30;
   }
 
   /* Input Styles with Glass Effect */
@@ -302,6 +323,32 @@
   /* Pulse Glow */
   .pulse-glow {
     animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  /* Enhanced Button Utilities - Horizon UI Style */
+  .btn-primary-enhanced {
+    @apply bg-gradient-to-r from-grupous-primary via-primary to-grupous-secondary;
+    @apply text-white font-semibold shadow-lg shadow-primary/30;
+    @apply hover:shadow-xl hover:shadow-primary/40 transition-all duration-300;
+    @apply transform hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-glass {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-md;
+    @apply border border-white/30 dark:border-gray-700/30;
+    @apply shadow-lg shadow-black/5 dark:shadow-black/20;
+    @apply hover:bg-white/90 dark:hover:bg-gray-900/90;
+    @apply transition-all duration-300;
+  }
+
+  /* Text Gradient Utilities */
+  .text-gradient-primary {
+    @apply bg-gradient-to-br from-grupous-primary via-primary to-grupous-secondary bg-clip-text text-transparent;
+  }
+
+  /* Enhanced Focus States */
+  .focus-ring-primary {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2;
   }
 }
 
