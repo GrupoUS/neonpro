@@ -8,7 +8,7 @@ const config = {
     ...shadcnConfig.content,
     "./pages/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "*.{js,ts,jsx,tsx,mdx}", // Ensure this covers all relevant files
+    "*.{js,ts,jsx,tsx,mdx}", // Your custom content path
   ],
   theme: {
     ...shadcnConfig.theme,
@@ -21,6 +21,34 @@ const config = {
     },
     extend: {
       ...shadcnConfig.theme.extend,
+      colors: {
+        ...shadcnConfig.theme.extend.colors,
+        chart: {
+          "1": "oklch(var(--chart-1))",
+          "2": "oklch(var(--chart-2))",
+          "3": "oklch(var(--chart-3))",
+          "4": "oklch(var(--chart-4))",
+          "5": "oklch(var(--chart-5))",
+        },
+        sidebar: {
+          DEFAULT: "oklch(var(--sidebar))",
+          foreground: "oklch(var(--sidebar-foreground))",
+          primary: {
+            DEFAULT: "oklch(var(--sidebar-primary))",
+            foreground: "oklch(var(--sidebar-primary-foreground))",
+          },
+          accent: {
+            DEFAULT: "oklch(var(--sidebar-accent))",
+            foreground: "oklch(var(--sidebar-accent-foreground))",
+          },
+          border: "oklch(var(--sidebar-border))",
+          ring: "oklch(var(--sidebar-ring))",
+        },
+      },
+      borderRadius: {
+        ...shadcnConfig.theme.extend.borderRadius,
+        xl: "var(--radius-xl)",
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
         serif: ["var(--font-serif)", ...defaultTheme.fontFamily.serif],
@@ -37,6 +65,7 @@ const config = {
         "2xl": "var(--shadow-2xl)",
       },
       keyframes: {
+        ...shadcnConfig.theme.extend.keyframes,
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -47,6 +76,7 @@ const config = {
         },
       },
       animation: {
+        ...shadcnConfig.theme.extend.animation,
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
