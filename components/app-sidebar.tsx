@@ -1,8 +1,16 @@
-"use client"
+"use client";
 
-import { Calendar, Home, Users, CreditCard, Settings, FileText, UserCheck } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import {
+  Calendar,
+  CreditCard,
+  FileText,
+  Home,
+  Settings,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -10,11 +18,11 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const menuItems = [
   {
@@ -24,46 +32,51 @@ const menuItems = [
   },
   {
     title: "Agenda",
-    url: "/agenda",
+    url: "/dashboard/agendamentos",
     icon: Calendar,
   },
   {
     title: "Clientes",
-    url: "/clientes",
+    url: "/dashboard/clientes",
     icon: Users,
   },
   {
+    title: "Prontuários",
+    url: "/dashboard/prontuarios",
+    icon: Heart,
+  },
+  {
     title: "Financeiro",
-    url: "/financeiro",
+    url: "/dashboard/financeiro",
     icon: CreditCard,
   },
   {
     title: "Relatórios",
-    url: "/relatorios",
+    url: "/dashboard/relatorios",
     icon: FileText,
   },
-]
+];
 
 const configItems = [
   {
     title: "Serviços",
-    url: "/servicos",
+    url: "/dashboard/servicos",
     icon: Settings,
   },
   {
     title: "Profissionais",
-    url: "/profissionais",
+    url: "/dashboard/profissionais",
     icon: UserCheck,
   },
   {
     title: "Configurações",
-    url: "/configuracoes",
+    url: "/dashboard/configuracoes",
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar>
@@ -113,5 +126,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
