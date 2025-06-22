@@ -4,10 +4,23 @@ const OFFLINE_URL = "/offline.html";
 // Files to cache on install
 const STATIC_CACHE_URLS = [
   "/",
+  "/dashboard",
   "/offline.html",
   "/manifest.json",
   "/favicon.ico",
   "/fonts/inter-var.woff2",
+];
+
+// Dynamic cache URLs for NeonPro
+const DYNAMIC_CACHE_URLS = [
+  "/dashboard/agendamentos",
+  "/dashboard/clientes",
+  "/dashboard/servicos",
+  "/dashboard/profissionais",
+  "/dashboard/financeiro",
+  "/dashboard/relatorios",
+  "/dashboard/configuracoes",
+  "/dashboard/prontuarios",
 ];
 
 // Install event - cache static assets
@@ -153,11 +166,55 @@ self.addEventListener("sync", (event) => {
   if (event.tag === "sync-actions") {
     event.waitUntil(syncOfflineActions());
   }
+  if (event.tag === "sync-appointments") {
+    event.waitUntil(syncAppointments());
+  }
+  if (event.tag === "sync-clients") {
+    event.waitUntil(syncClients());
+  }
 });
 
 async function syncOfflineActions() {
-  // Implement offline action sync
   console.log("[ServiceWorker] Syncing offline actions");
+  // Implement offline action sync for NeonPro
+}
+
+async function syncAppointments() {
+  console.log("[ServiceWorker] Syncing appointments...");
+  try {
+    // Sync pending appointment changes
+    const pendingChanges = await getStoredData("pending-appointments");
+    if (pendingChanges && pendingChanges.length > 0) {
+      // Process pending changes when back online
+      console.log("[ServiceWorker] Processing pending appointment changes");
+    }
+  } catch (error) {
+    console.error("[ServiceWorker] Error syncing appointments:", error);
+  }
+}
+
+async function syncClients() {
+  console.log("[ServiceWorker] Syncing clients...");
+  try {
+    // Sync pending client changes
+    const pendingChanges = await getStoredData("pending-clients");
+    if (pendingChanges && pendingChanges.length > 0) {
+      console.log("[ServiceWorker] Processing pending client changes");
+    }
+  } catch (error) {
+    console.error("[ServiceWorker] Error syncing clients:", error);
+  }
+}
+
+async function getStoredData(key) {
+  // Helper function to get data from IndexedDB or localStorage
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error("[ServiceWorker] Error getting stored data:", error);
+    return null;
+  }
 }
 
 // Push notifications

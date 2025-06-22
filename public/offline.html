@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NEONPRO - Offline</title>
+    <title>NeonPro - Offline</title>
     <style>
       * {
         margin: 0;
@@ -172,22 +172,22 @@
           </svg>
         </div>
 
-        <h1>You're Offline</h1>
+        <h1>NeonPro Offline</h1>
         <p>
-          It looks like you've lost your internet connection. Don't worry,
-          NEONPRO works offline too! Some features may be limited.
+          Você está offline no momento, mas o NeonPro continua funcionando!
+          Algumas funcionalidades estão disponíveis mesmo sem conexão.
         </p>
 
         <a
-          href="/"
+          href="/dashboard"
           class="button"
           onclick="window.location.reload(); return false;"
         >
-          Try Again
+          Ir para Dashboard
         </a>
 
         <div class="status">
-          <span id="status-text">Checking connection...</span>
+          <span id="status-text">Verificando conexão...</span>
         </div>
       </div>
     </div>
@@ -197,12 +197,12 @@
       function updateOnlineStatus() {
         const statusEl = document.getElementById("status-text");
         if (navigator.onLine) {
-          statusEl.textContent = "Connection restored! Reloading...";
+          statusEl.textContent = "Conexão restaurada! Redirecionando...";
           setTimeout(() => {
-            window.location.reload();
+            window.location.href = "/dashboard";
           }, 1000);
         } else {
-          statusEl.textContent = "No internet connection";
+          statusEl.textContent = "Sem conexão com a internet";
         }
       }
 
