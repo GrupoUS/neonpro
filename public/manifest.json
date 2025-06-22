@@ -1,14 +1,14 @@
 {
-  "name": "NEONPRO - Next Generation SaaS Platform",
-  "short_name": "NEONPRO",
-  "description": "Build faster, ship smarter with NEONPRO - The ultimate Next.js 15 boilerplate",
-  "start_url": "/",
+  "name": "NeonPro - Gestão de Clínica Estética",
+  "short_name": "NeonPro",
+  "description": "Sistema completo para gestão de clínicas de estética e beleza",
+  "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#AC9469",
-  "background_color": "#0a0a0b",
-  "categories": ["productivity", "business", "developer"],
-  "lang": "en",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "categories": ["business", "productivity", "medical"],
+  "lang": "pt-BR",
   "dir": "ltr",
   "scope": "/",
   "id": "neonpro-pwa",
@@ -94,26 +94,39 @@
   ],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "Go to dashboard",
-      "url": "/dashboard",
+      "name": "Novo Agendamento",
+      "short_name": "Agendar",
+      "description": "Criar um novo agendamento",
+      "url": "/dashboard/agendamentos/novo",
       "icons": [
         {
-          "src": "/icons/dashboard-96x96.png",
+          "src": "/icons/icon-96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
       ]
     },
     {
-      "name": "New Project",
-      "short_name": "New",
-      "description": "Create a new project",
-      "url": "/dashboard/new",
+      "name": "Clientes",
+      "short_name": "Clientes",
+      "description": "Gerenciar clientes",
+      "url": "/dashboard/clientes",
       "icons": [
         {
-          "src": "/icons/new-96x96.png",
+          "src": "/icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Agenda",
+      "short_name": "Agenda",
+      "description": "Ver agenda do dia",
+      "url": "/dashboard/agendamentos",
+      "icons": [
+        {
+          "src": "/icons/icon-96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
