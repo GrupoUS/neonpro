@@ -9,7 +9,10 @@ export const metadata: Metadata = {
   generator: "Next.js",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icon-192x192.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon-192x192.png", sizes: "192x192" },
+    ],
     apple: "/icon-192x192.png",
   },
 };
@@ -29,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
