@@ -9,40 +9,80 @@ interface AuthError extends Error {
 export async function GET(request: Request) {
   console.log("=== OAuth Callback Started ===");
 
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
-  const error = searchParams.get("error");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const error = requestUrl.searchParams.get("error");
+  const error_description = requestUrl.searchParams.get("error_description");
+  const next = requestUrl.searchParams.get("next") ?? "/dashboard";
 
+  console.log("Callback URL:", requestUrl.toString());
   console.log("Callback params:", {
     hasCode: !!code,
     hasError: !!error,
+    error,
+    error_description,
     next,
-    origin,
+    origin: requestUrl.origin,
+    host: request.headers.get("host"),
+    forwardedHost: request.headers.get("x-forwarded-host"),
   });
+
+  // Check for OAuth errors first
+  if (error) {
+    console.error("OAuth Error:", error, error_description);
+
+    // Special handling for common OAuth errors
+    if (error === "redirect_uri_mismatch") {
+      console.error(
+        "CRITICAL: Redirect URI mismatch! Check Google Console configuration."
+      );
+      return NextResponse.redirect(
+        `${
+          requestUrl.origin
+        }/auth/auth-code-error?error=redirect_uri_mismatch&description=${encodeURIComponent(
+          "Google OAuth redirect URI não está configurado corretamente. Verifique o Google Console."
+        )}`
+      );
+    }
+
+    return NextResponse.redirect(
+      `${
+        requestUrl.origin
+      }/auth/auth-code-error?error=${error}&description=${encodeURIComponent(
+        error_description || "OAuth error occurred"
+      )}`
+    );
+  }
 
   // Validate environment variables
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
     console.error("Missing Supabase environment variables");
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-  }
-
-  if (error) {
-    console.error("OAuth callback error:", error);
     return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?error=${encodeURIComponent(error)}`
+      `${
+        requestUrl.origin
+      }/auth/auth-code-error?error=config&description=${encodeURIComponent(
+        "Configuração do servidor inválida"
+      )}`
     );
   }
 
   if (!code) {
-    console.error("No authorization code provided");
+    console.error("No authorization code received!");
+    console.error("This usually means:");
+    console.error("1. Redirect URI mismatch in Google Console");
+    console.error("2. Wrong callback URL in Supabase settings");
+    console.error("3. User cancelled the OAuth flow");
+
     return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?error=no_code`
+      `${
+        requestUrl.origin
+      }/auth/auth-code-error?error=no_code&description=${encodeURIComponent(
+        "Código de autorização não recebido. Verifique as configurações do Google OAuth."
+      )}`
     );
   }
 
   try {
-    console.log("Creating Supabase client for code exchange");
     const supabase = await createClient();
 
     console.log("Exchanging code for session...");
@@ -50,45 +90,61 @@ export async function GET(request: Request) {
       await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
+      const authError = exchangeError as AuthError;
       console.error("Exchange code error:", {
-        message: exchangeError.message,
-        code: (exchangeError as AuthError).code,
+        code: authError.code,
+        message: authError.message,
+        fullError: exchangeError,
       });
+
       return NextResponse.redirect(
-        `${origin}/auth/auth-code-error?error=exchange_failed`
+        `${requestUrl.origin}/auth/auth-code-error?error=${
+          authError.code || "exchange_failed"
+        }&description=${encodeURIComponent(authError.message)}`
       );
     }
 
-    if (data?.session) {
-      console.log("Session created successfully for user:", data.user?.email);
-
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-
-      let redirectUrl: string;
-
-      if (isLocalEnv) {
-        redirectUrl = `${origin}${next}`;
-        console.log("Local redirect to:", redirectUrl);
-      } else if (forwardedHost) {
-        redirectUrl = `https://${forwardedHost}${next}`;
-        console.log("Production redirect (forwarded host) to:", redirectUrl);
-      } else {
-        redirectUrl = `${origin}${next}`;
-        console.log("Production redirect (origin) to:", redirectUrl);
-      }
-
-      return NextResponse.redirect(redirectUrl);
-    } else {
-      console.error("No session created despite successful exchange");
+    if (!data?.session) {
+      console.error("No session created after code exchange");
       return NextResponse.redirect(
-        `${origin}/auth/auth-code-error?error=no_session`
+        `${requestUrl.origin}/auth/auth-code-error?error=no_session`
       );
+    }
+
+    console.log("Session created successfully!", {
+      userId: data.session.user.id,
+      email: data.session.user.email,
+    });
+
+    // Determine redirect URL based on environment
+    const forwardedHost = request.headers.get("x-forwarded-host");
+    const isLocalEnv = process.env.NODE_ENV === "development";
+
+    let redirectTo = next;
+    if (!redirectTo.startsWith("/")) {
+      redirectTo = "/dashboard";
+    }
+
+    if (isLocalEnv) {
+      return NextResponse.redirect(`${requestUrl.origin}${redirectTo}`);
+    } else if (forwardedHost) {
+      return NextResponse.redirect(`https://${forwardedHost}${redirectTo}`);
+    } else {
+      return NextResponse.redirect(`${requestUrl.origin}${redirectTo}`);
     }
   } catch (error) {
-    console.error("Unexpected error in OAuth callback:", error);
+    const authError = error as AuthError;
+    console.error("Unexpected error in OAuth callback:", {
+      error: authError.message,
+      stack: authError.stack,
+    });
+
     return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?error=unexpected`
+      `${
+        requestUrl.origin
+      }/auth/auth-code-error?error=unexpected&description=${encodeURIComponent(
+        "Erro inesperado durante autenticação"
+      )}`
     );
   }
 }
