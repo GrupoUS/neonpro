@@ -132,16 +132,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("=== Initiating Google OAuth ===");
+      console.log("=== Initiating Google OAuth Popup ===");
 
-      const { error } = await supabase.auth.signInWithOAuth({
+      // Get OAuth URL without browser redirect
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/popup-callback`,
           queryParams: {
             access_type: "offline",
             prompt: "consent",
           },
+          skipBrowserRedirect: true, // Don't redirect, we'll handle the popup
         },
       });
 
@@ -150,8 +152,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error };
       }
 
-      console.log("OAuth initiated successfully");
-      return { error: null };
+      if (!data?.url) {
+        console.error("No OAuth URL returned");
+        return { error: new Error("Failed to get OAuth URL") };
+      }
+
+      // Open popup window
+      const popupWidth = 500;
+      const popupHeight = 700;
+      const left = window.screenX + (window.outerWidth - popupWidth) / 2;
+      const top = window.screenY + (window.outerHeight - popupHeight) / 2;
+
+      const popup = window.open(
+        data.url,
+        "GoogleAuthPopup",
+        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
+      );
+
+      if (!popup) {
+        console.error("Popup blocked");
+        // Fallback to redirect if popup is blocked
+        window.location.href = data.url;
+        return { error: null };
+      }
+
+      // Create promise to handle popup result
+      return new Promise<{ error: any }>((resolve) => {
+        let popupCheckInterval: NodeJS.Timeout;
+
+        // Listen for messages from popup
+        const messageHandler = (event: MessageEvent) => {
+          // Verify origin for security
+          if (event.origin !== window.location.origin) {
+            return;
+          }
+
+          if (event.data?.type === "GOOGLE_AUTH_SUCCESS") {
+            console.log("Google auth success via popup");
+            window.removeEventListener("message", messageHandler);
+            if (popupCheckInterval) clearInterval(popupCheckInterval);
+
+            // Refresh auth state
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session) {
+                setSession(session as Session);
+                setUser(session.user as User);
+              }
+            });
+
+            resolve({ error: null });
+          } else if (event.data?.type === "GOOGLE_AUTH_ERROR") {
+            console.error("Google auth error via popup:", event.data.error);
+            window.removeEventListener("message", messageHandler);
+            if (popupCheckInterval) clearInterval(popupCheckInterval);
+            resolve({ error: event.data.error });
+          }
+        };
+
+        window.addEventListener("message", messageHandler);
+
+        // Check if popup is closed
+        popupCheckInterval = setInterval(() => {
+          if (popup.closed) {
+            console.log("Popup closed by user");
+            window.removeEventListener("message", messageHandler);
+            clearInterval(popupCheckInterval);
+            resolve({ error: new Error("Authentication cancelled") });
+          }
+        }, 500);
+      });
     } catch (error: any) {
       console.error("Unexpected Google OAuth error:", error);
       return { error };

@@ -23,7 +23,8 @@
     "db:generate": "supabase gen types typescript --project-id=your-project-id > types/supabase.ts",
     "db:reset": "supabase db reset",
     "db:migrate": "supabase migration up",
-    "deploy": "npm run build && npm run test:ci"
+    "deploy": "npm run build && npm run test:ci",
+    "verify:supabase": "tsx scripts/verify-supabase-config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

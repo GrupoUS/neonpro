@@ -54,31 +54,59 @@ export async function GET(request: Request) {
     );
   }
 
-  // Validate environment variables
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-    console.error("Missing Supabase environment variables");
+  // Validate environment variables (check both possible env var names)
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("Missing Supabase environment variables", {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseKey,
+      nodeEnv: process.env.NODE_ENV,
+    });
     return NextResponse.redirect(
       `${
         requestUrl.origin
       }/auth/auth-code-error?error=config&description=${encodeURIComponent(
-        "Configuração do servidor inválida"
+        "Configuração do servidor inválida - variáveis de ambiente ausentes"
       )}`
     );
   }
 
   if (!code) {
     console.error("No authorization code received!");
+    console.error("Request URL:", requestUrl.toString());
+    console.error(
+      "All search params:",
+      Object.fromEntries(requestUrl.searchParams.entries())
+    );
     console.error("This usually means:");
     console.error("1. Redirect URI mismatch in Google Console");
     console.error("2. Wrong callback URL in Supabase settings");
     console.error("3. User cancelled the OAuth flow");
+    console.error("4. OAuth state parameter issues");
+
+    // Check if there are any other parameters that might indicate the issue
+    const allParams = Object.fromEntries(requestUrl.searchParams.entries());
+    const diagnosticInfo = {
+      url: requestUrl.toString(),
+      params: allParams,
+      hasState: !!requestUrl.searchParams.get("state"),
+      hasError: !!requestUrl.searchParams.get("error"),
+      origin: requestUrl.origin,
+      pathname: requestUrl.pathname,
+    };
+
+    console.error("Diagnostic info:", JSON.stringify(diagnosticInfo, null, 2));
 
     return NextResponse.redirect(
       `${
         requestUrl.origin
       }/auth/auth-code-error?error=no_code&description=${encodeURIComponent(
         "Código de autorização não recebido. Verifique as configurações do Google OAuth."
-      )}`
+      )}&debug=${encodeURIComponent(JSON.stringify(diagnosticInfo))}`
     );
   }
 
