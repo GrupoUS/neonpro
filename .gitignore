@@ -69,3 +69,7 @@ next-env.d.ts
 
 # prevent npm lock file
 package-lock.json
+
+# MCP Configuration
+.mcp-env
+supabase-url-config.json

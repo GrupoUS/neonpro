@@ -1,0 +1,12 @@
+{
+  "mcps": {
+    "supabase": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-supabase"],
+      "env": {
+        "SUPABASE_PROJECT_ID": "gfkskrkbnawkuppazkpt",
+        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdma3NrcmtibmF3a3VwcGF6a3B0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Nzk1MTEzNSwiZXhwIjoyMDYzNTI3MTM1fQ.8G9vhKrMZ9Y8bdHQBLg3MzDZahj50f5KzQTJmoQ4ick"
+      }
+    }
+  }
+}
