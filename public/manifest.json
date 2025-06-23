@@ -1,7 +1,7 @@
 {
-  "name": "NeonPro - Gestão de Clínica Estética",
+  "name": "NeonPro - Sistema de Gestão para Clínicas Estéticas",
   "short_name": "NeonPro",
-  "description": "Sistema completo para gestão de clínicas de estética e beleza",
+  "description": "Sistema completo para gestão de clínicas de estética e beleza - Sua beleza em primeiro lugar",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "portrait",
