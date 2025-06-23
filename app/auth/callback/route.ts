@@ -8,14 +8,15 @@ export async function GET(request: NextRequest) {
   const errorDescription = searchParams.get("error_description");
   const next = searchParams.get("next") ?? "/dashboard";
 
-  console.log(
-    "OAuth Callback - Code:",
-    !!code,
-    "Error:",
-    error,
-    "Description:",
-    errorDescription
-  );
+  // Enhanced logging for debugging
+  console.log("=== OAuth Callback Debug Info ===");
+  console.log("Full URL:", request.url);
+  console.log("Origin:", origin);
+  console.log("Code present:", !!code);
+  console.log("Error:", error);
+  console.log("Error Description:", errorDescription);
+  console.log("Next URL:", next);
+  console.log("All search params:", Object.fromEntries(searchParams.entries()));
 
   // Handle OAuth errors from Google
   if (error) {
@@ -30,16 +31,31 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     try {
+      console.log("=== Starting Code Exchange ===");
       const supabase = createClient();
+
+      // Enhanced logging before exchange
+      console.log("Supabase client created successfully");
+      console.log(
+        "Attempting to exchange code:",
+        code.substring(0, 10) + "..."
+      );
+
       const { data, error: exchangeError } =
         await supabase.auth.exchangeCodeForSession(code);
 
-      console.log(
-        "Code Exchange - Success:",
-        !!data.session,
-        "Error:",
-        exchangeError?.message
-      );
+      // Enhanced logging after exchange
+      console.log("=== Code Exchange Results ===");
+      console.log("Exchange successful:", !exchangeError);
+      console.log("Session present:", !!data?.session);
+      console.log("User present:", !!data?.user);
+      if (exchangeError) {
+        console.error("Exchange error details:", {
+          message: exchangeError.message,
+          status: exchangeError.status,
+          details: exchangeError,
+        });
+      }
 
       if (!exchangeError && data.session) {
         // Successful authentication
@@ -55,10 +71,37 @@ export async function GET(request: NextRequest) {
           redirectUrl = `${origin}${next}`;
         }
 
+        console.log("=== Successful Authentication ===");
+        console.log("User ID:", data.user?.id);
+        console.log("User Email:", data.user?.email);
         console.log("Redirecting to:", redirectUrl);
-        return NextResponse.redirect(redirectUrl);
+
+        // Create response with proper headers
+        const response = NextResponse.redirect(redirectUrl);
+
+        // Set session cookies manually if needed
+        if (data.session.access_token) {
+          response.cookies.set("sb-access-token", data.session.access_token, {
+            httpOnly: true,
+            secure: !isLocalEnv,
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+          });
+        }
+
+        if (data.session.refresh_token) {
+          response.cookies.set("sb-refresh-token", data.session.refresh_token, {
+            httpOnly: true,
+            secure: !isLocalEnv,
+            sameSite: "lax",
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+          });
+        }
+
+        return response;
       } else {
-        console.error("Code exchange failed:", exchangeError);
+        console.error("=== Code Exchange Failed ===");
+        console.error("Exchange error:", exchangeError);
         const errorUrl = new URL("/auth/auth-code-error", origin);
         errorUrl.searchParams.set("error", "exchange_failed");
         errorUrl.searchParams.set(
@@ -68,7 +111,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(errorUrl.toString());
       }
     } catch (err: any) {
-      console.error("Unexpected error during code exchange:", err);
+      console.error("=== Unexpected Error During Code Exchange ===");
+      console.error("Error details:", err);
+      console.error("Error stack:", err.stack);
       const errorUrl = new URL("/auth/auth-code-error", origin);
       errorUrl.searchParams.set("error", "unexpected_error");
       errorUrl.searchParams.set(

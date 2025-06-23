@@ -8,12 +8,18 @@ export async function middleware(request: NextRequest) {
   });
 
   // Verificar se há token de autenticação nos cookies (Supabase format)
-  const authToken = request.cookies.get(
-    "sb-gfkskrkbnawkuppazkpt-auth-token"
-  )?.value;
+  const authToken = request.cookies.get("sb-access-token")?.value;
+  const refreshToken = request.cookies.get("sb-refresh-token")?.value;
 
-  // Check for authentication
-  const isAuthenticated = !!authToken;
+  // Check for authentication - need either access token or refresh token
+  const isAuthenticated = !!(authToken || refreshToken);
+
+  // Enhanced logging for debugging
+  console.log("=== Middleware Auth Check ===");
+  console.log("Path:", request.nextUrl.pathname);
+  console.log("Access Token present:", !!authToken);
+  console.log("Refresh Token present:", !!refreshToken);
+  console.log("Is Authenticated:", isAuthenticated);
 
   // Rotas protegidas que requerem autenticação
   const protectedRoutes = ["/dashboard"];

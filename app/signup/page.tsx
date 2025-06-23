@@ -57,21 +57,37 @@ function SignupContent() {
   const onSubmit = async (data: SignupForm) => {
     setIsLoading(true);
     try {
+      console.log("=== Starting Signup Process ===");
+      console.log("Form data:", { email: data.email, name: data.name });
+
       const { error } = await signUp(data.email, data.password);
 
       if (error) {
-        if (error.message.includes("already registered")) {
+        console.error("Signup error:", error);
+        if (
+          error.message.includes("already registered") ||
+          error.message.includes("User already registered")
+        ) {
           toast.error("Este email já está cadastrado. Faça login.");
+        } else if (error.message.includes("Invalid email")) {
+          toast.error("Email inválido. Verifique o formato do email.");
+        } else if (error.message.includes("Password")) {
+          toast.error("Senha deve ter pelo menos 6 caracteres.");
         } else {
           toast.error(`Erro ao criar conta: ${error.message}`);
         }
       } else {
+        console.log("Signup successful!");
         toast.success(
           "Conta criada com sucesso! Verifique seu email para confirmação."
         );
-        // Idealmente, redirecionar ou limpar o formulário aqui
+        // Clear form or redirect after successful signup
+        setTimeout(() => {
+          router.push("/login?message=check-email");
+        }, 2000);
       }
     } catch (error: any) {
+      console.error("Unexpected signup error:", error);
       toast.error(`Erro inesperado ao criar conta: ${error.message}`);
     } finally {
       setIsLoading(false);

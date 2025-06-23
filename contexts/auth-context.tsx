@@ -93,16 +93,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      console.log("=== Starting Sign Up ===");
+      console.log("Email:", email);
+      console.log("Redirect URL:", `${window.location.origin}/auth/callback`);
 
-    // Auth state will be updated by the onAuthStateChange listener
-    return { error };
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      console.log("=== Sign Up Results ===");
+      console.log("Success:", !error);
+      console.log("User created:", !!data.user);
+      console.log("Session created:", !!data.session);
+      if (error) {
+        console.error("Sign up error:", error);
+      }
+
+      // Auth state will be updated by the onAuthStateChange listener
+      return { error };
+    } catch (err: any) {
+      console.error("Unexpected sign up error:", err);
+      return { error: err };
+    }
   };
 
   const signOut = async () => {

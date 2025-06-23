@@ -33,7 +33,7 @@ function LoginContent() {
   const router = useRouter();
   const { signIn, signInWithGoogle, user, loading } = useAuth();
 
-  // Get redirect URL from query params
+  // Get redirect URL and messages from query params
   const getRedirectUrl = () => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -41,6 +41,22 @@ function LoginContent() {
     }
     return "/dashboard";
   };
+
+  const getMessage = () => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get("message");
+    }
+    return null;
+  };
+
+  // Show message if coming from signup
+  useEffect(() => {
+    const message = getMessage();
+    if (message === "check-email") {
+      toast.success("Verifique seu email para confirmar sua conta!");
+    }
+  }, []);
 
   const {
     register,
@@ -89,7 +105,9 @@ function LoginContent() {
       // O redirecionamento para o Google é tratado dentro de signInWithGoogle
       // e o redirecionamento após o callback é tratado em /auth/callback
     } catch (error: any) {
-      toast.error(`Erro inesperado ao fazer login com Google: ${error.message}`);
+      toast.error(
+        `Erro inesperado ao fazer login com Google: ${error.message}`
+      );
       console.error("Unexpected Google Sign-In Error:", error);
     } finally {
       setIsLoading(false);
