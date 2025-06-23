@@ -14,7 +14,7 @@ export function createClient() {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
-      detectSessionInUrl: false, // Disable to prevent conflicts with popup
+      detectSessionInUrl: true,
       storage: {
         getItem: (key) => {
           if (typeof window !== "undefined") {
@@ -33,8 +33,6 @@ export function createClient() {
           }
         },
       },
-      // Use PKCE flow for better security
-      flowType: "pkce",
     },
   });
 }

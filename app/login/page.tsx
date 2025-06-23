@@ -240,7 +240,6 @@ export default function LoginPage() {
   return (
     <AuthProvider>
       <LoginContent />
-      <OAuthDebug />
     </AuthProvider>
   );
 }
