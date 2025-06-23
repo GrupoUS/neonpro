@@ -113,6 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      console.log("Initiating Google OAuth...");
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -121,8 +123,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             access_type: "offline",
             prompt: "consent",
           },
+          scopes: "email profile",
         },
       });
+
+      console.log("OAuth response:", { data, error });
 
       if (error) {
         console.error("Google OAuth error:", error);
