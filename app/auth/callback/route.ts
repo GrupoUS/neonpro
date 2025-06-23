@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     try {
       console.log("=== Starting Code Exchange ===");
+
       const supabase = createClient();
 
       // Enhanced logging before exchange
@@ -76,27 +77,8 @@ export async function GET(request: NextRequest) {
         console.log("User Email:", data.user?.email);
         console.log("Redirecting to:", redirectUrl);
 
-        // Create response with proper headers
+        // Create response with redirect
         const response = NextResponse.redirect(redirectUrl);
-
-        // Set session cookies manually if needed
-        if (data.session.access_token) {
-          response.cookies.set("sb-access-token", data.session.access_token, {
-            httpOnly: true,
-            secure: !isLocalEnv,
-            sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-          });
-        }
-
-        if (data.session.refresh_token) {
-          response.cookies.set("sb-refresh-token", data.session.refresh_token, {
-            httpOnly: true,
-            secure: !isLocalEnv,
-            sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-          });
-        }
 
         return response;
       } else {

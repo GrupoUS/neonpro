@@ -16,6 +16,8 @@ export function createClient() {
       persistSession: true,
       detectSessionInUrl: true,
       flowType: "pkce",
+      storage: typeof window !== "undefined" ? window.localStorage : undefined,
+      storageKey: "sb-auth-token",
     },
   });
 }

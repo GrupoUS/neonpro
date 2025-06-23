@@ -132,15 +132,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("Initiating Google OAuth...");
 
+      // Get the current origin for redirect
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      console.log("Redirect URL:", redirectTo);
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-          },
-          scopes: "email profile",
+          redirectTo,
+          skipBrowserRedirect: false,
         },
       });
 

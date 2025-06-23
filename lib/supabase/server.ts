@@ -1,5 +1,4 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
 
 // Configuração real do Supabase para server-side usando environment variables
 // Projeto GPUS: gfkskrkbnawkuppazkpt
@@ -11,23 +10,16 @@ const supabaseAnonKey =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdma3NrcmtibmF3a3VwcGF6a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NTExMzUsImV4cCI6MjA2MzUyNzEzNX0.hpJNATAkIwxQt_Z2Q-hxcxHX4wXszvc7eV24Sfs30ic";
 
 export function createClient() {
-  const cookieStore = cookies();
-
   return createSupabaseClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
-      detectSessionInUrl: false,
+      detectSessionInUrl: true,
       flowType: "pkce",
     },
     global: {
       headers: {
         "Cache-Control": "no-cache",
-      },
-    },
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
       },
     },
   });
