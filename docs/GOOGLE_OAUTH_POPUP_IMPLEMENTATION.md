@@ -1,99 +1,165 @@
 # Google OAuth Popup Implementation - NeonPro
 
-## 📋 O que foi implementado
+## Overview
 
-### 1. **AuthContext Atualizado** (`contexts/auth-context.tsx`)
+This document describes the implementation of Google OAuth authentication using popup windows instead of full page redirects in the NeonPro application.
 
-- ✅ Função `signInWithGoogle()` modificada para usar popup
-- ✅ Adicionado `skipBrowserRedirect: true` para prevenir redirect
-- ✅ Implementado `window.open()` para abrir popup OAuth
-- ✅ Listener `window.addEventListener('message')` para comunicação entre janelas
-- ✅ Detecção de fechamento do popup
-- ✅ Fallback para redirect se popup for bloqueado
+## Implementation Details
 
-### 2. **Novo Popup Callback Route** (`app/auth/popup-callback/route.ts`)
+### 1. Components
 
-- ✅ Route handler para processar OAuth callback no popup
-- ✅ Exchange de código OAuth por sessão Supabase
-- ✅ Comunicação com janela principal via `postMessage`
-- ✅ Auto-fechamento do popup após sucesso
-- ✅ Tratamento de erros com mensagens visuais
+#### SignInWithGooglePopupButton Component
 
-### 3. **Página de Login Melhorada** (`app/login/page.tsx`)
+**Location**: `components/auth/google-popup-button.tsx`
 
-- ✅ Loading states visuais com spinner animado
-- ✅ Ícone do Google no botão de login
-- ✅ Separação visual entre login normal e social
-- ✅ Redirecionamento automático após login com toast
-- ✅ Design modernizado com gradientes e backdrop blur
-- ✅ Estados separados para loading de email/senha e Google
+A reusable button component that handles Google OAuth authentication via popup window.
 
-### 4. **Middleware de Autenticação** (`middleware.ts`)
+**Features**:
 
-- ✅ Proteção de rotas autenticadas (/dashboard, /profile, etc)
-- ✅ Redirecionamento de usuários não autenticados para /login
-- ✅ Redirecionamento de usuários autenticados de /login para /dashboard
-- ✅ Preservação de URL de destino no parâmetro redirectTo
+- Loading states with spinner
+- Error handling with toast notifications
+- Customizable text and styling
+- Disabled state management
 
-### 5. **Scripts e Documentação**
+**Usage**:
 
-- ✅ Script de verificação Supabase (`scripts/verify-supabase-config.ts`)
-- ✅ Documentação de configuração (`docs/SUPABASE_CONFIGURATION.md`)
-- ✅ Documentação de variáveis de ambiente (`docs/ENVIRONMENT_VARIABLES.md`)
+```tsx
+import { SignInWithGooglePopupButton } from "@/components/auth/google-popup-button";
 
-## 🚀 Como funciona o fluxo
+// In your component
+<SignInWithGooglePopupButton
+  text="Sign in with Google"
+  loadingText="Signing in..."
+  className="w-full"
+  disabled={isLoading}
+/>;
+```
 
-1. **Usuário clica em "Entrar com Google"**
+### 2. AuthContext Updates
 
-   - AuthContext chama `signInWithGoogle()`
-   - Obtém URL OAuth do Supabase sem redirect
-   - Abre popup com a URL do Google
+**Location**: `contexts/auth-context.tsx`
 
-2. **Usuário faz login no Google**
+The `signInWithGoogle` method has been updated to support popup-based authentication:
 
-   - Google processa autenticação
-   - Redireciona para `/auth/popup-callback` com código
+```typescript
+signInWithGoogle: async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      skipBrowserRedirect: true,
+      redirectTo: `${window.location.origin}/auth/callback`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
+    },
+  });
 
-3. **Callback processa autenticação**
+  if (data?.url) {
+    // Open popup window
+    const popup = window.open(
+      data.url,
+      "googleAuth",
+      `width=500,height=700,left=${left},top=${top}`
+    );
 
-   - Route handler troca código por sessão
-   - Envia mensagem de sucesso para janela principal
-   - Fecha popup automaticamente
+    // Monitor popup for completion
+    const checkInterval = setInterval(() => {
+      // Check if popup was closed or if session exists
+      // Clear interval when done
+    }, 500);
+  }
 
-4. **Janela principal recebe confirmação**
-   - AuthContext atualiza estado do usuário
-   - Página de login detecta usuário autenticado
-   - Redireciona automaticamente para dashboard
+  return { error };
+};
+```
 
-## ⚙️ Configurações necessárias
+**Key Features**:
 
-### No Supabase Dashboard
+- Uses `skipBrowserRedirect: true` to prevent full page redirect
+- Opens centered popup window (500x700 pixels)
+- Monitors popup status every 500ms
+- Handles session detection when authentication completes
+- 5-minute timeout for authentication
+- Proper cleanup of intervals
 
-1. **Authentication > URL Configuration**:
+### 3. OAuth Callback Route
+
+**Location**: `app/auth/callback/route.ts`
+
+Enhanced to handle profile persistence:
+
+```typescript
+// After successful authentication
+const profileData = {
+  id: user.id,
+  email: user.email!,
+  full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+  avatar_url:
+    user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+  updated_at: new Date().toISOString(),
+};
+
+// Create or update profile in database
+```
+
+### 4. Database Schema
+
+**Location**: `supabase/migrations/001_create_profiles_table.sql`
+
+Created profiles table with:
+
+- User profile storage
+- RLS policies for security
+- Automatic profile creation trigger
+- Indexes for performance
+
+### 5. Updated Pages
+
+#### Login Page
+
+**Location**: `app/login/page.tsx`
+
+- Replaced custom Google button with `SignInWithGooglePopupButton`
+- Removed duplicate OAuth handling logic
+
+#### Signup Page
+
+**Location**: `app/signup/page.tsx`
+
+- Replaced custom Google button with `SignInWithGooglePopupButton`
+- Removed duplicate OAuth handling logic
+
+## Configuration Requirements
+
+### Supabase Dashboard
+
+1. **Site URL**:
 
    ```
-   Site URL: https://neonpro.vercel.app
-
-   Redirect URLs:
-   - https://neonpro.vercel.app/auth/callback
-   - https://neonpro.vercel.app/auth/popup-callback
-   - https://neonpro.vercel.app/dashboard
-   - http://localhost:3000/auth/callback
-   - http://localhost:3000/auth/popup-callback
-   - http://localhost:3000/dashboard
+   https://neonpro.vercel.app
    ```
 
-2. **Authentication > Providers > Google**:
-   - Ativar Google provider
-   - Adicionar Client ID e Client Secret do Google
+2. **Redirect URLs** (add all):
 
-### No Google Cloud Console
+   ```
+   # Production
+   https://neonpro.vercel.app/auth/callback
+   https://neonpro.vercel.app/dashboard
+   https://neonpro.vercel.app/login
 
-1. **APIs & Services > Credentials**:
+   # Development
+   http://localhost:3000/auth/callback
+   http://localhost:3000/dashboard
+   http://localhost:3000/login
 
-   - Criar OAuth 2.0 Client ID
+   # Preview Deployments
+   https://neonpro-*.vercel.app/auth/callback
+   ```
 
-2. **Authorized JavaScript origins**:
+### Google Cloud Console
+
+1. **Authorized JavaScript origins**:
 
    ```
    https://neonpro.vercel.app
@@ -101,67 +167,95 @@
    https://gfkskrkbnawkuppazkpt.supabase.co
    ```
 
-3. **Authorized redirect URIs**:
+2. **Authorized redirect URIs**:
    ```
    https://gfkskrkbnawkuppazkpt.supabase.co/auth/v1/callback
+   https://neonpro.vercel.app/auth/callback
+   http://localhost:3000/auth/callback
    ```
 
-### No Vercel
+## User Flow
 
-1. **Environment Variables**:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=https://gfkskrkbnawkuppazkpt.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[sua-anon-key]
-   NEXT_PUBLIC_SITE_URL=https://neonpro.vercel.app
-   ```
+1. User clicks "Sign in with Google" button
+2. Popup window opens with Google OAuth consent screen
+3. User authorizes the application
+4. Google redirects to `/auth/callback` with authorization code
+5. Callback route exchanges code for session
+6. Profile is created/updated in database
+7. Popup closes automatically
+8. Main window detects session and redirects to dashboard
 
-## 🧪 Como testar
+## Error Handling
 
-1. **Local**:
+### Popup Blocked
 
-   ```bash
-   # Criar arquivo .env.local com as variáveis
-   pnpm dev
-   # Acessar http://localhost:3000/login
-   ```
+- Shows toast: "Por favor, permita popups para fazer login com Google"
+- User must enable popups in browser
 
-2. **Verificar configuração**:
+### Authentication Cancelled
 
-   ```bash
-   pnpm tsx scripts/verify-supabase-config.ts
-   ```
+- Shows toast: "Login cancelado"
+- User closed popup without completing authentication
 
-3. **Produção**:
-   - Deploy no Vercel
-   - Testar em https://neonpro.vercel.app/login
+### Authentication Timeout
 
-## 🐛 Troubleshooting
+- Shows toast: "Tempo de autenticação expirado. Tente novamente."
+- Occurs after 5 minutes
 
-### Popup bloqueado pelo navegador
+### General Errors
 
-- O código tem fallback automático para redirect
-- Usuário pode permitir popups para o site
+- Shows toast with specific error message
+- Logs detailed error to console for debugging
 
-### Erro "Authentication cancelled"
+## Testing
 
-- Normal quando usuário fecha popup
-- Mostra toast informativo ao invés de erro
+### Local Development
 
-### Erro de CORS
+```bash
+# Start development server
+pnpm dev
 
-- Verificar URLs configuradas no Supabase
-- Confirmar domínio na lista de redirect URLs
+# Test at http://localhost:3000/login
+```
 
-### Usuário não é redirecionado após login
+### Test Scenarios
 
-- Verificar se middleware está ativo
-- Confirmar que AuthContext está atualizando estado
-- Checar console para erros
+1. ✅ Successful login with existing account
+2. ✅ Successful signup with new account
+3. ✅ Popup blocked by browser
+4. ✅ User cancels authentication
+5. ✅ Authentication timeout
+6. ✅ Network errors
+7. ✅ Profile creation/update
 
-## 📝 Próximos passos sugeridos
+## Security Considerations
 
-1. **Implementar Google One Tap** para login ainda mais rápido
-2. **Adicionar outros providers** (GitHub, Microsoft, etc)
-3. **Melhorar tratamento de erros** com mensagens específicas
-4. **Adicionar analytics** para tracking de conversão
-5. **Implementar "Lembrar-me"** com sessão persistente
+- OAuth state parameter prevents CSRF attacks
+- RLS policies ensure users can only access their own profiles
+- Sensitive operations happen server-side in route handlers
+- No client-side secrets exposed
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Popup doesn't open**
+
+   - Check browser popup blocker settings
+   - Ensure button click handler is synchronous
+
+2. **"redirect_uri_mismatch" error**
+
+   - Verify all URLs match exactly in Google Console and Supabase
+   - Check for trailing slashes
+
+3. **Session not detected after authentication**
+
+   - Check if cookies are enabled
+   - Verify Supabase client configuration
+   - Check browser console for errors
+
+4. **Profile not created**
+   - Check database logs in Supabase dashboard
+   - Verify RLS policies allow insert
+   - Check trigger function for errors
