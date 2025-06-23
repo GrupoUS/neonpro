@@ -1,48 +1,79 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { ClientCard } from './client-card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Users } from 'lucide-react'
 
-export async function ClientsList() {
-  const supabase = createClient()
-  
-  // Verificar autenticação
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function ClientsList() {
+  const [clients, setClients] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    async function loadClients() {
+      try {
+        const supabase = createClient()
+        
+        // Verificar autenticação
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser()
+
+        if (!currentUser) {
+          setError('Você precisa estar logado para ver os clientes.')
+          setLoading(false)
+          return
+        }
+
+        setUser(currentUser)
+
+        // Buscar clientes do usuário - simplified query for mock
+        const { data: clientsData, error: clientsError } = await supabase
+          .from('clients')
+          .select('*')
+          .eq('user_id', currentUser.id)
+
+        if (clientsError) {
+          setError(`Erro ao carregar clientes: ${clientsError.message}`)
+        } else {
+          setClients(clientsData || [])
+        }
+      } catch (err: any) {
+        setError(`Erro inesperado: ${err.message}`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadClients()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="bg-gray-200 animate-pulse p-4 rounded-lg h-24"></div>
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
+  }
 
   if (!user) {
     return (
       <Alert>
         <AlertDescription>
           Você precisa estar logado para ver os clientes.
-        </AlertDescription>
-      </Alert>
-    )
-  }
-
-  // Buscar clientes do usuário
-  const { data: clients, error } = await supabase
-    .from('clients')
-    .select(`
-      id,
-      full_name,
-      email,
-      phone,
-      birthdate,
-      created_at,
-      updated_at,
-      profile_photo_url,
-      notes
-    `)
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Erro ao carregar clientes: {error.message}
         </AlertDescription>
       </Alert>
     )

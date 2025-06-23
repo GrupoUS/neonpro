@@ -1,4 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,47 +25,74 @@ import {
 import Link from 'next/link'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
-export async function ProfessionalsList() {
-  const supabase = createClient()
-  
-  // Verificar autenticação
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export function ProfessionalsList() {
+  const [professionals, setProfessionals] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    async function loadProfessionals() {
+      try {
+        const supabase = createClient()
+        
+        // Verificar autenticação
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser()
+
+        if (!currentUser) {
+          setError('Você precisa estar logado para ver os profissionais.')
+          setLoading(false)
+          return
+        }
+
+        setUser(currentUser)
+
+        // Buscar profissionais do usuário - simplified query for mock
+        const { data: professionalsData, error: professionalsError } = await supabase
+          .from('professionals')
+          .select('*')
+          .eq('user_id', currentUser.id)
+
+        if (professionalsError) {
+          setError(`Erro ao carregar profissionais: ${professionalsError.message}`)
+        } else {
+          setProfessionals(professionalsData || [])
+        }
+      } catch (err: any) {
+        setError(`Erro inesperado: ${err.message}`)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadProfessionals()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="bg-gray-200 animate-pulse p-4 rounded-lg h-32"></div>
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
+  }
 
   if (!user) {
     return (
       <Alert>
         <AlertDescription>
           Você precisa estar logado para ver os profissionais.
-        </AlertDescription>
-      </Alert>
-    )
-  }
-
-  // Buscar profissionais do usuário
-  const { data: professionals, error } = await supabase
-    .from('professionals')
-    .select(`
-      id,
-      name,
-      email,
-      phone,
-      specialties,
-      commission_rate,
-      is_active,
-      profile_photo_url,
-      created_at,
-      updated_at
-    `)
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>
-          Erro ao carregar profissionais: {error.message}
         </AlertDescription>
       </Alert>
     )

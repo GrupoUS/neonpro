@@ -4,6 +4,7 @@ import {
   Calendar,
   CreditCard,
   FileText,
+  Heart,
   Home,
   Settings,
   UserCheck,
