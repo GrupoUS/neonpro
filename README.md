@@ -54,7 +54,7 @@ Sistema completo e moderno para gestão de clínicas de estética e beleza, dese
 
 Este projeto contém todos os arquivos necessários para funcionar independentemente:
 
-```
+\`\`\`
 neonpro/
 ├── app/              # Next.js App Router
 ├── components/       # Componentes React
@@ -68,7 +68,7 @@ neonpro/
 ├── package.json     # Dependências e scripts
 ├── tailwind.config.ts # Configuração Tailwind
 └── tsconfig.json    # Configuração TypeScript
-```
+\`\`\`
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -110,46 +110,46 @@ neonpro/
 
 ### 1. Clone o repositório
 
-```bash
+\`\`\`bash
 git clone https://github.com/seu-usuario/neonpro.git
 cd neonpro
-```
+\`\`\`
 
 ### 2. Instale as dependências
 
-```bash
+\`\`\`bash
 npm install
 # ou
 yarn install
-```
+\`\`\`
 
 ### 3. Configure as variáveis de ambiente
 
-```bash
+\`\`\`bash
 cp .env.example .env.local
-```
+\`\`\`
 
 Edite o arquivo `.env.local` com suas configurações:
 
-```env
+\`\`\`env
 NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima
 SUPABASE_SERVICE_ROLE_KEY=sua_chave_de_servico
-```
+\`\`\`
 
 ### 4. Configure o banco de dados
 
 Execute as migrações do Supabase:
 
-```bash
+\`\`\`bash
 npm run db:migrate
-```
+\`\`\`
 
 ### 5. Execute o projeto
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
 
@@ -157,7 +157,7 @@ Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 ### Testes unitários
 
-```bash
+\`\`\`bash
 # Executar todos os testes
 npm run test
 
@@ -166,17 +166,17 @@ npm run test:watch
 
 # Executar com cobertura
 npm run test:coverage
-```
+\`\`\`
 
 ### Testes E2E
 
-```bash
+\`\`\`bash
 # Executar testes E2E
 npm run test:e2e
 
 # Executar com interface gráfica
 npm run test:e2e:ui
-```
+\`\`\`
 
 ## 📱 PWA - Progressive Web App
 
