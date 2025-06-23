@@ -1,6 +1,6 @@
 /**
  * Script para verificar a configuração do Supabase
- * Execute com: pnpm tsx scripts/verify-supabase-config.ts
+ * Execute com: rro no pnpm tsx scripts/verify-supabase-config.ts
  */
 
 import { createClient } from "@supabase/supabase-js";
