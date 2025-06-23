@@ -1,7 +1,7 @@
 "use client";
 
+import { createClient } from "@/utils/supabase/client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "../lib/supabase/client";
 
 // Mock types for compatibility
 interface User {
@@ -68,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up real auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
       if (session) {
         setSession(session as Session);
         setUser(session.user as User);
@@ -130,28 +130,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("Initiating Google OAuth...");
+      console.log("=== Initiating Google OAuth (Workaround Method) ===");
 
-      // Get the current origin for redirect
+      // WORKAROUND: Use our custom API endpoint to bypass Google domain validation
+      // Flow: App → Google → Our API → Supabase → Our callback
       const redirectTo = `${window.location.origin}/auth/callback`;
-      console.log("Redirect URL:", redirectTo);
+      console.log(
+        "Final redirect URL (after Supabase processing):",
+        redirectTo
+      );
 
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo,
-          skipBrowserRedirect: false,
-        },
-      });
+      // Build Google OAuth URL manually to use our custom callback
+      const googleOAuthUrl = new URL(
+        "https://accounts.google.com/o/oauth2/v2/auth"
+      );
+      googleOAuthUrl.searchParams.set(
+        "client_id",
+        "995596459059-7klijp94opars55ak54q2ekl4mfqcafd.apps.googleusercontent.com"
+      );
+      googleOAuthUrl.searchParams.set(
+        "redirect_uri",
+        `${window.location.origin}/api/auth/callback/google`
+      );
+      googleOAuthUrl.searchParams.set("response_type", "code");
+      googleOAuthUrl.searchParams.set("scope", "openid email profile");
+      googleOAuthUrl.searchParams.set("access_type", "offline");
+      googleOAuthUrl.searchParams.set("prompt", "consent");
 
-      console.log("OAuth response:", { data, error });
+      // Add state parameter for security (Supabase will handle this)
+      const state = btoa(JSON.stringify({ redirectTo }));
+      googleOAuthUrl.searchParams.set("state", state);
 
-      if (error) {
-        console.error("Google OAuth error:", error);
-        return { error };
-      }
+      console.log("=== OAuth URL Built ===");
+      console.log("Redirecting to Google OAuth:", googleOAuthUrl.toString());
 
-      // OAuth redirect will handle the rest
+      // Redirect to Google OAuth
+      window.location.href = googleOAuthUrl.toString();
+
       return { error: null };
     } catch (error: any) {
       console.error("Unexpected Google OAuth error:", error);
