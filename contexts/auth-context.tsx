@@ -130,12 +130,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("=== Initiating Google OAuth (Standard Method) ===");
+      console.log("=== Initiating Google OAuth (Popup Method) ===");
 
+      // Create popup window
+      const width = 500;
+      const height = 600;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+
+      const popup = window.open(
+        "",
+        "google-oauth",
+        `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`
+      );
+
+      if (!popup) {
+        console.error("Popup blocked");
+        return { error: new Error("Popup blocked. Please allow popups for this site.") };
+      }
+
+      // Get OAuth URL from Supabase
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/popup-callback`,
+          skipBrowserRedirect: true,
           queryParams: {
             access_type: "offline",
             prompt: "consent",
@@ -144,12 +163,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        console.error("Google OAuth error:", error);
+        console.error("Error getting OAuth URL:", error);
+        popup.close();
         return { error };
       }
 
-      // Supabase will handle the redirect automatically
-      return { error: null };
+      if (!data?.url) {
+        console.error("No OAuth URL returned");
+        popup.close();
+        return { error: new Error("Failed to get OAuth URL") };
+      }
+
+      // Open OAuth URL in popup
+      popup.location.href = data.url;
+
+      // Listen for messages from popup
+      return new Promise<{ error: any }>((resolve) => {
+        const handleMessage = async (event: MessageEvent) => {
+          // Verify origin
+          if (event.origin !== window.location.origin) {
+            return;
+          }
+
+          console.log("Received message from popup:", event.data);
+
+          if (event.data.type === "OAUTH_SUCCESS") {
+            window.removeEventListener("message", handleMessage);
+            
+            // Exchange code for session
+            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(event.data.code);
+            
+            if (exchangeError) {
+              console.error("Error exchanging code:", exchangeError);
+              resolve({ error: exchangeError });
+            } else {
+              console.log("OAuth successful - session established");
+              // Auth state will be updated by the onAuthStateChange listener
+              // Redirect to dashboard
+              window.location.href = "/dashboard";
+              resolve({ error: null });
+            }
+          } else if (event.data.type === "OAUTH_ERROR") {
+            window.removeEventListener("message", handleMessage);
+            console.error("OAuth error from popup:", event.data);
+            resolve({ error: new Error(event.data.description || event.data.error) });
+          }
+        };
+
+        window.addEventListener("message", handleMessage);
+
+        // Check if popup is closed
+        const checkPopup = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(checkPopup);
+            window.removeEventListener("message", handleMessage);
+            resolve({ error: new Error("Authentication cancelled") });
+          }
+        }, 1000);
+      });
     } catch (error: any) {
       console.error("Unexpected Google OAuth error:", error);
       return { error };
