@@ -130,17 +130,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      console.log("=== Initiating Google OAuth (Workaround Method) ===");
+      console.log("=== Initiating Google OAuth (Popup Method) ===");
 
-      // WORKAROUND: Use our custom API endpoint to bypass Google domain validation
-      // Flow: App → Google → Our API → Supabase → Our callback
+      // NEW APPROACH: Use popup window to avoid redirect URI restrictions
       const redirectTo = `${window.location.origin}/auth/callback`;
       console.log(
         "Final redirect URL (after Supabase processing):",
         redirectTo
       );
 
-      // Build Google OAuth URL manually to use our custom callback
+      // Create a popup window for OAuth
+      const popup = window.open(
+        "",
+        "google-oauth",
+        "width=500,height=600,scrollbars=yes,resizable=yes"
+      );
+
+      if (!popup) {
+        throw new Error("Popup blocked. Please allow popups for this site.");
+      }
+
+      // Build Google OAuth URL for popup using our popup callback
       const googleOAuthUrl = new URL(
         "https://accounts.google.com/o/oauth2/v2/auth"
       );
@@ -150,24 +160,106 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
       googleOAuthUrl.searchParams.set(
         "redirect_uri",
-        `${window.location.origin}/api/auth/callback/google`
+        `${window.location.origin}/auth/popup-callback`
       );
       googleOAuthUrl.searchParams.set("response_type", "code");
       googleOAuthUrl.searchParams.set("scope", "openid email profile");
       googleOAuthUrl.searchParams.set("access_type", "offline");
       googleOAuthUrl.searchParams.set("prompt", "consent");
 
-      // Add state parameter for security (Supabase will handle this)
-      const state = btoa(JSON.stringify({ redirectTo }));
+      // Add state with our redirect URL
+      const state = btoa(
+        JSON.stringify({
+          redirectTo,
+          popup: true,
+        })
+      );
       googleOAuthUrl.searchParams.set("state", state);
 
-      console.log("=== OAuth URL Built ===");
-      console.log("Redirecting to Google OAuth:", googleOAuthUrl.toString());
+      console.log("=== Opening OAuth Popup ===");
+      console.log("OAuth URL:", googleOAuthUrl.toString());
 
-      // Redirect to Google OAuth
-      window.location.href = googleOAuthUrl.toString();
+      // Navigate popup to Google OAuth
+      popup.location.href = googleOAuthUrl.toString();
 
-      return { error: null };
+      // Listen for messages from popup
+      return new Promise<{ error: any }>((resolve) => {
+        const messageListener = async (event: MessageEvent) => {
+          // Verify origin for security
+          if (event.origin !== window.location.origin) {
+            return;
+          }
+
+          console.log("Received message from popup:", event.data);
+
+          if (event.data.type === "OAUTH_SUCCESS") {
+            // Handle successful OAuth
+            const { code, state } = event.data;
+
+            try {
+              // Exchange code for session using Supabase
+              const response = await fetch(
+                `https://gfkskrkbnawkuppazkpt.supabase.co/auth/v1/callback?code=${code}&state=${state}`,
+                {
+                  method: "GET",
+                  credentials: "include",
+                }
+              );
+
+              if (response.ok) {
+                // Check for session
+                const {
+                  data: { session },
+                } = await supabase.auth.getSession();
+                if (session) {
+                  console.log("OAuth successful - session created");
+                  setSession(session as Session);
+                  setUser(session.user as User);
+                  resolve({ error: null });
+                } else {
+                  resolve({ error: { message: "Failed to create session" } });
+                }
+              } else {
+                resolve({ error: { message: "Failed to exchange code" } });
+              }
+            } catch (error: any) {
+              resolve({ error: { message: error.message } });
+            }
+          } else if (event.data.type === "OAUTH_ERROR") {
+            // Handle OAuth error
+            resolve({ error: { message: event.data.error } });
+          }
+
+          // Clean up
+          window.removeEventListener("message", messageListener);
+          if (!popup.closed) {
+            popup.close();
+          }
+        };
+
+        // Add message listener
+        window.addEventListener("message", messageListener);
+
+        // Check if popup is closed manually
+        const checkClosed = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(checkClosed);
+            window.removeEventListener("message", messageListener);
+            console.log("OAuth popup closed manually");
+            resolve({ error: { message: "OAuth cancelled" } });
+          }
+        }, 1000);
+
+        // Timeout after 5 minutes
+        setTimeout(() => {
+          if (!popup.closed) {
+            popup.close();
+          }
+          clearInterval(checkClosed);
+          window.removeEventListener("message", messageListener);
+          resolve({ error: { message: "OAuth timeout" } });
+        }, 300000);
+      });
     } catch (error: any) {
       console.error("Unexpected Google OAuth error:", error);
       return { error };
