@@ -21,14 +21,16 @@ export async function middleware(request: NextRequest) {
   );
 
   // Rotas de autenticação
-  const authRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password"];
-  const isAuthRoute = authRoutes.some((route) =>
-    request.nextUrl.pathname.startsWith(route)
+  const authRoutes = ["/", "/login", "/signup", "/forgot-password"];
+  const isAuthRoute = authRoutes.some(
+    (route) =>
+      request.nextUrl.pathname === route ||
+      request.nextUrl.pathname.startsWith(route)
   );
 
   // Se usuário não está logado e tenta acessar rota protegida
   if (isProtectedRoute && !isAuthenticated) {
-    const redirectUrl = new URL("/auth/login", request.url);
+    const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectTo", request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }

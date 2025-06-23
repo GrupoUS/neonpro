@@ -60,11 +60,5 @@
       "destination": "/api/$1"
     }
   ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/dashboard",
-      "permanent": false
-    }
-  ]
+  "redirects": []
 }
