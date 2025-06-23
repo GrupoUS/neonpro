@@ -36,10 +36,11 @@ export async function GET(request: Request) {
   }
 
   if (code) {
+    console.log("OAuth callback received code, exchanging for session...");
+
     const supabase = await createClient();
-    const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(
-      code
-    );
+    const { data: sessionData, error: exchangeError } =
+      await supabase.auth.exchangeCodeForSession(code);
 
     if (exchangeError) {
       console.error("Error exchanging code:", exchangeError);
@@ -52,6 +53,7 @@ export async function GET(request: Request) {
           </head>
           <body>
             <script>
+              console.log("OAuth exchange failed: ${exchangeError.message}");
               if (window.opener) {
                 window.opener.postMessage({
                   type: 'OAUTH_ERROR',
@@ -61,13 +63,15 @@ export async function GET(request: Request) {
               }
               window.close();
             </script>
-            <p>Authentication failed</p>
+            <p>Authentication failed: ${exchangeError.message}</p>
           </body>
         </html>
         `,
         { headers: { "Content-Type": "text/html" } }
       );
     }
+
+    console.log("OAuth exchange successful, session created");
 
     // Success - return HTML that posts success message to parent
     return new Response(
@@ -79,21 +83,22 @@ export async function GET(request: Request) {
         </head>
         <body>
           <script>
+            console.log("OAuth successful, notifying parent window");
             if (window.opener) {
               window.opener.postMessage({
                 type: 'OAUTH_SUCCESS',
-                code: '${code}',
-                state: '${state || ""}'
+                sessionEstablished: true
               }, window.location.origin);
             }
-            // Don't close immediately, let parent handle it
+            // Close after a short delay
             setTimeout(() => {
-              if (!window.closed) {
-                window.close();
-              }
-            }, 2000);
+              window.close();
+            }, 1000);
           </script>
-          <p>Authentication successful! This window will close automatically...</p>
+          <div style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+            <h2>✅ Authentication Successful!</h2>
+            <p>This window will close automatically...</p>
+          </div>
         </body>
       </html>
       `,

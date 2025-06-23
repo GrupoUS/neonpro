@@ -141,12 +141,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const popup = window.open(
         "",
         "google-oauth",
-        `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no`
+        `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes,resizable=yes`
       );
 
       if (!popup) {
         console.error("Popup blocked");
-        return { error: new Error("Popup blocked. Please allow popups for this site.") };
+        return {
+          error: new Error("Popup blocked. Please allow popups for this site."),
+        };
       }
 
       // Get OAuth URL from Supabase
@@ -174,52 +176,92 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: new Error("Failed to get OAuth URL") };
       }
 
-      // Open OAuth URL in popup
+      console.log("Opening OAuth URL in popup:", data.url);
       popup.location.href = data.url;
 
       // Listen for messages from popup
       return new Promise<{ error: any }>((resolve) => {
+        let resolved = false;
+
         const handleMessage = async (event: MessageEvent) => {
           // Verify origin
           if (event.origin !== window.location.origin) {
+            console.log(
+              "Ignoring message from different origin:",
+              event.origin
+            );
             return;
           }
+
+          if (resolved) return;
 
           console.log("Received message from popup:", event.data);
 
           if (event.data.type === "OAUTH_SUCCESS") {
+            resolved = true;
             window.removeEventListener("message", handleMessage);
-            
-            // Exchange code for session
-            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(event.data.code);
-            
-            if (exchangeError) {
-              console.error("Error exchanging code:", exchangeError);
-              resolve({ error: exchangeError });
-            } else {
-              console.log("OAuth successful - session established");
-              // Auth state will be updated by the onAuthStateChange listener
-              // Redirect to dashboard
-              window.location.href = "/dashboard";
-              resolve({ error: null });
-            }
+
+            console.log(
+              "OAuth successful - session established by popup callback"
+            );
+
+            // Wait a moment for session to propagate, then check
+            setTimeout(async () => {
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+
+              if (session) {
+                console.log("Session confirmed, redirecting to dashboard");
+                setSession(session as Session);
+                setUser(session.user as User);
+                window.location.href = "/dashboard";
+                resolve({ error: null });
+              } else {
+                console.log(
+                  "Session not found immediately, waiting for auth state change..."
+                );
+                // The onAuthStateChange listener should handle the session update
+                // Just resolve successfully and let the auth state listener handle the redirect
+                resolve({ error: null });
+              }
+            }, 1000);
           } else if (event.data.type === "OAUTH_ERROR") {
+            resolved = true;
             window.removeEventListener("message", handleMessage);
+            popup.close();
             console.error("OAuth error from popup:", event.data);
-            resolve({ error: new Error(event.data.description || event.data.error) });
+            resolve({
+              error: new Error(event.data.description || event.data.error),
+            });
           }
         };
 
         window.addEventListener("message", handleMessage);
 
-        // Check if popup is closed
+        // Check if popup is closed manually
         const checkPopup = setInterval(() => {
-          if (popup.closed) {
+          if (popup.closed && !resolved) {
+            resolved = true;
             clearInterval(checkPopup);
             window.removeEventListener("message", handleMessage);
+            console.log("Popup closed manually");
             resolve({ error: new Error("Authentication cancelled") });
           }
         }, 1000);
+
+        // Timeout after 5 minutes
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            clearInterval(checkPopup);
+            window.removeEventListener("message", handleMessage);
+            if (!popup.closed) {
+              popup.close();
+            }
+            resolve({ error: new Error("Authentication timeout") });
+          }
+        }, 300000);
       });
     } catch (error: any) {
       console.error("Unexpected Google OAuth error:", error);
