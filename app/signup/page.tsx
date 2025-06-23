@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { SignInWithGooglePopupButton } from "@/components/auth/google-popup-button";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,7 +39,7 @@ type SignupForm = z.infer<typeof signupSchema>;
 function SignupContent() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { signUp, signInWithGoogle, user, loading } = useAuth();
+  const { signUp, user, loading } = useAuth();
 
   const {
     register,
@@ -89,25 +90,6 @@ function SignupContent() {
     } catch (error: any) {
       console.error("Unexpected signup error:", error);
       toast.error(`Erro inesperado ao criar conta: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleSignup = async () => {
-    setIsLoading(true);
-    try {
-      // Chama signInWithGoogle do AuthContext
-      const { error } = await signInWithGoogle();
-      if (error) {
-        toast.error(`Erro ao criar conta com Google: ${error.message}`);
-        console.error("Google Sign-Up Error from AuthContext:", error);
-      }
-    } catch (error: any) {
-      toast.error(
-        `Erro inesperado ao criar conta com Google: ${error.message}`
-      );
-      console.error("Unexpected Google Sign-Up Error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -212,15 +194,12 @@ function SignupContent() {
                 {isLoading ? "Criando conta..." : "Criar Conta"}
               </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full bg-background text-foreground rounded-lg"
-                onClick={handleGoogleSignup}
+              <SignInWithGooglePopupButton
+                text="Criar conta com Google"
+                loadingText="Aguarde..."
+                className="w-full"
                 disabled={isLoading}
-              >
-                {isLoading ? "Aguarde..." : "Criar conta com Google"}
-              </Button>
+              />
             </form>
 
             <div className="mt-4 text-center text-sm">

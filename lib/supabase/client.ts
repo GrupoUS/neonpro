@@ -23,8 +23,8 @@ export function createClient() {
       detectSessionInUrl: true,
       // Use default storage for better compatibility
       storage: typeof window !== "undefined" ? window.localStorage : undefined,
-      // Enhanced security settings
-      flowType: "pkce",
+      // Use implicit flow to avoid PKCE code_verifier issues
+      flowType: "implicit",
       debug: process.env.NODE_ENV === "development",
     },
     // Global configuration

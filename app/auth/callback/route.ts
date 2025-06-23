@@ -144,6 +144,64 @@ export async function GET(request: Request) {
       email: data.session.user.email,
     });
 
+    // Create or update user profile in the database
+    const user = data.session.user;
+    const profileData = {
+      id: user.id,
+      email: user.email!,
+      full_name:
+        user.user_metadata?.full_name || user.user_metadata?.name || null,
+      avatar_url:
+        user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    console.log("Creating/updating user profile:", profileData);
+
+    // Check if profile exists
+    const { data: existingProfile, error: profileCheckError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+
+    if (profileCheckError && profileCheckError.code !== "PGRST116") {
+      // PGRST116 means no rows found, which is fine for new users
+      console.error("Error checking profile:", profileCheckError);
+    }
+
+    if (!existingProfile) {
+      // Create new profile
+      const { error: createError } = await supabase
+        .from("profiles")
+        .insert([profileData]);
+
+      if (createError) {
+        console.error("Error creating profile:", createError);
+        // Don't fail the auth flow if profile creation fails
+        // The app can handle missing profiles gracefully
+      } else {
+        console.log("Profile created successfully");
+      }
+    } else {
+      // Update existing profile
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          email: profileData.email,
+          full_name: profileData.full_name,
+          avatar_url: profileData.avatar_url,
+          updated_at: profileData.updated_at,
+        })
+        .eq("id", user.id);
+
+      if (updateError) {
+        console.error("Error updating profile:", updateError);
+      } else {
+        console.log("Profile updated successfully");
+      }
+    }
+
     // Determine redirect URL based on environment
     const forwardedHost = request.headers.get("x-forwarded-host");
     const isLocalEnv = process.env.NODE_ENV === "development";
