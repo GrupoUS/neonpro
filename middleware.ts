@@ -7,12 +7,13 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Verificar se há token de autenticação nos cookies
-  const authToken = request.cookies.get("sb-access-token")?.value;
-  const refreshToken = request.cookies.get("sb-refresh-token")?.value;
+  // Verificar se há token de autenticação nos cookies (Supabase format)
+  const authToken = request.cookies.get(
+    "sb-gfkskrkbnawkuppazkpt-auth-token"
+  )?.value;
 
-  // Simular verificação de autenticação (será implementada com Supabase direto)
-  const isAuthenticated = authToken && refreshToken;
+  // Check for authentication
+  const isAuthenticated = !!authToken;
 
   // Rotas protegidas que requerem autenticação
   const protectedRoutes = ["/dashboard"];
@@ -20,8 +21,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
 
-  // Rotas de autenticação
-  const authRoutes = ["/", "/login", "/signup", "/forgot-password"];
+  // Rotas de autenticação (incluindo callbacks OAuth)
+  const authRoutes = ["/", "/login", "/signup", "/forgot-password", "/auth"];
   const isAuthRoute = authRoutes.some(
     (route) =>
       request.nextUrl.pathname === route ||
@@ -35,8 +36,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Se usuário está logado e tenta acessar rotas de auth
-  if (isAuthRoute && isAuthenticated) {
+  // Se usuário está logado e tenta acessar rotas de auth (exceto callbacks)
+  if (
+    isAuthRoute &&
+    isAuthenticated &&
+    !request.nextUrl.pathname.startsWith("/auth/")
+  ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

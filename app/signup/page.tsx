@@ -1,19 +1,25 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
-import { AuthProvider, useAuth } from "@/contexts/auth-context"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 const signupSchema = z
   .object({
@@ -25,14 +31,14 @@ const signupSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Senhas não coincidem",
     path: ["confirmPassword"],
-  })
+  });
 
-type SignupForm = z.infer<typeof signupSchema>
+type SignupForm = z.infer<typeof signupSchema>;
 
 function SignupContent() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { signUp, signInWithGoogle, user, loading } = useAuth()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { signUp, signInWithGoogle, user, loading } = useAuth();
 
   const {
     register,
@@ -40,52 +46,56 @@ function SignupContent() {
     formState: { errors },
   } = useForm<SignupForm>({
     resolver: zodResolver(signupSchema),
-  })
+  });
 
   useEffect(() => {
     if (user && !loading) {
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const { error } = await signUp(data.email, data.password)
+      const { error } = await signUp(data.email, data.password);
 
       if (error) {
         if (error.message.includes("already registered")) {
-          toast.error("Este email já está cadastrado. Faça login.")
+          toast.error("Este email já está cadastrado. Faça login.");
         } else {
-          toast.error(`Erro ao criar conta: ${error.message}`)
+          toast.error(`Erro ao criar conta: ${error.message}`);
         }
       } else {
-        toast.success("Conta criada com sucesso! Verifique seu email para confirmação.")
+        toast.success(
+          "Conta criada com sucesso! Verifique seu email para confirmação."
+        );
         // Idealmente, redirecionar ou limpar o formulário aqui
       }
     } catch (error: any) {
-      toast.error(`Erro inesperado ao criar conta: ${error.message}`)
+      toast.error(`Erro inesperado ao criar conta: ${error.message}`);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignup = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       // Chama signInWithGoogle do AuthContext
-      const { error } = await signInWithGoogle()
+      const { error } = await signInWithGoogle();
       if (error) {
-        toast.error(`Erro ao criar conta com Google: ${error.message}`)
-        console.error("Google Sign-Up Error from AuthContext:", error)
+        toast.error(`Erro ao criar conta com Google: ${error.message}`);
+        console.error("Google Sign-Up Error from AuthContext:", error);
       }
     } catch (error: any) {
-      toast.error(`Erro inesperado ao criar conta com Google: ${error.message}`)
-      console.error("Unexpected Google Sign-Up Error:", error)
+      toast.error(
+        `Erro inesperado ao criar conta com Google: ${error.message}`
+      );
+      console.error("Unexpected Google Sign-Up Error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (loading && !user) {
     // Mostrar loading apenas se não houver usuário e estiver carregando
@@ -96,7 +106,7 @@ function SignupContent() {
           <p className="mt-2 text-muted-foreground">Carregando...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -110,7 +120,9 @@ function SignupContent() {
               </h1>
             </div>
             <CardTitle className="text-2xl">Criar Conta</CardTitle>
-            <CardDescription>Preencha os dados abaixo para criar sua conta</CardDescription>
+            <CardDescription>
+              Preencha os dados abaixo para criar sua conta
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
@@ -123,7 +135,11 @@ function SignupContent() {
                   {...register("name")}
                   disabled={isLoading}
                 />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-2">
@@ -135,22 +151,48 @@ function SignupContent() {
                   {...register("email")}
                   disabled={isLoading}
                 />
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="password">Senha</Label>
-                <Input id="password" type="password" {...register("password")} disabled={isLoading} />
-                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  disabled={isLoading}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input id="confirmPassword" type="password" {...register("confirmPassword")} disabled={isLoading} />
-                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  {...register("confirmPassword")}
+                  disabled={isLoading}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-destructive">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
 
-              <Button type="submit" className="w-full rounded-lg" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full rounded-lg"
+                disabled={isLoading}
+              >
                 {isLoading ? "Criando conta..." : "Criar Conta"}
               </Button>
 
@@ -167,7 +209,10 @@ function SignupContent() {
 
             <div className="mt-4 text-center text-sm">
               Já tem uma conta?{" "}
-              <Link href="/" className="underline text-primary hover:text-primary/80">
+              <Link
+                href="/login"
+                className="underline text-primary hover:text-primary/80"
+              >
                 Fazer login
               </Link>
             </div>
@@ -188,12 +233,14 @@ function SignupContent() {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white p-8">
             <h2 className="text-4xl font-bold mb-4">Junte-se ao NEON PRO!</h2>
-            <p className="text-lg">Transforme a gestão da sua clínica de estética.</p>
+            <p className="text-lg">
+              Transforme a gestão da sua clínica de estética.
+            </p>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function SignupPage() {
@@ -201,5 +248,5 @@ export default function SignupPage() {
     <AuthProvider>
       <SignupContent />
     </AuthProvider>
-  )
+  );
 }

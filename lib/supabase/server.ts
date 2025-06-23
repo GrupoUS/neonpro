@@ -1,84 +1,34 @@
-// Configuração para usar a conexão direta do Supabase via Augment
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
+
+// Configuração real do Supabase para server-side usando environment variables
 // Projeto GPUS: gfkskrkbnawkuppazkpt
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  "https://gfkskrkbnawkuppazkpt.supabase.co";
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdma3NrcmtibmF3a3VwcGF6a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5NTExMzUsImV4cCI6MjA2MzUyNzEzNX0.hpJNATAkIwxQt_Z2Q-hxcxHX4wXszvc7eV24Sfs30ic";
 
 export function createClient() {
-  // Simulação de cliente Supabase para desenvolvimento
-  // A conexão real será feita através do Augment
-  return {
+  const cookieStore = cookies();
+
+  return createSupabaseClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      getUser: async () => {
-        // Simular usuário autenticado para desenvolvimento
-        return {
-          data: {
-            user: {
-              id: "demo-user-id",
-              email: "demo@neonpro.com",
-              user_metadata: {
-                name: "Usuário Demo",
-              },
-            },
-          },
-          error: null,
-        };
-      },
-      signInWithPassword: async (credentials: any) => {
-        // Simular login bem-sucedido
-        return {
-          data: {
-            user: {
-              id: "demo-user-id",
-              email: credentials.email,
-              user_metadata: {
-                name: "Usuário Demo",
-              },
-            },
-            session: {
-              access_token: "demo-token",
-              refresh_token: "demo-refresh",
-            },
-          },
-          error: null,
-        };
-      },
-      signUp: async (credentials: any) => {
-        // Simular registro bem-sucedido
-        return {
-          data: {
-            user: {
-              id: "demo-user-id",
-              email: credentials.email,
-              user_metadata: {
-                name: credentials.name || "Novo Usuário",
-              },
-            },
-          },
-          error: null,
-        };
-      },
-      signOut: async () => {
-        return { error: null };
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+      flowType: "pkce",
+    },
+    global: {
+      headers: {
+        "Cache-Control": "no-cache",
       },
     },
-    from: (table: string) => ({
-      select: (columns?: string) => ({
-        eq: (column: string, value: any) => ({
-          single: () => Promise.resolve({ data: null, error: null }),
-          limit: (count: number) => Promise.resolve({ data: [], error: null }),
-        }),
-        order: (column: string, options?: any) =>
-          Promise.resolve({ data: [], error: null }),
-        range: (from: number, to: number) =>
-          Promise.resolve({ data: [], error: null }),
-      }),
-      insert: (data: any) => Promise.resolve({ data: null, error: null }),
-      update: (data: any) => ({
-        eq: (column: string, value: any) =>
-          Promise.resolve({ data: null, error: null }),
-      }),
-      delete: () => ({
-        eq: (column: string, value: any) =>
-          Promise.resolve({ data: null, error: null }),
-      }),
-    }),
-  };
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
+      },
+    },
+  });
 }

@@ -46,18 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock auth state setup for development
+    // Real auth state setup
     const initializeAuth = async () => {
       try {
-        const { data } = await supabase.auth.getUser();
-        if (data.user) {
-          const mockSession: Session = {
-            access_token: "demo-token",
-            refresh_token: "demo-refresh",
-            user: data.user as User,
-          };
-          setSession(mockSession);
-          setUser(data.user as User);
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+          setSession(session as Session);
+          setUser(session.user as User);
         }
       } catch (error) {
         console.log("Auth initialization:", error);
@@ -68,12 +65,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
-    // Set up mock auth state listener
-    const { unsubscribe } = supabase.auth.onAuthStateChange((callback: any) => {
-      // Mock implementation - in real app this would be handled by Augment
+    // Set up real auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        setSession(session as Session);
+        setUser(session.user as User);
+      } else {
+        setSession(null);
+        setUser(null);
+      }
+      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -82,16 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
 
-    if (data.user) {
-      const mockSession: Session = {
-        access_token: "demo-token",
-        refresh_token: "demo-refresh",
-        user: data.user as User,
-      };
-      setSession(mockSession);
-      setUser(data.user as User);
-    }
-
+    // Auth state will be updated by the onAuthStateChange listener
     return { error };
   };
 
@@ -99,19 +96,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      name: "Novo Usuário",
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
 
-    if (data.user) {
-      const mockSession: Session = {
-        access_token: "demo-token",
-        refresh_token: "demo-refresh",
-        user: data.user as User,
-      };
-      setSession(mockSession);
-      setUser(data.user as User);
-    }
-
+    // Auth state will be updated by the onAuthStateChange listener
     return { error };
   };
 
@@ -122,25 +112,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    // Mock Google sign-in for development
-    const mockUser: User = {
-      id: "demo-google-user",
-      email: "google@neonpro.com",
-      user_metadata: {
-        name: "Usuário Google",
-      },
-    };
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
+        },
+      });
 
-    const mockSession: Session = {
-      access_token: "demo-google-token",
-      refresh_token: "demo-google-refresh",
-      user: mockUser,
-    };
+      if (error) {
+        console.error("Google OAuth error:", error);
+        return { error };
+      }
 
-    setSession(mockSession);
-    setUser(mockUser);
-
-    return { error: null };
+      // OAuth redirect will handle the rest
+      return { error: null };
+    } catch (error: any) {
+      console.error("Unexpected Google OAuth error:", error);
+      return { error };
+    }
   };
 
   const value = {
