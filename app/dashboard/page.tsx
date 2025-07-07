@@ -42,30 +42,11 @@ export default async function DashboardPage() {
     activePatients: 892,
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">
-              NeonPro Dashboard
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Bem-vindo,{" "}
-              {user?.user_metadata?.full_name || user?.email?.split("@")[0]}!
-            </p>
-          </div>
-          <form action="/api/auth/signout" method="post">
-            <Button type="submit" variant="outline">
-              Sair
-            </Button>
-          </form>
-        </div>
-      </header>
+  const breadcrumbs = [{ title: "Dashboard" }];
 
-      {/* Main Content */}
-      <main className="p-6 space-y-6">
+  return (
+    <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
+      <div className="space-y-6">
         {/* Welcome Section */}
         <div className="flex items-center justify-between">
           <div>
@@ -255,7 +236,7 @@ export default async function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
