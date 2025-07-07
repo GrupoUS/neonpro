@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
       );
 
       // Cria o cliente Supabase no servidor para verificar a sessão
-      const supabase = createClient();
+      const supabase = await createClient();
       const {
         data: { session },
         error,
