@@ -19,19 +19,38 @@ export async function GET(request: Request) {
         <html>
           <head>
             <title>Autenticação concluída</title>
+            <style>
+              body {
+                font-family: system-ui, -apple-system, sans-serif;
+                text-align: center;
+                padding: 2rem;
+                background: #f8fafc;
+              }
+              .success {
+                color: #059669;
+                font-size: 1.125rem;
+                margin-bottom: 1rem;
+              }
+            </style>
           </head>
           <body>
+            <div class="success">✅ Autenticação concluída com sucesso!</div>
+            <p>Redirecionando...</p>
             <script>
               // Notifica a janela pai sobre o sucesso
               if (window.opener) {
                 window.opener.postMessage({ type: 'auth-success' }, '*');
-                window.close();
+                // Aguarda um pouco antes de fechar para mostrar a mensagem
+                setTimeout(() => {
+                  window.close();
+                }, 1500);
               } else {
                 // Se não for popup, redireciona normalmente
-                window.location.href = '/dashboard';
+                setTimeout(() => {
+                  window.location.href = '/dashboard';
+                }, 1500);
               }
             </script>
-            <p>Autenticação concluída. Esta janela será fechada automaticamente...</p>
           </body>
         </html>
       `, {

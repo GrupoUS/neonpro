@@ -2,42 +2,87 @@
 "use client"
 
 import type React from "react"
-
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Chrome } from "lucide-react" // Usando um ícone genérico para o Google
+import { Chrome } from "lucide-react"
 import { createClient } from "@/app/utils/supabase/client"
 import Link from "next/link"
 
 export default function LoginPage() {
   const router = useRouter()
-  // Comentário: Instancia o cliente Supabase do lado do cliente para interações de UI.
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
-  // Comentário: Função para lidar com o login via Google.
-  // Utiliza signInWithOAuth, que gerencia o fluxo de popup/redirect de forma otimizada.
-  // O redirecionamento para /dashboard é tratado pela rota de callback.
+  // Verifica se o usuário já está logado
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.push("/dashboard")
+      }
+    }
+    checkUser()
+  }, [])
+
+  // Função para lidar com o login via Google com popup
   const handleLoginWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        // URL para onde o Supabase deve redirecionar após o login no Google.
-        // Esta é a nossa rota de callback que criamos.
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    })
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${location.origin}/auth/popup-callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      })
+      
+      if (error) {
+        setError("Erro ao fazer login com Google: " + error.message)
+      }
+    } catch (err) {
+      setError("Erro inesperado ao fazer login")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Placeholder para a função de login com email e senha
+  // Função para login com email e senha
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Lógica de login com email/senha aqui
-    // ...
-    router.push("/dashboard")
+    setLoading(true)
+    setError(null)
+    
+    const formData = new FormData(event.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      if (error) {
+        setError("Erro ao fazer login: " + error.message)
+      } else {
+        router.push("/dashboard")
+      }
+    } catch (err) {
+      setError("Erro inesperado ao fazer login")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -49,10 +94,22 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {/* Comentário: Botão de login com Google. Dispara a função que inicia o fluxo OAuth. */}
-            <Button variant="outline" className="w-full" onClick={handleLoginWithGoogle}>
+            {/* Exibir erro se houver */}
+            {error && (
+              <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+                {error}
+              </div>
+            )}
+            
+            {/* Botão de login com Google */}
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={handleLoginWithGoogle}
+              disabled={loading}
+            >
               <Chrome className="mr-2 h-4 w-4" />
-              Entrar com Google
+              {loading ? "Carregando..." : "Entrar com Google"}
             </Button>
 
             <Separator className="my-2" />
@@ -60,7 +117,14 @@ export default function LoginPage() {
             <form onSubmit={handleSignIn} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="seu@email.com" required />
+                <Input 
+                  id="email" 
+                  name="email" 
+                  type="email" 
+                  placeholder="seu@email.com" 
+                  required 
+                  disabled={loading}
+                />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -69,16 +133,20 @@ export default function LoginPage() {
                     Esqueceu sua senha?
                   </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input 
+                  id="password" 
+                  name="password" 
+                  type="password" 
+                  required 
+                  disabled={loading}
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Entrar
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Carregando..." : "Entrar"}
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">
               Não tem uma conta?{" "}
-              {/* Comentário: O fluxo de "Criar conta" deve levar a uma página de registro
-                  que utilize `supabase.auth.signUp`. */}
               <Link href="/signup" className="underline">
                 Criar conta
               </Link>
