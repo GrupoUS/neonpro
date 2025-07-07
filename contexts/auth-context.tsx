@@ -55,15 +55,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Real auth state setup
     const initializeAuth = async () => {
       try {
+        console.log("🔄 Initializing auth context...");
         const {
           data: { session },
         } = await supabase.auth.getSession();
+
+        console.log("📊 Initial session check:", !!session);
         if (session) {
+          console.log("✅ Initial session found, setting user");
           setSession(session as Session);
           setUser(session.user as User);
+        } else {
+          console.log("❌ No initial session found");
         }
       } catch (error) {
-        console.log("Auth initialization:", error);
+        console.error("❌ Auth initialization error:", error);
       } finally {
         setLoading(false);
       }
@@ -74,18 +80,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Set up real auth state listener
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (_event: string, session: any) => {
-        if (session) {
-          setSession(session as Session);
-          setUser(session.user as User);
-        } else {
-          setSession(null);
-          setUser(null);
-        }
-        setLoading(false);
+    } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
+      console.log("🔄 Auth state change:", event, !!session);
+
+      if (session) {
+        console.log("✅ Session detected, setting user:", session.user?.email);
+        setSession(session as Session);
+        setUser(session.user as User);
+      } else {
+        console.log("❌ No session, clearing user");
+        setSession(null);
+        setUser(null);
       }
-    );
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -189,40 +197,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Monitorar o popup e a sessão
         return new Promise<{ error: any }>((resolve) => {
+          let resolved = false;
+
           const checkInterval = setInterval(async () => {
             try {
               // Verificar se popup foi fechado
               if (popup.closed) {
                 clearInterval(checkInterval);
 
-                // Verificar se o usuário foi autenticado
-                const {
-                  data: { session },
-                } = await supabase.auth.getSession();
+                if (!resolved) {
+                  // Aguardar um pouco para a sessão ser sincronizada
+                  console.log("🔄 Popup closed, waiting for session sync...");
+                  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-                if (session) {
-                  console.log("Authentication successful via popup");
-                  resolve({ error: null });
-                } else {
-                  console.log("Popup closed without authentication");
-                  resolve({
-                    error: new Error("Authentication cancelled"),
-                  });
+                  // Verificar se o usuário foi autenticado
+                  const {
+                    data: { session },
+                  } = await supabase.auth.getSession();
+
+                  if (session) {
+                    console.log("✅ Authentication successful via popup");
+                    resolved = true;
+                    resolve({ error: null });
+                  } else {
+                    console.log("❌ Popup closed without authentication");
+                    resolved = true;
+                    resolve({
+                      error: new Error("Authentication cancelled"),
+                    });
+                  }
                 }
               } else {
                 // Verificar se recebemos uma sessão enquanto o popup ainda está aberto
                 const {
                   data: { session },
                 } = await supabase.auth.getSession();
-                if (session) {
+                if (session && !resolved) {
                   clearInterval(checkInterval);
-                  popup.close();
-                  console.log("Authentication successful, closing popup");
+                  console.log("✅ Authentication successful, closing popup");
+
+                  // Aguardar um pouco antes de fechar para garantir sincronização
+                  setTimeout(() => {
+                    popup.close();
+                  }, 500);
+
+                  resolved = true;
                   resolve({ error: null });
                 }
               }
             } catch (err) {
-              console.error("Error checking popup status:", err);
+              console.error("❌ Error checking popup status:", err);
             }
           }, 500);
 

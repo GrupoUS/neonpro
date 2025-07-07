@@ -1,20 +1,23 @@
 // app/page.tsx
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function HomePage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
   useEffect(() => {
+    console.log("🔄 Home page - Auth state:", { user: !!user, loading });
     if (!loading) {
       if (user) {
+        console.log("✅ User detected in home page, redirecting to dashboard");
         // Se o usuário está logado, redireciona para o dashboard
         router.push("/dashboard");
       } else {
+        console.log("❌ No user detected in home page, redirecting to login");
         // Se não está logado, redireciona para o login
         router.push("/login");
       }

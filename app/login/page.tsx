@@ -30,8 +30,12 @@ export default function LoginPage() {
 
   // Verifica se o usuário já está logado
   useEffect(() => {
+    console.log("🔄 Login page - checking user state:", !!user);
     if (user) {
+      console.log("✅ User detected in login page, redirecting to dashboard");
       router.push("/dashboard");
+    } else {
+      console.log("❌ No user detected in login page");
     }
   }, [user, router]);
 
