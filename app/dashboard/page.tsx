@@ -1,5 +1,6 @@
 // app/dashboard/page.tsx
 import { createClient } from "@/app/utils/supabase/server";
+import { DashboardLayout } from "@/components/navigation/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

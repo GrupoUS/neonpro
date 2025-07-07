@@ -55,7 +55,7 @@ export async function GET(request: Request) {
   console.log("Full URL:", request.url);
 
   if (code) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
