@@ -1,4 +1,10 @@
 {
+  "chat.agent.enabled": true,
+  "chat.agent.maxRequests": 15,
+  "github.copilot.chat.agent.runTasks": true,
+  "chat.mcp.discovery.enabled": true,
+  "github.copilot.chat.agent.autoFix": true,
+  "chat.tools.autoApprove": false,
   "github.copilot.advanced": {
     "context.includeWorkspace": true,
     "context.includeOpenTabs": true,
@@ -8,29 +14,35 @@
     "context.maxFiles": 30,
     "context.projectSpecific": {
       "neonpro": {
-        "patterns": ["app/**", "components/**", "lib/**", "hooks/**"],
-        "technologies": ["nextjs", "supabase", "shadcn", "tailwind"],
+        "patterns": [
+          "app/**",
+          "components/**",
+          "lib/**",
+          "hooks/**"
+        ],
+        "technologies": [
+          "nextjs",
+          "supabase",
+          "shadcn",
+          "tailwind"
+        ],
         "conventions": "VIBECODE_V1"
       }
     }
   },
-  
   "typescript.preferences.includePackageJsonAutoImports": "auto",
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.suggest.autoImports": true,
   "typescript.suggest.completeFunctionCalls": true,
-  
   "files.associations": {
     "*.supabase": "sql",
     "supabase/**/*.sql": "sql"
   },
-  
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "explicit",
     "source.addMissingImports": "explicit"
   },
-  
   "tailwindCSS.includeLanguages": {
     "typescript": "html",
     "javascript": "html"
@@ -40,7 +52,6 @@
     "className",
     "ngClass"
   ],
-  
   "files.exclude": {
     "**/.next": true,
     "**/node_modules": true,
@@ -49,35 +60,27 @@
     "**/coverage": true,
     "**/.vercel": true
   },
-  
   "search.exclude": {
     "**/.next": true,
     "**/node_modules": true,
     "**/pnpm-lock.yaml": true,
     "**/dist": true
   },
-  
   "emmet.includeLanguages": {
     "typescript": "html",
     "javascript": "html"
   },
-  
   "editor.quickSuggestions": {
     "other": "on",
     "comments": "on",
     "strings": "on"
   },
-  
   "npm.packageManager": "pnpm",
-  "typescript.preferences.includePackageJsonAutoImports": "auto",
-  
   "debug.allowBreakpointsEverywhere": true,
   "debug.openDebug": "openOnDebugBreak",
-  
   "editor.suggest.localityBonus": true,
   "editor.suggest.shareSuggestSelections": true,
   "editor.wordBasedSuggestions": "currentDocument",
-  
   "github.copilot.chat.context": {
     "project": "NeonPro",
     "description": "Clinic management system with Next.js 15 and Supabase",
