@@ -1,5 +1,18 @@
 # Epic 10: CRM & Campanhas
 
+**Priority:** P1 (High)  
+**Status:** APPROVED - ENHANCED
+
+## Enhancement Package 2025
+- 🤖 **AI-Powered CRM**: CRM inteligente com automação
+- 📊 **Predictive Campaigns**: Campanhas preditivas personalizadas
+- 🎯 **Smart Targeting**: Segmentação inteligente de pacientes
+- 📈 **ROI Analytics**: Analytics avançados de campanhas
+
+**Timeline:** 4 weeks (Optimized)  
+**Dependencies:** Epic 5 (Portal Paciente), MEGA-EPIC B (Analytics)  
+**Wave:** Intelligence & Value (Semanas 23-26)
+
 ## Overview
 
 Epic 10 implementa o sistema completo de CRM (Customer Relationship Management) e campanhas automatizadas para clínicas estéticas, fornecendo segmentação inteligente de pacientes, automação de marketing, lembretes de cobrança e retorno, e gestão completa do relacionamento com o cliente. Este épico expande as capacidades do NeonPro para além da gestão operacional, adicionando uma camada estratégica de marketing e retenção.

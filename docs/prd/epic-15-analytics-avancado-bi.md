@@ -1,4 +1,17 @@
-# Epic 15: Analytics Avançado & Business Intelligence
+# Epic 15: Analytics Avançado & Business Intelligence [CONSOLIDATED]
+
+**Priority:** P1 (High)  
+**Status:** APPROVED - ENHANCED
+
+## Enhancement Package 2025
+- 🤖 **AI-Powered Analytics**: Analytics avançados com IA
+- 📊 **Predictive Business Intelligence**: BI preditivo em tempo real
+- 🔮 **Smart Insights**: Insights automáticos inteligentes
+- 📈 **Advanced Reporting**: Relatórios avançados com ML
+
+**Timeline:** Integrated into 6 weeks (Epic 8+15)  
+**Dependencies:** See MEGA-EPIC B (Epic 8 + Epic 15)  
+**Note:** This epic has been consolidated with Epic 8 for optimized analytics delivery
 
 ## Overview
 

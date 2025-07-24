@@ -1,5 +1,17 @@
 # Epic 5: Portal Paciente - Sistema de Autoagendamento
 
+**Priority:** P0 (Critical)  
+**Status:** APPROVED - ENHANCED  
+**Timeline:** 4 weeks (Optimized)
+
+## Enhancement Package 2025
+- 🤖 **AI Chatbot Integration**: Assistente virtual para pacientes
+- 🧠 **Smart Scheduling**: ML-powered appointment optimization
+- 📊 **Predictive Recommendations**: Sugestões personalizadas de cuidados
+- 🔮 **Proactive Health Alerts**: Notificações preventivas baseadas em IA  
+**Dependencies:** Epic 1 (Authentication), MEGA-EPIC D (Patient Management)  
+**Wave:** Foundation (Semanas 11-14)
+
 ## Epic Overview
 
 **Epic Value Statement:** Empoderar pacientes com sistema completo de autoagendamento, cancelamento e reagendamento de consultas, reduzindo carga administrativa da clínica e melhorando satisfação do paciente.

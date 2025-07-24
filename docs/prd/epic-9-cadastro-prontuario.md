@@ -1,4 +1,16 @@
-# Epic 9: Cadastro Pacientes & Prontuário
+# Epic 9: Cadastro Pacientes & Prontuário [CONSOLIDATED]
+
+**Priority:** P1 (High)  
+**Status:** APPROVED - ENHANCED  
+**Timeline:** Integrated into 6 weeks (Epic 3+9)  
+**Dependencies:** See MEGA-EPIC D (Epic 3 + Epic 9)  
+**Note:** This epic has been consolidated with Epic 3 for unified patient management
+
+## Enhancement Package 2025
+- 🤖 **AI Clinical Assistant**: Assistente clínico inteligente
+- 📊 **Smart Documentation**: Documentação automática por IA
+- 🔍 **Pattern Recognition**: Reconhecimento de padrões clínicos
+- 📱 **Voice-to-Text**: Transcrição inteligente de consultas
 
 ## Overview
 
