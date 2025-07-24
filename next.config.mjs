@@ -8,61 +8,21 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig = {
-  // Performance Optimizations
+  // Simplified configuration for Vercel compatibility
   experimental: {
-    // Bundle optimizations
+    // Only essential optimizations
     optimizePackageImports: [
-      "@phosphor-icons/react",
-      "recharts",
-      "lodash",
-      "date-fns",
-      "react-query",
       "@supabase/supabase-js",
+      "recharts",
+      "date-fns",
     ],
-
-    // CSS chunking for better performance
-    cssChunking: true,
-
-    // Server components HMR cache for development
-    serverComponentsHmrCache: true,
-
-    // Turbopack for faster builds (Next.js 15.4+)
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-    },
-
-    // Enable Next.js 15.4+ performance features
-    reactCompiler: process.env.NODE_ENV === "production",
   },
 
-  // Bundle Pages Router dependencies for consistency
-  bundlePagesRouterDependencies: true,
-
   // External packages that should not be bundled
-  serverExternalPackages: ["sharp", "onnxruntime-node", "canvas", "playwright"],
+  serverExternalPackages: ["sharp"],
 
-  // Webpack configuration for additional optimizations
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Optimize for production builds
-    if (!dev && !isServer) {
-      // Tree shaking optimizations
-      config.optimization.usedExports = true;
-      config.optimization.sideEffects = false;
-
-      // Minimize duplicate dependencies
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        react: "react",
-        "react-dom": "react-dom",
-        "@supabase/supabase-js": "@supabase/supabase-js",
-      };
-    }
-
+  // Simplified webpack configuration
+  webpack: (config) => {
     // SVG optimization
     config.module.rules.push({
       test: /\.svg$/,
@@ -75,12 +35,17 @@ const nextConfig = {
   // Image optimization configuration
   images: {
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 31536000, // 1 year
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    domains: ["localhost", "ownkoxryswokcdanrdgj.supabase.co", "supabase.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "supabase.com",
+      },
+    ],
   },
 
   // Headers for performance and security
@@ -138,15 +103,7 @@ const nextConfig = {
   // Generate ETags for better caching
   generateEtags: true,
 
-  // Asset prefix for CDN (when deployed)
-  assetPrefix:
-    process.env.NODE_ENV === "production" && process.env.CDN_URL
-      ? process.env.CDN_URL
-      : "",
 
-  // Output configuration for static exports (optional)
-  output: process.env.NEXT_OUTPUT === "export" ? "export" : undefined,
-  trailingSlash: process.env.NEXT_OUTPUT === "export",
 
   // Environment variables to expose to the client
   env: {
@@ -181,16 +138,7 @@ const nextConfig = {
     ];
   },
 
-  // Rewrites for clean URLs and API proxying
-  async rewrites() {
-    return [
-      // Proxy API calls to external services if needed
-      {
-        source: "/api/external/:path*",
-        destination: "https://api.external-service.com/:path*",
-      },
-    ];
-  },
+
 };
 
 export default withBundleAnalyzer(nextConfig);

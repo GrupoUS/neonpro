@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Wifi, WifiOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { AppointmentNotesForm } from './appointment-notes-form'
 import { BookingConfirmation } from './booking-confirmation'
@@ -88,10 +88,15 @@ export default function AppointmentBookingFlow({
   const [appointmentNotes, setAppointmentNotes] = useState('')
   const [specialRequests, setSpecialRequests] = useState<string[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [bookingStartTime] = useState(Date.now())
+  const [bookingStartTime, setBookingStartTime] = useState<number | null>(null)
   const [error, setError] = useState<string>('')
 
   const router = useRouter()
+
+  // Initialize bookingStartTime on client side only
+  useEffect(() => {
+    setBookingStartTime(Date.now())
+  }, [])
 
   const steps: BookingStep[] = ['service', 'professional', 'time', 'notes', 'confirmation']
   const currentStepIndex = steps.indexOf(currentStep)
@@ -187,7 +192,7 @@ export default function AppointmentBookingFlow({
       if (bookingError) throw bookingError
 
       // Track booking completion time
-      const bookingDuration = (Date.now() - bookingStartTime) / 1000
+      const bookingDuration = bookingStartTime ? (Date.now() - bookingStartTime) / 1000 : 0
       console.log(`Booking completed in ${bookingDuration.toFixed(1)} seconds`)
 
       // Redirect to success page
@@ -202,6 +207,8 @@ export default function AppointmentBookingFlow({
   }
 
   const getElapsedTime = () => {
+    if (!bookingStartTime) return '0s'
+    
     const elapsed = (Date.now() - bookingStartTime) / 1000
     const minutes = Math.floor(elapsed / 60)
     const seconds = Math.floor(elapsed % 60)

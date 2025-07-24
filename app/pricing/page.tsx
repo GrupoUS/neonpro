@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { NEONPRO_PLANS } from "@/lib/services/subscription-service";
+import { NEONPRO_PLANS } from "@/lib/constants/plans";
 import { Check, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

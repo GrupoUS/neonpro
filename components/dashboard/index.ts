@@ -1,6 +1,7 @@
 // Dashboard Components Export - STORY-SUB-002 Task 4
 // Main export file for all dashboard components
 // Created: 2025-01-22
+// Updated: 2025-01-23 - Added Stock Alerts and Reports components (Story 11.4)
 
 // Main Dashboard Layout
 export { Dashboard } from './dashboard'
@@ -11,6 +12,10 @@ export { ConversionCharts } from './analytics/conversion-charts'
 
 // Trial Management Components
 export { TrialManagement } from './trial-management/trial-management'
+
+// Stock Management Components (Story 11.4)
+export { StockAlertsManagement } from './stock-alerts-management'
+export { StockReports } from './stock-reports'
 
 // Default export for main dashboard
 export { Dashboard as default } from './dashboard'

@@ -1,8 +1,21 @@
 # Script PowerShell para executar schema CRM no Supabase
 param(
-    [string]$ProjectRef = "gfkskrkbnawkuppazkpt",
-    [string]$AccessToken = "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
+    [string]$ProjectRef = $env:SUPABASE_PROJECT_REF,
+    [string]$AccessToken = $env:SUPABASE_ACCESS_TOKEN
 )
+
+# Verificar se as variáveis de ambiente estão configuradas
+if (-not $ProjectRef) {
+    Write-Host "❌ ERRO: Variable SUPABASE_PROJECT_REF não encontrada!" -ForegroundColor Red
+    Write-Host "💡 Configure no .env.local: SUPABASE_PROJECT_REF=gfkskrkbnawkuppazkpt" -ForegroundColor Yellow
+    exit 1
+}
+
+if (-not $AccessToken) {
+    Write-Host "❌ ERRO: Variable SUPABASE_ACCESS_TOKEN não encontrada!" -ForegroundColor Red  
+    Write-Host "💡 Configure no .env.local: SUPABASE_ACCESS_TOKEN=seu_token_aqui" -ForegroundColor Yellow
+    exit 1
+}
 
 Write-Host "🚀 Executando Schema CRM no Supabase..." -ForegroundColor Green
 Write-Host "🔑 Project: $ProjectRef" -ForegroundColor Cyan

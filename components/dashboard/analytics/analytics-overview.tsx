@@ -1,64 +1,55 @@
-// Analytics Overview Dashboard Component - STORY-SUB-002 Task 4
-// Real-time analytics dashboard with KPIs and charts
-// Based on research: Tavily SaaS best practices + Recharts + shadcn/ui patterns
-// Created: 2025-01-22
+/**
+ * Analytics Overview Component - VIBECODE V1.0
+ * Real-time dashboard metrics with AI-powered insights
+ */
 
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  UserPlus, 
-  DollarSign, 
-  Target,
-  Activity,
-  Clock,
-  AlertTriangle,
-  Zap
-} from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-// Types based on our analytics service layer
-interface AnalyticsKPI {
-  id: string
-  title: string
-  value: string | number
-  change: number
-  changeType: 'increase' | 'decrease' | 'neutral'
-  icon: React.ElementType
-  description: string
-  trend: number[]
-}
+import {
+  Users,
+  UserPlus,
+  Target,
+  Clock,
+  Zap,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Activity
+} from 'lucide-react'
 
 interface DashboardMetrics {
   totalTrials: number
   activeTrials: number
   conversionRate: number
   averageTrialDuration: number
-  topConversionSources: Array<{ source: string; count: number; rate: number }>
-  stageDistribution: {
-    onboarding: number
-    exploring: number
-    engaged: number
-    converting: number
-    churning: number
-  }
   aiPredictions: {
-    predictedConversions: number
-    highRiskTrials: number
-    recommendedInterventions: number
+    predictedConversions: string
+    highRiskTrials: string
   }
+}
+
+interface AnalyticsKPI {
+  id: string
+  title: string
+  value: string
+  change: number
+  changeType: 'increase' | 'decrease'
+  icon: any
+  description: string
+  trend: number[]
 }
 
 interface AnalyticsOverviewProps {
   className?: string
   refreshInterval?: number
-}export function AnalyticsOverview({ className, refreshInterval = 30000 }: AnalyticsOverviewProps) {
+}
+
+export function AnalyticsOverview({ className, refreshInterval = 30000 }: AnalyticsOverviewProps) {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
@@ -96,8 +87,7 @@ interface AnalyticsOverviewProps {
       icon: Users,
       description: 'Total users in trial period',
       trend: [65, 78, 82, 88, 95, 102, 115]
-    }
-  ],
+    },
     {
       id: 'active-trials',
       title: 'Active Trials',
@@ -175,7 +165,9 @@ interface AnalyticsOverviewProps {
         </div>
       </div>
     )
-  }  if (!metrics) {
+  }
+
+  if (!metrics) {
     return (
       <div className={cn('space-y-6', className)}>
         <Card>

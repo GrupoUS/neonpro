@@ -1,7 +1,91 @@
+/**
+ * Performance Monitor Utilities - VIBECODE V1.0 Monitoring
+ * Utility functions for performance monitoring and analysis
+ */
+
+export interface PerformanceMetric {
+  name: string;
+  value: number;
+  timestamp: number;
+  tags?: Record<string, string>;
+}
+
+export interface PerformanceThreshold {
+  metric: string;
+  warning: number;
+  critical: number;
+}
+
+export interface PerformanceAlert {
+  metric: string;
+  value: number;
+  threshold: number;
+  severity: 'warning' | 'critical';
+  timestamp: number;
+}
+
+export class PerformanceMonitorUtils {
+  private thresholds: Map<string, PerformanceThreshold> = new Map();
+  private alerts: PerformanceAlert[] = [];
+
+  constructor() {
+    this.initializeDefaultThresholds();
+  }
+
+  /**
+   * Initialize default performance thresholds
+   */
+  private initializeDefaultThresholds(): void {
+    this.setThreshold('response_time', { metric: 'response_time', warning: 1000, critical: 3000 });
+    this.setThreshold('memory_usage', { metric: 'memory_usage', warning: 80, critical: 95 });
+    this.setThreshold('cpu_usage', { metric: 'cpu_usage', warning: 70, critical: 90 });
+    this.setThreshold('error_rate', { metric: 'error_rate', warning: 5, critical: 10 });
+  }
+
+  /**
+   * Set performance threshold
+   */
+  setThreshold(metric: string, threshold: PerformanceThreshold): void {
+    this.thresholds.set(metric, threshold);
+  }
+
+  /**
+   * Check if metric exceeds thresholds
+   */
+  checkThresholds(metrics: PerformanceMetric[]): PerformanceAlert[] {
+    const newAlerts: PerformanceAlert[] = [];
+
+    for (const metric of metrics) {
+      const threshold = this.thresholds.get(metric.name);
+      if (!threshold) continue;
+
+      if (metric.value >= threshold.critical) {
+        newAlerts.push({
+          metric: metric.name,
+          value: metric.value,
+          threshold: threshold.critical,
+          severity: 'critical',
+          timestamp: metric.timestamp
+        });
+      } else if (metric.value >= threshold.warning) {
+        newAlerts.push({
+          metric: metric.name,
+          value: metric.value,
+          threshold: threshold.warning,
+          severity: 'warning',
+          timestamp: metric.timestamp
+        });
+      }
+    }
+
+    this.alerts.push(...newAlerts);
+    return newAlerts;
+  }
+
   /**
    * 📈 Generate performance trends
    */
-  private generateTrends(metrics: PerformanceMetric[], buckets: number = 10): any[] {
+  generateTrends(metrics: PerformanceMetric[], buckets: number = 10): any[] {
     if (metrics.length === 0) return [];
 
     const sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
@@ -31,7 +115,7 @@
   /**
    * 🔢 Aggregate metrics with statistical functions
    */
-  private aggregateMetrics(metrics: PerformanceMetric[]) {
+  aggregateMetrics(metrics: PerformanceMetric[]) {
     if (metrics.length === 0) {
       return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
     }
@@ -50,3 +134,87 @@
       max: values[values.length - 1],
     };
   }
+
+  /**
+   * Calculate percentile
+   */
+  private percentile(values: number[], p: number): number {
+    if (values.length === 0) return 0;
+    
+    const index = (p / 100) * (values.length - 1);
+    const lower = Math.floor(index);
+    const upper = Math.ceil(index);
+    
+    if (lower === upper) {
+      return values[lower];
+    }
+    
+    const weight = index - lower;
+    return Math.round(values[lower] * (1 - weight) + values[upper] * weight);
+  }
+
+  /**
+   * Get all alerts
+   */
+  getAlerts(): PerformanceAlert[] {
+    return [...this.alerts];
+  }
+
+  /**
+   * Clear old alerts
+   */
+  clearOldAlerts(maxAge: number = 3600000): void { // 1 hour default
+    const cutoff = Date.now() - maxAge;
+    this.alerts = this.alerts.filter(alert => alert.timestamp > cutoff);
+  }
+
+  /**
+   * Get performance score
+   */
+  calculatePerformanceScore(metrics: PerformanceMetric[]): number {
+    if (metrics.length === 0) return 100;
+
+    let score = 100;
+    const recentAlerts = this.alerts.filter(alert => 
+      Date.now() - alert.timestamp < 300000 // Last 5 minutes
+    );
+
+    // Deduct points for alerts
+    for (const alert of recentAlerts) {
+      if (alert.severity === 'critical') {
+        score -= 20;
+      } else if (alert.severity === 'warning') {
+        score -= 10;
+      }
+    }
+
+    return Math.max(0, score);
+  }
+
+  /**
+   * Generate performance report
+   */
+  generateReport(metrics: PerformanceMetric[]): any {
+    const aggregated = this.aggregateMetrics(metrics);
+    const trends = this.generateTrends(metrics);
+    const recentAlerts = this.alerts.filter(alert => 
+      Date.now() - alert.timestamp < 3600000 // Last hour
+    );
+    const score = this.calculatePerformanceScore(metrics);
+
+    return {
+      summary: {
+        totalMetrics: metrics.length,
+        performanceScore: score,
+        alertCount: recentAlerts.length
+      },
+      aggregated,
+      trends,
+      alerts: recentAlerts,
+      timestamp: Date.now()
+    };
+  }
+}
+
+// Export singleton instance
+export const performanceMonitorUtils = new PerformanceMonitorUtils();

@@ -1,7 +1,24 @@
 # Script PowerShell para executar schema CRM no Supabase
-$supabaseUrl = "https://gfkskrkbnawkuppazkpt.supabase.co"
-$accessToken = "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
-$projectRef = "gfkskrkbnawkuppazkpt"
+# Usar variáveis de ambiente para segurança
+$supabaseUrl = $env:NEXT_PUBLIC_SUPABASE_URL
+$accessToken = $env:SUPABASE_ACCESS_TOKEN  
+$projectRef = $env:SUPABASE_PROJECT_REF
+
+# Verificar se as variáveis estão configuradas
+if (-not $supabaseUrl) {
+    Write-Host "❌ ERRO: NEXT_PUBLIC_SUPABASE_URL não encontrada!" -ForegroundColor Red
+    exit 1
+}
+
+if (-not $accessToken) {
+    Write-Host "❌ ERRO: SUPABASE_ACCESS_TOKEN não encontrada!" -ForegroundColor Red
+    exit 1
+}
+
+if (-not $projectRef) {
+    Write-Host "❌ ERRO: SUPABASE_PROJECT_REF não encontrada!" -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "🚀 Executando Schema CRM no Supabase..." -ForegroundColor Green
 Write-Host "📊 URL: $supabaseUrl" -ForegroundColor Cyan

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/339</span>
+                <span class='fraction'>0/324</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/339</span>
+                <span class='fraction'>0/324</span>
             </div>
         
             
@@ -386,37 +386,7 @@
 <a name='L321'></a><a href='#L321'>321</a>
 <a name='L322'></a><a href='#L322'>322</a>
 <a name='L323'></a><a href='#L323'>323</a>
-<a name='L324'></a><a href='#L324'>324</a>
-<a name='L325'></a><a href='#L325'>325</a>
-<a name='L326'></a><a href='#L326'>326</a>
-<a name='L327'></a><a href='#L327'>327</a>
-<a name='L328'></a><a href='#L328'>328</a>
-<a name='L329'></a><a href='#L329'>329</a>
-<a name='L330'></a><a href='#L330'>330</a>
-<a name='L331'></a><a href='#L331'>331</a>
-<a name='L332'></a><a href='#L332'>332</a>
-<a name='L333'></a><a href='#L333'>333</a>
-<a name='L334'></a><a href='#L334'>334</a>
-<a name='L335'></a><a href='#L335'>335</a>
-<a name='L336'></a><a href='#L336'>336</a>
-<a name='L337'></a><a href='#L337'>337</a>
-<a name='L338'></a><a href='#L338'>338</a>
-<a name='L339'></a><a href='#L339'>339</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L324'></a><a href='#L324'>324</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -740,182 +710,137 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >/**</span></span></span>
-<span class="cstat-no" title="statement not covered" > * NeonPro Performance API Endpoint</span>
-<span class="cstat-no" title="statement not covered" > * Real-time Core Web Vitals collection and analysis</span>
+<span class="cstat-no" title="statement not covered" > * Performance Metrics Collection API</span>
+<span class="cstat-no" title="statement not covered" > * </span>
+<span class="cstat-no" title="statement not covered" > * Collects and stores Web Vitals and custom performance metrics</span>
+<span class="cstat-no" title="statement not covered" > * Based on 2025 performance monitoring best practices</span>
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >import { NextRequest, NextResponse } from 'next/server'</span>
 <span class="cstat-no" title="statement not covered" >import { createClient } from '@/app/utils/supabase/server'</span>
-<span class="cstat-no" title="statement not covered" >import { z } from 'zod'</span>
+<span class="cstat-no" title="statement not covered" >import { CacheHeaders } from '@/performance/caching'</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Performance metrics validation schema</span>
-<span class="cstat-no" title="statement not covered" >const PerformanceMetricsSchema = z.object({</span>
-<span class="cstat-no" title="statement not covered" >  lcp: z.number().min(0), // Largest Contentful Paint</span>
-<span class="cstat-no" title="statement not covered" >  fid: z.number().min(0), // First Input Delay</span>
-<span class="cstat-no" title="statement not covered" >  cls: z.number().min(0), // Cumulative Layout Shift</span>
-<span class="cstat-no" title="statement not covered" >  fcp: z.number().min(0), // First Contentful Paint</span>
-<span class="cstat-no" title="statement not covered" >  ttfb: z.number().min(0), // Time to First Byte</span>
-<span class="cstat-no" title="statement not covered" >  score: z.number().min(0).max(100), // Overall performance score</span>
-<span class="cstat-no" title="statement not covered" >  page: z.string().min(1), // Page URL or identifier</span>
-<span class="cstat-no" title="statement not covered" >  userAgent: z.string().optional(),</span>
-<span class="cstat-no" title="statement not covered" >  connection: z.string().optional(),</span>
-<span class="cstat-no" title="statement not covered" >  deviceType: z.enum(['desktop', 'mobile', 'tablet']).optional()</span>
-<span class="cstat-no" title="statement not covered" >})</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >type PerformanceMetrics = z.infer&lt;typeof PerformanceMetricsSchema&gt;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * GET /api/analytics/performance</span>
-<span class="cstat-no" title="statement not covered" > * Retrieve performance metrics and history</span>
-<span class="cstat-no" title="statement not covered" > */</span>
-<span class="cstat-no" title="statement not covered" >export async function GET(request: NextRequest) {</span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
-<span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Get authenticated user</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user }, error: authError } = await supabase.auth.getUser()</span>
-<span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Unauthorized' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
-<span class="cstat-no" title="statement not covered" >      )</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { searchParams } = new URL(request.url)</span>
-<span class="cstat-no" title="statement not covered" >    const page = searchParams.get('page')</span>
-<span class="cstat-no" title="statement not covered" >    const limit = parseInt(searchParams.get('limit') || '100')</span>
-<span class="cstat-no" title="statement not covered" >    const days = parseInt(searchParams.get('days') || '7')</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Build query</span>
-<span class="cstat-no" title="statement not covered" >    let query = supabase</span>
-<span class="cstat-no" title="statement not covered" >      .from('performance_metrics')</span>
-<span class="cstat-no" title="statement not covered" >      .select('*')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('clinic_id', user.user_metadata?.clinic_id)</span>
-<span class="cstat-no" title="statement not covered" >      .gte('created_at', new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString())</span>
-<span class="cstat-no" title="statement not covered" >      .order('created_at', { ascending: false })</span>
-<span class="cstat-no" title="statement not covered" >      .limit(limit)</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (page) {</span>
-<span class="cstat-no" title="statement not covered" >      query = query.eq('page', page)</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { data: metrics, error } = await query</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (error) {</span>
-<span class="cstat-no" title="statement not covered" >      console.error('Failed to fetch performance metrics:', error)</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Failed to fetch performance metrics' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 500 }</span>
-<span class="cstat-no" title="statement not covered" >      )</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Calculate current performance summary</span>
-<span class="cstat-no" title="statement not covered" >    const current = metrics?.[0] || null</span>
-<span class="cstat-no" title="statement not covered" >    const history = metrics || []</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Calculate averages for the period</span>
-<span class="cstat-no" title="statement not covered" >    const averages = calculateAverages(history)</span>
-<span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Performance insights</span>
-<span class="cstat-no" title="statement not covered" >    const insights = generateInsights(history)</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
-<span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      current,</span>
-<span class="cstat-no" title="statement not covered" >      history,</span>
-<span class="cstat-no" title="statement not covered" >      averages,</span>
-<span class="cstat-no" title="statement not covered" >      insights,</span>
-<span class="cstat-no" title="statement not covered" >      meta: {</span>
-<span class="cstat-no" title="statement not covered" >        count: metrics?.length || 0,</span>
-<span class="cstat-no" title="statement not covered" >        period: `${days} days`,</span>
-<span class="cstat-no" title="statement not covered" >        page: page || 'all'</span>
-<span class="cstat-no" title="statement not covered" >      }</span>
-<span class="cstat-no" title="statement not covered" >    })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Performance API error:', error)</span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
-<span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
-<span class="cstat-no" title="statement not covered" >    )</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >// Performance metric interface</span>
+<span class="cstat-no" title="statement not covered" >interface PerformanceMetric {</span>
+<span class="cstat-no" title="statement not covered" >  name: string</span>
+<span class="cstat-no" title="statement not covered" >  value: number</span>
+<span class="cstat-no" title="statement not covered" >  rating?: string</span>
+<span class="cstat-no" title="statement not covered" >  delta?: number</span>
+<span class="cstat-no" title="statement not covered" >  id?: string</span>
+<span class="cstat-no" title="statement not covered" >  navigationType?: string</span>
+<span class="cstat-no" title="statement not covered" >  entries?: any[]</span>
+<span class="cstat-no" title="statement not covered" >  url?: string</span>
+<span class="cstat-no" title="statement not covered" >  userAgent?: string</span>
+<span class="cstat-no" title="statement not covered" >  timestamp?: number</span>
+<span class="cstat-no" title="statement not covered" >  grade?: 'good' | 'needs-improvement' | 'poor'</span>
+<span class="cstat-no" title="statement not covered" >  userId?: string</span>
+<span class="cstat-no" title="statement not covered" >  sessionId?: string</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * POST /api/analytics/performance</span>
-<span class="cstat-no" title="statement not covered" > * Record new performance metrics</span>
-<span class="cstat-no" title="statement not covered" > */</span>
+<span class="cstat-no" title="statement not covered" >// Supported metric types</span>
+<span class="cstat-no" title="statement not covered" >const SUPPORTED_METRICS = [</span>
+<span class="cstat-no" title="statement not covered" >  'CLS',      // Cumulative Layout Shift</span>
+<span class="cstat-no" title="statement not covered" >  'FID',      // First Input Delay (deprecated)</span>
+<span class="cstat-no" title="statement not covered" >  'FCP',      // First Contentful Paint</span>
+<span class="cstat-no" title="statement not covered" >  'LCP',      // Largest Contentful Paint</span>
+<span class="cstat-no" title="statement not covered" >  'TTFB',     // Time to First Byte</span>
+<span class="cstat-no" title="statement not covered" >  'INP',      // Interaction to Next Paint (new)</span>
+<span class="cstat-no" title="statement not covered" >  'LONG_TASK',           // Long Task API</span>
+<span class="cstat-no" title="statement not covered" >  'DNS_TIME',            // DNS lookup time</span>
+<span class="cstat-no" title="statement not covered" >  'CONNECT_TIME',        // Connection time</span>
+<span class="cstat-no" title="statement not covered" >  'COMPONENT_RENDER',    // Component render time</span>
+<span class="cstat-no" title="statement not covered" >  'INTERACTION_RESPONSE', // Interaction response time</span>
+<span class="cstat-no" title="statement not covered" >  'FUNCTION_EXECUTION',  // Function execution time</span>
+<span class="cstat-no" title="statement not covered" >  'LARGE_RESOURCE',      // Large resource loading</span>
+<span class="cstat-no" title="statement not covered" >] as const</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >type MetricType = typeof SUPPORTED_METRICS[number]</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// Performance thresholds for automated alerts</span>
+<span class="cstat-no" title="statement not covered" >const PERFORMANCE_ALERTS = {</span>
+<span class="cstat-no" title="statement not covered" >  LCP: { critical: 4000, warning: 2500 },</span>
+<span class="cstat-no" title="statement not covered" >  FID: { critical: 300, warning: 100 },</span>
+<span class="cstat-no" title="statement not covered" >  CLS: { critical: 0.25, warning: 0.1 },</span>
+<span class="cstat-no" title="statement not covered" >  FCP: { critical: 3000, warning: 1800 },</span>
+<span class="cstat-no" title="statement not covered" >  TTFB: { critical: 1800, warning: 800 },</span>
+<span class="cstat-no" title="statement not covered" >  INP: { critical: 500, warning: 200 },</span>
+<span class="cstat-no" title="statement not covered" >} as const</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export async function POST(request: NextRequest) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Get authenticated user</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user }, error: authError } = await supabase.auth.getUser()</span>
-<span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Unauthorized' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
-<span class="cstat-no" title="statement not covered" >      )</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const body = await request.json()</span>
+<span class="cstat-no" title="statement not covered" >    // Parse request body</span>
+<span class="cstat-no" title="statement not covered" >    const metrics: PerformanceMetric | PerformanceMetric[] = await request.json()</span>
+<span class="cstat-no" title="statement not covered" >    const metricsArray = Array.isArray(metrics) ? metrics : [metrics]</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Validate metrics data</span>
-<span class="cstat-no" title="statement not covered" >    const validatedMetrics = PerformanceMetricsSchema.parse(body)</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Prepare data for insertion</span>
-<span class="cstat-no" title="statement not covered" >    const metricsData = {</span>
-<span class="cstat-no" title="statement not covered" >      clinic_id: user.user_metadata?.clinic_id,</span>
-<span class="cstat-no" title="statement not covered" >      user_id: user.id,</span>
-<span class="cstat-no" title="statement not covered" >      lcp: validatedMetrics.lcp,</span>
-<span class="cstat-no" title="statement not covered" >      fid: validatedMetrics.fid,</span>
-<span class="cstat-no" title="statement not covered" >      cls: validatedMetrics.cls,</span>
-<span class="cstat-no" title="statement not covered" >      fcp: validatedMetrics.fcp,</span>
-<span class="cstat-no" title="statement not covered" >      ttfb: validatedMetrics.ttfb,</span>
-<span class="cstat-no" title="statement not covered" >      score: validatedMetrics.score,</span>
-<span class="cstat-no" title="statement not covered" >      page: validatedMetrics.page,</span>
-<span class="cstat-no" title="statement not covered" >      user_agent: validatedMetrics.userAgent,</span>
-<span class="cstat-no" title="statement not covered" >      connection: validatedMetrics.connection,</span>
-<span class="cstat-no" title="statement not covered" >      device_type: validatedMetrics.deviceType || 'desktop',</span>
-<span class="cstat-no" title="statement not covered" >      created_at: new Date().toISOString()</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Insert metrics</span>
-<span class="cstat-no" title="statement not covered" >    const { data, error } = await supabase</span>
-<span class="cstat-no" title="statement not covered" >      .from('performance_metrics')</span>
-<span class="cstat-no" title="statement not covered" >      .insert([metricsData])</span>
-<span class="cstat-no" title="statement not covered" >      .select()</span>
-<span class="cstat-no" title="statement not covered" >      .single()</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (error) {</span>
-<span class="cstat-no" title="statement not covered" >      console.error('Failed to insert performance metrics:', error)</span>
+<span class="cstat-no" title="statement not covered" >    // Validate metrics</span>
+<span class="cstat-no" title="statement not covered" >    const validMetrics = metricsArray.filter(metric =&gt; </span>
+<span class="cstat-no" title="statement not covered" >      metric.name &amp;&amp; </span>
+<span class="cstat-no" title="statement not covered" >      typeof metric.value === 'number' &amp;&amp;</span>
+<span class="cstat-no" title="statement not covered" >      (SUPPORTED_METRICS as readonly string[]).includes(metric.name)</span>
+<span class="cstat-no" title="statement not covered" >    )</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (validMetrics.length === 0) {</span>
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Failed to save performance metrics' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 500 }</span>
-<span class="cstat-no" title="statement not covered" >      )</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Check if performance has degraded significantly</span>
-<span class="cstat-no" title="statement not covered" >    await checkPerformanceAlerts(supabase, user.user_metadata?.clinic_id, validatedMetrics)</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
-<span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      data,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Performance metrics recorded successfully'</span>
-<span class="cstat-no" title="statement not covered" >    })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    if (error instanceof z.ZodError) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { </span>
-<span class="cstat-no" title="statement not covered" >          error: 'Invalid performance metrics data',</span>
-<span class="cstat-no" title="statement not covered" >          details: error.errors</span>
-<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        { error: 'No valid metrics provided' },</span>
 <span class="cstat-no" title="statement not covered" >        { status: 400 }</span>
 <span class="cstat-no" title="statement not covered" >      )</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    console.error('Performance API error:', error)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Get user session if available</span>
+<span class="cstat-no" title="statement not covered" >    const { data: { session } } = await supabase.auth.getSession()</span>
+<span class="cstat-no" title="statement not covered" >    const userId = session?.user?.id</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Enrich metrics with additional context</span>
+<span class="cstat-no" title="statement not covered" >    const enrichedMetrics = validMetrics.map(metric =&gt; ({</span>
+<span class="cstat-no" title="statement not covered" >      ...metric,</span>
+<span class="cstat-no" title="statement not covered" >      userId: userId || null,</span>
+<span class="cstat-no" title="statement not covered" >      sessionId: generateSessionId(request),</span>
+<span class="cstat-no" title="statement not covered" >      url: metric.url || request.headers.get('referer') || 'unknown',</span>
+<span class="cstat-no" title="statement not covered" >      userAgent: metric.userAgent || request.headers.get('user-agent') || 'unknown',</span>
+<span class="cstat-no" title="statement not covered" >      timestamp: metric.timestamp || Date.now(),</span>
+<span class="cstat-no" title="statement not covered" >      grade: metric.grade || calculateGrade(metric.name as MetricType, metric.value),</span>
+<span class="cstat-no" title="statement not covered" >      ip_address: getClientIP(request),</span>
+<span class="cstat-no" title="statement not covered" >      country: request.geo?.country || 'unknown',</span>
+<span class="cstat-no" title="statement not covered" >      city: request.geo?.city || 'unknown',</span>
+<span class="cstat-no" title="statement not covered" >    }))</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Store metrics in database</span>
+<span class="cstat-no" title="statement not covered" >    const { data, error } = await supabase</span>
+<span class="cstat-no" title="statement not covered" >      .from('performance_metrics')</span>
+<span class="cstat-no" title="statement not covered" >      .insert(enrichedMetrics)</span>
+<span class="cstat-no" title="statement not covered" >      .select()</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (error) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Failed to store performance metrics:', error)</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
+<span class="cstat-no" title="statement not covered" >        { error: 'Failed to store metrics' },</span>
+<span class="cstat-no" title="statement not covered" >        { status: 500 }</span>
+<span class="cstat-no" title="statement not covered" >      )</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Check for performance alerts</span>
+<span class="cstat-no" title="statement not covered" >    await checkPerformanceAlerts(enrichedMetrics, supabase)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Return success response with appropriate cache headers</span>
+<span class="cstat-no" title="statement not covered" >    const response = NextResponse.json({</span>
+<span class="cstat-no" title="statement not covered" >      success: true,</span>
+<span class="cstat-no" title="statement not covered" >      stored: data?.length || 0,</span>
+<span class="cstat-no" title="statement not covered" >      metrics: data?.map(d =&gt; ({ id: d.id, name: d.name, grade: d.grade }))</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Add cache headers (no caching for this endpoint)</span>
+<span class="cstat-no" title="statement not covered" >    const headers = CacheHeaders.noCache()</span>
+<span class="cstat-no" title="statement not covered" >    headers.forEach((value, key) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      response.headers.set(key, value)</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    return response</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Performance metrics API error:', error)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
 <span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
 <span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
@@ -923,158 +848,188 @@
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * Calculate performance averages from historical data</span>
-<span class="cstat-no" title="statement not covered" > */</span>
-<span class="cstat-no" title="statement not covered" >function calculateAverages(metrics: any[]): any {</span>
-<span class="cstat-no" title="statement not covered" >  if (!metrics || metrics.length === 0) {</span>
-<span class="cstat-no" title="statement not covered" >    return {</span>
-<span class="cstat-no" title="statement not covered" >      lcp: 0,</span>
-<span class="cstat-no" title="statement not covered" >      fid: 0,</span>
-<span class="cstat-no" title="statement not covered" >      cls: 0,</span>
-<span class="cstat-no" title="statement not covered" >      fcp: 0,</span>
-<span class="cstat-no" title="statement not covered" >      ttfb: 0,</span>
-<span class="cstat-no" title="statement not covered" >      score: 0</span>
+<span class="cstat-no" title="statement not covered" >export async function GET(request: NextRequest) {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
+<span class="cstat-no" title="statement not covered" >    const { searchParams } = new URL(request.url)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Authentication required for viewing metrics</span>
+<span class="cstat-no" title="statement not covered" >    const { data: { session } } = await supabase.auth.getSession()</span>
+<span class="cstat-no" title="statement not covered" >    if (!session) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
+<span class="cstat-no" title="statement not covered" >        { error: 'Authentication required' },</span>
+<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
+<span class="cstat-no" title="statement not covered" >      )</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const totals = metrics.reduce((acc, metric) =&gt; ({</span>
-<span class="cstat-no" title="statement not covered" >    lcp: acc.lcp + (metric.lcp || 0),</span>
-<span class="cstat-no" title="statement not covered" >    fid: acc.fid + (metric.fid || 0),</span>
-<span class="cstat-no" title="statement not covered" >    cls: acc.cls + (metric.cls || 0),</span>
-<span class="cstat-no" title="statement not covered" >    fcp: acc.fcp + (metric.fcp || 0),</span>
-<span class="cstat-no" title="statement not covered" >    ttfb: acc.ttfb + (metric.ttfb || 0),</span>
-<span class="cstat-no" title="statement not covered" >    score: acc.score + (metric.score || 0)</span>
-<span class="cstat-no" title="statement not covered" >  }), { lcp: 0, fid: 0, cls: 0, fcp: 0, ttfb: 0, score: 0 })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const count = metrics.length</span>
-<span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  return {</span>
-<span class="cstat-no" title="statement not covered" >    lcp: parseFloat((totals.lcp / count).toFixed(2)),</span>
-<span class="cstat-no" title="statement not covered" >    fid: parseFloat((totals.fid / count).toFixed(2)),</span>
-<span class="cstat-no" title="statement not covered" >    cls: parseFloat((totals.cls / count).toFixed(3)),</span>
-<span class="cstat-no" title="statement not covered" >    fcp: parseFloat((totals.fcp / count).toFixed(2)),</span>
-<span class="cstat-no" title="statement not covered" >    ttfb: parseFloat((totals.ttfb / count).toFixed(2)),</span>
-<span class="cstat-no" title="statement not covered" >    score: Math.round(totals.score / count)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Parse query parameters</span>
+<span class="cstat-no" title="statement not covered" >    const userId = searchParams.get('userId') || session.user.id</span>
+<span class="cstat-no" title="statement not covered" >    const metric = searchParams.get('metric') as MetricType | null</span>
+<span class="cstat-no" title="statement not covered" >    const timeRange = searchParams.get('timeRange') || '24h'</span>
+<span class="cstat-no" title="statement not covered" >    const limit = parseInt(searchParams.get('limit') || '100')</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Build query</span>
+<span class="cstat-no" title="statement not covered" >    let query = supabase</span>
+<span class="cstat-no" title="statement not covered" >      .from('performance_metrics')</span>
+<span class="cstat-no" title="statement not covered" >      .select('*')</span>
+<span class="cstat-no" title="statement not covered" >      .eq('userId', userId)</span>
+<span class="cstat-no" title="statement not covered" >      .order('timestamp', { ascending: false })</span>
+<span class="cstat-no" title="statement not covered" >      .limit(Math.min(limit, 1000)) // Cap at 1000 records</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Filter by metric type</span>
+<span class="cstat-no" title="statement not covered" >    if (metric &amp;&amp; (SUPPORTED_METRICS as readonly string[]).includes(metric)) {</span>
+<span class="cstat-no" title="statement not covered" >      query = query.eq('name', metric)</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Filter by time range</span>
+<span class="cstat-no" title="statement not covered" >    const timeRangeMs = parseTimeRange(timeRange)</span>
+<span class="cstat-no" title="statement not covered" >    if (timeRangeMs &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >      const cutoff = Date.now() - timeRangeMs</span>
+<span class="cstat-no" title="statement not covered" >      query = query.gte('timestamp', cutoff)</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    const { data, error } = await query</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (error) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Failed to fetch performance metrics:', error)</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
+<span class="cstat-no" title="statement not covered" >        { error: 'Failed to fetch metrics' },</span>
+<span class="cstat-no" title="statement not covered" >        { status: 500 }</span>
+<span class="cstat-no" title="statement not covered" >      )</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Calculate aggregated statistics</span>
+<span class="cstat-no" title="statement not covered" >    const stats = calculateAggregatedStats(data || [])</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    const response = NextResponse.json({</span>
+<span class="cstat-no" title="statement not covered" >      metrics: data || [],</span>
+<span class="cstat-no" title="statement not covered" >      count: data?.length || 0,</span>
+<span class="cstat-no" title="statement not covered" >      timeRange,</span>
+<span class="cstat-no" title="statement not covered" >      stats,</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Add cache headers (5 minute cache for aggregated data)</span>
+<span class="cstat-no" title="statement not covered" >    const headers = CacheHeaders.apiResponse()</span>
+<span class="cstat-no" title="statement not covered" >    headers.forEach((value, key) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      response.headers.set(key, value)</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    return response</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Performance metrics GET API error:', error)</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
+<span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
+<span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
+<span class="cstat-no" title="statement not covered" >    )</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * Generate performance insights and recommendations</span>
-<span class="cstat-no" title="statement not covered" > */</span>
-<span class="cstat-no" title="statement not covered" >function generateInsights(metrics: any[]): any {</span>
-<span class="cstat-no" title="statement not covered" >  const insights = {</span>
-<span class="cstat-no" title="statement not covered" >    trends: {} as Record&lt;string, 'improving' | 'degrading' | 'stable'&gt;,</span>
-<span class="cstat-no" title="statement not covered" >    recommendations: [] as string[],</span>
-<span class="cstat-no" title="statement not covered" >    alerts: [] as string[]</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (!metrics || metrics.length &lt; 2) {</span>
-<span class="cstat-no" title="statement not covered" >    return insights</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Analyze trends (compare recent vs older metrics)</span>
-<span class="cstat-no" title="statement not covered" >  const recent = metrics.slice(0, Math.ceil(metrics.length / 2))</span>
-<span class="cstat-no" title="statement not covered" >  const older = metrics.slice(Math.ceil(metrics.length / 2))</span>
+<span class="cstat-no" title="statement not covered" >// Helper functions</span>
+<span class="cstat-no" title="statement not covered" >function generateSessionId(request: NextRequest): string {</span>
+<span class="cstat-no" title="statement not covered" >  const ip = getClientIP(request)</span>
+<span class="cstat-no" title="statement not covered" >  const userAgent = request.headers.get('user-agent') || ''</span>
+<span class="cstat-no" title="statement not covered" >  const timestamp = Math.floor(Date.now() / (1000 * 60 * 30)) // 30-minute buckets</span>
 <span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  const recentAvg = calculateAverages(recent)</span>
-<span class="cstat-no" title="statement not covered" >  const olderAvg = calculateAverages(older)</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Calculate trends for each metric</span>
-<span class="cstat-no" title="statement not covered" >  const trendThreshold = 0.1 // 10% change threshold</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  Object.keys(recentAvg).forEach(key =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const recentVal = recentAvg[key]</span>
-<span class="cstat-no" title="statement not covered" >    const olderVal = olderAvg[key]</span>
-<span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    if (Math.abs(recentVal - olderVal) &lt; trendThreshold) {</span>
-<span class="cstat-no" title="statement not covered" >      insights.trends[key] = 'stable'</span>
-<span class="cstat-no" title="statement not covered" >    } else if (key === 'score') {</span>
-<span class="cstat-no" title="statement not covered" >      // Higher score is better</span>
-<span class="cstat-no" title="statement not covered" >      insights.trends[key] = recentVal &gt; olderVal ? 'improving' : 'degrading'</span>
-<span class="cstat-no" title="statement not covered" >    } else {</span>
-<span class="cstat-no" title="statement not covered" >      // Lower values are better for other metrics</span>
-<span class="cstat-no" title="statement not covered" >      insights.trends[key] = recentVal &lt; olderVal ? 'improving' : 'degrading'</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >  })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Generate recommendations based on current averages</span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.lcp &gt; 2.5) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.recommendations.push('Optimize Largest Contentful Paint: Consider image optimization, preloading critical resources, or reducing server response times')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.fid &gt; 100) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.recommendations.push('Improve First Input Delay: Reduce JavaScript execution time, break up long tasks, and consider code splitting')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.cls &gt; 0.1) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.recommendations.push('Fix Cumulative Layout Shift: Ensure images and ads have defined dimensions, avoid injecting content above existing content')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.fcp &gt; 1.8) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.recommendations.push('Optimize First Contentful Paint: Eliminate render-blocking resources, optimize fonts, and reduce server response times')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.ttfb &gt; 800) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.recommendations.push('Improve Time to First Byte: Optimize server performance, use CDN, and consider caching strategies')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (recentAvg.score &lt; 70) {</span>
-<span class="cstat-no" title="statement not covered" >    insights.alerts.push('Overall performance is below acceptable levels and requires immediate attention')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Performance degradation alerts</span>
-<span class="cstat-no" title="statement not covered" >  Object.keys(insights.trends).forEach(key =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    if (insights.trends[key] === 'degrading') {</span>
-<span class="cstat-no" title="statement not covered" >      insights.alerts.push(`${key.toUpperCase()} performance is degrading over time`)</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >  })</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  return insights</span>
+<span class="cstat-no" title="statement not covered" >  return Buffer.from(`${ip}-${userAgent}-${timestamp}`).toString('base64').slice(0, 16)</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * Check for performance alerts and notify if needed</span>
-<span class="cstat-no" title="statement not covered" > */</span>
-<span class="cstat-no" title="statement not covered" >async function checkPerformanceAlerts(</span>
-<span class="cstat-no" title="statement not covered" >  supabase: any,</span>
-<span class="cstat-no" title="statement not covered" >  clinicId: string,</span>
-<span class="cstat-no" title="statement not covered" >  metrics: PerformanceMetrics</span>
-<span class="cstat-no" title="statement not covered" >): Promise&lt;void&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  const alerts = []</span>
+<span class="cstat-no" title="statement not covered" >function getClientIP(request: NextRequest): string {</span>
+<span class="cstat-no" title="statement not covered" >  return (</span>
+<span class="cstat-no" title="statement not covered" >    request.headers.get('x-forwarded-for')?.split(',')[0] ||</span>
+<span class="cstat-no" title="statement not covered" >    request.headers.get('x-real-ip') ||</span>
+<span class="cstat-no" title="statement not covered" >    request.ip ||</span>
+<span class="cstat-no" title="statement not covered" >    'unknown'</span>
+<span class="cstat-no" title="statement not covered" >  )</span>
+<span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Check critical thresholds</span>
-<span class="cstat-no" title="statement not covered" >  if (metrics.lcp &gt; 4) {</span>
-<span class="cstat-no" title="statement not covered" >    alerts.push('Critical: Largest Contentful Paint exceeds 4 seconds')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >function calculateGrade(metric: MetricType, value: number): 'good' | 'needs-improvement' | 'poor' {</span>
+<span class="cstat-no" title="statement not covered" >  const thresholds = PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS]</span>
 <span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  if (metrics.fid &gt; 300) {</span>
-<span class="cstat-no" title="statement not covered" >    alerts.push('Critical: First Input Delay exceeds 300ms')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  if (!thresholds) return 'poor'</span>
 <span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  if (metrics.cls &gt; 0.25) {</span>
-<span class="cstat-no" title="statement not covered" >    alerts.push('Critical: Cumulative Layout Shift exceeds 0.25')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  if (metrics.score &lt; 50) {</span>
-<span class="cstat-no" title="statement not covered" >    alerts.push('Critical: Overall performance score is below 50')</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  if (value &lt;= thresholds.warning) return 'good'</span>
+<span class="cstat-no" title="statement not covered" >  if (value &lt;= thresholds.critical) return 'needs-improvement'</span>
+<span class="cstat-no" title="statement not covered" >  return 'poor'</span>
+<span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // If there are critical alerts, log them</span>
-<span class="cstat-no" title="statement not covered" >  // In a production app, you might want to send notifications or emails</span>
-<span class="cstat-no" title="statement not covered" >  if (alerts.length &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >    console.warn('Performance alerts for clinic', clinicId, ':', alerts)</span>
+<span class="cstat-no" title="statement not covered" >function parseTimeRange(timeRange: string): number {</span>
+<span class="cstat-no" title="statement not covered" >  const ranges: Record&lt;string, number&gt; = {</span>
+<span class="cstat-no" title="statement not covered" >    '1h': 60 * 60 * 1000,</span>
+<span class="cstat-no" title="statement not covered" >    '24h': 24 * 60 * 60 * 1000,</span>
+<span class="cstat-no" title="statement not covered" >    '7d': 7 * 24 * 60 * 60 * 1000,</span>
+<span class="cstat-no" title="statement not covered" >    '30d': 30 * 24 * 60 * 60 * 1000,</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  return ranges[timeRange] || 0</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >function calculateAggregatedStats(metrics: any[]) {</span>
+<span class="cstat-no" title="statement not covered" >  if (metrics.length === 0) return {}</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  const statsByMetric: Record&lt;string, any&gt; = {}</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  for (const metric of metrics) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!statsByMetric[metric.name]) {</span>
+<span class="cstat-no" title="statement not covered" >      statsByMetric[metric.name] = {</span>
+<span class="cstat-no" title="statement not covered" >        count: 0,</span>
+<span class="cstat-no" title="statement not covered" >        values: [],</span>
+<span class="cstat-no" title="statement not covered" >        grades: { good: 0, 'needs-improvement': 0, poor: 0 }</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Optional: Store alerts in database for dashboard display</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      await supabase.from('performance_alerts').insert([{</span>
-<span class="cstat-no" title="statement not covered" >        clinic_id: clinicId,</span>
-<span class="cstat-no" title="statement not covered" >        alerts,</span>
-<span class="cstat-no" title="statement not covered" >        metrics_snapshot: metrics,</span>
-<span class="cstat-no" title="statement not covered" >        created_at: new Date().toISOString()</span>
-<span class="cstat-no" title="statement not covered" >      }])</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >      console.error('Failed to save performance alerts:', error)</span>
+<span class="cstat-no" title="statement not covered" >    statsByMetric[metric.name].count++</span>
+<span class="cstat-no" title="statement not covered" >    statsByMetric[metric.name].values.push(metric.value)</span>
+<span class="cstat-no" title="statement not covered" >    statsByMetric[metric.name].grades[metric.grade]++</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  // Calculate percentiles and averages</span>
+<span class="cstat-no" title="statement not covered" >  for (const [metricName, stats] of Object.entries(statsByMetric)) {</span>
+<span class="cstat-no" title="statement not covered" >    const values = stats.values.sort((a: number, b: number) =&gt; a - b)</span>
+<span class="cstat-no" title="statement not covered" >    const count = values.length</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    statsByMetric[metricName] = {</span>
+<span class="cstat-no" title="statement not covered" >      ...stats,</span>
+<span class="cstat-no" title="statement not covered" >      min: values[0],</span>
+<span class="cstat-no" title="statement not covered" >      max: values[count - 1],</span>
+<span class="cstat-no" title="statement not covered" >      average: values.reduce((sum: number, val: number) =&gt; sum + val, 0) / count,</span>
+<span class="cstat-no" title="statement not covered" >      median: values[Math.floor(count / 2)],</span>
+<span class="cstat-no" title="statement not covered" >      p75: values[Math.floor(count * 0.75)],</span>
+<span class="cstat-no" title="statement not covered" >      p95: values[Math.floor(count * 0.95)],</span>
+<span class="cstat-no" title="statement not covered" >      p99: values[Math.floor(count * 0.99)],</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    delete statsByMetric[metricName].values // Remove raw values to reduce response size</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  return statsByMetric</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >async function checkPerformanceAlerts(metrics: any[], supabase: any) {</span>
+<span class="cstat-no" title="statement not covered" >  for (const metric of metrics) {</span>
+<span class="cstat-no" title="statement not covered" >    const threshold = PERFORMANCE_ALERTS[metric.name as keyof typeof PERFORMANCE_ALERTS]</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (threshold &amp;&amp; metric.grade === 'poor') {</span>
+<span class="cstat-no" title="statement not covered" >      // Log critical performance issue</span>
+<span class="cstat-no" title="statement not covered" >      console.warn(`🚨 Critical performance issue: ${metric.name} = ${metric.value}ms (threshold: ${threshold.critical}ms)`)</span>
+<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" >      // Store alert (you could extend this to send notifications)</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        await supabase</span>
+<span class="cstat-no" title="statement not covered" >          .from('performance_alerts')</span>
+<span class="cstat-no" title="statement not covered" >          .insert({</span>
+<span class="cstat-no" title="statement not covered" >            metric_name: metric.name,</span>
+<span class="cstat-no" title="statement not covered" >            metric_value: metric.value,</span>
+<span class="cstat-no" title="statement not covered" >            threshold: threshold.critical,</span>
+<span class="cstat-no" title="statement not covered" >            user_id: metric.userId,</span>
+<span class="cstat-no" title="statement not covered" >            url: metric.url,</span>
+<span class="cstat-no" title="statement not covered" >            severity: 'critical',</span>
+<span class="cstat-no" title="statement not covered" >            timestamp: metric.timestamp,</span>
+<span class="cstat-no" title="statement not covered" >          })</span>
+<span class="cstat-no" title="statement not covered" >      } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >        console.error('Failed to store performance alert:', error)</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
@@ -1084,7 +1039,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-23T19:06:30.815Z
+                at 2025-07-24T17:38:00.534Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

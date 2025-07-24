@@ -96,3 +96,68 @@ export class DatabaseOptimizer {
     
     return suggestions;
   }
+
+  /**
+   * Generate performance report
+   */
+  generateReport(): DatabasePerformanceReport {
+    const slowQueries = this.queryMetrics.filter(m => m.executionTime > this.slowQueryThreshold);
+    const totalQueries = this.queryMetrics.length;
+    const cachedQueries = this.queryMetrics.filter(m => m.cached).length;
+    
+    const averageResponseTime = totalQueries > 0 
+      ? this.queryMetrics.reduce((sum, m) => sum + m.executionTime, 0) / totalQueries
+      : 0;
+    
+    const cacheHitRate = totalQueries > 0 ? (cachedQueries / totalQueries) * 100 : 0;
+    
+    return {
+      slowQueries,
+      averageResponseTime,
+      cacheHitRate,
+      indexUtilization: this.calculateIndexUtilization(),
+      optimizationSuggestions: this.getOptimizationSuggestions(),
+      performanceScore: this.calculatePerformanceScore()
+    };
+  }
+
+  /**
+   * Clean old metrics (keep last 1000)
+   */
+  private cleanOldMetrics(): void {
+    if (this.queryMetrics.length > 1000) {
+      this.queryMetrics = this.queryMetrics.slice(-1000);
+    }
+  }
+
+  /**
+   * Calculate index utilization
+   */
+  private calculateIndexUtilization(): number {
+    // Simplified calculation - in real implementation would analyze query plans
+    const indexedQueries = this.queryMetrics.filter(m => 
+      m.query.includes('WHERE') || m.query.includes('ORDER BY')
+    ).length;
+    
+    return this.queryMetrics.length > 0 
+      ? (indexedQueries / this.queryMetrics.length) * 100 
+      : 0;
+  }
+
+  /**
+   * Calculate overall performance score
+   */
+  private calculatePerformanceScore(): number {
+    const slowQueryRatio = this.queryMetrics.length > 0 
+      ? this.queryMetrics.filter(m => m.executionTime > this.slowQueryThreshold).length / this.queryMetrics.length
+      : 0;
+    
+    const cacheHitRate = this.queryMetrics.length > 0 
+      ? this.queryMetrics.filter(m => m.cached).length / this.queryMetrics.length
+      : 0;
+    
+    // Score based on slow query ratio and cache hit rate
+    const score = Math.max(0, 100 - (slowQueryRatio * 50) + (cacheHitRate * 20));
+    return Math.min(100, score);
+  }
+}

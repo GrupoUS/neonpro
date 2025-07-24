@@ -1,9 +1,33 @@
 /**
- * Jest Setup for API Routes and Next.js Environment
- * Configures global polyfills, mocks, and test environment for Next.js 15 + TypeScript
+ * Jest Setup for API Testing
+ * Configures all necessary mocks for testing API routes and authentication flows
  */
 
-// Polyfill for Next.js API routes testing
+import React from 'react';
+
+// Setup testing environment
+import '@testing-library/jest-dom';
+
+// Polyfills for Node.js testing environment
+try {
+  const { TextEncoder, TextDecoder } = require('util');
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+} catch {
+  // Fallback if util polyfills not available
+  global.TextEncoder = class TextEncoder {
+    encode(input: string) {
+      return new Uint8Array(Buffer.from(input, 'utf8'));
+    }
+  };
+  global.TextDecoder = class TextDecoder {
+    decode(input: Uint8Array) {
+      return Buffer.from(input).toString('utf8');
+    }
+  };
+}
+
+// Setup HTTP polyfills
 try {
   const { Request, Response, Headers } = require('undici');
   global.Request = Request;
@@ -73,10 +97,10 @@ process.env.NODE_ENV = 'test';
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
-process.env.STRIPE_SECRET_KEY = 'sk_test_123';
+process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key_for_testing_only';
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_123';
 
-// Mock Supabase client
+// Mock Supabase client (legacy client)
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     from: jest.fn(() => ({
@@ -98,6 +122,10 @@ jest.mock('@supabase/supabase-js', () => ({
       signInWithPassword: jest.fn(),
       signUp: jest.fn(),
       signOut: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: {} },
+        unsubscribe: jest.fn(),
+      })),
     },
     storage: {
       from: jest.fn(() => ({
@@ -108,6 +136,193 @@ jest.mock('@supabase/supabase-js', () => ({
     },
   })),
 }));
+
+// Enhanced Mock for @supabase/ssr with complete query builder chain support
+jest.mock('@supabase/ssr', () => ({
+  createServerClient: jest.fn(() => {
+    // Create a comprehensive query builder mock
+    const createQueryBuilder = (table?: string) => {
+      const queryBuilder = {
+        // Query methods
+        select: jest.fn().mockReturnThis(),
+        insert: jest.fn().mockReturnThis(),
+        update: jest.fn().mockReturnThis(),
+        delete: jest.fn().mockReturnThis(),
+        upsert: jest.fn().mockReturnThis(),
+        
+        // Filter methods
+        eq: jest.fn().mockReturnThis(),
+        neq: jest.fn().mockReturnThis(),
+        gt: jest.fn().mockReturnThis(),
+        gte: jest.fn().mockReturnThis(),
+        lt: jest.fn().mockReturnThis(),
+        lte: jest.fn().mockReturnThis(),
+        like: jest.fn().mockReturnThis(),
+        ilike: jest.fn().mockReturnThis(),
+        is: jest.fn().mockReturnThis(),
+        in: jest.fn().mockReturnThis(),
+        contains: jest.fn().mockReturnThis(),
+        containedBy: jest.fn().mockReturnThis(),
+        rangeGt: jest.fn().mockReturnThis(),
+        rangeGte: jest.fn().mockReturnThis(),
+        rangeLt: jest.fn().mockReturnThis(),
+        rangeLte: jest.fn().mockReturnThis(),
+        rangeAdjacent: jest.fn().mockReturnThis(),
+        overlaps: jest.fn().mockReturnThis(),
+        textSearch: jest.fn().mockReturnThis(),
+        match: jest.fn().mockReturnThis(),
+        not: jest.fn().mockReturnThis(),
+        or: jest.fn().mockReturnThis(),
+        filter: jest.fn().mockReturnThis(),
+        
+        // Transform methods
+        order: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        range: jest.fn().mockReturnThis(),
+        single: jest.fn().mockReturnThis(),
+        maybeSingle: jest.fn().mockReturnThis(),
+        csv: jest.fn().mockReturnThis(),
+        explain: jest.fn().mockReturnThis(),
+        raw: jest.fn().mockReturnThis(),
+        
+        // Promise interface
+        then: jest.fn((resolve) => {
+          const mockData = table === 'user_sessions' 
+            ? [{ id: 'session-1', user_id: 'mock-user-id', active: true, created_at: new Date().toISOString() }]
+            : table === 'security_alerts'
+            ? [{ id: 'alert-1', type: 'failed_login', severity: 'medium', created_at: new Date().toISOString() }]
+            : table === 'compliance_violations'
+            ? [{ id: 'violation-1', type: 'data_access', status: 'resolved', created_at: new Date().toISOString() }]
+            : [{ id: 'mock-id', created_at: new Date().toISOString() }];
+          
+          return resolve({ data: mockData, error: null });
+        }),
+        catch: jest.fn().mockReturnThis(),
+      };
+      
+      return queryBuilder;
+    };
+
+    return {
+      auth: {
+        getUser: jest.fn(async () => ({
+          data: { user: { id: 'mock-user-id', email: 'test@example.com' } },
+          error: null,
+        })),
+        getSession: jest.fn(async () => ({
+          data: { session: { access_token: 'mock-token', refresh_token: 'mock-refresh' } },
+          error: null,
+        })),
+        signOut: jest.fn(async () => ({ error: null })),
+        onAuthStateChange: jest.fn((callback) => {
+          setTimeout(() => {
+            callback('SIGNED_IN', { 
+              access_token: 'mock-token', 
+              refresh_token: 'mock-refresh',
+              user: { id: 'mock-user-id', email: 'test@example.com' }
+            });
+          }, 0);
+          return { data: { subscription: { unsubscribe: jest.fn() } } };
+        }),
+        signInWithPassword: jest.fn(async () => ({
+          data: { user: { id: 'mock-user-id' }, session: { access_token: 'mock-token' } },
+          error: null,
+        })),
+        signUp: jest.fn(async () => ({
+          data: { user: { id: 'mock-user-id' }, session: null },
+          error: null,
+        })),
+        resetPasswordForEmail: jest.fn(async () => ({ error: null })),
+        updateUser: jest.fn(async () => ({
+          data: { user: { id: 'mock-user-id' } },
+          error: null,
+        })),
+      },
+      from: jest.fn((table: string) => createQueryBuilder(table)),
+      rpc: jest.fn(async () => ({ data: null, error: null })),
+      storage: {
+        from: jest.fn(() => ({
+          upload: jest.fn(async () => ({ data: null, error: null })),
+          download: jest.fn(async () => ({ data: null, error: null })),
+          list: jest.fn(async () => ({ data: [], error: null })),
+          remove: jest.fn(async () => ({ data: null, error: null })),
+        })),
+      },
+    };
+  }),
+  createBrowserClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn(async () => ({
+        data: { user: { id: 'mock-user-id', email: 'test@example.com' } },
+        error: null,
+      })),
+      getSession: jest.fn(async () => ({
+        data: { session: { access_token: 'mock-token', refresh_token: 'mock-refresh' } },
+        error: null,
+      })),
+      signOut: jest.fn(async () => ({ error: null })),
+      onAuthStateChange: jest.fn((callback) => {
+        setTimeout(() => {
+          callback('SIGNED_IN', { 
+            access_token: 'mock-token', 
+            refresh_token: 'mock-refresh',
+            user: { id: 'mock-user-id', email: 'test@example.com' }
+          });
+        }, 0);
+        return { data: { subscription: { unsubscribe: jest.fn() } } };
+      }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      then: jest.fn(async (resolve) => resolve({ data: [], error: null })),
+    })),
+  })),
+}));
+
+// Mock PerformanceTracker as a named export
+jest.mock('@/lib/auth/performance-tracker', () => ({
+  PerformanceTracker: {
+    recordMetric: jest.fn(),
+    getMetrics: jest.fn(() => ({})),
+    reset: jest.fn(),
+    getInstance: jest.fn(() => ({
+      recordMetric: jest.fn(),
+      getMetrics: jest.fn(() => ({})),
+      reset: jest.fn(),
+    })),
+  },
+}));
+
+// Mock createServerClient as global function for direct imports
+global.createServerClient = jest.fn(() => {
+  const createQueryBuilder = () => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    in: jest.fn().mockReturnThis(),
+    raw: jest.fn().mockReturnThis(),
+    then: jest.fn(async (resolve) => resolve({ data: [], error: null })),
+  });
+
+  return {
+    auth: {
+      getUser: jest.fn(async () => ({
+        data: { user: { id: 'mock-user-id' } },
+        error: null,
+      })),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
+    },
+    from: jest.fn(() => createQueryBuilder()),
+  };
+});
 
 // Mock Stripe
 jest.mock('stripe', () => {
@@ -268,6 +483,7 @@ afterAll(() => {
 // Global test utilities
 declare global {
   var __TEST_ENV__: boolean;
+  var createServerClient: any;
 }
 
 global.__TEST_ENV__ = true;

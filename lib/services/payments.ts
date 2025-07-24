@@ -282,11 +282,6 @@ export class PaymentsService {
       throw new Error('Falha ao deletar pagamento')
     }
   }
-    } catch (error) {
-      console.error('Error deleting payment:', error)
-      throw new Error('Falha ao deletar pagamento')
-    }
-  }
 
   async getPaymentSummary(dateFrom?: string, dateTo?: string): Promise<PaymentSummary> {
     try {

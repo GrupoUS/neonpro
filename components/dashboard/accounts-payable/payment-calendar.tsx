@@ -132,8 +132,13 @@ interface PaymentCalendarProps {
 export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
   const [payments, setPayments] = useState<PaymentCalendarItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  // Initialize currentDate on client side only
+  useEffect(() => {
+    setCurrentDate(new Date());
+  }, []);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
 
@@ -191,14 +196,15 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
   }, [filteredPayments]);
 
   // Dias do mês atual
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const monthStart = currentDate ? startOfMonth(currentDate) : null;
+  const monthEnd = currentDate ? endOfMonth(currentDate) : null;
+  const calendarDays = monthStart && monthEnd ? eachDayOfInterval({ start: monthStart, end: monthEnd }) : [];
 
   const navigateMonth = (direction: "prev" | "next") => {
-    setCurrentDate((prev) =>
-      direction === "prev" ? subMonths(prev, 1) : addMonths(prev, 1)
-    );
+    setCurrentDate((prev) => {
+      if (!prev) return new Date();
+      return direction === "prev" ? subMonths(prev, 1) : addMonths(prev, 1);
+    });
     setSelectedDate(null);
   };
 
@@ -295,7 +301,7 @@ export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {
     }
   };
 
-  if (loading) {
+  if (loading || !currentDate) {
     return (
       <div className="space-y-4">
         <div className="animate-pulse">

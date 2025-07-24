@@ -4,6 +4,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Bot,
   Calendar,
   CreditCard,
   FileText,
@@ -184,6 +185,11 @@ const navigationData = {
           url: "/dashboard/records/templates",
         },
       ],
+    },
+    {
+      title: "Assistente Virtual",
+      url: "/dashboard/assistant",
+      icon: Bot,
     },
     {
       title: "Relatórios",

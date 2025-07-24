@@ -54,7 +54,9 @@ describe('Subscription API Routes', () => {
       expect(data).toHaveProperty('id')
       expect(data).toHaveProperty('status')
       expect(data).toHaveProperty('tier')
-    })    it('should return 401 for unauthenticated requests', async () => {
+    })
+
+    it('should return 401 for unauthenticated requests', async () => {
       const { req, res } = createMocks({
         method: 'GET',
         headers: {},
@@ -113,7 +115,9 @@ describe('Subscription API Routes', () => {
       expect(res._getStatusCode()).toBe(201)
       const data = JSON.parse(res._getData())
       expect(data).toEqual({ success: true })
-    })    it('should validate required fields', async () => {
+    })
+
+    it('should validate required fields', async () => {
       const { req, res } = createMocks({
         method: 'POST',
         body: {

@@ -30,9 +30,14 @@ export function CalendarView({
   className,
 }: CalendarViewProps) {
   // State management
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [view, setView] = useState<CalendarView>("week");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize current date on client side only
+  useEffect(() => {
+    setCurrentDate(new Date());
+  }, []);
 
   // Handle real-time updates via Supabase
   useEffect(() => {
@@ -81,7 +86,7 @@ export function CalendarView({
           break;
         case 'n':
           if (onCreateAppointment) {
-            onCreateAppointment(currentDate);
+            onCreateAppointment(currentDate || undefined);
           }
           break;
         case 'r':
@@ -99,41 +104,45 @@ export function CalendarView({
 
   // Navigation handlers
   const handlePreviousNavigation = useCallback(() => {
+    if (!currentDate) return;
     const today = new Date();
     switch (view) {
       case 'day':
-        setCurrentDate(prev => new Date(prev.getTime() - 24 * 60 * 60 * 1000));
+        setCurrentDate(prev => prev ? new Date(prev.getTime() - 24 * 60 * 60 * 1000) : new Date());
         break;
       case 'week':
-        setCurrentDate(prev => new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000));
+        setCurrentDate(prev => prev ? new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000) : new Date());
         break;
       case 'month':
         setCurrentDate(prev => {
+          if (!prev) return new Date();
           const newDate = new Date(prev);
           newDate.setMonth(prev.getMonth() - 1);
           return newDate;
         });
         break;
     }
-  }, [view]);
+  }, [view, currentDate]);
 
   const handleNextNavigation = useCallback(() => {
+    if (!currentDate) return;
     switch (view) {
       case 'day':
-        setCurrentDate(prev => new Date(prev.getTime() + 24 * 60 * 60 * 1000));
+        setCurrentDate(prev => prev ? new Date(prev.getTime() + 24 * 60 * 60 * 1000) : new Date());
         break;
       case 'week':
-        setCurrentDate(prev => new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000));
+        setCurrentDate(prev => prev ? new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000) : new Date());
         break;
       case 'month':
         setCurrentDate(prev => {
+          if (!prev) return new Date();
           const newDate = new Date(prev);
           newDate.setMonth(prev.getMonth() + 1);
           return newDate;
         });
         break;
     }
-  }, [view]);
+  }, [view, currentDate]);
 
   const handleToday = useCallback(() => {
     setCurrentDate(new Date());
@@ -199,7 +208,7 @@ export function CalendarView({
   // Handle time slot clicks
   const handleTimeSlotClick = useCallback((time: string) => {
     if (onCreateAppointment) {
-      onCreateAppointment(currentDate, time);
+      onCreateAppointment(currentDate || undefined, time);
     }
   }, [currentDate, onCreateAppointment]);
 
@@ -254,6 +263,17 @@ export function CalendarView({
         return null;
     }
   };
+
+  // Don't render until currentDate is initialized
+  if (!currentDate) {
+    return (
+      <div className={`flex flex-col h-full ${className || ''}`}>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex flex-col h-full ${className || ''}`}>

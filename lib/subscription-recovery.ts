@@ -45,7 +45,9 @@ interface RecoveryConfig {
   enableUserNotification: boolean
   circuitBreakerEnabled: boolean
   timeoutMs: number
-}const defaultRecoveryConfig: RecoveryConfig = {
+}
+
+const defaultRecoveryConfig: RecoveryConfig = {
   maxRetryAttempts: 3,
   baseRetryDelay: 1000, // 1 second
   maxRetryDelay: 30000, // 30 seconds
@@ -90,3 +92,131 @@ export class SubscriptionRecoveryManager {
         return this.executeDefaultStrategy(operation, error, context, startTime)
     }
   }
+
+  private async executeRetryStrategy<T>(
+    operation: () => Promise<T>,
+    error: SubscriptionError,
+    context: ErrorContext,
+    startTime: number
+  ): Promise<RecoveryResult<T>> {
+    let attempts = 0
+    let lastError = error
+
+    while (attempts < this.config.maxRetryAttempts) {
+      attempts++
+      
+      try {
+        const data = await operation()
+        return {
+          success: true,
+          data,
+          strategy: 'retry',
+          attempts,
+          duration: Date.now() - startTime,
+          fallbackUsed: false,
+          metadata: { retryAttempts: attempts }
+        }
+      } catch (err) {
+        lastError = err as SubscriptionError
+        
+        if (attempts < this.config.maxRetryAttempts) {
+          const delay = this.calculateRetryDelay(attempts)
+          await this.sleep(delay)
+        }
+      }
+    }
+
+    return {
+      success: false,
+      strategy: 'retry',
+      attempts,
+      duration: Date.now() - startTime,
+      fallbackUsed: false,
+      error: lastError,
+      metadata: { maxAttemptsReached: true }
+    }
+  }
+
+  private async executeFallbackStrategy<T>(
+    operation: () => Promise<T>,
+    error: SubscriptionError,
+    context: ErrorContext,
+    startTime: number
+  ): Promise<RecoveryResult<T>> {
+    // Implement fallback strategy
+    return {
+      success: false,
+      strategy: 'fallback',
+      attempts: 1,
+      duration: Date.now() - startTime,
+      fallbackUsed: true,
+      error,
+      metadata: {}
+    }
+  }
+
+  private async executeGracefulDegradationStrategy<T>(
+    operation: () => Promise<T>,
+    error: SubscriptionError,
+    context: ErrorContext,
+    startTime: number
+  ): Promise<RecoveryResult<T>> {
+    // Implement graceful degradation
+    return {
+      success: false,
+      strategy: 'graceful_degrade',
+      attempts: 1,
+      duration: Date.now() - startTime,
+      fallbackUsed: true,
+      error,
+      metadata: {}
+    }
+  }
+
+  private async executeCircuitBreakerStrategy<T>(
+    operation: () => Promise<T>,
+    error: SubscriptionError,
+    context: ErrorContext,
+    startTime: number
+  ): Promise<RecoveryResult<T>> {
+    // Implement circuit breaker strategy
+    return {
+      success: false,
+      strategy: 'circuit_break',
+      attempts: 1,
+      duration: Date.now() - startTime,
+      fallbackUsed: false,
+      error,
+      metadata: {}
+    }
+  }
+
+  private async executeDefaultStrategy<T>(
+    operation: () => Promise<T>,
+    error: SubscriptionError,
+    context: ErrorContext,
+    startTime: number
+  ): Promise<RecoveryResult<T>> {
+    // Default strategy - simple retry
+    return this.executeRetryStrategy(operation, error, context, startTime)
+  }
+
+  private calculateRetryDelay(attempt: number): number {
+    if (!this.config.exponentialBackoff) {
+      return this.config.baseRetryDelay
+    }
+
+    let delay = this.config.baseRetryDelay * Math.pow(2, attempt - 1)
+    delay = Math.min(delay, this.config.maxRetryDelay)
+
+    if (this.config.jitterEnabled) {
+      delay += Math.random() * 1000
+    }
+
+    return delay
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+}

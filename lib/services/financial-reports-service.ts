@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/app/utils/supabase/client";
 
 // Tipos para relatórios financeiros
 export interface AgingReportItem {

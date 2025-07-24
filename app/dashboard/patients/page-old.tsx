@@ -60,40 +60,6 @@ export default async function PatientsPage() {
     </DashboardLayout>
   );
 }
-  const patients = [
-    {
-      id: 1,
-      name: "João Silva",
-      email: "joao.silva@email.com",
-      phone: "(11) 99999-9999",
-      lastVisit: "2024-01-15",
-      status: "Ativo",
-      age: 45,
-    },
-    {
-      id: 2,
-      name: "Maria Santos",
-      email: "maria.santos@email.com", 
-      phone: "(11) 88888-8888",
-      lastVisit: "2024-01-10",
-      status: "Ativo",
-      age: 32,
-    },
-    {
-      id: 3,
-      name: "Pedro Costa",
-      email: "pedro.costa@email.com",
-      phone: "(11) 77777-7777",
-      lastVisit: "2023-12-20",
-      status: "Inativo",
-      age: 58,
-    },
-  ];
-
-  const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pacientes" },
-  ];
 
   return (
     <DashboardLayout user={user} breadcrumbs={breadcrumbs}>

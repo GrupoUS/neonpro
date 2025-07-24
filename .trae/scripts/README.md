@@ -422,7 +422,7 @@ node .trae/scripts/vibecode-runner.js --help
 ✅ **AI Safety Framework**: Security-first approach  
 ✅ **Performance Research Workflow**: Comprehensive optimization  
 
-**🚨 ABSOLUTE COMPLIANCE**: All scripts strictly follow `C:\Users\Mauri\.trae\user_rules.md` protocols with zero tolerance for deviations.
+**🚨 ABSOLUTE COMPLIANCE**: All scripts strictly follow `C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.trae\user_rules.md` protocols with zero tolerance for deviations.
 
 ---
 

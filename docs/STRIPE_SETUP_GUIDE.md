@@ -132,9 +132,9 @@ Após criar produtos e webhooks, atualize seu `.env.local`:
 
 ```env
 # Stripe Configuration
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_sua_publishable_key
-STRIPE_SECRET_KEY=sk_test_sua_secret_key
-STRIPE_WEBHOOK_SECRET=whsec_seu_webhook_secret
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_sua_publishable_key_aqui
+STRIPE_SECRET_KEY=sk_test_sua_secret_key_aqui
+STRIPE_WEBHOOK_SECRET=whsec_seu_webhook_secret_aqui
 
 # IDs dos Preços (IMPORTANTE: use os IDs reais gerados)
 STRIPE_STARTER_PRICE_ID=price_1A2B3C...

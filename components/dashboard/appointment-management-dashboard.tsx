@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -47,9 +47,15 @@ export function AppointmentManagementDashboard({
   professionalId,
   className = ''
 }: AppointmentManagementDashboardProps) {
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [currentDate, setCurrentDate] = useState<Date | null>(null)
   const [selectedView, setSelectedView] = useState<'list' | 'calendar'>('list')
   const [refreshing, setRefreshing] = useState(false)
+
+  // Initialize current date on client side only
+  useEffect(() => {
+
+    setCurrentDate(new Date())
+  }, [])
   
   // Modal states
   const [editDialogOpen, setEditDialogOpen] = useState(false)

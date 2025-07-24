@@ -210,7 +210,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ alert, onAcknowledge, acknowledgi
             </Badge>
           </div>
           <div className="text-xs text-muted-foreground">
-            {formatDate(alert.createdAt)}
+            {alert.createdAt ? formatDate(alert.createdAt) : '-'}
           </div>
         </div>
         <CardTitle className="text-base">
@@ -280,7 +280,7 @@ const StockAlertsDashboard: React.FC = () => {
     acknowledging: {}
   });
   const [error, setError] = useState<string | null>(null);
-  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   // =====================================================
   // DATA FETCHING FUNCTIONS
@@ -584,7 +584,7 @@ const StockAlertsDashboard: React.FC = () => {
       </Tabs>
 
       <div className="text-xs text-muted-foreground text-center">
-        Última atualização: {formatDate(lastRefresh)}
+        Última atualização: {lastRefresh ? formatDate(lastRefresh) : '-'}
       </div>
     </div>
   );

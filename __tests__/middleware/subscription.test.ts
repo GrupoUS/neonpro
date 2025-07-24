@@ -113,7 +113,9 @@ describe('Subscription Middleware', () => {
       premiumRoutes.forEach(route => {
         expect(route).toMatch(/^\/[a-z]+$/)
       })
-    })    it('should redirect expired users to upgrade page', async () => {
+    })
+
+    it('should redirect expired users to upgrade page', async () => {
       const expiredSubscription = createMockSubscription({
         status: 'expired',
         tier: 'premium',

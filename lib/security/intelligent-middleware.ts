@@ -113,7 +113,36 @@ export class IntelligentRateLimit {
         remaining: limits.requests - 1,
         resetTime: now + limits.windowMs,
       };
-    }/**
+    }
+
+    // Increment count
+    entry.count++;
+    
+    // Check if limit exceeded
+    if (entry.count > limits.requests) {
+      entry.blocked = true;
+      entry.blockUntil = now + (limits.blockDurationMs || 60000); // Default 1 minute block
+      rateLimitCache.set(key, entry);
+      
+      return {
+        allowed: false,
+        remaining: 0,
+        resetTime: entry.blockUntil,
+        reason: "Rate limit exceeded",
+      };
+    }
+    
+    rateLimitCache.set(key, entry);
+    
+    return {
+      allowed: true,
+      remaining: limits.requests - entry.count,
+      resetTime: entry.firstRequest + limits.windowMs,
+    };
+  }
+}
+
+/**
  * 🔍 Threat Detection System
  */
 export class ThreatDetection {

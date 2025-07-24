@@ -25,7 +25,9 @@ interface WeekViewProps {
   onAppointmentComplete?: (appointment: AppointmentWithRelations) => void;
   onTimeSlotClick?: (date: Date, time: string) => void;
   className?: string;
-}export function WeekView({
+}
+
+export function WeekView({
   date,
   appointments,
   onAppointmentClick,
@@ -199,15 +201,23 @@ interface WeekViewProps {
 
 // Current time indicator for week view
 function WeekCurrentTimeIndicator({ weekStart }: { weekStart: Date }) {
-  const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [currentTime, setCurrentTime] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
+    // Set initial time on client side only
+    setCurrentTime(new Date());
+    
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
 
     return () => clearInterval(interval);
   }, []);
+
+  // Don't render during SSR or before client hydration
+  if (!currentTime) {
+    return null;
+  }
 
   // Check if current time is within the week
   const weekEnd = endOfWeek(weekStart, { weekStartsOn: 0 });

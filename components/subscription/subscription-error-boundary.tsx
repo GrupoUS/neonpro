@@ -156,7 +156,9 @@ export class SubscriptionErrorBoundary extends Component<
 
   private handleRefresh = (): void => {
     window.location.reload()
-  }  render(): ReactNode {
+  }
+
+  render(): ReactNode {
     if (this.state.hasError) {
       // Show custom fallback if provided
       if (this.props.fallback) {

@@ -55,7 +55,8 @@ describe('Subscription System Performance', () => {
       const totalTime = endTime - startTime
       
       expect(results).toHaveLength(100)
-      expect(totalTime).toBeLessThan(1000) // Should complete within 1 second    })
+      expect(totalTime).toBeLessThan(1000) // Should complete within 1 second
+    })
   })
 
   // ============================================================================

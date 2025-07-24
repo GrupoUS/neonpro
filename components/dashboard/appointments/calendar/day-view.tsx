@@ -176,15 +176,23 @@ export function DayView({
 
 // Component to show current time indicator
 function CurrentTimeIndicator({ date }: { date: Date }) {
-  const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [currentTime, setCurrentTime] = React.useState<Date | null>(null);
 
   React.useEffect(() => {
+    // Set initial time only on client side to avoid hydration mismatch
+    setCurrentTime(new Date());
+    
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
 
     return () => clearInterval(interval);
   }, []);
+
+  // Don't render anything during SSR or before client hydration
+  if (!currentTime) {
+    return null;
+  }
 
   // Only show if viewing today
   if (!isSameDay(date, currentTime)) {

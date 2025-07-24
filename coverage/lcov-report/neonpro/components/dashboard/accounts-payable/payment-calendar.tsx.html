@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/562</span>
+                <span class='fraction'>0/568</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/562</span>
+                <span class='fraction'>0/568</span>
             </div>
         
             
@@ -625,7 +625,19 @@
 <a name='L560'></a><a href='#L560'>560</a>
 <a name='L561'></a><a href='#L561'>561</a>
 <a name='L562'></a><a href='#L562'>562</a>
-<a name='L563'></a><a href='#L563'>563</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L563'></a><a href='#L563'>563</a>
+<a name='L564'></a><a href='#L564'>564</a>
+<a name='L565'></a><a href='#L565'>565</a>
+<a name='L566'></a><a href='#L566'>566</a>
+<a name='L567'></a><a href='#L567'>567</a>
+<a name='L568'></a><a href='#L568'>568</a>
+<a name='L569'></a><a href='#L569'>569</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1321,8 +1333,13 @@
 <span class="cstat-no" title="statement not covered" >export function PaymentCalendar({ clinicId }: PaymentCalendarProps) {</span>
 <span class="cstat-no" title="statement not covered" >  const [payments, setPayments] = useState&lt;PaymentCalendarItem[]&gt;([]);</span>
 <span class="cstat-no" title="statement not covered" >  const [loading, setLoading] = useState(true);</span>
-<span class="cstat-no" title="statement not covered" >  const [currentDate, setCurrentDate] = useState(new Date());</span>
+<span class="cstat-no" title="statement not covered" >  const [currentDate, setCurrentDate] = useState&lt;Date | null&gt;(null);</span>
 <span class="cstat-no" title="statement not covered" >  const [selectedDate, setSelectedDate] = useState&lt;Date | null&gt;(null);</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  // Initialize currentDate on client side only</span>
+<span class="cstat-no" title="statement not covered" >  useEffect(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    setCurrentDate(new Date());</span>
+<span class="cstat-no" title="statement not covered" >  }, []);</span>
 <span class="cstat-no" title="statement not covered" >  const [statusFilter, setStatusFilter] = useState&lt;string&gt;("all");</span>
 <span class="cstat-no" title="statement not covered" >  const [priorityFilter, setPriorityFilter] = useState&lt;string&gt;("all");</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1380,14 +1397,15 @@
 <span class="cstat-no" title="statement not covered" >  }, [filteredPayments]);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  // Dias do mês atual</span>
-<span class="cstat-no" title="statement not covered" >  const monthStart = startOfMonth(currentDate);</span>
-<span class="cstat-no" title="statement not covered" >  const monthEnd = endOfMonth(currentDate);</span>
-<span class="cstat-no" title="statement not covered" >  const calendarDays = eachDayOfInterval({ start: monthStart, end: monthEnd });</span>
+<span class="cstat-no" title="statement not covered" >  const monthStart = currentDate ? startOfMonth(currentDate) : null;</span>
+<span class="cstat-no" title="statement not covered" >  const monthEnd = currentDate ? endOfMonth(currentDate) : null;</span>
+<span class="cstat-no" title="statement not covered" >  const calendarDays = monthStart &amp;&amp; monthEnd ? eachDayOfInterval({ start: monthStart, end: monthEnd }) : [];</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const navigateMonth = (direction: "prev" | "next") =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setCurrentDate((prev) =&gt;</span>
-<span class="cstat-no" title="statement not covered" >      direction === "prev" ? subMonths(prev, 1) : addMonths(prev, 1)</span>
-<span class="cstat-no" title="statement not covered" >    );</span>
+<span class="cstat-no" title="statement not covered" >    setCurrentDate((prev) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (!prev) return new Date();</span>
+<span class="cstat-no" title="statement not covered" >      return direction === "prev" ? subMonths(prev, 1) : addMonths(prev, 1);</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" >    setSelectedDate(null);</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1484,7 +1502,7 @@
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  if (loading) {</span>
+<span class="cstat-no" title="statement not covered" >  if (loading || !currentDate) {</span>
 <span class="cstat-no" title="statement not covered" >    return (</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className="space-y-4"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div className="animate-pulse"&gt;</span>
@@ -1756,7 +1774,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-23T19:06:30.815Z
+                at 2025-07-24T17:38:00.534Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

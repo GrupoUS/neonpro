@@ -140,3 +140,108 @@ export class CacheOptimizer {
     
     return oldestKey;
   }
+
+  /**
+   * Find Least Frequently Used key
+   */
+  private findLFUKey(): string | null {
+    let leastUsedKey: string | null = null;
+    let leastCount = Infinity;
+    
+    for (const [key, count] of this.accessCounts) {
+      if (count < leastCount) {
+        leastCount = count;
+        leastUsedKey = key;
+      }
+    }
+    
+    return leastUsedKey;
+  }
+
+  /**
+   * Find key using adaptive strategy
+   */
+  private findAdaptiveKey(): string | null {
+    // Combine LRU and LFU strategies
+    const lruKey = this.findLRUKey();
+    const lfuKey = this.findLFUKey();
+    
+    // Prefer LFU for frequently accessed items
+    return lfuKey || lruKey;
+  }
+
+  /**
+   * Update access metrics
+   */
+  private updateAccessMetrics(key: string, startTime: number): void {
+    const accessTime = performance.now() - startTime;
+    this.metrics.averageAccessTime = 
+      (this.metrics.averageAccessTime + accessTime) / 2;
+    
+    this.accessTimes.set(key, Date.now());
+    const currentCount = this.accessCounts.get(key) || 0;
+    this.accessCounts.set(key, currentCount + 1);
+  }
+
+  /**
+   * Update memory usage metrics
+   */
+  private updateMemoryUsage(): void {
+    this.metrics.memoryUsage = this.cache.size;
+  }
+
+  /**
+   * Compress value (placeholder implementation)
+   */
+  private compress(value: any): any {
+    // Simple JSON compression - in production, use proper compression
+    return JSON.stringify(value);
+  }
+
+  /**
+   * Get cache metrics
+   */
+  getMetrics(): CacheMetrics {
+    return { ...this.metrics };
+  }
+
+  /**
+   * Generate performance report
+   */
+  generateReport(): CachePerformanceReport {
+    const totalRequests = this.metrics.hits + this.metrics.misses;
+    const hitRate = totalRequests > 0 ? this.metrics.hits / totalRequests : 0;
+    const missRate = totalRequests > 0 ? this.metrics.misses / totalRequests : 0;
+    const evictionRate = this.cache.size > 0 ? this.metrics.evictions / this.cache.size : 0;
+    
+    return {
+      hitRate,
+      missRate,
+      evictionRate,
+      memoryEfficiency: this.cache.size / this.strategy.maxSize,
+      responseTimeImprovement: Math.max(0, 100 - this.metrics.averageAccessTime),
+      recommendations: this.generateRecommendations(hitRate, evictionRate)
+    };
+  }
+
+  /**
+   * Generate optimization recommendations
+   */
+  private generateRecommendations(hitRate: number, evictionRate: number): string[] {
+    const recommendations: string[] = [];
+    
+    if (hitRate < 0.8) {
+      recommendations.push('Consider increasing cache size or adjusting TTL');
+    }
+    
+    if (evictionRate > 0.3) {
+      recommendations.push('High eviction rate detected - consider optimizing cache strategy');
+    }
+    
+    if (this.metrics.averageAccessTime > 10) {
+      recommendations.push('Enable compression to improve access times');
+    }
+    
+    return recommendations;
+  }
+}

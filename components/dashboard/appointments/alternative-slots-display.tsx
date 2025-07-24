@@ -347,7 +347,9 @@ function SlotCard({
       </div>
     </div>
   );
-}  // Performance Metrics Display (Research-based KPI tracking)
+}
+
+// Performance Metrics Display (Research-based KPI tracking)
   const PerformanceMetricsCard = () => {
     if (!showPerformanceMetrics || !performanceMetrics) return null;
 

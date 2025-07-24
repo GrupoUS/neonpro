@@ -57,7 +57,8 @@ describe('Subscription Components', () => {
   // ============================================================================
 
   describe('SubscriptionStatusCard', () => {
-    it('should render status card with correct information', () => {      renderWithProviders(<MockSubscriptionStatusCard />)
+    it('should render status card with correct information', () => {
+      renderWithProviders(<MockSubscriptionStatusCard />)
       
       expect(screen.getByTestId('subscription-status-card')).toBeInTheDocument()
       expect(screen.getByText('Subscription Status')).toBeInTheDocument()
@@ -105,7 +106,9 @@ describe('Subscription Components', () => {
       expect(screen.getByTestId('feature-gate')).toBeInTheDocument()
       expect(screen.getByTestId('premium-content')).toBeInTheDocument()
       expect(screen.getByText('Premium Analytics Dashboard')).toBeInTheDocument()
-    })    it('should render fallback for restricted features', () => {
+    })
+
+    it('should render fallback for restricted features', () => {
       renderWithProviders(
         <MockFeatureGate 
           feature="enterprise-only" 

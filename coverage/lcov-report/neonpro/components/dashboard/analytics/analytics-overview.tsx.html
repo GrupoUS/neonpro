@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/257</span>
+                <span class='fraction'>0/249</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/257</span>
+                <span class='fraction'>0/249</span>
             </div>
         
             
@@ -311,15 +311,7 @@
 <a name='L246'></a><a href='#L246'>246</a>
 <a name='L247'></a><a href='#L247'>247</a>
 <a name='L248'></a><a href='#L248'>248</a>
-<a name='L249'></a><a href='#L249'>249</a>
-<a name='L250'></a><a href='#L250'>250</a>
-<a name='L251'></a><a href='#L251'>251</a>
-<a name='L252'></a><a href='#L252'>252</a>
-<a name='L253'></a><a href='#L253'>253</a>
-<a name='L254'></a><a href='#L254'>254</a>
-<a name='L255'></a><a href='#L255'>255</a>
-<a name='L256'></a><a href='#L256'>256</a>
-<a name='L257'></a><a href='#L257'>257</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L249'></a><a href='#L249'>249</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -567,75 +559,58 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >// Analytics Overview Dashboard Component - STORY-SUB-002 Task 4</span></span></span>
-<span class="cstat-no" title="statement not covered" >// Real-time analytics dashboard with KPIs and charts</span>
-<span class="cstat-no" title="statement not covered" >// Based on research: Tavily SaaS best practices + Recharts + shadcn/ui patterns</span>
-<span class="cstat-no" title="statement not covered" >// Created: 2025-01-22</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >/**</span></span></span>
+<span class="cstat-no" title="statement not covered" > * Analytics Overview Component - VIBECODE V1.0</span>
+<span class="cstat-no" title="statement not covered" > * Real-time dashboard metrics with AI-powered insights</span>
+<span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >'use client'</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import { useEffect, useState } from 'react'</span>
-<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'</span>
+<span class="cstat-no" title="statement not covered" >import { useState, useEffect } from 'react'</span>
+<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'</span>
 <span class="cstat-no" title="statement not covered" >import { Badge } from '@/components/ui/badge'</span>
 <span class="cstat-no" title="statement not covered" >import { Button } from '@/components/ui/button'</span>
-<span class="cstat-no" title="statement not covered" >import { </span>
-<span class="cstat-no" title="statement not covered" >  TrendingUp, </span>
-<span class="cstat-no" title="statement not covered" >  TrendingDown, </span>
-<span class="cstat-no" title="statement not covered" >  Users, </span>
-<span class="cstat-no" title="statement not covered" >  UserPlus, </span>
-<span class="cstat-no" title="statement not covered" >  DollarSign, </span>
-<span class="cstat-no" title="statement not covered" >  Target,</span>
-<span class="cstat-no" title="statement not covered" >  Activity,</span>
-<span class="cstat-no" title="statement not covered" >  Clock,</span>
-<span class="cstat-no" title="statement not covered" >  AlertTriangle,</span>
-<span class="cstat-no" title="statement not covered" >  Zap</span>
-<span class="cstat-no" title="statement not covered" >} from 'lucide-react'</span>
 <span class="cstat-no" title="statement not covered" >import { cn } from '@/lib/utils'</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Types based on our analytics service layer</span>
-<span class="cstat-no" title="statement not covered" >interface AnalyticsKPI {</span>
-<span class="cstat-no" title="statement not covered" >  id: string</span>
-<span class="cstat-no" title="statement not covered" >  title: string</span>
-<span class="cstat-no" title="statement not covered" >  value: string | number</span>
-<span class="cstat-no" title="statement not covered" >  change: number</span>
-<span class="cstat-no" title="statement not covered" >  changeType: 'increase' | 'decrease' | 'neutral'</span>
-<span class="cstat-no" title="statement not covered" >  icon: React.ElementType</span>
-<span class="cstat-no" title="statement not covered" >  description: string</span>
-<span class="cstat-no" title="statement not covered" >  trend: number[]</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
+<span class="cstat-no" title="statement not covered" >  Users,</span>
+<span class="cstat-no" title="statement not covered" >  UserPlus,</span>
+<span class="cstat-no" title="statement not covered" >  Target,</span>
+<span class="cstat-no" title="statement not covered" >  Clock,</span>
+<span class="cstat-no" title="statement not covered" >  Zap,</span>
+<span class="cstat-no" title="statement not covered" >  AlertTriangle,</span>
+<span class="cstat-no" title="statement not covered" >  TrendingUp,</span>
+<span class="cstat-no" title="statement not covered" >  TrendingDown,</span>
+<span class="cstat-no" title="statement not covered" >  Activity</span>
+<span class="cstat-no" title="statement not covered" >} from 'lucide-react'</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface DashboardMetrics {</span>
 <span class="cstat-no" title="statement not covered" >  totalTrials: number</span>
 <span class="cstat-no" title="statement not covered" >  activeTrials: number</span>
 <span class="cstat-no" title="statement not covered" >  conversionRate: number</span>
 <span class="cstat-no" title="statement not covered" >  averageTrialDuration: number</span>
-<span class="cstat-no" title="statement not covered" >  topConversionSources: Array&lt;{ source: string; count: number; rate: number }&gt;</span>
-<span class="cstat-no" title="statement not covered" >  stageDistribution: {</span>
-<span class="cstat-no" title="statement not covered" >    onboarding: number</span>
-<span class="cstat-no" title="statement not covered" >    exploring: number</span>
-<span class="cstat-no" title="statement not covered" >    engaged: number</span>
-<span class="cstat-no" title="statement not covered" >    converting: number</span>
-<span class="cstat-no" title="statement not covered" >    churning: number</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >  aiPredictions: {</span>
-<span class="cstat-no" title="statement not covered" >    predictedConversions: number</span>
-<span class="cstat-no" title="statement not covered" >    highRiskTrials: number</span>
-<span class="cstat-no" title="statement not covered" >    recommendedInterventions: number</span>
+<span class="cstat-no" title="statement not covered" >    predictedConversions: string</span>
+<span class="cstat-no" title="statement not covered" >    highRiskTrials: string</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >interface AnalyticsKPI {</span>
+<span class="cstat-no" title="statement not covered" >  id: string</span>
+<span class="cstat-no" title="statement not covered" >  title: string</span>
+<span class="cstat-no" title="statement not covered" >  value: string</span>
+<span class="cstat-no" title="statement not covered" >  change: number</span>
+<span class="cstat-no" title="statement not covered" >  changeType: 'increase' | 'decrease'</span>
+<span class="cstat-no" title="statement not covered" >  icon: any</span>
+<span class="cstat-no" title="statement not covered" >  description: string</span>
+<span class="cstat-no" title="statement not covered" >  trend: number[]</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface AnalyticsOverviewProps {</span>
 <span class="cstat-no" title="statement not covered" >  className?: string</span>
 <span class="cstat-no" title="statement not covered" >  refreshInterval?: number</span>
-<span class="cstat-no" title="statement not covered" >}export function AnalyticsOverview({ className, refreshInterval = 30000 }: AnalyticsOverviewProps) {</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export function AnalyticsOverview({ className, refreshInterval = 30000 }: AnalyticsOverviewProps) {</span>
 <span class="cstat-no" title="statement not covered" >  const [metrics, setMetrics] = useState&lt;DashboardMetrics | null&gt;(null)</span>
 <span class="cstat-no" title="statement not covered" >  const [loading, setLoading] = useState(true)</span>
 <span class="cstat-no" title="statement not covered" >  const [lastUpdated, setLastUpdated] = useState&lt;Date&gt;(new Date())</span>
@@ -673,8 +648,7 @@
 <span class="cstat-no" title="statement not covered" >      icon: Users,</span>
 <span class="cstat-no" title="statement not covered" >      description: 'Total users in trial period',</span>
 <span class="cstat-no" title="statement not covered" >      trend: [65, 78, 82, 88, 95, 102, 115]</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >  ],</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    {</span>
 <span class="cstat-no" title="statement not covered" >      id: 'active-trials',</span>
 <span class="cstat-no" title="statement not covered" >      title: 'Active Trials',</span>
@@ -752,7 +726,9 @@
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    )</span>
-<span class="cstat-no" title="statement not covered" >  }  if (!metrics) {</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  if (!metrics) {</span>
 <span class="cstat-no" title="statement not covered" >    return (</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className={cn('space-y-6', className)}&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;Card&gt;</span>
@@ -838,7 +814,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-23T19:06:30.815Z
+                at 2025-07-24T17:38:00.534Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

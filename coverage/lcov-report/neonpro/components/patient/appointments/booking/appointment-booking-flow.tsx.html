@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/426</span>
+                <span class='fraction'>0/433</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/426</span>
+                <span class='fraction'>0/433</span>
             </div>
         
             
@@ -489,7 +489,21 @@
 <a name='L424'></a><a href='#L424'>424</a>
 <a name='L425'></a><a href='#L425'>425</a>
 <a name='L426'></a><a href='#L426'>426</a>
-<a name='L427'></a><a href='#L427'>427</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L427'></a><a href='#L427'>427</a>
+<a name='L428'></a><a href='#L428'>428</a>
+<a name='L429'></a><a href='#L429'>429</a>
+<a name='L430'></a><a href='#L430'>430</a>
+<a name='L431'></a><a href='#L431'>431</a>
+<a name='L432'></a><a href='#L432'>432</a>
+<a name='L433'></a><a href='#L433'>433</a>
+<a name='L434'></a><a href='#L434'>434</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -925,7 +939,7 @@
 <span class="cstat-no" title="statement not covered" >import { Progress } from '@/components/ui/progress'</span>
 <span class="cstat-no" title="statement not covered" >import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Wifi, WifiOff } from 'lucide-react'</span>
 <span class="cstat-no" title="statement not covered" >import { useRouter } from 'next/navigation'</span>
-<span class="cstat-no" title="statement not covered" >import { useState } from 'react'</span>
+<span class="cstat-no" title="statement not covered" >import { useState, useEffect } from 'react'</span>
 <span class="cstat-no" title="statement not covered" >import { toast } from 'sonner'</span>
 <span class="cstat-no" title="statement not covered" >import { AppointmentNotesForm } from './appointment-notes-form'</span>
 <span class="cstat-no" title="statement not covered" >import { BookingConfirmation } from './booking-confirmation'</span>
@@ -1005,10 +1019,15 @@
 <span class="cstat-no" title="statement not covered" >  const [appointmentNotes, setAppointmentNotes] = useState('')</span>
 <span class="cstat-no" title="statement not covered" >  const [specialRequests, setSpecialRequests] = useState&lt;string[]&gt;([])</span>
 <span class="cstat-no" title="statement not covered" >  const [isSubmitting, setIsSubmitting] = useState(false)</span>
-<span class="cstat-no" title="statement not covered" >  const [bookingStartTime] = useState(Date.now())</span>
+<span class="cstat-no" title="statement not covered" >  const [bookingStartTime, setBookingStartTime] = useState&lt;number | null&gt;(null)</span>
 <span class="cstat-no" title="statement not covered" >  const [error, setError] = useState&lt;string&gt;('')</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const router = useRouter()</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  // Initialize bookingStartTime on client side only</span>
+<span class="cstat-no" title="statement not covered" >  useEffect(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    setBookingStartTime(Date.now())</span>
+<span class="cstat-no" title="statement not covered" >  }, [])</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const steps: BookingStep[] = ['service', 'professional', 'time', 'notes', 'confirmation']</span>
 <span class="cstat-no" title="statement not covered" >  const currentStepIndex = steps.indexOf(currentStep)</span>
@@ -1104,7 +1123,7 @@
 <span class="cstat-no" title="statement not covered" >      if (bookingError) throw bookingError</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Track booking completion time</span>
-<span class="cstat-no" title="statement not covered" >      const bookingDuration = (Date.now() - bookingStartTime) / 1000</span>
+<span class="cstat-no" title="statement not covered" >      const bookingDuration = bookingStartTime ? (Date.now() - bookingStartTime) / 1000 : 0</span>
 <span class="cstat-no" title="statement not covered" >      console.log(`Booking completed in ${bookingDuration.toFixed(1)} seconds`)</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Redirect to success page</span>
@@ -1119,6 +1138,8 @@
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const getElapsedTime = () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!bookingStartTime) return '0s'</span>
+<span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    const elapsed = (Date.now() - bookingStartTime) / 1000</span>
 <span class="cstat-no" title="statement not covered" >    const minutes = Math.floor(elapsed / 60)</span>
 <span class="cstat-no" title="statement not covered" >    const seconds = Math.floor(elapsed % 60)</span>
@@ -1348,7 +1369,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-23T19:06:30.815Z
+                at 2025-07-24T17:38:00.534Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

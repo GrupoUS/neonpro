@@ -45,8 +45,9 @@ export const ptBR = {
     patient: "Paciente",
     welcome: "Bem-vindo(a)",
     overview: "Visão Geral"
-  }
-} as const  // Common translations
+  },
+
+  // Common translations
   common: {
     yes: "Sim",
     no: "Não", 
@@ -66,11 +67,9 @@ export const ptBR = {
     skipToContent: "Pular para o conteúdo principal",
     currentPage: "Página atual",
     loading: "Carregando conteúdo"
-  }
-} as const
+  },
 
-export type LocalizationKey = keyof typeof ptBR
-export type TranslationKeys = typeof ptBR// Booking wizard translations
+  // Booking wizard translations
   booking: {
     wizard: {
       title: 'Agendar Consulta',
@@ -144,7 +143,9 @@ export type TranslationKeys = typeof ptBR// Booking wizard translations
       incomplete: 'Por favor, complete todas as etapas obrigatórias',
       generic: 'Ocorreu um erro inesperado. Tente novamente'
     }
-  },  // Professional-related translations
+  },
+
+  // Professional-related translations
   professionals: {
     specialties: {
       dermatologist: 'Dermatologista',
@@ -198,8 +199,12 @@ export type TranslationKeys = typeof ptBR// Booking wizard translations
   confirmation: {
     subtitle: 'Revise os detalhes do seu agendamento antes de confirmar',
     summary: 'Resumo do Agendamento',
-    notes: 'Suas Observações',
-    terms: 'Ao confirmar, você concorda com nossos termos de atendimento',
     confirm: 'Confirmar Agendamento',
-    confirming: 'Confirmando...'
+    edit: 'Editar',
+    success: 'Agendamento confirmado com sucesso!',
+    error: 'Erro ao confirmar agendamento'
   }
+} as const;
+
+export type LocalizationKey = keyof typeof ptBR;
+export type TranslationKeys = typeof ptBR;

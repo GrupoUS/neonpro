@@ -1,9 +1,10 @@
 const fs = require("fs");
 const https = require("https");
+require('dotenv').config({ path: '../.env.local' });
 
-// Configurações do Supabase
-const projectRef = "gfkskrkbnawkuppazkpt";
-const accessToken = "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc";
+// Configurações do Supabase - USAR VARIÁVEIS DE AMBIENTE
+const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.split('//')[1]?.split('.')[0] || "gfkskrkbnawkuppazkpt";
+const accessToken = process.env.SUPABASE_ACCESS_TOKEN;
 
 console.log("🚀 Executando Schema CRM no Supabase...");
 console.log("🔑 Project:", projectRef);

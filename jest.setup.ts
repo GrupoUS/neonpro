@@ -1,4 +1,9 @@
 import '@testing-library/jest-dom'
+import { TextDecoder, TextEncoder } from 'util'
+
+// Add global polyfills for WebAuthn dependencies
+global.TextDecoder = TextDecoder
+global.TextEncoder = TextEncoder
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {

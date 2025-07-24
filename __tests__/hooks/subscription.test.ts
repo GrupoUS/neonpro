@@ -40,11 +40,8 @@ describe('Subscription Hooks', () => {
   describe('useSubscriptionStatus', () => {
     it('should return subscription data correctly', () => {
       const { result } = renderHook(() => mockUseSubscriptionStatus(), {
-        wrapper: ({ children }) => (
-          <AllTheProviders queryClient={queryClient}>
-            {children}
-          </AllTheProviders>
-        ),
+        wrapper: ({ children }: { children: React.ReactNode }) => 
+          AllTheProviders({ queryClient, children })
       })
       
       expect(result.current.data).toBeDefined()
@@ -52,7 +49,8 @@ describe('Subscription Hooks', () => {
       expect(result.current.isError).toBe(false)
     })
 
-    it('should handle loading state correctly', () => {      const mockHook = createMockSubscriptionHook({ isLoading: true })
+    it('should handle loading state correctly', () => {
+      const mockHook = createMockSubscriptionHook({ isLoading: true })
       
       expect(mockHook.isLoading).toBe(true)
       expect(mockHook.data).toBeDefined()

@@ -186,3 +186,115 @@ export class StressTester {
     console.log(`🔌 Simulating connection drops (intensity: ${intensity})`);
     // Implementation would mock network failures
   }
+
+  /**
+   * Cleanup chaos action
+   */
+  private cleanupChaosAction(action: ChaosAction): void {
+    console.log(`🧹 Cleaning up chaos action: ${action.type}`);
+    // Cleanup implementation would depend on action type
+  }
+
+  /**
+   * Wait for system recovery
+   */
+  private async waitForSystemRecovery(testFn: () => Promise<boolean>): Promise<void> {
+    const maxWaitTime = 30000; // 30 seconds
+    const checkInterval = 1000; // 1 second
+    const startTime = Date.now();
+    
+    while (Date.now() - startTime < maxWaitTime) {
+      try {
+        const isHealthy = await testFn();
+        if (isHealthy) {
+          console.log('✅ System recovered');
+          return;
+        }
+      } catch (error) {
+        // System still recovering
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, checkInterval));
+    }
+    
+    console.warn('⚠️ System recovery timeout');
+  }
+
+  /**
+   * Cleanup chaos actions for a test
+   */
+  private cleanupChaosActions(testId: string): void {
+    for (const [key, timeoutId] of this.activeTests.entries()) {
+      if (key.startsWith(testId)) {
+        clearTimeout(timeoutId);
+        this.activeTests.delete(key);
+      }
+    }
+  }
+
+  /**
+   * Calculate system stability score
+   */
+  private calculateStabilityScore(loadResult: any): number {
+    if (!loadResult.totalRequests) return 0;
+    
+    const successRate = (loadResult.totalRequests - loadResult.failedRequests) / loadResult.totalRequests;
+    const responseTimeScore = Math.max(0, 100 - (loadResult.averageResponseTime / 10));
+    
+    return Math.round((successRate * 70) + (responseTimeScore * 0.3));
+  }
+
+  /**
+   * Calculate performance degradation
+   */
+  private calculatePerformanceDegradation(baseline: any, current: any): number {
+    if (!baseline || !current) return 0;
+    
+    const baselineScore = baseline.overallScore || 100;
+    const currentScore = current.overallScore || 100;
+    
+    return Math.max(0, Math.round(((baselineScore - currentScore) / baselineScore) * 100));
+  }
+
+  /**
+   * Get all stress test reports
+   */
+  getReports(): StressTestReport[] {
+    return [...this.reports];
+  }
+
+  /**
+   * Clear all reports
+   */
+  clearReports(): void {
+    this.reports = [];
+  }
+
+  /**
+   * Generate comprehensive stress test report
+   */
+  generateComprehensiveReport(): any {
+    if (this.reports.length === 0) {
+      return {
+        summary: 'No stress tests executed',
+        totalTests: 0,
+        averageStability: 0,
+        averageRecoveryTime: 0
+      };
+    }
+    
+    const totalTests = this.reports.length;
+    const averageStability = this.reports.reduce((sum, report) => sum + report.systemStability, 0) / totalTests;
+    const averageRecoveryTime = this.reports.reduce((sum, report) => sum + report.recoveryTime, 0) / totalTests;
+    const totalFailures = this.reports.reduce((sum, report) => sum + report.criticalFailures, 0);
+    
+    return {
+      summary: `Executed ${totalTests} stress tests`,
+      totalTests,
+      averageStability: Math.round(averageStability),
+      averageRecoveryTime: Math.round(averageRecoveryTime),
+      totalFailures,
+      reports: this.reports
+    };
+  }
+}

@@ -1,4 +1,11 @@
-import { tasks } from "@trigger.dev/sdk/v3";
+import { TriggerClient } from "@trigger.dev/sdk";
+
+// Initialize Trigger.dev client
+const client = new TriggerClient({
+  id: "neonpro",
+  apiKey: process.env.TRIGGER_API_KEY!,
+  apiUrl: process.env.TRIGGER_API_URL,
+});
 import type { AppointmentJobPayload, InvoiceJobPayload } from "@/trigger/client";
 
 /**
@@ -38,7 +45,10 @@ export class NeonProAutomation {
         serviceName: params.serviceName,
       };
 
-      const handle = await tasks.trigger("appointment-confirmation-email", payload);
+      const handle = await client.sendEvent({
+        name: "appointment-confirmation-email",
+        payload,
+      });
       
       console.log("✅ Appointment confirmation job triggered", {
         jobId: handle.id,
@@ -93,8 +103,12 @@ export class NeonProAutomation {
         scheduleFor = new Date(appointmentDateTime.getTime() - 24 * 60 * 60 * 1000); // 24h antes
       }
 
-      const handle = await tasks.trigger("appointment-reminder-email", payload, {
-        delay: scheduleFor,
+      const handle = await client.sendEvent({
+        name: "appointment-reminder-email",
+        payload,
+        options: {
+          delay: scheduleFor,
+        },
       });
 
       console.log("✅ Appointment reminder scheduled", {
@@ -142,7 +156,10 @@ export class NeonProAutomation {
         invoiceUrl: params.invoiceUrl,
       };
 
-      const handle = await tasks.trigger("invoice-email-delivery", payload);
+      const handle = await client.sendEvent({
+        name: "invoice-email-delivery",
+        payload,
+      });
 
       console.log("✅ Invoice email job triggered", {
         jobId: handle.id,
@@ -197,7 +214,11 @@ export class NeonProAutomation {
         scheduleOptions = { delay: delayDate };
       }
 
-      const handle = await tasks.trigger("payment-reminder-email", payload, scheduleOptions);
+      const handle = await client.sendEvent({
+        name: "payment-reminder-email",
+        payload,
+        options: scheduleOptions,
+      });
 
       console.log("✅ Payment reminder job triggered", {
         jobId: handle.id,

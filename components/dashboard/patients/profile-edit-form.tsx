@@ -7,7 +7,8 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'import { Checkbox } from '@/components/ui/checkbox'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -51,7 +52,8 @@ export function PatientProfileEditForm({
       rg: '',
       phone: '',
       mobile: '',
-      email: '',      address: {
+      email: '',
+      address: {
         street: '',
         number: '',
         complement: '',
@@ -97,7 +99,9 @@ export function PatientProfileEditForm({
   const { fields: emergencyContactFields, append: addEmergencyContact, remove: removeEmergencyContact } = useFieldArray({
     control: form.control,
     name: 'emergencyContacts'
-  })  // Load initial data and check consent validity
+  })
+
+  // Load initial data and check consent validity
   useEffect(() => {
     if (initialData) {
       form.reset(initialData)
@@ -157,7 +161,9 @@ export function PatientProfileEditForm({
     } finally {
       setIsSubmitting(false)
     }
-  }  const handleAddEmergencyContact = () => {
+  }
+
+  const handleAddEmergencyContact = () => {
     if (emergencyContactFields.length < 3) {
       addEmergencyContact({
         name: '',
@@ -207,7 +213,9 @@ export function PatientProfileEditForm({
             </div>
           </CardContent>
         </Card>
-      )}      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      )}
+
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="personal" className="flex items-center gap-2">
@@ -256,3 +264,182 @@ export function PatientProfileEditForm({
                       </p>
                     )}
                   </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="dateOfBirth">Data de Nascimento *</Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      {...form.register('dateOfBirth')}
+                    />
+                    {form.formState.errors.dateOfBirth && (
+                      <p className="text-sm text-red-600">
+                        {form.formState.errors.dateOfBirth.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Contact Information Tab */}
+          <TabsContent value="contact">
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações de Contato</CardTitle>
+                <CardDescription>
+                  Dados de contato e preferências de comunicação
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">E-mail *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...form.register('email')}
+                      placeholder="exemplo@email.com"
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-sm text-red-600">
+                        {form.formState.errors.email.message}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Telefone</Label>
+                    <Input
+                      id="phone"
+                      {...form.register('phone')}
+                      placeholder="(11) 99999-9999"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Address Tab */}
+          <TabsContent value="address">
+            <Card>
+              <CardHeader>
+                <CardTitle>Endereço</CardTitle>
+                <CardDescription>
+                  Informações de endereço residencial
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="street">Rua</Label>
+                    <Input
+                      id="street"
+                      {...form.register('address.street')}
+                      placeholder="Nome da rua"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="city">Cidade</Label>
+                    <Input
+                      id="city"
+                      {...form.register('address.city')}
+                      placeholder="Nome da cidade"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Emergency Contacts Tab */}
+          <TabsContent value="emergency">
+            <Card>
+              <CardHeader>
+                <CardTitle>Contatos de Emergência</CardTitle>
+                <CardDescription>
+                  Pessoas para contatar em caso de emergência
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddEmergencyContact}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Contato de Emergência
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Privacy Tab */}
+          <TabsContent value="privacy">
+            <Card>
+              <CardHeader>
+                <CardTitle>Configurações de Privacidade</CardTitle>
+                <CardDescription>
+                  Controle como seus dados são utilizados
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Controller
+                      name="lgpdConsent.dataProcessingConsent"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Checkbox
+                          id="dataProcessingConsent"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      )}
+                    />
+                    <Label htmlFor="dataProcessingConsent" className="text-sm">
+                      Consinto com o processamento dos meus dados pessoais
+                    </Label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Form Actions */}
+        <div className="flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="min-w-[120px]"
+          >
+            {isSubmitting ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Salvando...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Salvar
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
+  )
+}
