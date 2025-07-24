@@ -1,491 +1,699 @@
-/**
- * Jest Setup for API Testing
- * Configures all necessary mocks for testing API routes and authentication flows
- */
+// Jest setup file for API testing with proper mocking structure
 
-import React from 'react';
-
-// Setup testing environment
+// Basic Jest configuration
 import '@testing-library/jest-dom';
 
-// Polyfills for Node.js testing environment
-try {
-  const { TextEncoder, TextDecoder } = require('util');
-  global.TextEncoder = TextEncoder;
-  global.TextDecoder = TextDecoder;
-} catch {
-  // Fallback if util polyfills not available
-  global.TextEncoder = class TextEncoder {
-    encode(input: string) {
-      return new Uint8Array(Buffer.from(input, 'utf8'));
+// Mock Date constructor for consistent timestamps
+const originalDate = Date;
+global.Date = jest.fn(() => new originalDate('2025-01-24T10:00:00.000Z')) as any;
+global.Date.now = jest.fn(() => new originalDate('2025-01-24T10:00:00.000Z').getTime());
+global.Date.UTC = originalDate.UTC;
+global.Date.parse = originalDate.parse;
+
+// Mock console to suppress logs during tests
+global.console = {
+  ...console,
+  log: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+  debug: jest.fn(),
+  info: jest.fn(),
+};
+
+// Mock crypto for security-related operations
+Object.defineProperty(global, 'crypto', {
+  value: {
+    getRandomValues: jest.fn(() => new Uint8Array(32)),
+    randomUUID: jest.fn(() => '12345678-1234-5678-9012-123456789012'),
+    subtle: {
+      encrypt: jest.fn(),
+      decrypt: jest.fn(),
+      sign: jest.fn(),
+      verify: jest.fn(),
+      digest: jest.fn(),
+      generateKey: jest.fn(),
+      importKey: jest.fn(),
+      exportKey: jest.fn(),
     }
-  };
-  global.TextDecoder = class TextDecoder {
-    decode(input: Uint8Array) {
-      return Buffer.from(input).toString('utf8');
-    }
-  };
-}
+  }
+});
 
-// Setup HTTP polyfills
-try {
-  const { Request, Response, Headers } = require('undici');
-  global.Request = Request;
-  global.Response = Response;
-  global.Headers = Headers;
-} catch {
-  // Fallback to global fetch polyfill if undici not available
-  global.Request = class MockRequest {};
-  global.Response = class MockResponse {};
-  global.Headers = class MockHeaders {};
-}
+// Mock URL constructor
+global.URL = jest.fn().mockImplementation((url) => ({
+  href: url,
+  origin: 'http://localhost:3000',
+  protocol: 'http:',
+  host: 'localhost:3000',
+  hostname: 'localhost',
+  port: '3000',
+  pathname: '/',
+  search: '',
+  hash: '',
+  toString: () => url,
+}));
 
-// Polyfill fetch for Node.js testing environment
-try {
-  global.fetch = require('node-fetch');
-} catch {
-  global.fetch = jest.fn(() => Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({}),
-    text: () => Promise.resolve(''),
-  }));
-}
+// Mock URLSearchParams
+global.URLSearchParams = jest.fn().mockImplementation(() => ({
+  get: jest.fn(),
+  set: jest.fn(),
+  has: jest.fn(),
+  delete: jest.fn(),
+  append: jest.fn(),
+  toString: jest.fn().mockReturnValue(''),
+  entries: jest.fn().mockReturnValue([]),
+  forEach: jest.fn(),
+  keys: jest.fn().mockReturnValue([]),
+  values: jest.fn().mockReturnValue([])
+}));
 
-// Mock Next.js modules that are not compatible with Jest
+// Mock Request and Response for Next.js API routes
+global.Request = jest.fn().mockImplementation((url, options = {}) => ({
+  url: url || 'http://localhost:3000',
+  method: options.method || 'GET',
+  headers: new Map(Object.entries(options.headers || {})),
+  body: options.body || null,
+  json: jest.fn().mockResolvedValue({}),
+  text: jest.fn().mockResolvedValue(''),
+  formData: jest.fn().mockResolvedValue(new FormData()),
+  arrayBuffer: jest.fn().mockResolvedValue(new ArrayBuffer(0)),
+  blob: jest.fn().mockResolvedValue(new Blob()),
+  clone: jest.fn(),
+}));
+
+global.Response = jest.fn().mockImplementation((body, options = {}) => ({
+  status: options.status || 200,
+  statusText: options.statusText || 'OK',
+  headers: new Map(Object.entries(options.headers || {})),
+  body: body || null,
+  json: jest.fn().mockResolvedValue({}),
+  text: jest.fn().mockResolvedValue(''),
+  arrayBuffer: jest.fn().mockResolvedValue(new ArrayBuffer(0)),
+  blob: jest.fn().mockResolvedValue(new Blob()),
+  clone: jest.fn(),
+  ok: (options.status || 200) >= 200 && (options.status || 200) < 300,
+}));
+
+// Mock environment variables
+process.env = {
+  ...process.env,
+  NODE_ENV: 'test',
+  NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+  SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
+  NEXTAUTH_SECRET: 'test-secret',
+  NEXTAUTH_URL: 'http://localhost:3000',
+  DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+  STRIPE_SECRET_KEY: 'sk_test_123',
+  STRIPE_PUBLISHABLE_KEY: 'pk_test_123',
+};
+
+// Mock Next.js navigation
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({
+  useRouter: jest.fn().mockReturnValue({
     push: jest.fn(),
     replace: jest.fn(),
     back: jest.fn(),
     forward: jest.fn(),
     refresh: jest.fn(),
-    pathname: '/dashboard',
+    prefetch: jest.fn(),
+    pathname: '/',
     searchParams: new URLSearchParams(),
+    query: {},
   }),
-  usePathname: () => '/dashboard',
-  useSearchParams: () => new URLSearchParams(),
+  usePathname: jest.fn().mockReturnValue('/'),
+  useSearchParams: jest.fn().mockReturnValue(new URLSearchParams()),
   redirect: jest.fn(),
-  permanentRedirect: jest.fn(),
+  notFound: jest.fn(),
 }));
 
+// Mock Next.js server components
+class MockNextResponse {
+  status: number;
+  statusText: string;
+  headers: Map<string, string>;
+  body: any;
+  ok: boolean;
+
+  constructor(body: any, options: any = {}) {
+    this.status = options.status || 200;
+    this.statusText = options.statusText || 'OK';
+    this.headers = new Map(Object.entries(options.headers || {}));
+    this.body = body;
+    this.ok = this.status >= 200 && this.status < 300;
+  }
+
+  json = jest.fn().mockResolvedValue(this.body);
+  text = jest.fn().mockResolvedValue(typeof this.body === 'string' ? this.body : JSON.stringify(this.body));
+  clone = jest.fn();
+
+  static json(data: any, options: any = {}) {
+    return new MockNextResponse(data, options);
+  }
+
+  static redirect(url: string, status = 302) {
+    return new MockNextResponse(null, { status, headers: { 'location': url } });
+  }
+
+  static rewrite(url: string) {
+    return new MockNextResponse(null, { status: 200 });
+  }
+
+  static next() {
+    return new MockNextResponse(null, { status: 200 });
+  }
+}
+
+jest.mock('next/server', () => ({
+  NextRequest: jest.fn().mockImplementation((url, options = {}) => ({
+    url: url || 'http://localhost:3000',
+    method: options.method || 'GET',
+    headers: {
+      get: jest.fn().mockImplementation((name) => {
+        const mockHeaders = {
+          'authorization': 'Bearer mock-token',
+          'user-agent': 'Mozilla/5.0 (Test Browser)',
+          'x-forwarded-for': '192.168.1.100',
+          'x-real-ip': '192.168.1.100',
+          'host': 'localhost:3000',
+          'accept': 'text/html,application/xhtml+xml',
+          'content-type': 'application/json',
+        };
+        return mockHeaders[name.toLowerCase()] || null;
+      }),
+      has: jest.fn().mockReturnValue(true),
+      entries: jest.fn().mockReturnValue([]),
+      forEach: jest.fn(),
+      keys: jest.fn().mockReturnValue([]),
+      values: jest.fn().mockReturnValue([])
+    },
+    body: options.body || null,
+    json: jest.fn().mockResolvedValue({}),
+    text: jest.fn().mockResolvedValue(''),
+    formData: jest.fn().mockResolvedValue(new FormData()),
+    arrayBuffer: jest.fn().mockResolvedValue(new ArrayBuffer(0)),
+    blob: jest.fn().mockResolvedValue(new Blob()),
+    clone: jest.fn(),
+    nextUrl: {
+      pathname: '/',
+      search: '',
+      searchParams: new URLSearchParams(),
+    },
+    geo: {},
+    ip: '192.168.1.100',
+    cookies: {
+      get: jest.fn().mockReturnValue({ name: 'test-cookie', value: 'test-value' }),
+      set: jest.fn(),
+      delete: jest.fn(),
+      has: jest.fn().mockReturnValue(true),
+      getAll: jest.fn().mockReturnValue([]),
+    },
+  })),
+  NextResponse: MockNextResponse,
+}));
+
+// Mock Next.js headers
 jest.mock('next/headers', () => ({
-  cookies: () => ({
-    get: jest.fn(() => ({ value: 'test-session' })),
+  cookies: jest.fn().mockReturnValue({
+    get: jest.fn().mockReturnValue({ 
+      name: 'test-cookie', 
+      value: 'test-cookie-value' 
+    }),
     set: jest.fn(),
     delete: jest.fn(),
+    has: jest.fn().mockReturnValue(true),
+    getAll: jest.fn().mockReturnValue([]),
   }),
-  headers: () => ({
-    get: jest.fn(),
-    has: jest.fn(),
-    forEach: jest.fn(),
-  }),
-}));
-
-// Mock Next.js dynamic imports
-jest.mock('next/dynamic', () => {
-  return (fn: () => any) => {
-    const Component = fn();
-    if (Component.then) {
-      return Component;
-    }
-    return Component;
-  };
-});
-
-// Mock environment variables
-process.env.NODE_ENV = 'test';
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
-process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key_for_testing_only';
-process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_123';
-
-// Mock Supabase client (legacy client)
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      gte: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      single: jest.fn(() => Promise.resolve({ data: null, error: null })),
-      returns: jest.fn(() => Promise.resolve({ data: [], error: null })),
-    })),
-    auth: {
-      getUser: jest.fn(() => Promise.resolve({ data: { user: { id: 'test-user' } }, error: null })),
-      getSession: jest.fn(() => Promise.resolve({ data: { session: { user: { id: 'test-user' } } }, error: null })),
-      signInWithPassword: jest.fn(),
-      signUp: jest.fn(),
-      signOut: jest.fn(),
-      onAuthStateChange: jest.fn(() => ({
-        data: { subscription: {} },
-        unsubscribe: jest.fn(),
-      })),
-    },
-    storage: {
-      from: jest.fn(() => ({
-        upload: jest.fn(),
-        download: jest.fn(),
-        remove: jest.fn(),
-      })),
-    },
-  })),
-}));
-
-// Enhanced Mock for @supabase/ssr with complete query builder chain support
-jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(() => {
-    // Create a comprehensive query builder mock
-    const createQueryBuilder = (table?: string) => {
-      const queryBuilder = {
-        // Query methods
-        select: jest.fn().mockReturnThis(),
-        insert: jest.fn().mockReturnThis(),
-        update: jest.fn().mockReturnThis(),
-        delete: jest.fn().mockReturnThis(),
-        upsert: jest.fn().mockReturnThis(),
-        
-        // Filter methods
-        eq: jest.fn().mockReturnThis(),
-        neq: jest.fn().mockReturnThis(),
-        gt: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lt: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        like: jest.fn().mockReturnThis(),
-        ilike: jest.fn().mockReturnThis(),
-        is: jest.fn().mockReturnThis(),
-        in: jest.fn().mockReturnThis(),
-        contains: jest.fn().mockReturnThis(),
-        containedBy: jest.fn().mockReturnThis(),
-        rangeGt: jest.fn().mockReturnThis(),
-        rangeGte: jest.fn().mockReturnThis(),
-        rangeLt: jest.fn().mockReturnThis(),
-        rangeLte: jest.fn().mockReturnThis(),
-        rangeAdjacent: jest.fn().mockReturnThis(),
-        overlaps: jest.fn().mockReturnThis(),
-        textSearch: jest.fn().mockReturnThis(),
-        match: jest.fn().mockReturnThis(),
-        not: jest.fn().mockReturnThis(),
-        or: jest.fn().mockReturnThis(),
-        filter: jest.fn().mockReturnThis(),
-        
-        // Transform methods
-        order: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        range: jest.fn().mockReturnThis(),
-        single: jest.fn().mockReturnThis(),
-        maybeSingle: jest.fn().mockReturnThis(),
-        csv: jest.fn().mockReturnThis(),
-        explain: jest.fn().mockReturnThis(),
-        raw: jest.fn().mockReturnThis(),
-        
-        // Promise interface
-        then: jest.fn((resolve) => {
-          const mockData = table === 'user_sessions' 
-            ? [{ id: 'session-1', user_id: 'mock-user-id', active: true, created_at: new Date().toISOString() }]
-            : table === 'security_alerts'
-            ? [{ id: 'alert-1', type: 'failed_login', severity: 'medium', created_at: new Date().toISOString() }]
-            : table === 'compliance_violations'
-            ? [{ id: 'violation-1', type: 'data_access', status: 'resolved', created_at: new Date().toISOString() }]
-            : [{ id: 'mock-id', created_at: new Date().toISOString() }];
-          
-          return resolve({ data: mockData, error: null });
-        }),
-        catch: jest.fn().mockReturnThis(),
+  headers: jest.fn().mockReturnValue({
+    get: jest.fn().mockImplementation((name) => {
+      const mockHeaders = {
+        'user-agent': 'Mozilla/5.0 (Test Browser)',
+        'x-forwarded-for': '192.168.1.100',
+        'x-real-ip': '192.168.1.100',
+        'host': 'localhost:3000',
+        'accept': 'text/html,application/xhtml+xml',
       };
-      
-      return queryBuilder;
-    };
+      return mockHeaders[name.toLowerCase()] || null;
+    }),
+    has: jest.fn().mockReturnValue(true),
+    entries: jest.fn().mockReturnValue([]),
+    forEach: jest.fn(),
+    keys: jest.fn().mockReturnValue([]),
+    values: jest.fn().mockReturnValue([])
+  })
+}));
 
-    return {
-      auth: {
-        getUser: jest.fn(async () => ({
-          data: { user: { id: 'mock-user-id', email: 'test@example.com' } },
-          error: null,
-        })),
-        getSession: jest.fn(async () => ({
-          data: { session: { access_token: 'mock-token', refresh_token: 'mock-refresh' } },
-          error: null,
-        })),
-        signOut: jest.fn(async () => ({ error: null })),
-        onAuthStateChange: jest.fn((callback) => {
-          setTimeout(() => {
-            callback('SIGNED_IN', { 
-              access_token: 'mock-token', 
-              refresh_token: 'mock-refresh',
-              user: { id: 'mock-user-id', email: 'test@example.com' }
-            });
-          }, 0);
-          return { data: { subscription: { unsubscribe: jest.fn() } } };
-        }),
-        signInWithPassword: jest.fn(async () => ({
-          data: { user: { id: 'mock-user-id' }, session: { access_token: 'mock-token' } },
-          error: null,
-        })),
-        signUp: jest.fn(async () => ({
-          data: { user: { id: 'mock-user-id' }, session: null },
-          error: null,
-        })),
-        resetPasswordForEmail: jest.fn(async () => ({ error: null })),
-        updateUser: jest.fn(async () => ({
-          data: { user: { id: 'mock-user-id' } },
-          error: null,
-        })),
-      },
-      from: jest.fn((table: string) => createQueryBuilder(table)),
-      rpc: jest.fn(async () => ({ data: null, error: null })),
-      storage: {
-        from: jest.fn(() => ({
-          upload: jest.fn(async () => ({ data: null, error: null })),
-          download: jest.fn(async () => ({ data: null, error: null })),
-          list: jest.fn(async () => ({ data: [], error: null })),
-          remove: jest.fn(async () => ({ data: null, error: null })),
-        })),
-      },
-    };
-  }),
-  createBrowserClient: jest.fn(() => ({
+// Mock Supabase client
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn().mockReturnValue({
     auth: {
-      getUser: jest.fn(async () => ({
-        data: { user: { id: 'mock-user-id', email: 'test@example.com' } },
-        error: null,
-      })),
-      getSession: jest.fn(async () => ({
-        data: { session: { access_token: 'mock-token', refresh_token: 'mock-refresh' } },
-        error: null,
-      })),
-      signOut: jest.fn(async () => ({ error: null })),
-      onAuthStateChange: jest.fn((callback) => {
-        setTimeout(() => {
-          callback('SIGNED_IN', { 
-            access_token: 'mock-token', 
-            refresh_token: 'mock-refresh',
-            user: { id: 'mock-user-id', email: 'test@example.com' }
-          });
-        }, 0);
-        return { data: { subscription: { unsubscribe: jest.fn() } } };
+      getSession: jest.fn().mockResolvedValue({
+        data: { 
+          session: { 
+            user: { 
+              id: 'user-123', 
+              email: 'test@example.com' 
+            },
+            access_token: 'mock-token',
+            refresh_token: 'mock-refresh-token'
+          } 
+        },
+        error: null
+      }),
+      getUser: jest.fn().mockResolvedValue({
+        data: { 
+          user: { 
+            id: 'user-123', 
+            email: 'test@example.com' 
+          } 
+        },
+        error: null
+      }),
+      signInWithPassword: jest.fn().mockResolvedValue({
+        data: { 
+          user: { 
+            id: 'user-123', 
+            email: 'test@example.com' 
+          },
+          session: { 
+            access_token: 'mock-token' 
+          }
+        },
+        error: null
+      }),
+      signOut: jest.fn().mockResolvedValue({ error: null }),
+      onAuthStateChange: jest.fn().mockReturnValue({
+        data: { subscription: { unsubscribe: jest.fn() } }
       }),
     },
-    from: jest.fn(() => ({
+    from: jest.fn().mockReturnValue({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      then: jest.fn(async (resolve) => resolve({ data: [], error: null })),
-    })),
+      neq: jest.fn().mockReturnThis(),
+      gt: jest.fn().mockReturnThis(),
+      gte: jest.fn().mockReturnThis(),
+      lt: jest.fn().mockReturnThis(),
+      lte: jest.fn().mockReturnThis(),
+      like: jest.fn().mockReturnThis(),
+      ilike: jest.fn().mockReturnThis(),
+      is: jest.fn().mockReturnThis(),
+      in: jest.fn().mockReturnThis(),
+      contains: jest.fn().mockReturnThis(),
+      containedBy: jest.fn().mockReturnThis(),
+      rangeGt: jest.fn().mockReturnThis(),
+      rangeGte: jest.fn().mockReturnThis(),
+      rangeLt: jest.fn().mockReturnThis(),
+      rangeLte: jest.fn().mockReturnThis(),
+      rangeAdjacent: jest.fn().mockReturnThis(),
+      overlaps: jest.fn().mockReturnThis(),
+      textSearch: jest.fn().mockReturnThis(),
+      match: jest.fn().mockReturnThis(),
+      not: jest.fn().mockReturnThis(),
+      or: jest.fn().mockReturnThis(),
+      filter: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      range: jest.fn().mockReturnThis(),
+      abortSignal: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ 
+        data: { 
+          id: 1, 
+          name: 'Test' 
+        }, 
+        error: null 
+      }),
+      maybeSingle: jest.fn().mockResolvedValue({ 
+        data: { 
+          id: 1, 
+          name: 'Test' 
+        }, 
+        error: null 
+      }),
+      csv: jest.fn().mockResolvedValue({ 
+        data: 'id,name\n1,Test', 
+        error: null 
+      }),
+      explain: jest.fn().mockResolvedValue({
+        data: 'Query plan',
+        error: null
+      }),
+      then: jest.fn().mockResolvedValue({ 
+        data: [{ 
+          id: 1, 
+          name: 'Test' 
+        }], 
+        error: null 
+      }),
+    }),
+    rpc: jest.fn().mockResolvedValue({ 
+      data: { 
+        result: 'success' 
+      }, 
+      error: null 
+    }),
+    storage: {
+      from: jest.fn().mockReturnValue({
+        upload: jest.fn().mockResolvedValue({ 
+          data: { 
+            path: 'test/file.png' 
+          }, 
+          error: null 
+        }),
+        download: jest.fn().mockResolvedValue({ 
+          data: new Blob(), 
+          error: null 
+        }),
+        remove: jest.fn().mockResolvedValue({ 
+          data: true, 
+          error: null 
+        }),
+        list: jest.fn().mockResolvedValue({ 
+          data: [], 
+          error: null 
+        }),
+        getPublicUrl: jest.fn().mockReturnValue({
+          data: { 
+            publicUrl: 'https://example.com/file.png' 
+          }
+        }),
+      })
+    },
+    realtime: {
+      channel: jest.fn().mockReturnValue({
+        on: jest.fn().mockReturnThis(),
+        subscribe: jest.fn().mockReturnThis(),
+        unsubscribe: jest.fn().mockReturnThis(),
+      })
+    }
+  })
+}));
+
+// Mock Supabase SSR
+jest.mock('@supabase/ssr', () => ({
+  createServerClient: jest.fn().mockImplementation(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: { 
+          session: { 
+            user: { 
+              id: 'user-123', 
+              email: 'test@example.com' 
+            },
+            access_token: 'mock-token',
+            refresh_token: 'mock-refresh-token'
+          } 
+        },
+        error: null
+      }),
+      getUser: jest.fn().mockResolvedValue({
+        data: { 
+          user: { 
+            id: 'user-123', 
+            email: 'test@example.com' 
+          } 
+        },
+        error: null
+      }),
+    },
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ 
+        data: { 
+          id: 1, 
+          name: 'Test' 
+        }, 
+        error: null 
+      }),
+      then: jest.fn().mockResolvedValue({ 
+        data: [{ 
+          id: 1, 
+          name: 'Test' 
+        }], 
+        error: null 
+      }),
+    }),
+  })),
+  createBrowserClient: jest.fn().mockImplementation(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: { 
+          session: { 
+            user: { 
+              id: 'user-123', 
+              email: 'test@example.com' 
+            },
+            access_token: 'mock-token',
+            refresh_token: 'mock-refresh-token'
+          } 
+        },
+        error: null
+      }),
+    },
   })),
 }));
 
-// Mock PerformanceTracker as a named export
-jest.mock('@/lib/auth/performance-tracker', () => ({
-  PerformanceTracker: {
+// Mock PerformanceTracker singleton
+jest.mock('../../lib/auth/performance-tracker', () => {
+  const mockInstance = {
+    startTracking: jest.fn(),
+    endTracking: jest.fn(),
     recordMetric: jest.fn(),
-    getMetrics: jest.fn(() => ({})),
+    getMetrics: jest.fn().mockReturnValue({}),
     reset: jest.fn(),
-    getInstance: jest.fn(() => ({
-      recordMetric: jest.fn(),
-      getMetrics: jest.fn(() => ({})),
-      reset: jest.fn(),
-    })),
-  },
-}));
-
-// Mock createServerClient as global function for direct imports
-global.createServerClient = jest.fn(() => {
-  const createQueryBuilder = () => ({
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    raw: jest.fn().mockReturnThis(),
-    then: jest.fn(async (resolve) => resolve({ data: [], error: null })),
-  });
+  };
 
   return {
-    auth: {
-      getUser: jest.fn(async () => ({
-        data: { user: { id: 'mock-user-id' } },
-        error: null,
-      })),
-      onAuthStateChange: jest.fn(() => ({
-        data: { subscription: { unsubscribe: jest.fn() } },
-      })),
-    },
-    from: jest.fn(() => createQueryBuilder()),
+    PerformanceTracker: {
+      getInstance: jest.fn().mockReturnValue(mockInstance)
+    }
   };
 });
+
+// Mock SessionManager singleton
+jest.mock('../../lib/auth/session-manager', () => {
+  const mockSessionManager = {
+    validateSession: jest.fn().mockImplementation((token) => {
+      if (token === 'invalid-token') {
+        return Promise.resolve({
+          isValid: false,
+          error: 'Invalid token',
+        });
+      }
+      return Promise.resolve({
+        isValid: true,
+        session: {
+          id: 'session-123',
+          userId: 'user-123',
+          expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
+        },
+        user: {
+          id: 'user-123',
+          email: 'test@example.com',
+        },
+        securityFlags: {
+          isTrustedDevice: true,
+          requiresMFA: false,
+          lastSecurityCheck: new Date().toISOString(),
+        },
+      });
+    }),
+    extendSession: jest.fn().mockImplementation((userId, extendMinutes) => {
+      if (userId === 'invalid-user') {
+        return Promise.resolve({
+          success: false,
+          error: 'User not found',
+        });
+      }
+      return Promise.resolve({
+        success: true,
+        newExpiresAt: new Date(Date.now() + (extendMinutes || 30) * 60000),
+        sessionId: 'session-123',
+        metadata: {
+          extensionCount: 1,
+          originalExpiration: new Date(Date.now() + 3600000),
+          extendedBy: extendMinutes || 30,
+        },
+      });
+    }),
+    cleanupExpiredSessions: jest.fn().mockResolvedValue({
+      cleanedCount: 5,
+      totalProcessed: 10,
+    }),
+    createSession: jest.fn().mockResolvedValue({
+      success: true,
+      sessionId: 'session-123',
+      expiresAt: new Date(Date.now() + 3600000),
+    }),
+    revokeSession: jest.fn().mockResolvedValue({
+      success: true,
+    }),
+    logSecurityEvent: jest.fn().mockResolvedValue({
+      success: true,
+      eventId: 'security-event-123',
+      timestamp: new Date().toISOString(),
+    }),
+  };
+
+  return {
+    sessionManager: mockSessionManager,
+  };
+});
+
+// Mock SecurityAuditFramework singleton
+jest.mock('../../lib/auth/security-audit-framework', () => {
+  const mockSecurityAuditFramework = {
+    performAudit: jest.fn().mockImplementation((type) => {
+      if (type === 'invalid-type') {
+        return Promise.resolve({
+          success: false,
+          error: 'Invalid audit type',
+        });
+      }
+      return Promise.resolve({
+        success: true,
+        auditId: 'audit-123',
+        findings: [
+          {
+            type: 'security',
+            severity: 'low',
+            description: 'Sample security finding',
+          },
+        ],
+        riskScore: 3.5, // Ensure this is a number between 0-10
+        riskLevel: 'low',
+      });
+    }),
+    detectThreat: jest.fn().mockResolvedValue({
+      success: true,
+      threatId: 'threat-123',
+      actionsTaken: ['logged', 'blocked'],
+      severity: 'medium',
+    }),
+    validateCompliance: jest.fn().mockResolvedValue({
+      success: true,
+      standards: ['SOC2', 'ISO27001'],
+      violations: [],
+      complianceScore: 95,
+    }),
+    logSecurityEvent: jest.fn().mockResolvedValue({
+      success: true,
+      eventId: 'event-123',
+    }),
+    generateReport: jest.fn().mockImplementation(() => {
+      return Promise.resolve({
+        success: true,
+        reportId: 'report-123',
+        data: {
+          summary: 'Security audit completed',
+          findings: [],
+          recommendations: [],
+          riskScore: 3.5,
+        },
+      });
+    }),
+  };
+
+  return {
+    securityAuditFramework: mockSecurityAuditFramework,
+  };
+});
+
+// Mock date-fns
+jest.mock('date-fns', () => ({
+  format: jest.fn().mockReturnValue('2025-01-24'),
+  addDays: jest.fn().mockReturnValue(new Date('2025-01-25T10:00:00.000Z')),
+  addHours: jest.fn().mockReturnValue(new Date('2025-01-24T11:00:00.000Z')),
+  addMinutes: jest.fn().mockReturnValue(new Date('2025-01-24T10:01:00.000Z')),
+  subDays: jest.fn().mockReturnValue(new Date('2025-01-23T10:00:00.000Z')),
+  isAfter: jest.fn().mockReturnValue(false),
+  isBefore: jest.fn().mockReturnValue(true),
+  isEqual: jest.fn().mockReturnValue(false),
+  differenceInMinutes: jest.fn().mockReturnValue(60),
+  differenceInHours: jest.fn().mockReturnValue(1),
+  differenceInDays: jest.fn().mockReturnValue(1),
+  parseISO: jest.fn().mockImplementation((dateString) => new Date(dateString)),
+  isValid: jest.fn().mockReturnValue(true),
+}));
 
 // Mock Stripe
 jest.mock('stripe', () => {
   return jest.fn().mockImplementation(() => ({
     customers: {
-      list: jest.fn(() => Promise.resolve({ data: [] })),
-      retrieve: jest.fn(() => Promise.resolve({ id: 'cus_test' })),
-      create: jest.fn(() => Promise.resolve({ id: 'cus_test' })),
+      create: jest.fn().mockResolvedValue({
+        id: 'cus_123',
+        email: 'test@example.com'
+      }),
+      retrieve: jest.fn().mockResolvedValue({
+        id: 'cus_123',
+        email: 'test@example.com'
+      }),
+      update: jest.fn().mockResolvedValue({
+        id: 'cus_123',
+        email: 'test@example.com'
+      }),
     },
     subscriptions: {
-      list: jest.fn(() => Promise.resolve({ data: [] })),
-      retrieve: jest.fn(() => Promise.resolve({ id: 'sub_test', status: 'active' })),
-      create: jest.fn(() => Promise.resolve({ id: 'sub_test' })),
-    },
-    products: {
-      list: jest.fn(() => Promise.resolve({ data: [] })),
-    },
-    prices: {
-      list: jest.fn(() => Promise.resolve({ data: [] })),
+      create: jest.fn().mockResolvedValue({
+        id: 'sub_123',
+        status: 'active'
+      }),
+      retrieve: jest.fn().mockResolvedValue({
+        id: 'sub_123',
+        status: 'active'
+      }),
+      update: jest.fn().mockResolvedValue({
+        id: 'sub_123',
+        status: 'active'
+      }),
+      cancel: jest.fn().mockResolvedValue({
+        id: 'sub_123',
+        status: 'canceled'
+      }),
     },
     invoices: {
-      list: jest.fn(() => Promise.resolve({ data: [] })),
+      create: jest.fn().mockResolvedValue({
+        id: 'in_123',
+        status: 'draft'
+      }),
+      retrieve: jest.fn().mockResolvedValue({
+        id: 'in_123',
+        status: 'draft'
+      }),
     },
-    webhooks: {
-      constructEvent: jest.fn(() => ({
-        type: 'invoice.payment_succeeded',
-        data: { object: { id: 'in_test' } },
-      })),
-    },
-  }));
-});
-
-// Mock React Query (conditional mock)
-try {
-  require.resolve('@tanstack/react-query');
-  jest.mock('@tanstack/react-query', () => ({
-    useQuery: jest.fn(() => ({
-      data: null,
-      isLoading: false,
-      error: null,
-      refetch: jest.fn(),
-    })),
-    useMutation: jest.fn(() => ({
-      mutate: jest.fn(),
-      mutateAsync: jest.fn(),
-      isLoading: false,
-      error: null,
-    })),
-    QueryClient: jest.fn(() => ({
-      invalidateQueries: jest.fn(),
-      setQueryData: jest.fn(),
-      getQueryData: jest.fn(),
-    })),
-    QueryClientProvider: ({ children }: { children: React.ReactNode }) => children,
-  }));
-} catch {
-  // @tanstack/react-query not installed, skip mocking
-}
-
-// Mock Recharts for analytics components
-jest.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => children,
-  LineChart: ({ children }: { children: React.ReactNode }) => {
-    return React.createElement('div', { 'data-testid': 'line-chart' }, children);
-  },
-  BarChart: ({ children }: { children: React.ReactNode }) => {
-    return React.createElement('div', { 'data-testid': 'bar-chart' }, children);
-  },
-  PieChart: ({ children }: { children: React.ReactNode }) => {
-    return React.createElement('div', { 'data-testid': 'pie-chart' }, children);
-  },
-  Line: () => React.createElement('div', { 'data-testid': 'line' }),
-  Bar: () => React.createElement('div', { 'data-testid': 'bar' }),
-  Cell: () => React.createElement('div', { 'data-testid': 'cell' }),
-  XAxis: () => React.createElement('div', { 'data-testid': 'x-axis' }),
-  YAxis: () => React.createElement('div', { 'data-testid': 'y-axis' }),
-  CartesianGrid: () => React.createElement('div', { 'data-testid': 'cartesian-grid' }),
-  Tooltip: () => React.createElement('div', { 'data-testid': 'tooltip' }),
-  Legend: () => React.createElement('div', { 'data-testid': 'legend' }),
-}));
-
-// Mock jsPDF for export functionality
-jest.mock('jspdf', () => {
-  return jest.fn().mockImplementation(() => ({
-    addPage: jest.fn(),
-    setFontSize: jest.fn(),
-    text: jest.fn(),
-    save: jest.fn(),
-    internal: {
-      pageSize: { width: 210, height: 297 },
+    paymentIntents: {
+      create: jest.fn().mockResolvedValue({
+        id: 'pi_123',
+        client_secret: 'pi_123_secret',
+        status: 'requires_payment_method'
+      }),
+      retrieve: jest.fn().mockResolvedValue({
+        id: 'pi_123',
+        status: 'succeeded'
+      }),
     },
   }));
 });
 
-// Mock xlsx for Excel export
-jest.mock('xlsx', () => ({
-  utils: {
-    json_to_sheet: jest.fn(() => ({})),
-    book_new: jest.fn(() => ({})),
-    book_append_sheet: jest.fn(),
-    sheet_to_csv: jest.fn(() => 'test,csv,data'),
-  },
-  write: jest.fn(() => Buffer.from('test')),
-  writeFile: jest.fn(),
+// Mock React hooks
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn(),
+  useEffect: jest.fn(),
+  useContext: jest.fn(),
+  useReducer: jest.fn(),
+  useCallback: jest.fn(),
+  useMemo: jest.fn(),
+  useRef: jest.fn(),
+  useImperativeHandle: jest.fn(),
+  useLayoutEffect: jest.fn(),
+  useDebugValue: jest.fn(),
 }));
 
-// Mock date-fns functions
-jest.mock('date-fns', () => ({
-  format: jest.fn((date, formatStr) => {
-    if (formatStr === 'yyyy-MM-dd') return '2024-01-15';
-    if (formatStr === 'MMM dd, yyyy') return 'Jan 15, 2024';
-    return '2024-01-15';
-  }),
-  startOfMonth: jest.fn(() => new Date('2024-01-01')),
-  endOfMonth: jest.fn(() => new Date('2024-01-31')),
-  startOfYear: jest.fn(() => new Date('2024-01-01')),
-  endOfYear: jest.fn(() => new Date('2024-12-31')),
-  subMonths: jest.fn(() => new Date('2023-12-15')),
-  subYears: jest.fn(() => new Date('2023-01-15')),
-  addDays: jest.fn(() => new Date('2024-01-16')),
-  differenceInDays: jest.fn(() => 30),
-  isAfter: jest.fn(() => true),
-  isBefore: jest.fn(() => false),
-  parseISO: jest.fn((dateStr) => new Date(dateStr)),
-}));
-
-// Mock lodash functions
-jest.mock('lodash', () => ({
-  groupBy: jest.fn((arr, key) => ({ group1: arr })),
-  sumBy: jest.fn(() => 100),
-  orderBy: jest.fn((arr) => arr),
-  chunk: jest.fn((arr, size) => [arr.slice(0, size)]),
-  debounce: jest.fn((fn) => fn),
-  throttle: jest.fn((fn) => fn),
-  isEmpty: jest.fn(() => false),
-  isEqual: jest.fn(() => true),
-}));
-
-// Console silence for cleaner test output
-const originalError = console.error;
-beforeAll(() => {
-  console.error = (...args: any[]) => {
-    if (
-      typeof args[0] === 'string' &&
-      (args[0].includes('Warning: ReactDOM.render is deprecated') ||
-        args[0].includes('Warning: React.createFactory is deprecated'))
-    ) {
-      return;
-    }
-    originalError.call(console, ...args);
-  };
-});
-
-afterAll(() => {
-  console.error = originalError;
-});
-
-// Global test utilities
-declare global {
-  var __TEST_ENV__: boolean;
-  var createServerClient: any;
-}
-
-global.__TEST_ENV__ = true;
-
+// Export for use in tests
 export {};

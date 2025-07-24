@@ -13,6 +13,9 @@ export { ConversionCharts } from './analytics/conversion-charts'
 // Trial Management Components
 export { TrialManagement } from './trial-management/trial-management'
 
+// Appointment Management Components
+export { AppointmentManagementDashboard } from './appointment-management-dashboard'
+
 // Stock Management Components (Story 11.4)
 export { StockAlertsManagement } from './stock-alerts-management'
 export { StockReports } from './stock-reports'

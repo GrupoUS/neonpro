@@ -6,7 +6,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+import { onCLS, onFID, onFCP, onLCP, onTTFB } from 'web-vitals'
 
 interface PerformanceMetrics {
   lcp: number
@@ -80,11 +80,11 @@ export function usePerformanceMonitoring() {
     }
 
     // Collect Core Web Vitals
-    getCLS((metric) => collectMetric('cls', metric.value))
-    getFID((metric) => collectMetric('fid', metric.value))
-    getFCP((metric) => collectMetric('fcp', metric.value / 1000)) // Convert to seconds
-    getLCP((metric) => collectMetric('lcp', metric.value / 1000)) // Convert to seconds
-    getTTFB((metric) => collectMetric('ttfb', metric.value))
+    onCLS((metric) => collectMetric('cls', metric.value))
+    onFID((metric) => collectMetric('fid', metric.value))
+    onFCP((metric) => collectMetric('fcp', metric.value / 1000)) // Convert to seconds
+    onLCP((metric) => collectMetric('lcp', metric.value / 1000)) // Convert to seconds
+    onTTFB((metric) => collectMetric('ttfb', metric.value))
 
     // Cleanup on unmount
     return () => {

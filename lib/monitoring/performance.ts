@@ -322,3 +322,20 @@ export function usePerformanceTracker(componentName: string) {
 
   return { measureComponentRender };
 }
+
+// Generic performance tracking function for auth and other modules
+export async function trackPerformance(options: {
+  category: string;
+  name: string;
+  duration: number;
+  success: boolean;
+  metadata?: Record<string, any>;
+}): Promise<void> {
+  await performanceMonitor.logPerformanceMetric({
+    route_path: `${options.category}/${options.name}`,
+    metric_type: 'api_response',
+    duration_ms: options.duration,
+    status_code: options.success ? 200 : 500,
+    metadata: options.metadata
+  });
+}

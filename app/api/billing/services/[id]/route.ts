@@ -15,9 +15,10 @@ const UpdateServiceSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -31,7 +32,7 @@ export async function GET(
     const { data: service, error } = await supabase
       .from("services")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .single();
 
     if (error || !service) {
@@ -50,9 +51,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -69,7 +71,7 @@ export async function PUT(
     const { data: service, error } = await supabase
       .from("services")
       .update(validatedData)
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .select()
       .single();
 
@@ -100,9 +102,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -117,7 +120,7 @@ export async function DELETE(
     const { data: invoices, error: invoiceError } = await supabase
       .from("invoice_items")
       .select("id")
-      .eq("service_id", params.id)
+      .eq("service_id", resolvedParams.id)
       .limit(1);
 
     if (invoiceError) {
@@ -133,7 +136,7 @@ export async function DELETE(
       const { data: service, error } = await supabase
         .from("services")
         .update({ is_active: false })
-        .eq("id", params.id)
+        .eq("id", resolvedParams.id)
         .select()
         .single();
 
@@ -155,7 +158,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("services")
       .delete()
-      .eq("id", params.id);
+      .eq("id", resolvedParams.id);
 
     if (error) {
       console.error("Error deleting service:", error);

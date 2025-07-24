@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware/auth';
-import { trialManagementService } from '@/lib/trial-management';
+import TrialManager from '@/lib/trial-management';
 import { z } from 'zod';
 
 // Validation schema for campaign creation
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Get campaigns
-    const result = await trialManagementService.getCampaigns({
+    const result = await TrialManager.campaigns.getCampaigns({
       status,
       type,
       clinicId: clinicId || undefined,
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create campaign
-    const campaign = await trialManagementService.createCampaign({
+    const campaign = await TrialManager.campaigns.createCampaign({
       ...campaignData,
       clinicId: user.clinicId || undefined,
       createdBy: user.id,

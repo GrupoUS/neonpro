@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useSubscriptionStatus } from "@/hooks/use-subscription";
+import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
 import { AlertCircle, Clock, Lock, Zap } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";

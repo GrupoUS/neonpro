@@ -267,3 +267,30 @@ export const STOCK_REPORT_TYPES = {
   performance: 'Métricas de Performance',
   custom: 'Relatório Personalizado',
 } as const
+
+export const NOTIFICATION_CHANNEL_LABELS = {
+  in_app: 'Notificação no App',
+  email: 'E-mail',
+  whatsapp: 'WhatsApp',
+  sms: 'SMS',
+} as const
+
+export const SEVERITY_LABELS = {
+  low: 'Baixa',
+  medium: 'Média',
+  high: 'Alta',
+  critical: 'Crítica',
+} as const
+
+export const ALERT_TYPE_LABELS = {
+  low_stock: 'Estoque Baixo',
+  expiring: 'Vencendo',
+  expired: 'Vencido',
+  overstock: 'Excesso de Estoque',
+} as const
+
+export const THRESHOLD_UNIT_LABELS = {
+  quantity: 'Quantidade',
+  days: 'Dias',
+  percentage: 'Porcentagem',
+} as const

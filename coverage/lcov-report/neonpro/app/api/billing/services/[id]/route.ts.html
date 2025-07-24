@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/176</span>
+                <span class='fraction'>0/179</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/176</span>
+                <span class='fraction'>0/179</span>
             </div>
         
             
@@ -239,7 +239,13 @@
 <a name='L174'></a><a href='#L174'>174</a>
 <a name='L175'></a><a href='#L175'>175</a>
 <a name='L176'></a><a href='#L176'>176</a>
-<a name='L177'></a><a href='#L177'>177</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -432,9 +438,10 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export async function GET(</span>
 <span class="cstat-no" title="statement not covered" >  request: Request,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    const {</span>
@@ -448,7 +455,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: service, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from("services")</span>
 <span class="cstat-no" title="statement not covered" >      .select("*")</span>
-<span class="cstat-no" title="statement not covered" >      .eq("id", params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq("id", resolvedParams.id)</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (error || !service) {</span>
@@ -467,9 +474,10 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export async function PUT(</span>
 <span class="cstat-no" title="statement not covered" >  request: Request,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    const {</span>
@@ -486,7 +494,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: service, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from("services")</span>
 <span class="cstat-no" title="statement not covered" >      .update(validatedData)</span>
-<span class="cstat-no" title="statement not covered" >      .eq("id", params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq("id", resolvedParams.id)</span>
 <span class="cstat-no" title="statement not covered" >      .select()</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -517,9 +525,10 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export async function DELETE(</span>
 <span class="cstat-no" title="statement not covered" >  request: Request,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    const {</span>
@@ -534,7 +543,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: invoices, error: invoiceError } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from("invoice_items")</span>
 <span class="cstat-no" title="statement not covered" >      .select("id")</span>
-<span class="cstat-no" title="statement not covered" >      .eq("service_id", params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq("service_id", resolvedParams.id)</span>
 <span class="cstat-no" title="statement not covered" >      .limit(1);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (invoiceError) {</span>
@@ -550,7 +559,7 @@
 <span class="cstat-no" title="statement not covered" >      const { data: service, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from("services")</span>
 <span class="cstat-no" title="statement not covered" >        .update({ is_active: false })</span>
-<span class="cstat-no" title="statement not covered" >        .eq("id", params.id)</span>
+<span class="cstat-no" title="statement not covered" >        .eq("id", resolvedParams.id)</span>
 <span class="cstat-no" title="statement not covered" >        .select()</span>
 <span class="cstat-no" title="statement not covered" >        .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -572,7 +581,7 @@
 <span class="cstat-no" title="statement not covered" >    const { error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from("services")</span>
 <span class="cstat-no" title="statement not covered" >      .delete()</span>
-<span class="cstat-no" title="statement not covered" >      .eq("id", params.id);</span>
+<span class="cstat-no" title="statement not covered" >      .eq("id", resolvedParams.id);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (error) {</span>
 <span class="cstat-no" title="statement not covered" >      console.error("Error deleting service:", error);</span>
@@ -598,7 +607,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T17:38:00.534Z
+                at 2025-07-24T19:40:46.084Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

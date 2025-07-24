@@ -11,7 +11,7 @@ import { webAuthnService } from '@/lib/auth/webauthn-service';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { credentialId: string } }
+  { params }: { params: Promise<{ credentialId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -26,7 +26,8 @@ export async function DELETE(
       );
     }
 
-    const { credentialId } = params;
+    const resolvedParams = await params;
+    const { credentialId } = resolvedParams;
 
     if (!credentialId) {
       return NextResponse.json(

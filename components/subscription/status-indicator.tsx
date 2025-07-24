@@ -4,7 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useSubscriptionStatus } from "@/hooks/use-subscription";
+import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
 import { cn } from "@/lib/utils";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import Link from "next/link";

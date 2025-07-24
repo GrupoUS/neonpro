@@ -11,10 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  useSubscription,
-  useSubscriptionStatus,
-} from "@/hooks/use-subscription";
+import { useSubscription } from "@/hooks/use-subscription";
+import { useSubscriptionStatus } from "@/hooks/use-subscription-status";
 import {
   AlertCircle,
   BarChart3,

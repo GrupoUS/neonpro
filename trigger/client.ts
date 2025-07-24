@@ -1,7 +1,7 @@
-import { TriggerApi } from "@trigger.dev/sdk/v3";
+import { TriggerClient } from "@trigger.dev/sdk";
 
 // Cliente Trigger.dev configurado para NeonPro
-export const client = new TriggerApi({
+export const client = new TriggerClient({
   id: "neonpro-clinic-automation",
   name: "NeonPro Clinic Management Jobs",
   apiKey: process.env.TRIGGER_SECRET_KEY,

@@ -14,9 +14,10 @@ const UpdatePaymentSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -62,7 +63,7 @@ export async function GET(
         )
       `
       )
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .single();
 
     if (error || !payment) {
@@ -81,9 +82,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -101,7 +103,7 @@ export async function PUT(
     const { data: currentPayment, error: currentError } = await supabase
       .from("payments")
       .select("*, invoice:invoices(id, total_amount, status)")
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .single();
 
     if (currentError || !currentPayment) {
@@ -123,7 +125,7 @@ export async function PUT(
     const { data: payment, error } = await supabase
       .from("payments")
       .update(updateData)
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .select(
         `
         *,
@@ -195,9 +197,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -212,7 +215,7 @@ export async function DELETE(
     const { data: payment, error: paymentError } = await supabase
       .from("payments")
       .select("*, invoice:invoices(id, total_amount)")
-      .eq("id", params.id)
+      .eq("id", resolvedParams.id)
       .single();
 
     if (paymentError || !payment) {
@@ -231,7 +234,7 @@ export async function DELETE(
     const { error: installmentsError } = await supabase
       .from("installment_payments")
       .delete()
-      .eq("payment_id", params.id);
+      .eq("payment_id", resolvedParams.id);
 
     if (installmentsError) {
       console.error("Error deleting installments:", installmentsError);
@@ -245,7 +248,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("payments")
       .delete()
-      .eq("id", params.id);
+      .eq("id", resolvedParams.id);
 
     if (error) {
       console.error("Error deleting payment:", error);
@@ -287,9 +290,10 @@ export async function DELETE(
 // Refund payment
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params;
     const supabase = await createClient();
 
     const {
@@ -311,7 +315,7 @@ export async function POST(
       const { data: payment, error: paymentError } = await supabase
         .from("payments")
         .select("*")
-        .eq("id", params.id)
+        .eq("id", resolvedParams.id)
         .single();
 
       if (paymentError || !payment) {

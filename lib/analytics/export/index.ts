@@ -12,9 +12,9 @@ export * from './service'
 export {
   ExportConfigSchema,
   ExportRequestSchema,
-  PDFExportOptionsSchema,
-  ExcelExportOptionsSchema,
-  CSVExportOptionsSchema
+  ExportFormatSchema,
+  ExportStatusSchema,
+  ReportTypeSchema
 } from './types'
 
 // Export default configurations

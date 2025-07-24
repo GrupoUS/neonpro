@@ -203,6 +203,7 @@ class AuthPerformanceTracker {
 
 // Export singleton instance
 export const authPerformanceTracker = AuthPerformanceTracker.getInstance();
+export const performanceTracker = authPerformanceTracker; // Alias for backward compatibility
 
 // Utility functions for common operations
 export async function trackLoginPerformance<T>(

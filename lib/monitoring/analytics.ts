@@ -386,6 +386,11 @@ class UserAnalytics {
 // Export singleton instance
 export const userAnalytics = new UserAnalytics();
 
+// Export logAnalyticsEvent function for compatibility
+export function logAnalyticsEvent(eventType: string, eventData?: Record<string, any>): Promise<void> {
+  return userAnalytics.trackEvent(eventType, eventData);
+}
+
 // React Hook for component analytics
 export function useAnalytics() {
   return {

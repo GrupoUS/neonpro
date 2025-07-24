@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/245</span>
+                <span class='fraction'>0/250</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/245</span>
+                <span class='fraction'>0/250</span>
             </div>
         
             
@@ -307,7 +307,17 @@
 <a name='L242'></a><a href='#L242'>242</a>
 <a name='L243'></a><a href='#L243'>243</a>
 <a name='L244'></a><a href='#L244'>244</a>
-<a name='L245'></a><a href='#L245'>245</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -569,7 +579,7 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function GET(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
@@ -583,7 +593,8 @@
 <span class="cstat-no" title="statement not covered" >      );</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const appointmentId = params.id;</span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
+<span class="cstat-no" title="statement not covered" >    const appointmentId = resolvedParams.id;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Fetch appointment with all related data</span>
 <span class="cstat-no" title="statement not covered" >    const { data: appointment, error } = await supabase</span>
@@ -640,7 +651,7 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function PATCH(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
@@ -654,7 +665,8 @@
 <span class="cstat-no" title="statement not covered" >      );</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const appointmentId = params.id;</span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
+<span class="cstat-no" title="statement not covered" >    const appointmentId = resolvedParams.id;</span>
 <span class="cstat-no" title="statement not covered" >    const updateData: UpdateAppointmentFormData = await request.json();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Convert dates to ISO strings if they exist</span>
@@ -757,7 +769,7 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function DELETE(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
@@ -769,7 +781,10 @@
 <span class="cstat-no" title="statement not covered" >        { success: false, error_message: 'Authentication required' },</span>
 <span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
 <span class="cstat-no" title="statement not covered" >      );</span>
-<span class="cstat-no" title="statement not covered" >    }    const appointmentId = params.id;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const resolvedParams = await params;</span>
+<span class="cstat-no" title="statement not covered" >    const appointmentId = resolvedParams.id;</span>
 <span class="cstat-no" title="statement not covered" >    const { reason } = await request.json();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Use stored procedure for soft delete</span>
@@ -802,7 +817,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T17:38:00.534Z
+                at 2025-07-24T19:40:46.084Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

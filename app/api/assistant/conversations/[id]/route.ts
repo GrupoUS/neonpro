@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(
@@ -20,7 +20,8 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversationId = params.id;
+    const resolvedParams = await params;
+    const conversationId = resolvedParams.id;
 
     // Verificar se a conversa existe e pertence ao usuário
     const { data: conversation, error: convError } = await supabase
@@ -74,7 +75,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversationId = params.id;
+    const resolvedParams = await params;
+    const conversationId = resolvedParams.id;
     const { title, is_active } = await request.json();
 
     // Verificar se a conversa existe e pertence ao usuário
@@ -136,7 +138,8 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const conversationId = params.id;
+    const resolvedParams = await params;
+    const conversationId = resolvedParams.id;
 
     // Verificar se a conversa existe e pertence ao usuário
     const { data: existingConversation, error: convError } = await supabase

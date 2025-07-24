@@ -56,13 +56,6 @@ export default async function PatientsPage() {
 
   return (
     <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
-      <PatientsClientPage initialPatients={patients} />
-    </DashboardLayout>
-  );
-}
-
-  return (
-    <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">

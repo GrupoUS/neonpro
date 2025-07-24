@@ -41,6 +41,9 @@ export { AnalyticsRepository } from './repository'
 export { AnalyticsService } from './service'
 export { AnalyticsController, analyticsController } from './controller'
 
+// Service instances
+export const analyticsService = new AnalyticsService()
+
 // Export System - STORY-SUB-002 Task 7
 export * from './export'
 export { AnalyticsExportService } from './export/service'

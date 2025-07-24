@@ -16,7 +16,7 @@ import {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -30,7 +30,8 @@ export async function GET(
       );
     }
 
-    const appointmentId = params.id;
+    const resolvedParams = await params;
+    const appointmentId = resolvedParams.id;
 
     // Fetch appointment with all related data
     const { data: appointment, error } = await supabase
@@ -87,7 +88,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -101,7 +102,8 @@ export async function PATCH(
       );
     }
 
-    const appointmentId = params.id;
+    const resolvedParams = await params;
+    const appointmentId = resolvedParams.id;
     const updateData: UpdateAppointmentFormData = await request.json();
 
     // Convert dates to ISO strings if they exist
@@ -204,7 +206,7 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -216,7 +218,10 @@ export async function DELETE(
         { success: false, error_message: 'Authentication required' },
         { status: 401 }
       );
-    }    const appointmentId = params.id;
+    }
+
+    const resolvedParams = await params;
+    const appointmentId = resolvedParams.id;
     const { reason } = await request.json();
 
     // Use stored procedure for soft delete

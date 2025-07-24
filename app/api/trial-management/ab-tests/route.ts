@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/middleware/auth';
-import { trialManagementService } from '@/lib/trial-management';
+import TrialManager from '@/lib/trial-management';
 import { z } from 'zod';
 
 // Validation schema for A/B test creation
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Get A/B tests
-    const result = await trialManagementService.getABTests({
+    const result = await TrialManager.campaigns.getABTests({
       status,
       testType,
       clinicId: clinicId || undefined,
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create A/B test
-    const abTest = await trialManagementService.createABTest({
+    const abTest = await TrialManager.campaigns.createABTest({
       ...testData,
       clinicId: user.clinicId || undefined,
       createdBy: user.id,

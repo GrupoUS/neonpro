@@ -514,7 +514,7 @@ export default async function AdvancedMedicalAIDashboard() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">API Response Time</span>
-                    <Badge variant="outline">< 100ms</Badge>
+                    <Badge variant="outline">&lt; 100ms</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm">System Availability</span>

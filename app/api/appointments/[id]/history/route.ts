@@ -12,7 +12,7 @@ import { AppointmentHistoryResponse } from '@/app/lib/types/appointments';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -26,7 +26,8 @@ export async function GET(
       );
     }
 
-    const appointmentId = params.id;
+    const resolvedParams = await params;
+    const appointmentId = resolvedParams.id;
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
