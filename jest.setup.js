@@ -1,23 +1,39 @@
-// Jest setup file - runs before each test
-// Ensures consistent testing environment
-
-import '@testing-library/jest-dom';
-
-// Set timezone to UTC for consistent date testing across all environments
-process.env.TZ = 'UTC';
-
-// Mock IntersectionObserver for components that use it
-global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
+const mockSupabaseClient = {
+  from: jest.fn().mockReturnValue({
+    select: jest.fn().mockReturnValue({
+      eq: jest.fn().mockReturnValue({
+        eq: jest.fn().mockReturnValue({
+          order: jest.fn().mockReturnValue({
+            then: jest.fn().mockResolvedValue({ data: [], error: null })
+          })
+        })
+      })
+    }),
+    insert: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        then: jest.fn().mockResolvedValue({
+          data: [{ id: '1', name: 'Test Form' }],
+          error: null
+        })
+      })
+    }),
+    update: jest.fn().mockReturnValue({
+      eq: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          then: jest.fn().mockResolvedValue({
+            data: [{ id: '1', status: 'revoked' }],
+            error: null
+          })
+        })
+      })
+    })
+  })
 };
 
-// Mock ResizeObserver for components that use it
-global.ResizeObserver = class ResizeObserver {
-  constructor() {}
-  disconnect() {}
-  observe() {}
-  unobserve() {}
-};
+// Mock do cliente Supabase
+jest.mock('@/app/utils/supabase/client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient)
+}));
+
+// Mock global para métodos Promise
+global.mockSupabaseClient = mockSupabaseClient;
