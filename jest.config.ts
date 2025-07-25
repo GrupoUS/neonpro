@@ -1,6 +1,9 @@
 import type { Config } from 'jest'
 import nextJest from 'next/jest.js'
 
+// Set timezone to UTC for consistent date testing across all environments
+process.env.TZ = 'UTC';
+
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
   dir: './',
@@ -16,6 +19,9 @@ const config: Config = {
     '<rootDir>/jest.setup.ts',
     '<rootDir>/__tests__/setup/api-setup.ts'
   ],
+  
+  // Global setup for timezone configuration
+  globalSetup: '<rootDir>/jest.global-setup.js',
   
   // Coverage configuration
   collectCoverage: true,

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/201</span>
+                <span class='fraction'>0/207</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/201</span>
+                <span class='fraction'>0/207</span>
             </div>
         
             
@@ -263,7 +263,19 @@
 <a name='L198'></a><a href='#L198'>198</a>
 <a name='L199'></a><a href='#L199'>199</a>
 <a name='L200'></a><a href='#L200'>200</a>
-<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -487,7 +499,7 @@
 <span class="cstat-no" title="statement not covered" >// GET /api/regulatory-documents/[id] - Get single document by ID</span>
 <span class="cstat-no" title="statement not covered" >export async function GET(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -497,6 +509,8 @@
 <span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Fetch document with related data</span>
 <span class="cstat-no" title="statement not covered" >    const { data: document, error } = await supabase</span>
@@ -523,7 +537,7 @@
 <span class="cstat-no" title="statement not covered" >        profiles!regulatory_documents_created_by_fkey(full_name),</span>
 <span class="cstat-no" title="statement not covered" >        profiles!regulatory_documents_updated_by_fkey(full_name)</span>
 <span class="cstat-no" title="statement not covered" >      `)</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (error) {</span>
@@ -545,7 +559,7 @@
 <span class="cstat-no" title="statement not covered" >// PUT /api/regulatory-documents/[id] - Update document</span>
 <span class="cstat-no" title="statement not covered" >export async function PUT(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -556,6 +570,8 @@
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Parse and validate request body</span>
 <span class="cstat-no" title="statement not covered" >    const requestBody = await request.json()</span>
 <span class="cstat-no" title="statement not covered" >    const validatedData = UpdateDocumentSchema.parse(requestBody)</span>
@@ -564,7 +580,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: existingDoc, error: fetchError } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('regulatory_documents')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id, version, file_url')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (fetchError) {</span>
@@ -582,7 +598,7 @@
 <span class="cstat-no" title="statement not covered" >        updated_by: user.id,</span>
 <span class="cstat-no" title="statement not covered" >        updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >      })</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .select(`</span>
 <span class="cstat-no" title="statement not covered" >        *,</span>
 <span class="cstat-no" title="statement not covered" >        regulation_categories!inner(name, authority_name)</span>
@@ -599,7 +615,7 @@
 <span class="cstat-no" title="statement not covered" >      await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('document_versions')</span>
 <span class="cstat-no" title="statement not covered" >        .insert({</span>
-<span class="cstat-no" title="statement not covered" >          document_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >          document_id: id,</span>
 <span class="cstat-no" title="statement not covered" >          version: validatedData.version || `v${Date.now()}`,</span>
 <span class="cstat-no" title="statement not covered" >          file_url: validatedData.file_url,</span>
 <span class="cstat-no" title="statement not covered" >          change_reason: requestBody.change_reason || 'Document updated',</span>
@@ -621,7 +637,7 @@
 <span class="cstat-no" title="statement not covered" >// DELETE /api/regulatory-documents/[id] - Delete document</span>
 <span class="cstat-no" title="statement not covered" >export async function DELETE(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -632,11 +648,13 @@
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Check if document exists</span>
 <span class="cstat-no" title="statement not covered" >    const { data: existingDoc, error: fetchError } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('regulatory_documents')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (fetchError) {</span>
@@ -650,7 +668,7 @@
 <span class="cstat-no" title="statement not covered" >    const { error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('regulatory_documents')</span>
 <span class="cstat-no" title="statement not covered" >      .delete()</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (error) {</span>
 <span class="cstat-no" title="statement not covered" >      console.error('Error deleting regulatory document:', error)</span>
@@ -670,7 +688,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

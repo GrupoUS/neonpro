@@ -11,7 +11,7 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -25,7 +25,8 @@ export async function GET(
       );
     }
 
-    const accountId = params.id;
+    const { id } = await params;
+    const accountId = id;
     const searchParams = request.nextUrl.searchParams;
     const action = searchParams.get('action') || 'profile';
 
@@ -124,7 +125,7 @@ export async function GET(
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -138,7 +139,8 @@ export async function PATCH(
       );
     }
 
-    const accountId = params.id;
+    const { id } = await params;
+    const accountId = id;
     const { isActive, autoPost, notificationsEnabled } = await request.json();
 
     // Update account settings
@@ -206,9 +208,11 @@ export async function PATCH(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+    const accountId = id;
     const supabase = await createClient();
     
     // Verify user authentication
@@ -219,8 +223,6 @@ export async function DELETE(
         { status: 401 }
       );
     }
-
-    const accountId = params.id;
 
     // Get account details before deletion
     const { data: account } = await supabase

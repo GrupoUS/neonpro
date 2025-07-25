@@ -43,7 +43,23 @@ import {
   Filter,
   Calendar
 } from 'lucide-react';
-import { StockDashboardData, StockKPIs, Recommendation } from '@/app/lib/types/stock';
+import { StockDashboardData } from '@/app/lib/types/stock';
+
+// Extract the KPIs type from StockDashboardData
+type StockKPIs = StockDashboardData['kpis'];
+
+// Define Recommendation type locally since it's not exported
+interface Recommendation {
+  type: 'reorder' | 'optimize' | 'attention';
+  priority: 'high' | 'medium' | 'low';
+  message: string;
+  actionable: boolean;
+  productId?: string;
+  actions?: Array<{
+    action: string;
+    parameters?: Record<string, any>;
+  }>;
+}
 
 // =====================================================
 // TYPES AND INTERFACES
@@ -221,9 +237,7 @@ const StockDashboardClient: React.FC = () => {
       { key: 'daysCoverage', label: 'Dias de Cobertura', value: `${kpis.daysCoverage} dias`, change: null },
       { key: 'accuracyPercentage', label: 'Precisão', value: formatPercentage(kpis.accuracyPercentage), change: null },
       { key: 'activeAlerts', label: 'Alertas Ativos', value: kpis.activeAlerts.toString(), change: null },
-      { key: 'criticalAlerts', label: 'Alertas Críticos', value: kpis.criticalAlerts.toString(), change: null },
-      { key: 'wasteValue', label: 'Valor de Desperdício', value: formatCurrency(kpis.wasteValue), change: null },
-      { key: 'wastePercentage', label: '% Desperdício', value: formatPercentage(kpis.wastePercentage), change: null }
+      { key: 'criticalAlerts', label: 'Alertas Críticos', value: kpis.criticalAlerts.toString(), change: null }
     ];
 
     return (
@@ -304,13 +318,13 @@ const StockDashboardClient: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-medium text-sm">{product.name}</p>
-                    <p className="text-xs text-muted-foreground">{product.sku}</p>
+                    <p className="text-xs text-muted-foreground">ID: {product.productId}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="font-medium text-sm">{formatCurrency(product.value)}</p>
-                  <p className={`text-xs ${product.changePercentage >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {product.changePercentage >= 0 ? '+' : ''}{product.changePercentage.toFixed(1)}%
+                  <p className="text-xs text-muted-foreground">
+                    {product.consumption} unidades
                   </p>
                 </div>
               </div>
@@ -370,9 +384,9 @@ const StockDashboardClient: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {state.data.recommendations.map((recommendation) => (
+            {state.data.recommendations.map((recommendation, index) => (
               <div
-                key={recommendation.id}
+                key={`recommendation-${index}`}
                 className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <AlertTriangle className={`h-5 w-5 mt-0.5 ${
@@ -381,19 +395,19 @@ const StockDashboardClient: React.FC = () => {
                 }`} />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-medium text-sm">{recommendation.title}</h4>
+                    <h4 className="font-medium text-sm">{recommendation.type.charAt(0).toUpperCase() + recommendation.type.slice(1)}</h4>
                     <Badge className={getSeverityColor(recommendation.priority)}>
                       {recommendation.priority}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">{recommendation.message}</p>
                 </div>
-                {recommendation.actionable && recommendation.actions?.length && (
+                {recommendation.actionable && (
                   <Button
                     size="sm"
                     onClick={() => handleRecommendationAction(recommendation)}
                   >
-                    {recommendation.actions[0].label}
+                    Ação
                   </Button>
                 )}
               </div>

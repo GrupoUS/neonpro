@@ -21,9 +21,9 @@ const updateAccountSchema = z.object({
 });
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -36,6 +36,7 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Verify authentication
@@ -86,7 +87,7 @@ export async function GET(
           oauth_config
         )
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
 
@@ -130,6 +131,7 @@ export async function PUT(
   { params }: RouteParams
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Verify authentication
@@ -159,7 +161,7 @@ export async function PUT(
     const { data: existingAccount } = await supabase
       .from('social_media_accounts')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
 
@@ -181,7 +183,7 @@ export async function PUT(
         ...validatedData,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .select(`
         id,
@@ -238,6 +240,7 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Verify authentication
@@ -275,7 +278,7 @@ export async function DELETE(
     const { data: existingAccount } = await supabase
       .from('social_media_accounts')
       .select('id, platform_name, account_name')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
 
@@ -290,7 +293,7 @@ export async function DELETE(
     const { data: dependentPosts } = await supabase
       .from('social_media_posts')
       .select('id')
-      .eq('account_id', params.id)
+      .eq('account_id', id)
       .limit(1);
 
     if (dependentPosts && dependentPosts.length > 0) {
@@ -302,7 +305,7 @@ export async function DELETE(
           sync_status: 'disconnected',
           updated_at: new Date().toISOString()
         })
-        .eq('id', params.id)
+        .eq('id', id)
         .eq('clinic_id', profile.clinic_id);
 
       if (error) {
@@ -322,7 +325,7 @@ export async function DELETE(
       const { error } = await supabase
         .from('social_media_accounts')
         .delete()
-        .eq('id', params.id)
+        .eq('id', id)
         .eq('clinic_id', profile.clinic_id);
 
       if (error) {
@@ -356,6 +359,7 @@ export async function POST(
   { params }: RouteParams
 ) {
   try {
+    const { id } = await params;
     const supabase = await createClient();
     
     // Verify authentication
@@ -389,7 +393,7 @@ export async function POST(
     const { data: account } = await supabase
       .from('social_media_accounts')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('clinic_id', profile.clinic_id)
       .single();
 
@@ -411,7 +415,7 @@ export async function POST(
             sync_error_message: null,
             updated_at: new Date().toISOString()
           })
-          .eq('id', params.id);
+          .eq('id', id);
 
         if (syncError) {
           throw syncError;

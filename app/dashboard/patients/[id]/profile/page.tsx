@@ -8,9 +8,9 @@ import { Separator } from '@/components/ui/separator'
 import { User, Shield, Clock, Heart } from 'lucide-react'
 
 interface PatientProfilePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 async function getPatientProfile(patientId: string, supabase: any) {
@@ -32,6 +32,7 @@ async function getPatientProfile(patientId: string, supabase: any) {
 
   return patient
 }export default async function PatientProfilePage({ params }: PatientProfilePageProps) {
+  const { id } = await params
   const supabase = await createClient()
   
   // Verify authentication
@@ -42,7 +43,7 @@ async function getPatientProfile(patientId: string, supabase: any) {
   if (!user) redirect('/login')
 
   // Fetch patient data
-  const patient = await getPatientProfile(params.id, supabase)
+  const patient = await getPatientProfile(id, supabase)
   if (!patient) {
     notFound()
   }
@@ -50,7 +51,7 @@ async function getPatientProfile(patientId: string, supabase: any) {
   const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
     { title: "Pacientes", href: "/dashboard/patients" },
-    { title: patient.full_name || 'Paciente', href: `/dashboard/patients/${params.id}` },
+    { title: patient.full_name || 'Paciente', href: `/dashboard/patients/${id}` },
     { title: "Perfil" }
   ]
 
@@ -117,7 +118,7 @@ async function getPatientProfile(patientId: string, supabase: any) {
 
         {/* Profile Edit Form */}
         <PatientProfileEditForm
-          patientId={params.id}
+          patientId={id}
           initialData={patient.profiles?.[0] || patient}
           onSuccess={() => {
             // Redirect or refresh as needed

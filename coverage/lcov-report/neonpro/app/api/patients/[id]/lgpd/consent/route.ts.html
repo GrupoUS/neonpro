@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/131</span>
+                <span class='fraction'>0/133</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/131</span>
+                <span class='fraction'>0/133</span>
             </div>
         
             
@@ -193,7 +193,11 @@
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
 <a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -338,7 +342,7 @@
 <span class="cstat-no" title="statement not covered" >// POST - Record new LGPD consent</span>
 <span class="cstat-no" title="statement not covered" >export async function POST(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -349,6 +353,7 @@
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const body = await request.json()</span>
 <span class="cstat-no" title="statement not covered" >    const validatedConsent = ConsentSchema.parse(body)</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -356,7 +361,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: consent, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('lgpd_consents')</span>
 <span class="cstat-no" title="statement not covered" >      .insert({</span>
-<span class="cstat-no" title="statement not covered" >        patient_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >        patient_id: id,</span>
 <span class="cstat-no" title="statement not covered" >        data_processing_consent: validatedConsent.dataProcessingConsent,</span>
 <span class="cstat-no" title="statement not covered" >        sensitive_data_consent: validatedConsent.sensitiveDataConsent,</span>
 <span class="cstat-no" title="statement not covered" >        marketing_consent: validatedConsent.marketingConsent,</span>
@@ -378,7 +383,7 @@
 <span class="cstat-no" title="statement not covered" >    await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('lgpd_audit_log')</span>
 <span class="cstat-no" title="statement not covered" >      .insert({</span>
-<span class="cstat-no" title="statement not covered" >        patient_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >        patient_id: id,</span>
 <span class="cstat-no" title="statement not covered" >        action: 'consent_given',</span>
 <span class="cstat-no" title="statement not covered" >        data_fields: Object.keys(validatedConsent),</span>
 <span class="cstat-no" title="statement not covered" >        legal_basis: 'Consentimento do titular (Art. 7°, I, LGPD)',</span>
@@ -411,7 +416,7 @@
 <span class="cstat-no" title="statement not covered" >// PATCH - Update existing consent</span>
 <span class="cstat-no" title="statement not covered" >export async function PATCH(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -421,6 +426,7 @@
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const body = await request.json()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Update consent record</span>
@@ -430,7 +436,7 @@
 <span class="cstat-no" title="statement not covered" >        ...body,</span>
 <span class="cstat-no" title="statement not covered" >        updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >      })</span>
-<span class="cstat-no" title="statement not covered" >      .eq('patient_id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('patient_id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .select()</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -460,7 +466,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../../../prettify.js"></script>
         <script>

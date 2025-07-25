@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/455</span>
+                <span class='fraction'>0/459</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/455</span>
+                <span class='fraction'>0/459</span>
             </div>
         
             
@@ -517,7 +517,15 @@
 <a name='L452'></a><a href='#L452'>452</a>
 <a name='L453'></a><a href='#L453'>453</a>
 <a name='L454'></a><a href='#L454'>454</a>
-<a name='L455'></a><a href='#L455'>455</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L455'></a><a href='#L455'>455</a>
+<a name='L456'></a><a href='#L456'>456</a>
+<a name='L457'></a><a href='#L457'>457</a>
+<a name='L458'></a><a href='#L458'>458</a>
+<a name='L459'></a><a href='#L459'>459</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -994,9 +1002,9 @@
 <span class="cstat-no" title="statement not covered" >});</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface RouteParams {</span>
-<span class="cstat-no" title="statement not covered" >  params: {</span>
+<span class="cstat-no" title="statement not covered" >  params: Promise&lt;{</span>
 <span class="cstat-no" title="statement not covered" >    id: string;</span>
-<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  }&gt;;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >/**</span>
@@ -1009,6 +1017,7 @@
 <span class="cstat-no" title="statement not covered" >  { params }: RouteParams</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
@@ -1059,7 +1068,7 @@
 <span class="cstat-no" title="statement not covered" >          oauth_config</span>
 <span class="cstat-no" title="statement not covered" >        )</span>
 <span class="cstat-no" title="statement not covered" >      `)</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .eq('clinic_id', profile.clinic_id)</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1103,6 +1112,7 @@
 <span class="cstat-no" title="statement not covered" >  { params }: RouteParams</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
@@ -1132,7 +1142,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: existingAccount } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('social_media_accounts')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .eq('clinic_id', profile.clinic_id)</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1154,7 +1164,7 @@
 <span class="cstat-no" title="statement not covered" >        ...validatedData,</span>
 <span class="cstat-no" title="statement not covered" >        updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >      })</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .eq('clinic_id', profile.clinic_id)</span>
 <span class="cstat-no" title="statement not covered" >      .select(`</span>
 <span class="cstat-no" title="statement not covered" >        id,</span>
@@ -1211,6 +1221,7 @@
 <span class="cstat-no" title="statement not covered" >  { params }: RouteParams</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
@@ -1248,7 +1259,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: existingAccount } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('social_media_accounts')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id, platform_name, account_name')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .eq('clinic_id', profile.clinic_id)</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1263,7 +1274,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: dependentPosts } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('social_media_posts')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('account_id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('account_id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .limit(1);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (dependentPosts &amp;&amp; dependentPosts.length &gt; 0) {</span>
@@ -1275,7 +1286,7 @@
 <span class="cstat-no" title="statement not covered" >          sync_status: 'disconnected',</span>
 <span class="cstat-no" title="statement not covered" >          updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >        .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', profile.clinic_id);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      if (error) {</span>
@@ -1295,7 +1306,7 @@
 <span class="cstat-no" title="statement not covered" >      const { error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('social_media_accounts')</span>
 <span class="cstat-no" title="statement not covered" >        .delete()</span>
-<span class="cstat-no" title="statement not covered" >        .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >        .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', profile.clinic_id);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      if (error) {</span>
@@ -1329,6 +1340,7 @@
 <span class="cstat-no" title="statement not covered" >  { params }: RouteParams</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
@@ -1362,7 +1374,7 @@
 <span class="cstat-no" title="statement not covered" >    const { data: account } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('social_media_accounts')</span>
 <span class="cstat-no" title="statement not covered" >      .select('*')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .eq('clinic_id', profile.clinic_id)</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1384,7 +1396,7 @@
 <span class="cstat-no" title="statement not covered" >            sync_error_message: null,</span>
 <span class="cstat-no" title="statement not covered" >            updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >          })</span>
-<span class="cstat-no" title="statement not covered" >          .eq('id', params.id);</span>
+<span class="cstat-no" title="statement not covered" >          .eq('id', id);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >        if (syncError) {</span>
 <span class="cstat-no" title="statement not covered" >          throw syncError;</span>
@@ -1432,7 +1444,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

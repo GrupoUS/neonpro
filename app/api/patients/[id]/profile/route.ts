@@ -6,7 +6,7 @@ import { z } from 'zod'
 // GET - Retrieve patient profile
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -16,6 +16,8 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const { id } = await params;
 
     // Fetch patient profile with related data
     const { data: patient, error } = await supabase
@@ -27,7 +29,7 @@ export async function GET(
         lgpd_consents (*),
         contact_preferences (*)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -39,7 +41,7 @@ export async function GET(
     await supabase
       .from('lgpd_audit_log')
       .insert({
-        patient_id: params.id,
+        patient_id: id,
         action: 'read',
         data_fields: ['profile', 'emergency_contacts', 'preferences'],
         legal_basis: 'Consentimento do titular (Art. 7°, I, LGPD)',
@@ -60,7 +62,7 @@ export async function GET(
 }// PUT - Update patient profile
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -85,11 +87,13 @@ export async function PUT(
     // Validate profile data
     const validatedData = PatientProfileUpdateSchema.parse(body)
 
+    const { id } = await params;
+
     // Start transaction
     const { data: updatedPatient, error: updateError } = await supabase.rpc(
       'update_patient_profile_with_lgpd_audit',
       {
-        p_patient_id: params.id,
+        p_patient_id: id,
         p_profile_data: validatedData,
         p_user_agent: request.headers.get('user-agent') || 'unknown',
         p_ip_address: request.ip || 'unknown'
@@ -128,7 +132,7 @@ export async function PUT(
 // PATCH - Partial update patient profile
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -142,11 +146,13 @@ export async function PATCH(
     // Parse request body
     const body = await request.json()
 
+    const { id } = await params;
+
     // Check if patient exists and user has permission
     const { data: patient, error: fetchError } = await supabase
       .from('patients')
       .select('id, clinic_id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (fetchError || !patient) {
@@ -157,7 +163,7 @@ export async function PATCH(
     await supabase
       .from('lgpd_audit_log')
       .insert({
-        patient_id: params.id,
+        patient_id: id,
         action: 'update',
         data_fields: Object.keys(body),
         legal_basis: 'Legítimo interesse (Art. 7°, IX, LGPD)',
@@ -173,7 +179,7 @@ export async function PATCH(
         ...body,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
 

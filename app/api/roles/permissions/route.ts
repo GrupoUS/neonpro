@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
 
 // Definição da hierarquia de roles
-export const ROLE_HIERARCHY = {
+const ROLE_HIERARCHY = {
   admin: {
     level: 5,
     permissions: [
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Função para verificar se uma role tem determinada permissão
-export function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permission: string): boolean {
+function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permission: string): boolean {
   const roleInfo = ROLE_HIERARCHY[userRole];
   if (!roleInfo) return false;
 
@@ -224,7 +224,7 @@ export function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permissio
 }
 
 // Função para verificar se uma role pode gerenciar outra role
-export function canManageTargetRole(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
+function canManageTargetRole(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   if (!userRoleInfo) return false;
 
@@ -232,7 +232,7 @@ export function canManageTargetRole(userRole: keyof typeof ROLE_HIERARCHY, targe
 }
 
 // Função para verificar se uma role tem nível hierárquico superior
-export function hasHigherLevel(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
+function hasHigherLevel(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   const targetRoleInfo = ROLE_HIERARCHY[targetRole];
   

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/133</span>
+                <span class='fraction'>0/134</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/133</span>
+                <span class='fraction'>0/134</span>
             </div>
         
             
@@ -195,7 +195,9 @@
 <a name='L130'></a><a href='#L130'>130</a>
 <a name='L131'></a><a href='#L131'>131</a>
 <a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -337,9 +339,9 @@
 <span class="cstat-no" title="statement not covered" >import { User, Shield, Clock, Heart } from 'lucide-react'</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface PatientProfilePageProps {</span>
-<span class="cstat-no" title="statement not covered" >  params: {</span>
+<span class="cstat-no" title="statement not covered" >  params: Promise&lt;{</span>
 <span class="cstat-no" title="statement not covered" >    id: string</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  }&gt;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >async function getPatientProfile(patientId: string, supabase: any) {</span>
@@ -361,6 +363,7 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  return patient</span>
 <span class="cstat-no" title="statement not covered" >}export default async function PatientProfilePage({ params }: PatientProfilePageProps) {</span>
+<span class="cstat-no" title="statement not covered" >  const { id } = await params</span>
 <span class="cstat-no" title="statement not covered" >  const supabase = await createClient()</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  // Verify authentication</span>
@@ -371,7 +374,7 @@
 <span class="cstat-no" title="statement not covered" >  if (!user) redirect('/login')</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  // Fetch patient data</span>
-<span class="cstat-no" title="statement not covered" >  const patient = await getPatientProfile(params.id, supabase)</span>
+<span class="cstat-no" title="statement not covered" >  const patient = await getPatientProfile(id, supabase)</span>
 <span class="cstat-no" title="statement not covered" >  if (!patient) {</span>
 <span class="cstat-no" title="statement not covered" >    notFound()</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
@@ -379,7 +382,7 @@
 <span class="cstat-no" title="statement not covered" >  const breadcrumbs = [</span>
 <span class="cstat-no" title="statement not covered" >    { title: "Dashboard", href: "/dashboard" },</span>
 <span class="cstat-no" title="statement not covered" >    { title: "Pacientes", href: "/dashboard/patients" },</span>
-<span class="cstat-no" title="statement not covered" >    { title: patient.full_name || 'Paciente', href: `/dashboard/patients/${params.id}` },</span>
+<span class="cstat-no" title="statement not covered" >    { title: patient.full_name || 'Paciente', href: `/dashboard/patients/${id}` },</span>
 <span class="cstat-no" title="statement not covered" >    { title: "Perfil" }</span>
 <span class="cstat-no" title="statement not covered" >  ]</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -446,7 +449,7 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >        {/* Profile Edit Form */}</span>
 <span class="cstat-no" title="statement not covered" >        &lt;PatientProfileEditForm</span>
-<span class="cstat-no" title="statement not covered" >          patientId={params.id}</span>
+<span class="cstat-no" title="statement not covered" >          patientId={id}</span>
 <span class="cstat-no" title="statement not covered" >          initialData={patient.profiles?.[0] || patient}</span>
 <span class="cstat-no" title="statement not covered" >          onSuccess={() =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            // Redirect or refresh as needed</span>
@@ -466,7 +469,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

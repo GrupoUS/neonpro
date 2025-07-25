@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/104</span>
+                <span class='fraction'>0/88</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/104</span>
+                <span class='fraction'>0/88</span>
             </div>
         
             
@@ -151,39 +151,7 @@
 <a name='L86'></a><a href='#L86'>86</a>
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a>
-<a name='L91'></a><a href='#L91'>91</a>
-<a name='L92'></a><a href='#L92'>92</a>
-<a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a>
-<a name='L100'></a><a href='#L100'>100</a>
-<a name='L101'></a><a href='#L101'>101</a>
-<a name='L102'></a><a href='#L102'>102</a>
-<a name='L103'></a><a href='#L103'>103</a>
-<a name='L104'></a><a href='#L104'>104</a>
-<a name='L105'></a><a href='#L105'>105</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L89'></a><a href='#L89'>89</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -273,106 +241,90 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >"use client";</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import CustomerList from "@/components/crm/customer-management/customer-list";</span>
-<span class="cstat-no" title="statement not covered" >import { DashboardLayout } from "@/components/navigation/dashboard-layout";</span>
-<span class="cstat-no" title="statement not covered" >import { CRMProvider } from "@/contexts/crm-context";</span>
-<span class="cstat-no" title="statement not covered" >import { User } from "@supabase/auth-helpers-nextjs";</span>
 <span class="cstat-no" title="statement not covered" >import { useState } from "react";</span>
+<span class="cstat-no" title="statement not covered" >import { User } from "@supabase/supabase-js";</span>
+<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";</span>
+<span class="cstat-no" title="statement not covered" >import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";</span>
+<span class="cstat-no" title="statement not covered" >import { Badge } from "@/components/ui/badge";</span>
+<span class="cstat-no" title="statement not covered" >import { </span>
+<span class="cstat-no" title="statement not covered" >  CustomerManagement, </span>
+<span class="cstat-no" title="statement not covered" >  LeadTracking, </span>
+<span class="cstat-no" title="statement not covered" >  CustomerAnalytics </span>
+<span class="cstat-no" title="statement not covered" >} from "@/components/crm";</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface CRMClientPageProps {</span>
 <span class="cstat-no" title="statement not covered" >  user: User;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default function CRMClientPage({ user }: CRMClientPageProps) {</span>
-<span class="cstat-no" title="statement not covered" >  const [currentView, setCurrentView] = useState&lt;</span>
-<span class="cstat-no" title="statement not covered" >    "customers" | "segments" | "campaigns"</span>
-<span class="cstat-no" title="statement not covered" >  &gt;("customers");</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const breadcrumbs = [</span>
-<span class="cstat-no" title="statement not covered" >    { title: "Dashboard", href: "/dashboard" },</span>
-<span class="cstat-no" title="statement not covered" >    { title: "CRM", href: "/dashboard/crm" },</span>
-<span class="cstat-no" title="statement not covered" >  ];</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const renderContent = () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    switch (currentView) {</span>
-<span class="cstat-no" title="statement not covered" >      case "customers":</span>
-<span class="cstat-no" title="statement not covered" >        return (</span>
-<span class="cstat-no" title="statement not covered" >          &lt;CustomerList</span>
-<span class="cstat-no" title="statement not covered" >            onCustomerSelect={(customer) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >              console.log("Customer selected:", customer);</span>
-<span class="cstat-no" title="statement not covered" >            }}</span>
-<span class="cstat-no" title="statement not covered" >            onCreateCustomer={() =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >              console.log("Create new customer");</span>
-<span class="cstat-no" title="statement not covered" >            }}</span>
-<span class="cstat-no" title="statement not covered" >            onEditCustomer={(customer) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >              console.log("Edit customer:", customer);</span>
-<span class="cstat-no" title="statement not covered" >            }}</span>
-<span class="cstat-no" title="statement not covered" >          /&gt;</span>
-<span class="cstat-no" title="statement not covered" >        );</span>
-<span class="cstat-no" title="statement not covered" >      case "segments":</span>
-<span class="cstat-no" title="statement not covered" >        return (</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="p-8 text-center"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;h2 className="text-2xl font-bold"&gt;Segmentação de Clientes&lt;/h2&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;p className="text-muted-foreground mt-2"&gt;Em desenvolvimento...&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >        );</span>
-<span class="cstat-no" title="statement not covered" >      case "campaigns":</span>
-<span class="cstat-no" title="statement not covered" >        return (</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="p-8 text-center"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;h2 className="text-2xl font-bold"&gt;Campanhas de Marketing&lt;/h2&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;p className="text-muted-foreground mt-2"&gt;Em desenvolvimento...&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >        );</span>
-<span class="cstat-no" title="statement not covered" >      default:</span>
-<span class="cstat-no" title="statement not covered" >        return null;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  const [activeTab, setActiveTab] = useState("customers");</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;DashboardLayout user={user} breadcrumbs={breadcrumbs}&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;CRMProvider&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className="space-y-6"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          {/* Navigation Tabs */}</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="border-b border-gray-200"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;nav className="-mb-px flex space-x-8"&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;button</span>
-<span class="cstat-no" title="statement not covered" >                onClick={() =&gt; setCurrentView("customers")}</span>
-<span class="cstat-no" title="statement not covered" >                className={`py-2 px-1 border-b-2 font-medium text-sm ${</span>
-<span class="cstat-no" title="statement not covered" >                  currentView === "customers"</span>
-<span class="cstat-no" title="statement not covered" >                    ? "border-primary text-primary"</span>
-<span class="cstat-no" title="statement not covered" >                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"</span>
-<span class="cstat-no" title="statement not covered" >                }`}</span>
-<span class="cstat-no" title="statement not covered" >              &gt;</span>
-<span class="cstat-no" title="statement not covered" >                Clientes</span>
-<span class="cstat-no" title="statement not covered" >              &lt;/button&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;button</span>
-<span class="cstat-no" title="statement not covered" >                onClick={() =&gt; setCurrentView("segments")}</span>
-<span class="cstat-no" title="statement not covered" >                className={`py-2 px-1 border-b-2 font-medium text-sm ${</span>
-<span class="cstat-no" title="statement not covered" >                  currentView === "segments"</span>
-<span class="cstat-no" title="statement not covered" >                    ? "border-primary text-primary"</span>
-<span class="cstat-no" title="statement not covered" >                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"</span>
-<span class="cstat-no" title="statement not covered" >                }`}</span>
-<span class="cstat-no" title="statement not covered" >              &gt;</span>
-<span class="cstat-no" title="statement not covered" >                Segmentação</span>
-<span class="cstat-no" title="statement not covered" >              &lt;/button&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;button</span>
-<span class="cstat-no" title="statement not covered" >                onClick={() =&gt; setCurrentView("campaigns")}</span>
-<span class="cstat-no" title="statement not covered" >                className={`py-2 px-1 border-b-2 font-medium text-sm ${</span>
-<span class="cstat-no" title="statement not covered" >                  currentView === "campaigns"</span>
-<span class="cstat-no" title="statement not covered" >                    ? "border-primary text-primary"</span>
-<span class="cstat-no" title="statement not covered" >                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"</span>
-<span class="cstat-no" title="statement not covered" >                }`}</span>
-<span class="cstat-no" title="statement not covered" >              &gt;</span>
-<span class="cstat-no" title="statement not covered" >                Campanhas</span>
-<span class="cstat-no" title="statement not covered" >              &lt;/button&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;/nav&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >          {/* Content */}</span>
-<span class="cstat-no" title="statement not covered" >          {renderContent()}</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className="container mx-auto p-6 space-y-6"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      {/* Header */}</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="flex items-center justify-between"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;h1 className="text-3xl font-bold"&gt;Customer Relationship Management&lt;/h1&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;p className="text-muted-foreground"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Gerencie relacionamentos com clientes, leads e análises</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/CRMProvider&gt;</span>
-<span class="cstat-no" title="statement not covered" >    &lt;/DashboardLayout&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;Badge variant="secondary" className="text-sm"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          CRM v2.2</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/Badge&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      {/* CRM Dashboard Tabs */}</span>
+<span class="cstat-no" title="statement not covered" >      &lt;Tabs value={activeTab} onValueChange={setActiveTab} className="w-full"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;TabsList className="grid w-full grid-cols-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;TabsTrigger value="customers"&gt;Clientes&lt;/TabsTrigger&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;TabsTrigger value="leads"&gt;Leads&lt;/TabsTrigger&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;TabsTrigger value="analytics"&gt;Análises&lt;/TabsTrigger&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/TabsList&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;TabsContent value="customers" className="space-y-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardTitle&gt;Gestão de Clientes&lt;/CardTitle&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >                Visualize e gerencie informações detalhadas dos clientes</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CustomerManagement /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/TabsContent&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;TabsContent value="leads" className="space-y-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardTitle&gt;Acompanhamento de Leads&lt;/CardTitle&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >                Monitore e converta leads em clientes ativos</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;LeadTracking /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/TabsContent&gt;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        &lt;TabsContent value="analytics" className="space-y-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardTitle&gt;Análises de Clientes&lt;/CardTitle&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >                Insights e métricas de relacionamento com clientes</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/CardDescription&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardHeader&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;CustomerAnalytics /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/CardContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/Card&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/TabsContent&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/Tabs&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >  );</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;</pre></td></tr></table></pre>
@@ -382,7 +334,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

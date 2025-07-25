@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom'
 import { TextDecoder, TextEncoder } from 'util'
 
+// Set timezone to UTC for consistent date testing across all environments
+process.env.TZ = 'UTC';
+
 // Add global polyfills for WebAuthn dependencies
 global.TextDecoder = TextDecoder
 global.TextEncoder = TextEncoder

@@ -13,7 +13,7 @@ const ConsentSchema = z.object({
 // POST - Record new LGPD consent
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -24,6 +24,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params;
     const body = await request.json()
     const validatedConsent = ConsentSchema.parse(body)
 
@@ -31,7 +32,7 @@ export async function POST(
     const { data: consent, error } = await supabase
       .from('lgpd_consents')
       .insert({
-        patient_id: params.id,
+        patient_id: id,
         data_processing_consent: validatedConsent.dataProcessingConsent,
         sensitive_data_consent: validatedConsent.sensitiveDataConsent,
         marketing_consent: validatedConsent.marketingConsent,
@@ -53,7 +54,7 @@ export async function POST(
     await supabase
       .from('lgpd_audit_log')
       .insert({
-        patient_id: params.id,
+        patient_id: id,
         action: 'consent_given',
         data_fields: Object.keys(validatedConsent),
         legal_basis: 'Consentimento do titular (Art. 7°, I, LGPD)',
@@ -86,7 +87,7 @@ export async function POST(
 // PATCH - Update existing consent
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -96,6 +97,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params;
     const body = await request.json()
 
     // Update consent record
@@ -105,7 +107,7 @@ export async function PATCH(
         ...body,
         updated_at: new Date().toISOString()
       })
-      .eq('patient_id', params.id)
+      .eq('patient_id', id)
       .select()
       .single()
 

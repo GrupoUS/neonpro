@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/200</span>
+                <span class='fraction'>0/206</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/200</span>
+                <span class='fraction'>0/206</span>
             </div>
         
             
@@ -262,7 +262,19 @@
 <a name='L197'></a><a href='#L197'>197</a>
 <a name='L198'></a><a href='#L198'>198</a>
 <a name='L199'></a><a href='#L199'>199</a>
-<a name='L200'></a><a href='#L200'>200</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -469,7 +481,7 @@
 <span class="cstat-no" title="statement not covered" >// GET - Retrieve patient profile</span>
 <span class="cstat-no" title="statement not covered" >export async function GET(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -479,6 +491,8 @@
 <span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Fetch patient profile with related data</span>
 <span class="cstat-no" title="statement not covered" >    const { data: patient, error } = await supabase</span>
@@ -490,7 +504,7 @@
 <span class="cstat-no" title="statement not covered" >        lgpd_consents (*),</span>
 <span class="cstat-no" title="statement not covered" >        contact_preferences (*)</span>
 <span class="cstat-no" title="statement not covered" >      `)</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (error) {</span>
@@ -502,7 +516,7 @@
 <span class="cstat-no" title="statement not covered" >    await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('lgpd_audit_log')</span>
 <span class="cstat-no" title="statement not covered" >      .insert({</span>
-<span class="cstat-no" title="statement not covered" >        patient_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >        patient_id: id,</span>
 <span class="cstat-no" title="statement not covered" >        action: 'read',</span>
 <span class="cstat-no" title="statement not covered" >        data_fields: ['profile', 'emergency_contacts', 'preferences'],</span>
 <span class="cstat-no" title="statement not covered" >        legal_basis: 'Consentimento do titular (Art. 7°, I, LGPD)',</span>
@@ -523,7 +537,7 @@
 <span class="cstat-no" title="statement not covered" >}// PUT - Update patient profile</span>
 <span class="cstat-no" title="statement not covered" >export async function PUT(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -548,11 +562,13 @@
 <span class="cstat-no" title="statement not covered" >    // Validate profile data</span>
 <span class="cstat-no" title="statement not covered" >    const validatedData = PatientProfileUpdateSchema.parse(body)</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Start transaction</span>
 <span class="cstat-no" title="statement not covered" >    const { data: updatedPatient, error: updateError } = await supabase.rpc(</span>
 <span class="cstat-no" title="statement not covered" >      'update_patient_profile_with_lgpd_audit',</span>
 <span class="cstat-no" title="statement not covered" >      {</span>
-<span class="cstat-no" title="statement not covered" >        p_patient_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >        p_patient_id: id,</span>
 <span class="cstat-no" title="statement not covered" >        p_profile_data: validatedData,</span>
 <span class="cstat-no" title="statement not covered" >        p_user_agent: request.headers.get('user-agent') || 'unknown',</span>
 <span class="cstat-no" title="statement not covered" >        p_ip_address: request.ip || 'unknown'</span>
@@ -591,7 +607,7 @@
 <span class="cstat-no" title="statement not covered" >// PATCH - Partial update patient profile</span>
 <span class="cstat-no" title="statement not covered" >export async function PATCH(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient()</span>
@@ -605,11 +621,13 @@
 <span class="cstat-no" title="statement not covered" >    // Parse request body</span>
 <span class="cstat-no" title="statement not covered" >    const body = await request.json()</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { id } = await params;</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Check if patient exists and user has permission</span>
 <span class="cstat-no" title="statement not covered" >    const { data: patient, error: fetchError } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('patients')</span>
 <span class="cstat-no" title="statement not covered" >      .select('id, clinic_id')</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (fetchError || !patient) {</span>
@@ -620,7 +638,7 @@
 <span class="cstat-no" title="statement not covered" >    await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('lgpd_audit_log')</span>
 <span class="cstat-no" title="statement not covered" >      .insert({</span>
-<span class="cstat-no" title="statement not covered" >        patient_id: params.id,</span>
+<span class="cstat-no" title="statement not covered" >        patient_id: id,</span>
 <span class="cstat-no" title="statement not covered" >        action: 'update',</span>
 <span class="cstat-no" title="statement not covered" >        data_fields: Object.keys(body),</span>
 <span class="cstat-no" title="statement not covered" >        legal_basis: 'Legítimo interesse (Art. 7°, IX, LGPD)',</span>
@@ -636,7 +654,7 @@
 <span class="cstat-no" title="statement not covered" >        ...body,</span>
 <span class="cstat-no" title="statement not covered" >        updated_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >      })</span>
-<span class="cstat-no" title="statement not covered" >      .eq('id', params.id)</span>
+<span class="cstat-no" title="statement not covered" >      .eq('id', id)</span>
 <span class="cstat-no" title="statement not covered" >      .select()</span>
 <span class="cstat-no" title="statement not covered" >      .single()</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -667,7 +685,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/495</span>
+                <span class='fraction'>0/509</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/495</span>
+                <span class='fraction'>0/509</span>
             </div>
         
             
@@ -557,7 +557,35 @@
 <a name='L492'></a><a href='#L492'>492</a>
 <a name='L493'></a><a href='#L493'>493</a>
 <a name='L494'></a><a href='#L494'>494</a>
-<a name='L495'></a><a href='#L495'>495</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L495'></a><a href='#L495'>495</a>
+<a name='L496'></a><a href='#L496'>496</a>
+<a name='L497'></a><a href='#L497'>497</a>
+<a name='L498'></a><a href='#L498'>498</a>
+<a name='L499'></a><a href='#L499'>499</a>
+<a name='L500'></a><a href='#L500'>500</a>
+<a name='L501'></a><a href='#L501'>501</a>
+<a name='L502'></a><a href='#L502'>502</a>
+<a name='L503'></a><a href='#L503'>503</a>
+<a name='L504'></a><a href='#L504'>504</a>
+<a name='L505'></a><a href='#L505'>505</a>
+<a name='L506'></a><a href='#L506'>506</a>
+<a name='L507'></a><a href='#L507'>507</a>
+<a name='L508'></a><a href='#L508'>508</a>
+<a name='L509'></a><a href='#L509'>509</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1096,7 +1124,23 @@
 <span class="cstat-no" title="statement not covered" >  Filter,</span>
 <span class="cstat-no" title="statement not covered" >  Calendar</span>
 <span class="cstat-no" title="statement not covered" >} from 'lucide-react';</span>
-<span class="cstat-no" title="statement not covered" >import { StockDashboardData, StockKPIs, Recommendation } from '@/app/lib/types/stock';</span>
+<span class="cstat-no" title="statement not covered" >import { StockDashboardData } from '@/app/lib/types/stock';</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// Extract the KPIs type from StockDashboardData</span>
+<span class="cstat-no" title="statement not covered" >type StockKPIs = StockDashboardData['kpis'];</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// Define Recommendation type locally since it's not exported</span>
+<span class="cstat-no" title="statement not covered" >interface Recommendation {</span>
+<span class="cstat-no" title="statement not covered" >  type: 'reorder' | 'optimize' | 'attention';</span>
+<span class="cstat-no" title="statement not covered" >  priority: 'high' | 'medium' | 'low';</span>
+<span class="cstat-no" title="statement not covered" >  message: string;</span>
+<span class="cstat-no" title="statement not covered" >  actionable: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  productId?: string;</span>
+<span class="cstat-no" title="statement not covered" >  actions?: Array&lt;{</span>
+<span class="cstat-no" title="statement not covered" >    action: string;</span>
+<span class="cstat-no" title="statement not covered" >    parameters?: Record&lt;string, any&gt;;</span>
+<span class="cstat-no" title="statement not covered" >  }&gt;;</span>
+<span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >// =====================================================</span>
 <span class="cstat-no" title="statement not covered" >// TYPES AND INTERFACES</span>
@@ -1274,9 +1318,7 @@
 <span class="cstat-no" title="statement not covered" >      { key: 'daysCoverage', label: 'Dias de Cobertura', value: `${kpis.daysCoverage} dias`, change: null },</span>
 <span class="cstat-no" title="statement not covered" >      { key: 'accuracyPercentage', label: 'Precisão', value: formatPercentage(kpis.accuracyPercentage), change: null },</span>
 <span class="cstat-no" title="statement not covered" >      { key: 'activeAlerts', label: 'Alertas Ativos', value: kpis.activeAlerts.toString(), change: null },</span>
-<span class="cstat-no" title="statement not covered" >      { key: 'criticalAlerts', label: 'Alertas Críticos', value: kpis.criticalAlerts.toString(), change: null },</span>
-<span class="cstat-no" title="statement not covered" >      { key: 'wasteValue', label: 'Valor de Desperdício', value: formatCurrency(kpis.wasteValue), change: null },</span>
-<span class="cstat-no" title="statement not covered" >      { key: 'wastePercentage', label: '% Desperdício', value: formatPercentage(kpis.wastePercentage), change: null }</span>
+<span class="cstat-no" title="statement not covered" >      { key: 'criticalAlerts', label: 'Alertas Críticos', value: kpis.criticalAlerts.toString(), change: null }</span>
 <span class="cstat-no" title="statement not covered" >    ];</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    return (</span>
@@ -1357,13 +1399,13 @@
 <span class="cstat-no" title="statement not covered" >                  &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                    &lt;p className="font-medium text-sm"&gt;{product.name}&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;p className="text-xs text-muted-foreground"&gt;{product.sku}&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;p className="text-xs text-muted-foreground"&gt;ID: {product.productId}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;div className="text-right"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;p className="font-medium text-sm"&gt;{formatCurrency(product.value)}&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >                  &lt;p className={`text-xs ${product.changePercentage &gt;= 0 ? 'text-green-600' : 'text-red-600'}`}&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    {product.changePercentage &gt;= 0 ? '+' : ''}{product.changePercentage.toFixed(1)}%</span>
+<span class="cstat-no" title="statement not covered" >                  &lt;p className="text-xs text-muted-foreground"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    {product.consumption} unidades</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
@@ -1423,9 +1465,9 @@
 <span class="cstat-no" title="statement not covered" >        &lt;/CardHeader&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;CardContent&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className="space-y-3"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            {state.data.recommendations.map((recommendation) =&gt; (</span>
+<span class="cstat-no" title="statement not covered" >            {state.data.recommendations.map((recommendation, index) =&gt; (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div</span>
-<span class="cstat-no" title="statement not covered" >                key={recommendation.id}</span>
+<span class="cstat-no" title="statement not covered" >                key={`recommendation-${index}`}</span>
 <span class="cstat-no" title="statement not covered" >                className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors"</span>
 <span class="cstat-no" title="statement not covered" >              &gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;AlertTriangle className={`h-5 w-5 mt-0.5 ${</span>
@@ -1434,19 +1476,19 @@
 <span class="cstat-no" title="statement not covered" >                }`} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;div className="flex-1"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;div className="flex items-center gap-2 mb-1"&gt;</span>
-<span class="cstat-no" title="statement not covered" >                    &lt;h4 className="font-medium text-sm"&gt;{recommendation.title}&lt;/h4&gt;</span>
+<span class="cstat-no" title="statement not covered" >                    &lt;h4 className="font-medium text-sm"&gt;{recommendation.type.charAt(0).toUpperCase() + recommendation.type.slice(1)}&lt;/h4&gt;</span>
 <span class="cstat-no" title="statement not covered" >                    &lt;Badge className={getSeverityColor(recommendation.priority)}&gt;</span>
 <span class="cstat-no" title="statement not covered" >                      {recommendation.priority}</span>
 <span class="cstat-no" title="statement not covered" >                    &lt;/Badge&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;p className="text-sm text-muted-foreground"&gt;{recommendation.message}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >                {recommendation.actionable &amp;&amp; recommendation.actions?.length &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >                {recommendation.actionable &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;Button</span>
 <span class="cstat-no" title="statement not covered" >                    size="sm"</span>
 <span class="cstat-no" title="statement not covered" >                    onClick={() =&gt; handleRecommendationAction(recommendation)}</span>
 <span class="cstat-no" title="statement not covered" >                  &gt;</span>
-<span class="cstat-no" title="statement not covered" >                    {recommendation.actions[0].label}</span>
+<span class="cstat-no" title="statement not covered" >                    Ação</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;/Button&gt;</span>
 <span class="cstat-no" title="statement not covered" >                )}</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
@@ -1552,7 +1594,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

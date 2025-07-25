@@ -16,7 +16,7 @@ import { TokenEncryptionService } from '@/lib/oauth/token-encryption';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -30,7 +30,8 @@ export async function GET(
       );
     }
 
-    const accountId = params.id;
+    const { id } = await params;
+    const accountId = id;
 
     // Get Facebook account details
     const { data: account, error: accountError } = await supabase
@@ -107,7 +108,7 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -121,7 +122,8 @@ export async function DELETE(
       );
     }
 
-    const accountId = params.id;
+    const { id } = await params;
+    const accountId = id;
 
     // Get account with encrypted tokens for revocation
     const { data: account, error: accountError } = await supabase

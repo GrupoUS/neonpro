@@ -6,7 +6,7 @@ import {
   getUserRole,
   routeProtector,
   type AccessLevel,
-  type RouteContext,
+  type UserRouteContext,
   type SubscriptionTier,
   type UserRole
 } from '../lib/route-protection'
@@ -22,7 +22,7 @@ import {
 } from '../lib/subscription-status'
 
 // Re-export types for backward compatibility
-export type { AccessLevel, RouteContext, SubscriptionStatus, SubscriptionTier, SubscriptionValidationResult, UserRole }
+export type { AccessLevel, UserRouteContext, SubscriptionStatus, SubscriptionTier, SubscriptionValidationResult, UserRole }
 
 /**
  * Enhanced subscription middleware with granular route protection
@@ -57,7 +57,7 @@ export async function subscriptionMiddleware(req: NextRequest): Promise<NextResp
     }
 
     // Build route context for advanced protection
-    let routeContext: RouteContext | null = null
+    let routeContext: UserRouteContext | null = null
     
     if (session?.user) {
       // Get user profile data for role and permissions
@@ -261,7 +261,7 @@ export async function validateUserAccess(req: NextRequest, userId: string): Prom
       .limit(1)
       .single()
 
-    const routeContext: RouteContext = {
+    const routeContext: UserRouteContext = {
       userId,
       userRole: getUserRole(profile?.role || 'patient'),
       subscriptionTier: getSubscriptionTier(subscription?.tier || 'free'),

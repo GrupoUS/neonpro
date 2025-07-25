@@ -29,10 +29,10 @@ export interface RoutePermission {
   featureFlags?: string[]
   rateLimitRpm?: number
   auditLevel?: 'none' | 'basic' | 'detailed'
-  customValidator?: (req: NextRequest, context: RouteContext) => Promise<ValidationResult>
+  customValidator?: (req: NextRequest, context: UserRouteContext) => Promise<ValidationResult>
 }
 
-export interface RouteContext {
+export interface UserRouteContext {
   userId: string
   userRole: UserRole
   subscriptionTier: SubscriptionTier
@@ -289,7 +289,7 @@ export class RouteProtector {
   /**
    * Check if user has access to a specific route
    */
-  async checkAccess(req: NextRequest, context: RouteContext): Promise<ValidationResult> {
+  async checkAccess(req: NextRequest, context: UserRouteContext): Promise<ValidationResult> {
     const startTime = Date.now()
     const route = req.nextUrl.pathname
     const method = req.method
@@ -370,7 +370,7 @@ export class RouteProtector {
   /**
    * Check subscription requirements
    */
-  private checkSubscription(context: RouteContext, permission: RoutePermission): ValidationResult {
+  private checkSubscription(context: UserRouteContext, permission: RoutePermission): ValidationResult {
     // Check minimum tier requirement
     if (permission.minimumTier) {
       const requiredLevel = TIER_HIERARCHY[permission.minimumTier]
@@ -410,7 +410,7 @@ export class RouteProtector {
   /**
    * Check role and permission requirements
    */
-  private checkRolePermissions(context: RouteContext, permission: RoutePermission): ValidationResult {
+  private checkRolePermissions(context: UserRouteContext, permission: RoutePermission): ValidationResult {
     // Check allowed roles
     if (permission.allowedRoles && !permission.allowedRoles.includes(context.userRole)) {
       return this.createResult(
@@ -443,7 +443,7 @@ export class RouteProtector {
   /**
    * Check feature flag requirements
    */
-  private checkFeatureFlags(context: RouteContext, permission: RoutePermission): ValidationResult {
+  private checkFeatureFlags(context: UserRouteContext, permission: RoutePermission): ValidationResult {
     if (!permission.featureFlags) {
       return this.createResult(true, 'No feature flags required', undefined, 'NO_FLAGS')
     }
@@ -524,7 +524,7 @@ export class RouteProtector {
    */
   private logAccess(
     req: NextRequest, 
-    context: RouteContext, 
+    context: UserRouteContext, 
     permission: RoutePermission | null, 
     result: ValidationResult,
     duration: number

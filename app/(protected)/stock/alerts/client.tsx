@@ -14,7 +14,7 @@ import AlertConfigForm from '@/components/stock/alert-config-form';
 import {
   StockAlertConfig,
   StockAlert,
-  CreateStockAlertConfigRequest,
+  CreateAlertConfigRequest,
   StockAlertError
 } from '@/app/lib/types/stock';
 
@@ -161,7 +161,7 @@ const StockAlertsClient: React.FC = () => {
     });
   };
 
-  const handleSubmitConfig = async (data: CreateStockAlertConfigRequest) => {
+  const handleSubmitConfig = async (data: CreateAlertConfigRequest) => {
     setFormLoading(true);
 
     try {

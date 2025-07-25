@@ -1328,10 +1328,10 @@
 <span class="cstat-no" title="statement not covered" >  featureFlags?: string[]</span>
 <span class="cstat-no" title="statement not covered" >  rateLimitRpm?: number</span>
 <span class="cstat-no" title="statement not covered" >  auditLevel?: 'none' | 'basic' | 'detailed'</span>
-<span class="cstat-no" title="statement not covered" >  customValidator?: (req: NextRequest, context: RouteContext) =&gt; Promise&lt;ValidationResult&gt;</span>
+<span class="cstat-no" title="statement not covered" >  customValidator?: (req: NextRequest, context: UserRouteContext) =&gt; Promise&lt;ValidationResult&gt;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export interface RouteContext {</span>
+<span class="cstat-no" title="statement not covered" >export interface UserRouteContext {</span>
 <span class="cstat-no" title="statement not covered" >  userId: string</span>
 <span class="cstat-no" title="statement not covered" >  userRole: UserRole</span>
 <span class="cstat-no" title="statement not covered" >  subscriptionTier: SubscriptionTier</span>
@@ -1588,7 +1588,7 @@
 <span class="cstat-no" title="statement not covered" >  /**</span>
 <span class="cstat-no" title="statement not covered" >   * Check if user has access to a specific route</span>
 <span class="cstat-no" title="statement not covered" >   */</span>
-<span class="cstat-no" title="statement not covered" >  async checkAccess(req: NextRequest, context: RouteContext): Promise&lt;ValidationResult&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  async checkAccess(req: NextRequest, context: UserRouteContext): Promise&lt;ValidationResult&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    const startTime = Date.now()</span>
 <span class="cstat-no" title="statement not covered" >    const route = req.nextUrl.pathname</span>
 <span class="cstat-no" title="statement not covered" >    const method = req.method</span>
@@ -1669,7 +1669,7 @@
 <span class="cstat-no" title="statement not covered" >  /**</span>
 <span class="cstat-no" title="statement not covered" >   * Check subscription requirements</span>
 <span class="cstat-no" title="statement not covered" >   */</span>
-<span class="cstat-no" title="statement not covered" >  private checkSubscription(context: RouteContext, permission: RoutePermission): ValidationResult {</span>
+<span class="cstat-no" title="statement not covered" >  private checkSubscription(context: UserRouteContext, permission: RoutePermission): ValidationResult {</span>
 <span class="cstat-no" title="statement not covered" >    // Check minimum tier requirement</span>
 <span class="cstat-no" title="statement not covered" >    if (permission.minimumTier) {</span>
 <span class="cstat-no" title="statement not covered" >      const requiredLevel = TIER_HIERARCHY[permission.minimumTier]</span>
@@ -1709,7 +1709,7 @@
 <span class="cstat-no" title="statement not covered" >  /**</span>
 <span class="cstat-no" title="statement not covered" >   * Check role and permission requirements</span>
 <span class="cstat-no" title="statement not covered" >   */</span>
-<span class="cstat-no" title="statement not covered" >  private checkRolePermissions(context: RouteContext, permission: RoutePermission): ValidationResult {</span>
+<span class="cstat-no" title="statement not covered" >  private checkRolePermissions(context: UserRouteContext, permission: RoutePermission): ValidationResult {</span>
 <span class="cstat-no" title="statement not covered" >    // Check allowed roles</span>
 <span class="cstat-no" title="statement not covered" >    if (permission.allowedRoles &amp;&amp; !permission.allowedRoles.includes(context.userRole)) {</span>
 <span class="cstat-no" title="statement not covered" >      return this.createResult(</span>
@@ -1742,7 +1742,7 @@
 <span class="cstat-no" title="statement not covered" >  /**</span>
 <span class="cstat-no" title="statement not covered" >   * Check feature flag requirements</span>
 <span class="cstat-no" title="statement not covered" >   */</span>
-<span class="cstat-no" title="statement not covered" >  private checkFeatureFlags(context: RouteContext, permission: RoutePermission): ValidationResult {</span>
+<span class="cstat-no" title="statement not covered" >  private checkFeatureFlags(context: UserRouteContext, permission: RoutePermission): ValidationResult {</span>
 <span class="cstat-no" title="statement not covered" >    if (!permission.featureFlags) {</span>
 <span class="cstat-no" title="statement not covered" >      return this.createResult(true, 'No feature flags required', undefined, 'NO_FLAGS')</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
@@ -1823,7 +1823,7 @@
 <span class="cstat-no" title="statement not covered" >   */</span>
 <span class="cstat-no" title="statement not covered" >  private logAccess(</span>
 <span class="cstat-no" title="statement not covered" >    req: NextRequest, </span>
-<span class="cstat-no" title="statement not covered" >    context: RouteContext, </span>
+<span class="cstat-no" title="statement not covered" >    context: UserRouteContext, </span>
 <span class="cstat-no" title="statement not covered" >    permission: RoutePermission | null, </span>
 <span class="cstat-no" title="statement not covered" >    result: ValidationResult,</span>
 <span class="cstat-no" title="statement not covered" >    duration: number</span>
@@ -1921,7 +1921,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T19:40:46.084Z
+                at 2025-07-24T22:51:16.367Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

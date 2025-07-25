@@ -6,10 +6,11 @@ import { randomBytes } from 'crypto';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const requestId = randomBytes(16).toString('hex');
-  const connectionId = params.id;
+  const { id } = await params;
+  const connectionId = id;
   
   try {
     Logger.info('WhatsApp connection details request initiated', {
@@ -113,10 +114,11 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const requestId = randomBytes(16).toString('hex');
-  const connectionId = params.id;
+  const { id } = await params;
+  const connectionId = id;
   
   try {
     Logger.info('WhatsApp connection disconnection request initiated', {

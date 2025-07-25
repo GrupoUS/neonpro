@@ -1,9 +1,20 @@
 "use client";
 
-import CustomerList from "@/components/crm/customer-management/customer-list";
-import { DashboardLayout } from "@/components/navigation/dashboard-layout";
-import { CRMProvider } from "@/contexts/crm-context";
-import { User } from "@supabase/auth-helpers-nextjs";
+import {
+  CustomerAnalytics,
+  CustomerManagement,
+  LeadTracking,
+} from "@/components/crm";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 
 interface CRMClientPageProps {
@@ -11,94 +22,75 @@ interface CRMClientPageProps {
 }
 
 export default function CRMClientPage({ user }: CRMClientPageProps) {
-  const [currentView, setCurrentView] = useState<
-    "customers" | "segments" | "campaigns"
-  >("customers");
-
-  const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "CRM", href: "/dashboard/crm" },
-  ];
-
-  const renderContent = () => {
-    switch (currentView) {
-      case "customers":
-        return (
-          <CustomerList
-            onCustomerSelect={(customer) => {
-              console.log("Customer selected:", customer);
-            }}
-            onCreateCustomer={() => {
-              console.log("Create new customer");
-            }}
-            onEditCustomer={(customer) => {
-              console.log("Edit customer:", customer);
-            }}
-          />
-        );
-      case "segments":
-        return (
-          <div className="p-8 text-center">
-            <h2 className="text-2xl font-bold">Segmentação de Clientes</h2>
-            <p className="text-muted-foreground mt-2">Em desenvolvimento...</p>
-          </div>
-        );
-      case "campaigns":
-        return (
-          <div className="p-8 text-center">
-            <h2 className="text-2xl font-bold">Campanhas de Marketing</h2>
-            <p className="text-muted-foreground mt-2">Em desenvolvimento...</p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  const [activeTab, setActiveTab] = useState("customers");
 
   return (
-    <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
-      <CRMProvider>
-        <div className="space-y-6">
-          {/* Navigation Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setCurrentView("customers")}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  currentView === "customers"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                Clientes
-              </button>
-              <button
-                onClick={() => setCurrentView("segments")}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  currentView === "segments"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                Segmentação
-              </button>
-              <button
-                onClick={() => setCurrentView("campaigns")}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                  currentView === "campaigns"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
-              >
-                Campanhas
-              </button>
-            </nav>
-          </div>
-
-          {/* Content */}
-          {renderContent()}
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Customer Relationship Management
+          </h1>
+          <p className="text-muted-foreground">
+            Gerencie relacionamentos com clientes, leads e análises
+          </p>
         </div>
-      </CRMProvider>
-    </DashboardLayout>
+        <Badge variant="secondary" className="text-sm">
+          CRM v2.2
+        </Badge>
+      </div>
+
+      {/* CRM Dashboard Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="customers">Clientes</TabsTrigger>
+          <TabsTrigger value="leads">Leads</TabsTrigger>
+          <TabsTrigger value="analytics">Análises</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="customers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestão de Clientes</CardTitle>
+              <CardDescription>
+                Visualize e gerencie informações detalhadas dos clientes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CustomerManagement />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="leads" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Acompanhamento de Leads</CardTitle>
+              <CardDescription>
+                Monitore e converta leads em clientes ativos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LeadTracking />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Análises de Clientes</CardTitle>
+              <CardDescription>
+                Insights e métricas de relacionamento com clientes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CustomerAnalytics />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

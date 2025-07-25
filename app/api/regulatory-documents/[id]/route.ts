@@ -22,7 +22,7 @@ const UpdateDocumentSchema = z.object({
 // GET /api/regulatory-documents/[id] - Get single document by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -32,6 +32,8 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const { id } = await params;
 
     // Fetch document with related data
     const { data: document, error } = await supabase
@@ -58,7 +60,7 @@ export async function GET(
         profiles!regulatory_documents_created_by_fkey(full_name),
         profiles!regulatory_documents_updated_by_fkey(full_name)
       `)
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (error) {
@@ -80,7 +82,7 @@ export async function GET(
 // PUT /api/regulatory-documents/[id] - Update document
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -91,6 +93,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params;
+
     // Parse and validate request body
     const requestBody = await request.json()
     const validatedData = UpdateDocumentSchema.parse(requestBody)
@@ -99,7 +103,7 @@ export async function PUT(
     const { data: existingDoc, error: fetchError } = await supabase
       .from('regulatory_documents')
       .select('id, version, file_url')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (fetchError) {
@@ -117,7 +121,7 @@ export async function PUT(
         updated_by: user.id,
         updated_at: new Date().toISOString()
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select(`
         *,
         regulation_categories!inner(name, authority_name)
@@ -134,7 +138,7 @@ export async function PUT(
       await supabase
         .from('document_versions')
         .insert({
-          document_id: params.id,
+          document_id: id,
           version: validatedData.version || `v${Date.now()}`,
           file_url: validatedData.file_url,
           change_reason: requestBody.change_reason || 'Document updated',
@@ -156,7 +160,7 @@ export async function PUT(
 // DELETE /api/regulatory-documents/[id] - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -167,11 +171,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params;
+
     // Check if document exists
     const { data: existingDoc, error: fetchError } = await supabase
       .from('regulatory_documents')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .single()
 
     if (fetchError) {
@@ -185,7 +191,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('regulatory_documents')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
 
     if (error) {
       console.error('Error deleting regulatory document:', error)
