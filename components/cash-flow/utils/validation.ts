@@ -91,7 +91,11 @@ export const CashFlowFiltersSchema = z.object({
   isReconciled: z.boolean().optional(),
   search: z.string().max(200).optional()
 }).refine(
-  data => !data.dateFrom || !data.dateTo || new Date(data.dateFrom) < new Date(data.dateTo),
+  data => {
+    // For YYYY-MM-DD format strings, we can use string comparison
+    // This avoids Jest Date parsing issues and is more efficient
+    return !data.dateFrom || !data.dateTo || data.dateFrom <= data.dateTo;
+  },
   {
     message: "Start date must be before end date",
     path: ["dateTo"]

@@ -100,7 +100,7 @@ describe('Cash Flow Utilities', () => {
     const now = new Date('2025-01-24T10:00:00.000Z');
     const mockNow = jest.spyOn(global, 'Date').mockImplementation(() => now);
 
-    afterAll(() => {
+    afterEach(() => {
       mockNow.mockRestore();
     });
 
