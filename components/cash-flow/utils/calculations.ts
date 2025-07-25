@@ -210,3 +210,35 @@ export function getDateRange(period: 'today' | 'week' | 'month' | 'year'): { sta
     end: now.toISOString()
   };
 }
+
+// Cash flow summary calculation
+export function getCashFlowSummary(entries: CashFlowEntry[]): {
+  totalIncome: number;
+  totalExpenses: number;
+  netCashFlow: number;
+  transactionCount: number;
+  recentTransactions: CashFlowEntry[];
+} {
+  const income = entries
+    .filter(entry => entry.transaction_type === 'receipt')
+    .reduce((sum, entry) => sum + entry.amount, 0);
+
+  const expenses = entries
+    .filter(entry => entry.transaction_type === 'expense')
+    .reduce((sum, entry) => sum + entry.amount, 0);
+
+  const netCashFlow = income - expenses;
+  
+  // Get recent transactions (last 5)
+  const recentTransactions = entries
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, 5);
+
+  return {
+    totalIncome: income,
+    totalExpenses: expenses,
+    netCashFlow,
+    transactionCount: entries.length,
+    recentTransactions
+  };
+}

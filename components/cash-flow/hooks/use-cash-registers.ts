@@ -1,3 +1,5 @@
+"use client";
+
 // Cash Registers Hook - React hook for cash register operations
 // Following financial dashboard patterns from Context7 research
 

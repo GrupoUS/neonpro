@@ -1,3 +1,5 @@
+"use client";
+
 // Cash Flow Hook - React hook for cash flow operations
 // Following financial dashboard patterns from Context7 research
 
