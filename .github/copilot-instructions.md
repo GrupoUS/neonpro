@@ -95,6 +95,21 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 - **@qa**: Quality assurance with NeonPro coding standards expertise
 - **@analyst**: Requirements analyst for clinic workflow analysis
 
+### BMad Agent Delegation Protocol (VIBECODE V4.0 Enhanced)
+**SMART DELEGATION TRIGGERS**: For complex multi-domain tasks or specialized expertise:
+- **Architecture & System Design**: Consider `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\chatmodes\voidbeast-modular.chatmode.md` for complex system architecture
+- **Multi-Agent Coordination**: Use BMad Orchestrator for coordinating multiple specialized agents
+- **Quality Assurance**: @qa for comprehensive code review and refactoring
+- **User Experience**: @ux-expert for interface design and user journey optimization
+- **Product Strategy**: @pm for feature prioritization and product decisions
+
+### VIBECODE V4.0 Quality Integration
+**Automatic Quality Gates**: All NeonPro development must maintain:
+- ≥9.5/10 code quality (enhanced from BMad 8/10)
+- ≥95% confidence before implementation (enhanced from 90%)
+- Mandatory research validation for all technical decisions
+- Desktop Commander enforcement for all file operations
+
 ### BMad Workflow Compliance Requirements (NeonPro)
 1. **Story-First Development**: All implementation must follow approved stories from `docs/stories/`
 2. **Document Integrity**: Never modify `docs/prd/` or `docs/architecture/` without proper BMad workflow
@@ -136,10 +151,17 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 
 ### Core Development Principles (Following VIBECODE V1.0 + BMad Method)
 - **"Aprimore, Não Prolifere"**: ≥85% code reuse, avoid duplicating existing solutions
-- **Quality Threshold**: Minimum 8/10 quality score for all code changes
-- **Confidence Minimum**: 90% confidence before implementing solutions
+- **Quality Threshold**: Minimum 9.5/10 quality score for all code changes (enhanced from 8/10)
+- **Confidence Minimum**: 95% confidence before implementing solutions (enhanced from 90%)
 - **Context First**: Understand system completely before making changes
 - **BMad-First**: Follow BMad Method workflows for all development activities
+
+### VIBECODE V4.0 Hub Integration
+- **Central Hub**: `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` (VIBECODE master hub)
+- **Active Chatmodes**: Integration with `neonpro-development.chatmode.md` and `voidbeast-modular.chatmode.md`
+- **Smart Agent Delegation**: Auto-delegate complex tasks to specialized VIBECODE agents
+- **Modular Architecture**: Hub-and-spoke system with 85%+ context reduction
+- **Research Integration**: Mandatory Context7 + Tavily + Exa for all research tasks
 
 ### Mandatory Workflow (BMad-Enhanced 7-Step Process)
 1. **ANALYZE** → Evaluate complexity and check for active BMad stories
@@ -158,12 +180,14 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 - **System files**: Use cursor-editor regardless of size
 - **BMad Files**: Never modify `.bmad-core/` contents without explicit instruction
 
-### Research & Documentation Protocol (BMad-Compliant)
+### Research & Documentation Protocol (BMad-Compliant + VIBECODE V4.0 Enhanced)
 - **BMad Knowledge**: Reference `.bmad-core/data/bmad-kb.md` for BMad methodology questions
-- **Mandatory sequence**: context7 → tavily → exa for external research needs
+- **VIBECODE V4.0 Enhanced Research**: context7 → tavily → exa with smart MCP routing
+- **Context7 Integration**: Auto-validate all code patterns against current documentation
 - **Auto-activation triggers**: pesquisar, buscar, documentação, tutorial, API, etc.
-- **Quality requirements**: ≥8/10 synthesis from all 3 sources
+- **Quality requirements**: ≥9.5/10 synthesis from all 3 sources (enhanced from 8/10)
 - **Documentation**: Document all sources and synthesis process in story records
+- **Hub Integration**: Reference `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` for VIBECODE orchestration
 
 ## 🏗️ Architecture & Core Patterns
 
@@ -336,11 +360,12 @@ uv run python .cursor/scripts/vibecode_core_validator.py
 - **Quality Gates**: MUST run `*execute-checklist story-dod-checklist` before marking stories complete
 
 ### VIBECODE Compliance Requirements
-- **Quality Gate**: All changes must meet ≥8/10 quality threshold
+- **Quality Gate**: All changes must meet ≥9.5/10 quality threshold (enhanced from 8/10)
 - **Verification Protocol**: Always read files after write operations
 - **Sync Validation**: Ensure configurations remain consistent
 - **Research Compliance**: Use all 3 research tools (context7 → tavily → exa) when needed
 - **BMad Integration**: Follow BMad workflows when `.bmad-core/` exists
+- **MCP Enforcement**: ALL operations must use appropriate MCP tools with Desktop Commander for file operations
 
 ### Authentication
 - **Cookie Management**: Server-side auth relies on cookies - test thoroughly in different browsers
