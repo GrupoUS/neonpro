@@ -1,62 +1,86 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { DashboardLayout } from "@/components/navigation/dashboard-layout";
-import { redirect } from "next/navigation";
-import { PatientsClientPage } from "./client-page";
+import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import { createServerClient } from '@/app/utils/supabase/server';
+import { DashboardLayout } from '@/components/navigation/dashboard-layout';
+import { PatientManagementDashboard } from '@/components/dashboard/patients/PatientManagementDashboard';
+import { Skeleton } from '@/components/ui/skeleton';
+
+/**
+ * Patient Management Page
+ * 
+ * FHIR-compliant patient management with LGPD compliance.
+ * Implements HL7 FHIR R4 Patient resource structure and Brazilian
+ * data protection requirements.
+ */
 
 export default async function PatientsPage() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  // Server-side authentication check
+  const supabase = await createServerClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  
   if (!session) {
-    redirect("/login");
+    redirect('/login');
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    redirect('/login');
+  }
 
-  // Mock data para demonstração com acessibilidade
-  const patients = [
-    {
-      id: "1",
-      name: "Maria Silva",
-      email: "maria@example.com",
-      phone: "(11) 99999-9999",
-      cpf: "123.456.789-00",
-      lastVisit: "2024-01-15",
-      nextAppointment: "2024-02-10",
-      status: "active" as const,
-    },
-    {
-      id: "2",
-      name: "João Santos",
-      email: "joao@example.com",
-      phone: "(11) 88888-8888",
-      cpf: "987.654.321-00",
-      lastVisit: "2024-01-10",
-      status: "inactive" as const,
-    },
-    {
-      id: "3",
-      name: "Ana Costa",
-      email: "ana@example.com",
-      phone: "(11) 77777-7777",
-      cpf: "456.789.123-00",
-      nextAppointment: "2024-02-05",
-      status: "pending" as const,
-    },
-  ];
-
+  // Define breadcrumbs for navigation
   const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Pacientes" },
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Patients' }
   ];
 
   return (
     <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
-      <PatientsClientPage initialPatients={patients} />
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Patient Management</h1>
+          <p className="text-muted-foreground">
+            Manage patient records with FHIR compliance and LGPD data protection.
+          </p>
+        </div>
+
+        {/* Patient Management Dashboard */}
+        <Suspense fallback={<PatientManagementSkeleton />}>
+          <PatientManagementDashboard />
+        </Suspense>
+      </div>
     </DashboardLayout>
+  );
+}
+
+// Loading skeleton for patient management dashboard
+function PatientManagementSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Search and Filter Skeleton */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Skeleton className="h-10 flex-1" />
+        <Skeleton className="h-10 w-32" />
+        <Skeleton className="h-10 w-40" />
+      </div>
+
+      {/* Stats Cards Skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-24 w-full" />
+          </div>
+        ))}
+      </div>
+
+      {/* Table Skeleton */}
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full" />
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-16 w-full" />
+        ))}
+      </div>
+    </div>
   );
 }
