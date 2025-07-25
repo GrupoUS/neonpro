@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/516</span>
+                <span class='fraction'>0/514</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/516</span>
+                <span class='fraction'>0/514</span>
             </div>
         
             
@@ -577,11 +577,7 @@
 <a name='L512'></a><a href='#L512'>512</a>
 <a name='L513'></a><a href='#L513'>513</a>
 <a name='L514'></a><a href='#L514'>514</a>
-<a name='L515'></a><a href='#L515'>515</a>
-<a name='L516'></a><a href='#L516'>516</a>
-<a name='L517'></a><a href='#L517'>517</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L515'></a><a href='#L515'>515</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1259,15 +1255,17 @@
 <span class="cstat-no" title="statement not covered" >          resolutionSuggestions: [],</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        utilization: {</span>
-<span class="cstat-no" title="statement not covered" >          averageUtilization: 0,</span>
-<span class="cstat-no" title="statement not covered" >          peakHours: [],</span>
-<span class="cstat-no" title="statement not covered" >          underutilizedSlots: [],</span>
+<span class="cstat-no" title="statement not covered" >          professionalId: "default",</span>
+<span class="cstat-no" title="statement not covered" >          utilizationRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >          appointmentsCount: 0,</span>
+<span class="cstat-no" title="statement not covered" >          availableSlots: 0,</span>
+<span class="cstat-no" title="statement not covered" >          efficiency: 0,</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        patientFlow: {</span>
 <span class="cstat-no" title="statement not covered" >          averageWaitTime: 0,</span>
-<span class="cstat-no" title="statement not covered" >          patientVolume: 0,</span>
-<span class="cstat-no" title="statement not covered" >          peakDays: [],</span>
-<span class="cstat-no" title="statement not covered" >          bottlenecks: [],</span>
+<span class="cstat-no" title="statement not covered" >          appointmentDuration: 0,</span>
+<span class="cstat-no" title="statement not covered" >          noShowRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >          cancellationRate: 0,</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >      },</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1293,10 +1291,11 @@
 <span class="cstat-no" title="statement not covered" >          averagePaymentDays: 0,</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        profitability: {</span>
-<span class="cstat-no" title="statement not covered" >          grossMargin: 0,</span>
-<span class="cstat-no" title="statement not covered" >          netMargin: 0,</span>
-<span class="cstat-no" title="statement not covered" >          revenuePerPatient: 0,</span>
-<span class="cstat-no" title="statement not covered" >          costPerService: 0,</span>
+<span class="cstat-no" title="statement not covered" >          treatmentType: "default",</span>
+<span class="cstat-no" title="statement not covered" >          revenue: 0,</span>
+<span class="cstat-no" title="statement not covered" >          costs: 0,</span>
+<span class="cstat-no" title="statement not covered" >          margin: 0,</span>
+<span class="cstat-no" title="statement not covered" >          profitabilityRate: 0,</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        forecasting: {</span>
 <span class="cstat-no" title="statement not covered" >          revenue: {</span>
@@ -1338,42 +1337,38 @@
 <span class="cstat-no" title="statement not covered" >        patientRecords: {</span>
 <span class="cstat-no" title="statement not covered" >          patientId: "",</span>
 <span class="cstat-no" title="statement not covered" >          personalInfo: {</span>
-<span class="cstat-no" title="statement not covered" >            name: "",</span>
-<span class="cstat-no" title="statement not covered" >            age: 0,</span>
+<span class="cstat-no" title="statement not covered" >            id: "",</span>
+<span class="cstat-no" title="statement not covered" >            first_name: "",</span>
+<span class="cstat-no" title="statement not covered" >            last_name: "",</span>
+<span class="cstat-no" title="statement not covered" >            email: "",</span>
+<span class="cstat-no" title="statement not covered" >            phone: "",</span>
+<span class="cstat-no" title="statement not covered" >            date_of_birth: "",</span>
 <span class="cstat-no" title="statement not covered" >            gender: "",</span>
-<span class="cstat-no" title="statement not covered" >            contactInfo: "",</span>
-<span class="cstat-no" title="statement not covered" >            emergencyContact: "",</span>
+<span class="cstat-no" title="statement not covered" >            address: "",</span>
+<span class="cstat-no" title="statement not covered" >            emergency_contact: "",</span>
+<span class="cstat-no" title="statement not covered" >            clinic_id: "",</span>
+<span class="cstat-no" title="statement not covered" >            created_at: "",</span>
+<span class="cstat-no" title="statement not covered" >            updated_at: "",</span>
 <span class="cstat-no" title="statement not covered" >          },</span>
-<span class="cstat-no" title="statement not covered" >          medicalHistory: {</span>
-<span class="cstat-no" title="statement not covered" >            conditions: [],</span>
-<span class="cstat-no" title="statement not covered" >            allergies: [],</span>
-<span class="cstat-no" title="statement not covered" >            medications: [],</span>
-<span class="cstat-no" title="statement not covered" >            surgeries: [],</span>
-<span class="cstat-no" title="statement not covered" >          },</span>
+<span class="cstat-no" title="statement not covered" >          medicalHistory: [],</span>
 <span class="cstat-no" title="statement not covered" >          treatmentSessions: [],</span>
-<span class="cstat-no" title="statement not covered" >          progressTracking: {</span>
-<span class="cstat-no" title="statement not covered" >            beforeAfterPhotos: [],</span>
-<span class="cstat-no" title="statement not covered" >            measurementHistory: [],</span>
-<span class="cstat-no" title="statement not covered" >            satisfactionScores: [],</span>
-<span class="cstat-no" title="statement not covered" >          },</span>
-<span class="cstat-no" title="statement not covered" >          complianceTracking: {</span>
-<span class="cstat-no" title="statement not covered" >            appointmentAdherence: 0,</span>
-<span class="cstat-no" title="statement not covered" >            treatmentCompliance: 0,</span>
-<span class="cstat-no" title="statement not covered" >            followUpCompletion: 0,</span>
-<span class="cstat-no" title="statement not covered" >          },</span>
-<span class="cstat-no" title="statement not covered" >          riskAssessment: {</span>
-<span class="cstat-no" title="statement not covered" >            riskLevel: "low" as const,</span>
-<span class="cstat-no" title="statement not covered" >            factors: [],</span>
-<span class="cstat-no" title="statement not covered" >            recommendations: [],</span>
-<span class="cstat-no" title="statement not covered" >          },</span>
-<span class="cstat-no" title="statement not covered" >          communicationLog: [],</span>
+<span class="cstat-no" title="statement not covered" >          progressTracking: [],</span>
+<span class="cstat-no" title="statement not covered" >          satisfactionScores: [],</span>
+<span class="cstat-no" title="statement not covered" >          riskFactors: [],</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
-<span class="cstat-no" title="statement not covered" >        treatmentProtocols: { protocols: [], customizations: [], outcomes: [] },</span>
+<span class="cstat-no" title="statement not covered" >        treatmentProtocols: {</span>
+<span class="cstat-no" title="statement not covered" >          protocols: [],</span>
+<span class="cstat-no" title="statement not covered" >          successRates: {},</span>
+<span class="cstat-no" title="statement not covered" >          averageDuration: {},</span>
+<span class="cstat-no" title="statement not covered" >          contraindications: {},</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        professionalPerformance: {</span>
-<span class="cstat-no" title="statement not covered" >          efficiency: 0,</span>
+<span class="cstat-no" title="statement not covered" >          professionalId: "default",</span>
+<span class="cstat-no" title="statement not covered" >          performanceScore: 0,</span>
 <span class="cstat-no" title="statement not covered" >          patientSatisfaction: 0,</span>
-<span class="cstat-no" title="statement not covered" >          clinicalOutcomes: 0,</span>
-<span class="cstat-no" title="statement not covered" >          continuousEducation: 0,</span>
+<span class="cstat-no" title="statement not covered" >          treatmentSuccessRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >          efficiency: 0,</span>
+<span class="cstat-no" title="statement not covered" >          specialties: [],</span>
 <span class="cstat-no" title="statement not covered" >        },</span>
 <span class="cstat-no" title="statement not covered" >        complianceStatus: {</span>
 <span class="cstat-no" title="statement not covered" >          cfmCompliance: true,</span>
@@ -1431,15 +1426,17 @@
 <span class="cstat-no" title="statement not covered" >      resolutionSuggestions: [],</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    utilization: {</span>
-<span class="cstat-no" title="statement not covered" >      averageUtilization: 0,</span>
-<span class="cstat-no" title="statement not covered" >      peakHours: [],</span>
-<span class="cstat-no" title="statement not covered" >      underutilizedSlots: [],</span>
+<span class="cstat-no" title="statement not covered" >      professionalId: "default",</span>
+<span class="cstat-no" title="statement not covered" >      utilizationRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >      appointmentsCount: 0,</span>
+<span class="cstat-no" title="statement not covered" >      availableSlots: 0,</span>
+<span class="cstat-no" title="statement not covered" >      efficiency: 0,</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    patientFlow: {</span>
 <span class="cstat-no" title="statement not covered" >      averageWaitTime: 0,</span>
-<span class="cstat-no" title="statement not covered" >      patientVolume: 0,</span>
-<span class="cstat-no" title="statement not covered" >      peakDays: [],</span>
-<span class="cstat-no" title="statement not covered" >      bottlenecks: [],</span>
+<span class="cstat-no" title="statement not covered" >      appointmentDuration: 0,</span>
+<span class="cstat-no" title="statement not covered" >      noShowRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >      cancellationRate: 0,</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -1478,10 +1475,11 @@
 <span class="cstat-no" title="statement not covered" >      averagePaymentDays: 0,</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    profitability: {</span>
-<span class="cstat-no" title="statement not covered" >      grossMargin: 0,</span>
-<span class="cstat-no" title="statement not covered" >      netMargin: 0,</span>
-<span class="cstat-no" title="statement not covered" >      revenuePerPatient: 0,</span>
-<span class="cstat-no" title="statement not covered" >      costPerService: 0,</span>
+<span class="cstat-no" title="statement not covered" >      treatmentType: "default",</span>
+<span class="cstat-no" title="statement not covered" >      revenue: 0,</span>
+<span class="cstat-no" title="statement not covered" >      costs: 0,</span>
+<span class="cstat-no" title="statement not covered" >      margin: 0,</span>
+<span class="cstat-no" title="statement not covered" >      profitabilityRate: 0,</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    forecasting: {</span>
 <span class="cstat-no" title="statement not covered" >      revenue: {</span>
@@ -1532,42 +1530,38 @@
 <span class="cstat-no" title="statement not covered" >    patientRecords: {</span>
 <span class="cstat-no" title="statement not covered" >      patientId: "anonymized",</span>
 <span class="cstat-no" title="statement not covered" >      personalInfo: {</span>
-<span class="cstat-no" title="statement not covered" >        name: "Patient Data (Anonymized)",</span>
-<span class="cstat-no" title="statement not covered" >        age: 0,</span>
+<span class="cstat-no" title="statement not covered" >        id: "anonymous",</span>
+<span class="cstat-no" title="statement not covered" >        first_name: "Patient",</span>
+<span class="cstat-no" title="statement not covered" >        last_name: "Data (Anonymized)",</span>
+<span class="cstat-no" title="statement not covered" >        email: "",</span>
+<span class="cstat-no" title="statement not covered" >        phone: "",</span>
+<span class="cstat-no" title="statement not covered" >        date_of_birth: "",</span>
 <span class="cstat-no" title="statement not covered" >        gender: "",</span>
-<span class="cstat-no" title="statement not covered" >        contactInfo: "",</span>
-<span class="cstat-no" title="statement not covered" >        emergencyContact: "",</span>
+<span class="cstat-no" title="statement not covered" >        address: "",</span>
+<span class="cstat-no" title="statement not covered" >        emergency_contact: "",</span>
+<span class="cstat-no" title="statement not covered" >        clinic_id: "",</span>
+<span class="cstat-no" title="statement not covered" >        created_at: "",</span>
+<span class="cstat-no" title="statement not covered" >        updated_at: "",</span>
 <span class="cstat-no" title="statement not covered" >      },</span>
-<span class="cstat-no" title="statement not covered" >      medicalHistory: {</span>
-<span class="cstat-no" title="statement not covered" >        conditions: [],</span>
-<span class="cstat-no" title="statement not covered" >        allergies: [],</span>
-<span class="cstat-no" title="statement not covered" >        medications: [],</span>
-<span class="cstat-no" title="statement not covered" >        surgeries: [],</span>
-<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      medicalHistory: [],</span>
 <span class="cstat-no" title="statement not covered" >      treatmentSessions: [],</span>
-<span class="cstat-no" title="statement not covered" >      progressTracking: {</span>
-<span class="cstat-no" title="statement not covered" >        beforeAfterPhotos: [],</span>
-<span class="cstat-no" title="statement not covered" >        measurementHistory: [],</span>
-<span class="cstat-no" title="statement not covered" >        satisfactionScores: [],</span>
-<span class="cstat-no" title="statement not covered" >      },</span>
-<span class="cstat-no" title="statement not covered" >      complianceTracking: {</span>
-<span class="cstat-no" title="statement not covered" >        appointmentAdherence: 0,</span>
-<span class="cstat-no" title="statement not covered" >        treatmentCompliance: 0,</span>
-<span class="cstat-no" title="statement not covered" >        followUpCompletion: 0,</span>
-<span class="cstat-no" title="statement not covered" >      },</span>
-<span class="cstat-no" title="statement not covered" >      riskAssessment: {</span>
-<span class="cstat-no" title="statement not covered" >        riskLevel: "low" as const,</span>
-<span class="cstat-no" title="statement not covered" >        factors: [],</span>
-<span class="cstat-no" title="statement not covered" >        recommendations: [],</span>
-<span class="cstat-no" title="statement not covered" >      },</span>
-<span class="cstat-no" title="statement not covered" >      communicationLog: [],</span>
+<span class="cstat-no" title="statement not covered" >      progressTracking: [],</span>
+<span class="cstat-no" title="statement not covered" >      satisfactionScores: [],</span>
+<span class="cstat-no" title="statement not covered" >      riskFactors: [],</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
-<span class="cstat-no" title="statement not covered" >    treatmentProtocols: { protocols: [], customizations: [], outcomes: [] },</span>
+<span class="cstat-no" title="statement not covered" >    treatmentProtocols: {</span>
+<span class="cstat-no" title="statement not covered" >      protocols: [],</span>
+<span class="cstat-no" title="statement not covered" >      successRates: {},</span>
+<span class="cstat-no" title="statement not covered" >      averageDuration: {},</span>
+<span class="cstat-no" title="statement not covered" >      contraindications: {},</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    professionalPerformance: {</span>
-<span class="cstat-no" title="statement not covered" >      efficiency: 0,</span>
+<span class="cstat-no" title="statement not covered" >      professionalId: "default",</span>
+<span class="cstat-no" title="statement not covered" >      performanceScore: 0,</span>
 <span class="cstat-no" title="statement not covered" >      patientSatisfaction: 0,</span>
-<span class="cstat-no" title="statement not covered" >      clinicalOutcomes: 0,</span>
-<span class="cstat-no" title="statement not covered" >      continuousEducation: 0,</span>
+<span class="cstat-no" title="statement not covered" >      treatmentSuccessRate: 0,</span>
+<span class="cstat-no" title="statement not covered" >      efficiency: 0,</span>
+<span class="cstat-no" title="statement not covered" >      specialties: [],</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    complianceStatus: {</span>
 <span class="cstat-no" title="statement not covered" >      cfmCompliance: true,</span>
@@ -1618,7 +1612,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T22:51:16.367Z
+                at 2025-07-25T02:57:19.104Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

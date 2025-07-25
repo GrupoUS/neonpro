@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/88</span>
+                <span class='fraction'>0/96</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/88</span>
+                <span class='fraction'>0/96</span>
             </div>
         
             
@@ -151,7 +151,23 @@
 <a name='L86'></a><a href='#L86'>86</a>
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -241,16 +257,22 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >"use client";</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import { useState } from "react";</span>
-<span class="cstat-no" title="statement not covered" >import { User } from "@supabase/supabase-js";</span>
-<span class="cstat-no" title="statement not covered" >import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";</span>
-<span class="cstat-no" title="statement not covered" >import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";</span>
-<span class="cstat-no" title="statement not covered" >import { Badge } from "@/components/ui/badge";</span>
-<span class="cstat-no" title="statement not covered" >import { </span>
-<span class="cstat-no" title="statement not covered" >  CustomerManagement, </span>
-<span class="cstat-no" title="statement not covered" >  LeadTracking, </span>
-<span class="cstat-no" title="statement not covered" >  CustomerAnalytics </span>
+<span class="cstat-no" title="statement not covered" >import {</span>
+<span class="cstat-no" title="statement not covered" >  CustomerAnalytics,</span>
+<span class="cstat-no" title="statement not covered" >  CustomerManagement,</span>
+<span class="cstat-no" title="statement not covered" >  LeadTracking,</span>
 <span class="cstat-no" title="statement not covered" >} from "@/components/crm";</span>
+<span class="cstat-no" title="statement not covered" >import { Badge } from "@/components/ui/badge";</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
+<span class="cstat-no" title="statement not covered" >  Card,</span>
+<span class="cstat-no" title="statement not covered" >  CardContent,</span>
+<span class="cstat-no" title="statement not covered" >  CardDescription,</span>
+<span class="cstat-no" title="statement not covered" >  CardHeader,</span>
+<span class="cstat-no" title="statement not covered" >  CardTitle,</span>
+<span class="cstat-no" title="statement not covered" >} from "@/components/ui/card";</span>
+<span class="cstat-no" title="statement not covered" >import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";</span>
+<span class="cstat-no" title="statement not covered" >import { User } from "@supabase/supabase-js";</span>
+<span class="cstat-no" title="statement not covered" >import { useState } from "react";</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface CRMClientPageProps {</span>
 <span class="cstat-no" title="statement not covered" >  user: User;</span>
@@ -264,7 +286,9 @@
 <span class="cstat-no" title="statement not covered" >      {/* Header */}</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className="flex items-center justify-between"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;h1 className="text-3xl font-bold"&gt;Customer Relationship Management&lt;/h1&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;h1 className="text-3xl font-bold"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Customer Relationship Management</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/h1&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;p className="text-muted-foreground"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            Gerencie relacionamentos com clientes, leads e análises</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/p&gt;</span>
@@ -334,7 +358,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-24T22:51:16.367Z
+                at 2025-07-25T02:57:19.104Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
