@@ -1,0 +1,151 @@
+import '@testing-library/jest-dom'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { RegulatoryDocumentsList } from '@/components/regulatory-documents/regulatory-documents-list'
+import { useRegulatoryDocuments } from '@/hooks/use-regulatory-documents'
+
+// Mock the custom hook
+jest.mock('@/hooks/use-regulatory-documents')
+const mockUseRegulatoryDocuments = useRegulatoryDocuments as jest.MockedFunction<typeof useRegulatoryDocuments>
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}))
+
+describe('RegulatoryDocumentsList Integration', () => {
+  const mockDocuments = [
+    {
+      id: '1',
+      title: 'ANVISA Compliance Document',
+      category: 'ANVISA',
+      type: 'regulamento' as const,
+      file_path: '/documents/anvisa-doc.pdf',
+      expiration_date: '2025-12-31',
+      created_at: '2025-01-22',
+      updated_at: '2025-01-22',
+    },
+    {
+      id: '2',
+      title: 'CFM Guidelines',
+      category: 'CFM',
+      type: 'diretriz' as const,
+      file_path: '/documents/cfm-guidelines.pdf',
+      expiration_date: '2025-06-30',
+      created_at: '2025-01-22',
+      updated_at: '2025-01-22',
+    },
+  ]
+
+  beforeEach(() => {
+    mockUseRegulatoryDocuments.mockReturnValue({
+      documents: mockDocuments,
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
+      createDocument: jest.fn(),
+      updateDocument: jest.fn(),
+      deleteDocument: jest.fn(),
+    })
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('renders documents list with proper data', () => {
+    render(<RegulatoryDocumentsList />)
+    
+    expect(screen.getByText('ANVISA Compliance Document')).toBeInTheDocument()
+    expect(screen.getByText('CFM Guidelines')).toBeInTheDocument()
+    expect(screen.getByText('ANVISA')).toBeInTheDocument()
+    expect(screen.getByText('CFM')).toBeInTheDocument()
+  })
+
+  it('shows loading state when fetching documents', () => {
+    mockUseRegulatoryDocuments.mockReturnValue({
+      documents: [],
+      loading: true,
+      error: null,
+      refetch: jest.fn(),
+      createDocument: jest.fn(),
+      updateDocument: jest.fn(),
+      deleteDocument: jest.fn(),
+    })
+
+    render(<RegulatoryDocumentsList />)
+    
+    expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument()
+  })
+
+  it('displays error message when fetch fails', () => {
+    mockUseRegulatoryDocuments.mockReturnValue({
+      documents: [],
+      loading: false,
+      error: 'Failed to fetch documents',
+      refetch: jest.fn(),
+      createDocument: jest.fn(),
+      updateDocument: jest.fn(),
+      deleteDocument: jest.fn(),
+    })
+
+    render(<RegulatoryDocumentsList />)
+    
+    expect(screen.getByText('Error loading documents')).toBeInTheDocument()
+    expect(screen.getByText('Failed to fetch documents')).toBeInTheDocument()
+  })
+
+  it('handles document deletion', async () => {
+    const mockDeleteDocument = jest.fn().mockResolvedValue(undefined)
+    mockUseRegulatoryDocuments.mockReturnValue({
+      documents: mockDocuments,
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
+      createDocument: jest.fn(),
+      updateDocument: jest.fn(),
+      deleteDocument: mockDeleteDocument,
+    })
+
+    render(<RegulatoryDocumentsList />)
+    
+    // Click delete button for first document
+    const deleteButtons = screen.getAllByTestId('delete-document-button')
+    fireEvent.click(deleteButtons[0])
+    
+    // Confirm deletion in modal
+    const confirmButton = screen.getByTestId('confirm-delete-button')
+    fireEvent.click(confirmButton)
+    
+    await waitFor(() => {
+      expect(mockDeleteDocument).toHaveBeenCalledWith('1')
+    })
+  })
+
+  it('filters documents by category', () => {
+    render(<RegulatoryDocumentsList />)
+    
+    // Select ANVISA filter
+    const categoryFilter = screen.getByTestId('category-filter')
+    fireEvent.change(categoryFilter, { target: { value: 'ANVISA' } })
+    
+    // Should show only ANVISA documents
+    expect(screen.getByText('ANVISA Compliance Document')).toBeInTheDocument()
+    expect(screen.queryByText('CFM Guidelines')).not.toBeInTheDocument()
+  })
+
+  it('sorts documents by expiration date', () => {
+    render(<RegulatoryDocumentsList />)
+    
+    // Select expiration date sort
+    const sortSelect = screen.getByTestId('sort-select')
+    fireEvent.change(sortSelect, { target: { value: 'expiration_date' } })
+    
+    // Verify documents are sorted properly
+    const documentTitles = screen.getAllByTestId('document-title')
+    expect(documentTitles[0]).toHaveTextContent('CFM Guidelines') // Earlier expiration
+    expect(documentTitles[1]).toHaveTextContent('ANVISA Compliance Document') // Later expiration
+  })
+})

@@ -180,8 +180,8 @@ export class NotificationService {
         const timeDiff = dueDate.getTime() - today.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
         
-        let alertType: 'due_soon' | 'due_today' | 'overdue';
-        let priority: 'low' | 'medium' | 'high' | 'urgent';
+        let alertType: 'due_soon' | 'due_today' | 'overdue' = 'due_soon';
+        let priority: 'low' | 'medium' | 'high' | 'urgent' = 'low';
 
         if (daysDiff < 0) {
           alertType = 'overdue';
@@ -228,8 +228,8 @@ export class NotificationService {
     const alerts: DashboardAlert[] = [];
     
     for (const reminder of duePayments.slice(0, limit)) {
-      let title: string;
-      let message: string;
+      let title: string = '';
+      let message: string = '';
       
       if (reminder.alert_type === 'overdue') {
         title = `Pagamento em atraso - ${reminder.vendor.name}`;

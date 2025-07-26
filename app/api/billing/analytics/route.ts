@@ -151,7 +151,7 @@ export async function GET(request: Request) {
         .in("status", ["pending", "overdue"])
         .order("due_date", { ascending: true });
 
-    let outstandingAnalysis = {
+    const outstandingAnalysis = {
       total_outstanding: 0,
       overdue_count: 0,
       overdue_amount: 0,

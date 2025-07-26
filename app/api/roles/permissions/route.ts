@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Definição da hierarquia de roles
 const ROLE_HIERARCHY = {
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Função para verificar se uma role tem determinada permissão
-function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permission: string): boolean {
+export function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permission: string): boolean {
   const roleInfo = ROLE_HIERARCHY[userRole];
   if (!roleInfo) return false;
 
@@ -224,7 +224,7 @@ function checkPermission(userRole: keyof typeof ROLE_HIERARCHY, permission: stri
 }
 
 // Função para verificar se uma role pode gerenciar outra role
-function canManageTargetRole(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
+export function canManageTargetRole(userRole: keyof typeof ROLE_HIERARCHY, targetRole: keyof typeof ROLE_HIERARCHY): boolean {
   const userRoleInfo = ROLE_HIERARCHY[userRole];
   if (!userRoleInfo) return false;
 

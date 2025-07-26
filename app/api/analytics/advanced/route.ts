@@ -6,11 +6,11 @@
  * and performance optimization.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
 import { CohortAnalyzer } from '@/lib/analytics/advanced/cohort-analyzer'
 import { ForecastingEngine } from '@/lib/analytics/advanced/forecasting-engine'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 // Validation schemas
@@ -272,7 +272,7 @@ async function handleStatisticalAnalysis(request: NextRequest, supabase: any, us
     // Process data for analysis
     const processedData = processAnalyticsDataForStatistics(analyticsData, validatedData.metrics)
     
-    let results: any = {}
+    const results: any = {}
     
     // Correlation Analysis
     if (validatedData.analysis_type === 'correlation' || validatedData.analysis_type === 'all') {

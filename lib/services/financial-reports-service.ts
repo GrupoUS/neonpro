@@ -368,7 +368,7 @@ export class FinancialReportsService {
       
       // Mock implementation
       const projections: CashFlowProjection[] = [];
-      let currentDate = new Date();
+      const currentDate = new Date();
       let runningBalance = 250000; // saldo inicial simulado
 
       for (let i = 0; i < periods; i++) {

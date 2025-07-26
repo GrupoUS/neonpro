@@ -71,3 +71,6 @@ export const sendEmail = async ({
     return { success: false, error }
   }
 }
+
+// Alias for compatibility
+export const sendInvoiceEmail = sendEmail;

@@ -3,18 +3,20 @@ prd:
   prdFile: docs/prd.md
   prdVersion: v4
   prdSharded: true
-  prdShardedLocation: docs/prd
+  prdShardedLocation: docs/shards/epics
   epicFilePattern: epic-{n}*.md
 architecture:
   architectureFile: docs/architecture.md
   architectureVersion: v4
   architectureSharded: true
-  architectureShardedLocation: docs/architecture
+  architectureShardedLocation: docs/shards/architecture
 customTechnicalDocuments: null
 devLoadAlwaysFiles:
-  - docs/architecture/coding-standards.md
-  - docs/architecture/tech-stack.md
-  - docs/architecture/source-tree.md
+  - docs/architecture.md
+  - docs/prd.md
+  - docs/front-end-spec.md
+  - docs/shards/architecture/tech-stack.md
+  - docs/shards/architecture/coding-standards.md
 devDebugLog: .ai/debug-log.md
-devStoryLocation: docs/stories
+devStoryLocation: docs/shards/stories
 slashPrefix: BMad

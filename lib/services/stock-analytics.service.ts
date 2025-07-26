@@ -55,7 +55,9 @@ export interface RecurrencePattern {
 }
 
 class StockAnalyticsService {
-  private supabase = createClient();
+  private async getSupabaseClient() {
+    return await createClient();
+  }
 
   // ==========================================
   // METRICS CALCULATION
@@ -68,6 +70,7 @@ class StockAnalyticsService {
     severityLevel?: string
   ): Promise<AlertResolutionMetrics | null> {
     try {
+      const supabase = await this.getSupabaseClient();
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
       
@@ -75,7 +78,7 @@ class StockAnalyticsService {
       endOfDay.setHours(23, 59, 59, 999);
 
       // Base query conditions
-      let query = this.supabase
+      let query = supabase
         .from('stock_alerts_history')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -178,7 +181,8 @@ class StockAnalyticsService {
     severityLevel?: string
   ): Promise<number> {
     try {
-      let query = this.supabase
+      const supabase = await this.getSupabaseClient();
+      let query = supabase
         .from('stock_alerts_history')
         .select('product_id')
         .eq('clinic_id', clinicId)
@@ -231,7 +235,8 @@ class StockAnalyticsService {
       endOfDay.setHours(23, 59, 59, 999);
 
       // Get notification deliveries for the day
-      const { data: notifications, error } = await this.supabase
+      const supabase = await this.getSupabaseClient();
+      const { data: notifications, error } = await supabase
         .from('notification_deliveries')
         .select(`
           *,
@@ -250,7 +255,7 @@ class StockAnalyticsService {
       }
 
       // Filter notifications based on alert type and severity
-      const filteredNotifications = notifications.filter(notif => {
+      const filteredNotifications = notifications?.filter((notif: any) => {
         const alert = notif.stock_alerts_history;
         if (alertType && alertType !== 'all' && alert.alert_type !== alertType) return false;
         if (severityLevel && severityLevel !== 'all' && alert.severity_level !== severityLevel) return false;
@@ -293,8 +298,10 @@ class StockAnalyticsService {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
+      const supabase = await this.getSupabaseClient();
+      
       // Count purchase orders created from alerts
-      let purchaseOrderQuery = this.supabase
+      const purchaseOrderQuery = supabase
         .from('purchase_order_items')
         .select('alert_trigger_id')
         .not('alert_trigger_id', 'is', null)
@@ -305,7 +312,7 @@ class StockAnalyticsService {
       const purchaseOrderTriggers = purchaseItems?.length || 0;
 
       // Count config updates triggered by alerts
-      let configUpdateQuery = this.supabase
+      const configUpdateQuery = supabase
         .from('alert_config_updates_log')
         .select('trigger_alert_id')
         .not('trigger_alert_id', 'is', null)
@@ -316,7 +323,7 @@ class StockAnalyticsService {
       const configUpdateTriggers = configUpdates?.length || 0;
 
       // Count reorder suggestions created
-      let reorderQuery = this.supabase
+      const reorderQuery = supabase
         .from('reorder_suggestions')
         .select('trigger_alert_id')
         .eq('clinic_id', clinicId)
@@ -340,7 +347,8 @@ class StockAnalyticsService {
 
   async saveMetrics(metrics: AlertResolutionMetrics): Promise<boolean> {
     try {
-      const { error } = await this.supabase
+      const supabase = await this.getSupabaseClient();
+      const { error } = await supabase
         .from('alert_resolution_analytics')
         .upsert({
           clinic_id: metrics.clinic_id,
@@ -379,7 +387,8 @@ class StockAnalyticsService {
 
   async getMetrics(query: AnalyticsQuery): Promise<AlertResolutionMetrics[]> {
     try {
-      let dbQuery = this.supabase
+      const supabase = await this.getSupabaseClient();
+      let dbQuery = supabase
         .from('alert_resolution_analytics')
         .select('*')
         .eq('clinic_id', query.clinicId)
@@ -418,7 +427,8 @@ class StockAnalyticsService {
     alertType?: string
   ): Promise<ResolutionTimeAnalysis[]> {
     try {
-      let query = this.supabase
+      const supabase = await this.getSupabaseClient();
+      let query = supabase
         .from('stock_alerts_history')
         .select('id, created_at, acknowledged_at, resolved_at, alert_type')
         .eq('clinic_id', clinicId)
@@ -471,8 +481,9 @@ class StockAnalyticsService {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - lookbackDays);
-
-      const { data: alerts, error } = await this.supabase
+      
+      const supabase = await this.getSupabaseClient();
+      const { data: alerts, error } = await supabase
         .from('stock_alerts_history')
         .select(`
           product_id,
@@ -606,7 +617,8 @@ class StockAnalyticsService {
         metrics.filter(m => m.notification_success_rate).length || 0;
 
       // Get top alert types
-      const { data: alertTypes, error: alertTypesError } = await this.supabase
+      const supabase = await this.getSupabaseClient();
+      const { data: alertTypes, error: alertTypesError } = await supabase
         .from('stock_alerts_history')
         .select('alert_type')
         .eq('clinic_id', clinicId)
@@ -718,11 +730,3 @@ class StockAnalyticsService {
 // Singleton instance
 const stockAnalyticsService = new StockAnalyticsService();
 export default stockAnalyticsService;
-
-// Export types for use in other modules
-export type {
-  AlertResolutionMetrics,
-  AnalyticsQuery,
-  ResolutionTimeAnalysis,
-  RecurrencePattern,
-};

@@ -10,12 +10,12 @@
  * Supports cohort analysis, forecasting, statistical insights, and dashboard data.
  */
 
-import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
-import { z } from 'zod'
-import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
+import { NextRequest, NextResponse } from 'next/server'
+import * as XLSX from 'xlsx'
+import { z } from 'zod'
 
 // Extend jsPDF type for autoTable
 declare module 'jspdf' {
@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     const { type, format, data, options = {} } = validatedRequest
 
     // Generate export based on format
-    let exportData: Buffer | string
-    let contentType: string
-    let filename: string
+    let exportData: Buffer | string;
+    let contentType: string;
+    let filename: string;
 
     switch (format) {
       case 'csv':
@@ -132,8 +132,8 @@ async function generateCSVExport(
   data: any,
   options: any
 ): Promise<{ data: string; contentType: string; filename: string }> {
-  let csvData: string = ''
-  let filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.csv`
+  let csvData: string = '';
+  let filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.csv`;
 
   switch (type) {
     case 'cohort':
@@ -175,8 +175,8 @@ async function generateExcelExport(
   data: any,
   options: any
 ): Promise<{ data: Buffer; contentType: string; filename: string }> {
-  const workbook = XLSX.utils.book_new()
-  let filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.xlsx`
+  const workbook = XLSX.utils.book_new();
+  let filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.xlsx`;
 
   switch (type) {
     case 'cohort':
@@ -265,7 +265,7 @@ async function generateJSONExport(
   options: any
 ): Promise<{ data: string; contentType: string; filename: string }> {
   let exportData: any = data
-  let filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.json`
+  const filename: string = `${type}-export-${new Date().toISOString().split('T')[0]}.json`
 
   // Add metadata if requested
   if (options.includeMetadata) {

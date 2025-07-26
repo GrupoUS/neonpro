@@ -1,6 +1,6 @@
 import type {
-  BookingResponse,
-  CreateAppointmentFormData,
+    BookingResponse,
+    CreateAppointmentFormData,
 } from "@/app/lib/types/appointments";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";

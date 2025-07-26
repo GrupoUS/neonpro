@@ -339,3 +339,12 @@ export async function trackPerformance(options: {
     metadata: options.metadata
   });
 }
+
+// Missing functions for compatibility
+export async function getPerformanceMetrics() {
+  return performanceMonitor.generatePerformanceReport();
+}
+
+export async function recordPerformanceMetric(metric: PerformanceMetric) {
+  return performanceMonitor.logPerformanceMetric(metric);
+}
