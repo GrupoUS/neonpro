@@ -91,27 +91,29 @@ async function applyRateLimit(
 }
 
 /**
- * Add security headers to response
+ * Add security headers to response (optimized for serverless)
  */
 function addSecurityHeaders(response: NextResponse): NextResponse {
-  // Content Security Policy
-  response.headers.set(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:;"
-  );
+  // Batch header operations for better performance
+  const headers = new Map([
+    ['Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:;"],
+    ['X-Frame-Options', 'DENY'],
+    ['X-Content-Type-Options', 'nosniff'],
+    ['Referrer-Policy', 'strict-origin-when-cross-origin'],
+    ['Permissions-Policy', 'camera=(), microphone=(), geolocation=()']
+  ]);
   
-  // Other security headers
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
-  // CORS headers for API routes
+  // Add CORS headers for API routes
   if (response.url.includes('/api/')) {
-    response.headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_APP_URL || '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_APP_URL || 'https://localhost:3000');
+    headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   }
+  
+  // Apply all headers at once
+  headers.forEach((value, key) => {
+    response.headers.set(key, value);
+  });
   
   return response;
 }
@@ -162,22 +164,35 @@ export async function middleware(request: NextRequest) {
   
   // Apply rate limiting for API routes
   if (pathname.startsWith('/api/')) {
-    // Get user information for role-based rate limiting
+    // Skip expensive auth check for health/monitoring endpoints
+    const isHealthEndpoint = pathname.includes('/health') || pathname.includes('/monitoring');
+    
     let userRole: string | undefined;
     let userId: string | undefined;
     
-    try {
-      const authResult = await authenticateRequest(request);
-      if (authResult.success && authResult.user) {
-        userRole = authResult.user.role;
-        userId = authResult.user.id;
+    // Only perform auth check for non-health endpoints and with timeout
+    if (!isHealthEndpoint) {
+      try {
+        const authPromise = authenticateRequest(request);
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth timeout')), 500)
+        );
+        
+        const authResult = await Promise.race([authPromise, timeoutPromise]) as any;
+        if (authResult?.success && authResult?.user) {
+          userRole = authResult.user.role;
+          userId = authResult.user.id;
+        }
+      } catch (error) {
+        // Continue without user info if authentication fails or times out
+        // Skip console.warn in production to reduce noise
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('Authentication check failed in middleware:', error);
+        }
       }
-    } catch (error) {
-      // Continue without user info if authentication fails
-      console.warn('Authentication check failed in middleware:', error);
     }
     
-    // Apply rate limiting
+    // Apply rate limiting with faster execution
     const rateLimitResponse = await applyRateLimit(
       request,
       ip,

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/217</span>
+                <span class='fraction'>0/232</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/217</span>
+                <span class='fraction'>0/232</span>
             </div>
         
             
@@ -279,7 +279,37 @@
 <a name='L214'></a><a href='#L214'>214</a>
 <a name='L215'></a><a href='#L215'>215</a>
 <a name='L216'></a><a href='#L216'>216</a>
-<a name='L217'></a><a href='#L217'>217</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -588,27 +618,29 @@
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >/**</span>
-<span class="cstat-no" title="statement not covered" > * Add security headers to response</span>
+<span class="cstat-no" title="statement not covered" > * Add security headers to response (optimized for serverless)</span>
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >function addSecurityHeaders(response: NextResponse): NextResponse {</span>
-<span class="cstat-no" title="statement not covered" >  // Content Security Policy</span>
-<span class="cstat-no" title="statement not covered" >  response.headers.set(</span>
-<span class="cstat-no" title="statement not covered" >    'Content-Security-Policy',</span>
-<span class="cstat-no" title="statement not covered" >    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:;"</span>
-<span class="cstat-no" title="statement not covered" >  );</span>
+<span class="cstat-no" title="statement not covered" >  // Batch header operations for better performance</span>
+<span class="cstat-no" title="statement not covered" >  const headers = new Map([</span>
+<span class="cstat-no" title="statement not covered" >    ['Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:;"],</span>
+<span class="cstat-no" title="statement not covered" >    ['X-Frame-Options', 'DENY'],</span>
+<span class="cstat-no" title="statement not covered" >    ['X-Content-Type-Options', 'nosniff'],</span>
+<span class="cstat-no" title="statement not covered" >    ['Referrer-Policy', 'strict-origin-when-cross-origin'],</span>
+<span class="cstat-no" title="statement not covered" >    ['Permissions-Policy', 'camera=(), microphone=(), geolocation=()']</span>
+<span class="cstat-no" title="statement not covered" >  ]);</span>
 <span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  // Other security headers</span>
-<span class="cstat-no" title="statement not covered" >  response.headers.set('X-Frame-Options', 'DENY');</span>
-<span class="cstat-no" title="statement not covered" >  response.headers.set('X-Content-Type-Options', 'nosniff');</span>
-<span class="cstat-no" title="statement not covered" >  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');</span>
-<span class="cstat-no" title="statement not covered" >  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');</span>
-<span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  // CORS headers for API routes</span>
+<span class="cstat-no" title="statement not covered" >  // Add CORS headers for API routes</span>
 <span class="cstat-no" title="statement not covered" >  if (response.url.includes('/api/')) {</span>
-<span class="cstat-no" title="statement not covered" >    response.headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_APP_URL || '*');</span>
-<span class="cstat-no" title="statement not covered" >    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');</span>
-<span class="cstat-no" title="statement not covered" >    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');</span>
+<span class="cstat-no" title="statement not covered" >    headers.set('Access-Control-Allow-Origin', process.env.NEXT_PUBLIC_APP_URL || 'https://localhost:3000');</span>
+<span class="cstat-no" title="statement not covered" >    headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');</span>
+<span class="cstat-no" title="statement not covered" >    headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >  // Apply all headers at once</span>
+<span class="cstat-no" title="statement not covered" >  headers.forEach((value, key) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    response.headers.set(key, value);</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  return response;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -659,22 +691,35 @@
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  // Apply rate limiting for API routes</span>
 <span class="cstat-no" title="statement not covered" >  if (pathname.startsWith('/api/')) {</span>
-<span class="cstat-no" title="statement not covered" >    // Get user information for role-based rate limiting</span>
+<span class="cstat-no" title="statement not covered" >    // Skip expensive auth check for health/monitoring endpoints</span>
+<span class="cstat-no" title="statement not covered" >    const isHealthEndpoint = pathname.includes('/health') || pathname.includes('/monitoring');</span>
+<span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    let userRole: string | undefined;</span>
 <span class="cstat-no" title="statement not covered" >    let userId: string | undefined;</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      const authResult = await authenticateRequest(request);</span>
-<span class="cstat-no" title="statement not covered" >      if (authResult.success &amp;&amp; authResult.user) {</span>
-<span class="cstat-no" title="statement not covered" >        userRole = authResult.user.role;</span>
-<span class="cstat-no" title="statement not covered" >        userId = authResult.user.id;</span>
+<span class="cstat-no" title="statement not covered" >    // Only perform auth check for non-health endpoints and with timeout</span>
+<span class="cstat-no" title="statement not covered" >    if (!isHealthEndpoint) {</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        const authPromise = authenticateRequest(request);</span>
+<span class="cstat-no" title="statement not covered" >        const timeoutPromise = new Promise((_, reject) =&gt; </span>
+<span class="cstat-no" title="statement not covered" >          setTimeout(() =&gt; reject(new Error('Auth timeout')), 500)</span>
+<span class="cstat-no" title="statement not covered" >        );</span>
+<span class="cstat-no" title="statement not covered" >        </span>
+<span class="cstat-no" title="statement not covered" >        const authResult = await Promise.race([authPromise, timeoutPromise]) as any;</span>
+<span class="cstat-no" title="statement not covered" >        if (authResult?.success &amp;&amp; authResult?.user) {</span>
+<span class="cstat-no" title="statement not covered" >          userRole = authResult.user.role;</span>
+<span class="cstat-no" title="statement not covered" >          userId = authResult.user.id;</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >        // Continue without user info if authentication fails or times out</span>
+<span class="cstat-no" title="statement not covered" >        // Skip console.warn in production to reduce noise</span>
+<span class="cstat-no" title="statement not covered" >        if (process.env.NODE_ENV !== 'production') {</span>
+<span class="cstat-no" title="statement not covered" >          console.warn('Authentication check failed in middleware:', error);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" >      }</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >      // Continue without user info if authentication fails</span>
-<span class="cstat-no" title="statement not covered" >      console.warn('Authentication check failed in middleware:', error);</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Apply rate limiting</span>
+<span class="cstat-no" title="statement not covered" >    // Apply rate limiting with faster execution</span>
 <span class="cstat-no" title="statement not covered" >    const rateLimitResponse = await applyRateLimit(</span>
 <span class="cstat-no" title="statement not covered" >      request,</span>
 <span class="cstat-no" title="statement not covered" >      ip,</span>
@@ -718,7 +763,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-25T16:55:36.133Z
+                at 2025-07-26T07:01:22.515Z
             </div>
         <script src="../prettify.js"></script>
         <script>

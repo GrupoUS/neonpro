@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>0/47</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>0/47</span>
             </div>
         
             
@@ -88,7 +88,51 @@
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
 <a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -114,27 +158,49 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >// This file is used to initialize instrumentation in Next.js 15</span></span></span>
-<span class="cstat-no" title="statement not covered" >// Enhanced with intelligent error handling and optional OpenTelemetry</span>
+<span class="cstat-no" title="statement not covered" >// Optimized for serverless performance with conditional loading</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export async function register() {</span>
 <span class="cstat-no" title="statement not covered" >  if (process.env.NEXT_RUNTIME === 'nodejs') {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      // Skip instrumentation in development for faster cold starts</span>
+<span class="cstat-no" title="statement not covered" >      if (process.env.NODE_ENV === 'development') {</span>
+<span class="cstat-no" title="statement not covered" >        console.log('🔧 Skipping instrumentation in development mode');</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >      </span>
 <span class="cstat-no" title="statement not covered" >      console.log('🔧 Registering NeonPro instrumentation...')</span>
 <span class="cstat-no" title="statement not covered" >      </span>
-<span class="cstat-no" title="statement not covered" >      // Initialize OpenTelemetry (only if enabled)</span>
-<span class="cstat-no" title="statement not covered" >      const { SimpleTelemetry } = await import('./lib/observability/opentelemetry-setup');</span>
-<span class="cstat-no" title="statement not covered" >      await SimpleTelemetry.initialize();</span>
+<span class="cstat-no" title="statement not covered" >      // Initialize OpenTelemetry only if explicitly enabled</span>
+<span class="cstat-no" title="statement not covered" >      if (process.env.OTEL_ENABLED === 'true') {</span>
+<span class="cstat-no" title="statement not covered" >        const { SimpleTelemetry } = await import('./lib/observability/opentelemetry-setup');</span>
+<span class="cstat-no" title="statement not covered" >        await SimpleTelemetry.initialize();</span>
+<span class="cstat-no" title="statement not covered" >        console.log('🔧 OpenTelemetry initialized');</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >      </span>
-<span class="cstat-no" title="statement not covered" >      // Initialize intelligent error handler</span>
-<span class="cstat-no" title="statement not covered" >      const { intelligentErrorHandler } = await import('./lib/error-handling/intelligent-error-handler');</span>
-<span class="cstat-no" title="statement not covered" >      console.log('🔧 Intelligent error handler initialized');</span>
+<span class="cstat-no" title="statement not covered" >      // Initialize intelligent error handler (lightweight)</span>
+<span class="cstat-no" title="statement not covered" >      try {</span>
+<span class="cstat-no" title="statement not covered" >        const { intelligentErrorHandler } = await import('./lib/error-handling/intelligent-error-handler');</span>
+<span class="cstat-no" title="statement not covered" >        console.log('🔧 Intelligent error handler initialized');</span>
+<span class="cstat-no" title="statement not covered" >      } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >        // Gracefully handle missing error handler</span>
+<span class="cstat-no" title="statement not covered" >        console.warn('⚠️ Error handler not available:', error.message);</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >      </span>
-<span class="cstat-no" title="statement not covered" >      // Sentry instrumentation disabled for development</span>
-<span class="cstat-no" title="statement not covered" >      // await import('./lib/sentry')</span>
+<span class="cstat-no" title="statement not covered" >      // Sentry instrumentation for production only</span>
+<span class="cstat-no" title="statement not covered" >      if (process.env.NODE_ENV === 'production' &amp;&amp; process.env.SENTRY_DSN) {</span>
+<span class="cstat-no" title="statement not covered" >        try {</span>
+<span class="cstat-no" title="statement not covered" >          await import('./lib/sentry');</span>
+<span class="cstat-no" title="statement not covered" >          console.log('🔧 Sentry initialized');</span>
+<span class="cstat-no" title="statement not covered" >        } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >          console.warn('⚠️ Sentry initialization failed:', error.message);</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >      </span>
 <span class="cstat-no" title="statement not covered" >      console.log('✅ NeonPro instrumentation registered successfully')</span>
 <span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
 <span class="cstat-no" title="statement not covered" >      console.error('❌ Failed to register instrumentation:', error)</span>
+<span class="cstat-no" title="statement not covered" >      // Don't throw - allow app to continue without instrumentation</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -145,7 +211,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-25T16:55:36.133Z
+                at 2025-07-26T07:01:22.515Z
             </div>
         <script src="../prettify.js"></script>
         <script>

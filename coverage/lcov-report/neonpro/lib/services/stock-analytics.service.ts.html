@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/728</span>
+                <span class='fraction'>0/732</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/728</span>
+                <span class='fraction'>0/732</span>
             </div>
         
             
@@ -790,7 +790,15 @@
 <a name='L725'></a><a href='#L725'>725</a>
 <a name='L726'></a><a href='#L726'>726</a>
 <a name='L727'></a><a href='#L727'>727</a>
-<a name='L728'></a><a href='#L728'>728</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L728'></a><a href='#L728'>728</a>
+<a name='L729'></a><a href='#L729'>729</a>
+<a name='L730'></a><a href='#L730'>730</a>
+<a name='L731'></a><a href='#L731'>731</a>
+<a name='L732'></a><a href='#L732'>732</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1574,7 +1582,9 @@
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >class StockAnalyticsService {</span>
-<span class="cstat-no" title="statement not covered" >  private supabase = createClient();</span>
+<span class="cstat-no" title="statement not covered" >  private async getSupabaseClient() {</span>
+<span class="cstat-no" title="statement not covered" >    return await createClient();</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  // ==========================================</span>
 <span class="cstat-no" title="statement not covered" >  // METRICS CALCULATION</span>
@@ -1587,6 +1597,7 @@
 <span class="cstat-no" title="statement not covered" >    severityLevel?: string</span>
 <span class="cstat-no" title="statement not covered" >  ): Promise&lt;AlertResolutionMetrics | null&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
 <span class="cstat-no" title="statement not covered" >      const startOfDay = new Date(date);</span>
 <span class="cstat-no" title="statement not covered" >      startOfDay.setHours(0, 0, 0, 0);</span>
 <span class="cstat-no" title="statement not covered" >      </span>
@@ -1594,7 +1605,7 @@
 <span class="cstat-no" title="statement not covered" >      endOfDay.setHours(23, 59, 59, 999);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Base query conditions</span>
-<span class="cstat-no" title="statement not covered" >      let query = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      let query = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('stock_alerts_history')</span>
 <span class="cstat-no" title="statement not covered" >        .select('*')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', clinicId)</span>
@@ -1697,7 +1708,8 @@
 <span class="cstat-no" title="statement not covered" >    severityLevel?: string</span>
 <span class="cstat-no" title="statement not covered" >  ): Promise&lt;number&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      let query = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      let query = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('stock_alerts_history')</span>
 <span class="cstat-no" title="statement not covered" >        .select('product_id')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', clinicId)</span>
@@ -1750,7 +1762,8 @@
 <span class="cstat-no" title="statement not covered" >      endOfDay.setHours(23, 59, 59, 999);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Get notification deliveries for the day</span>
-<span class="cstat-no" title="statement not covered" >      const { data: notifications, error } = await this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      const { data: notifications, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('notification_deliveries')</span>
 <span class="cstat-no" title="statement not covered" >        .select(`</span>
 <span class="cstat-no" title="statement not covered" >          *,</span>
@@ -1769,7 +1782,7 @@
 <span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Filter notifications based on alert type and severity</span>
-<span class="cstat-no" title="statement not covered" >      const filteredNotifications = notifications.filter(notif =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      const filteredNotifications = notifications?.filter((notif: any) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        const alert = notif.stock_alerts_history;</span>
 <span class="cstat-no" title="statement not covered" >        if (alertType &amp;&amp; alertType !== 'all' &amp;&amp; alert.alert_type !== alertType) return false;</span>
 <span class="cstat-no" title="statement not covered" >        if (severityLevel &amp;&amp; severityLevel !== 'all' &amp;&amp; alert.severity_level !== severityLevel) return false;</span>
@@ -1812,8 +1825,10 @@
 <span class="cstat-no" title="statement not covered" >      const endOfDay = new Date(date);</span>
 <span class="cstat-no" title="statement not covered" >      endOfDay.setHours(23, 59, 59, 999);</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      </span>
 <span class="cstat-no" title="statement not covered" >      // Count purchase orders created from alerts</span>
-<span class="cstat-no" title="statement not covered" >      let purchaseOrderQuery = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const purchaseOrderQuery = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('purchase_order_items')</span>
 <span class="cstat-no" title="statement not covered" >        .select('alert_trigger_id')</span>
 <span class="cstat-no" title="statement not covered" >        .not('alert_trigger_id', 'is', null)</span>
@@ -1824,7 +1839,7 @@
 <span class="cstat-no" title="statement not covered" >      const purchaseOrderTriggers = purchaseItems?.length || 0;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Count config updates triggered by alerts</span>
-<span class="cstat-no" title="statement not covered" >      let configUpdateQuery = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const configUpdateQuery = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('alert_config_updates_log')</span>
 <span class="cstat-no" title="statement not covered" >        .select('trigger_alert_id')</span>
 <span class="cstat-no" title="statement not covered" >        .not('trigger_alert_id', 'is', null)</span>
@@ -1835,7 +1850,7 @@
 <span class="cstat-no" title="statement not covered" >      const configUpdateTriggers = configUpdates?.length || 0;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Count reorder suggestions created</span>
-<span class="cstat-no" title="statement not covered" >      let reorderQuery = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const reorderQuery = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('reorder_suggestions')</span>
 <span class="cstat-no" title="statement not covered" >        .select('trigger_alert_id')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', clinicId)</span>
@@ -1859,7 +1874,8 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  async saveMetrics(metrics: AlertResolutionMetrics): Promise&lt;boolean&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      const { error } = await this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      const { error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('alert_resolution_analytics')</span>
 <span class="cstat-no" title="statement not covered" >        .upsert({</span>
 <span class="cstat-no" title="statement not covered" >          clinic_id: metrics.clinic_id,</span>
@@ -1898,7 +1914,8 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  async getMetrics(query: AnalyticsQuery): Promise&lt;AlertResolutionMetrics[]&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      let dbQuery = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      let dbQuery = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('alert_resolution_analytics')</span>
 <span class="cstat-no" title="statement not covered" >        .select('*')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', query.clinicId)</span>
@@ -1937,7 +1954,8 @@
 <span class="cstat-no" title="statement not covered" >    alertType?: string</span>
 <span class="cstat-no" title="statement not covered" >  ): Promise&lt;ResolutionTimeAnalysis[]&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      let query = this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      let query = supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('stock_alerts_history')</span>
 <span class="cstat-no" title="statement not covered" >        .select('id, created_at, acknowledged_at, resolved_at, alert_type')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', clinicId)</span>
@@ -1990,8 +2008,9 @@
 <span class="cstat-no" title="statement not covered" >    try {</span>
 <span class="cstat-no" title="statement not covered" >      const startDate = new Date();</span>
 <span class="cstat-no" title="statement not covered" >      startDate.setDate(startDate.getDate() - lookbackDays);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >      const { data: alerts, error } = await this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      const { data: alerts, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('stock_alerts_history')</span>
 <span class="cstat-no" title="statement not covered" >        .select(`</span>
 <span class="cstat-no" title="statement not covered" >          product_id,</span>
@@ -2125,7 +2144,8 @@
 <span class="cstat-no" title="statement not covered" >        metrics.filter(m =&gt; m.notification_success_rate).length || 0;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      // Get top alert types</span>
-<span class="cstat-no" title="statement not covered" >      const { data: alertTypes, error: alertTypesError } = await this.supabase</span>
+<span class="cstat-no" title="statement not covered" >      const supabase = await this.getSupabaseClient();</span>
+<span class="cstat-no" title="statement not covered" >      const { data: alertTypes, error: alertTypesError } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >        .from('stock_alerts_history')</span>
 <span class="cstat-no" title="statement not covered" >        .select('alert_type')</span>
 <span class="cstat-no" title="statement not covered" >        .eq('clinic_id', clinicId)</span>
@@ -2236,22 +2256,14 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >// Singleton instance</span>
 <span class="cstat-no" title="statement not covered" >const stockAnalyticsService = new StockAnalyticsService();</span>
-<span class="cstat-no" title="statement not covered" >export default stockAnalyticsService;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Export types for use in other modules</span>
-<span class="cstat-no" title="statement not covered" >export type {</span>
-<span class="cstat-no" title="statement not covered" >  AlertResolutionMetrics,</span>
-<span class="cstat-no" title="statement not covered" >  AnalyticsQuery,</span>
-<span class="cstat-no" title="statement not covered" >  ResolutionTimeAnalysis,</span>
-<span class="cstat-no" title="statement not covered" >  RecurrencePattern,</span>
-<span class="cstat-no" title="statement not covered" >};</span></pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >export default stockAnalyticsService;</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-25T16:55:36.133Z
+                at 2025-07-26T07:01:22.515Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
