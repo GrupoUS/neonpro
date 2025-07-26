@@ -273,7 +273,10 @@ export interface FinancialSettings {
 export interface UpdateFinancialSettingsData
   extends Partial<
     Omit<FinancialSettings, "id" | "created_at" | "updated_at">
-  > {}
+  > {
+  // Minimal interface for financial settings updates
+  clinic_id?: string;
+}
 
 // =====================================================
 // DASHBOARD & ANALYTICS INTERFACES

@@ -1,86 +1,196 @@
-import { Suspense } from 'react';
-import { redirect } from 'next/navigation';
-import { createServerClient } from '@/app/utils/supabase/server';
-import { DashboardLayout } from '@/components/navigation/dashboard-layout';
-import { PatientManagementDashboard } from '@/components/dashboard/patients/PatientManagementDashboard';
-import { Skeleton } from '@/components/ui/skeleton';
-
-/**
- * Patient Management Page
- * 
- * FHIR-compliant patient management with LGPD compliance.
- * Implements HL7 FHIR R4 Patient resource structure and Brazilian
- * data protection requirements.
- */
+// app/dashboard/patients/page.tsx
+import { createClient } from "@/app/utils/supabase/server";
+import { DashboardLayout } from "@/components/navigation/dashboard-layout";
+import PatientSearch from "@/components/patients/patient-search";
+import PatientProfile from "@/components/patients/patient-profile";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { UserPlus, Users, Activity, Heart } from "lucide-react";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function PatientsPage() {
-  // Server-side authentication check
-  const supabase = await createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   if (!session) {
-    redirect('/login');
+    redirect("/login");
   }
 
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    redirect('/login');
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Define breadcrumbs for navigation
   const breadcrumbs = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Patients' }
+    { title: "Dashboard", href: "/dashboard" },
+    { title: "Pacientes" }
   ];
+
+  // Mock stats for patient management
+  const patientStats = {
+    totalPatients: 1247,
+    activePatients: 892,
+    newThisMonth: 45,
+    chronicPatients: 156
+  };
 
   return (
     <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Page Header */}
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Patient Management</h1>
-          <p className="text-muted-foreground">
-            Manage patient records with FHIR compliance and LGPD data protection.
-          </p>
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Gerenciamento de Pacientes
+            </h2>
+            <p className="text-muted-foreground">
+              Visualize, pesquise e gerencie todos os seus pacientes em um só lugar.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button>
+              <UserPlus className="mr-2 h-4 w-4" />
+              Novo Paciente
+            </Button>
+          </div>
         </div>
 
-        {/* Patient Management Dashboard */}
-        <Suspense fallback={<PatientManagementSkeleton />}>
-          <PatientManagementDashboard />
-        </Suspense>
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total de Pacientes
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {patientStats.totalPatients.toLocaleString()}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Todos os pacientes cadastrados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Pacientes Ativos
+              </CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {patientStats.activePatients.toLocaleString()}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Últimos 6 meses
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Novos Este Mês
+              </CardTitle>
+              <UserPlus className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {patientStats.newThisMonth}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                <span className="text-green-600">+12%</span> vs mês anterior
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Pacientes Crônicos
+              </CardTitle>
+              <Heart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {patientStats.chronicPatients}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Acompanhamento especial
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Search Panel - Takes 1 column */}
+          <Card className="lg:col-span-1">
+            <CardHeader>
+              <CardTitle>Buscar Pacientes</CardTitle>
+              <CardDescription>
+                Pesquise por nome, CPF, telefone ou outras informações
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<div>Carregando busca...</div>}>
+                <PatientSearch />
+              </Suspense>
+            </CardContent>
+          </Card>
+
+          {/* Patient Profile - Takes 2 columns */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Perfil do Paciente</CardTitle>
+              <CardDescription>
+                Visualização 360° completa do paciente selecionado
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<div>Carregando perfil...</div>}>
+                <PatientProfile />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Ações Rápidas</CardTitle>
+            <CardDescription>
+              Acesse funcionalidades importantes rapidamente
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                <UserPlus className="h-6 w-6" />
+                <span>Cadastrar Paciente</span>
+              </Button>
+              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                <Activity className="h-6 w-6" />
+                <span>Relatórios</span>
+              </Button>
+              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                <Heart className="h-6 w-6" />
+                <span>Pacientes Especiais</span>
+              </Button>
+              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+                <Users className="h-6 w-6" />
+                <span>Grupos de Pacientes</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
-  );
-}
-
-// Loading skeleton for patient management dashboard
-function PatientManagementSkeleton() {
-  return (
-    <div className="space-y-6">
-      {/* Search and Filter Skeleton */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <Skeleton className="h-10 flex-1" />
-        <Skeleton className="h-10 w-32" />
-        <Skeleton className="h-10 w-40" />
-      </div>
-
-      {/* Stats Cards Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <Skeleton className="h-24 w-full" />
-          </div>
-        ))}
-      </div>
-
-      {/* Table Skeleton */}
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-full" />
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-16 w-full" />
-        ))}
-      </div>
-    </div>
   );
 }

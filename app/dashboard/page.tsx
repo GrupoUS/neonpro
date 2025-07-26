@@ -15,6 +15,7 @@ import {
   Calendar,
   CalendarPlus,
   DollarSign,
+  Search,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -67,6 +68,12 @@ export default async function DashboardPage() {
             <Button variant="outline">
               <UserPlus className="mr-2 h-4 w-4" />
               Novo Paciente
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/dashboard/patients">
+                <Users className="mr-2 h-4 w-4" />
+                Gerenciar Pacientes
+              </a>
             </Button>
           </div>
         </div>

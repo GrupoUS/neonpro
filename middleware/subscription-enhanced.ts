@@ -76,7 +76,11 @@ let lastFailureTime = 0
 
 // Request batching
 const pendingRequests = new Map<string, Promise<SubscriptionValidationResult>>()
-const requestBatches = new Map<string, Array<{ userId: string; resolve: Function; reject: Function }>>()
+const requestBatches = new Map<string, Array<{ 
+  userId: string; 
+  resolve: (value: SubscriptionValidationResult) => void; 
+  reject: (reason?: any) => void 
+}>>()
 
 // Performance metrics
 interface RequestMetrics {

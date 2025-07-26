@@ -75,7 +75,7 @@ interface UseSubscriptionReturn extends UseSubscriptionState {
 
 // Global state for cross-hook coordination
 const globalHookState = new Map<string, {
-  subscribers: Set<Function>
+  subscribers: Set<(data: SubscriptionValidationResult | null) => void>
   lastFetch: number
   data: SubscriptionValidationResult | null
   promise: Promise<SubscriptionValidationResult | null> | null
