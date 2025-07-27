@@ -628,7 +628,7 @@ export class GeneticAlgorithmOptimizer implements ResolutionAlgorithm {
     // Multi-objective fitness evaluation
     let conflictResolution = 1.0;
     let disruption = 0.0;
-    let satisfaction = 1.0;
+    const satisfaction = 1.0;
     
     // Check if conflicts are resolved
     const appointments = context.availableAppointments;

@@ -80,7 +80,7 @@ export function LeadTracking({
 
   // Filter and sort leads
   const filteredLeads = useMemo(() => {
-    let filtered = customerLeadScores.filter(lead => {
+    const filtered = customerLeadScores.filter(lead => {
       const matchesSearch = lead.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            lead.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
       

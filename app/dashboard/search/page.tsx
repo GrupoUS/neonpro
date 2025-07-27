@@ -1,21 +1,35 @@
 // app/dashboard/search/page.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, TrendingUp, Clock, Star, Filter } from "lucide-react";
-import UnifiedSearch from "@/components/search/unified-search";
 import SearchResults from "@/components/search/search-results";
-import { 
-  SearchResult, 
-  SearchResponse, 
+import { SmartSearchInterface } from "@/components/search/smart-search-interface";
+import UnifiedSearch from "@/components/search/unified-search";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { searchClient } from "@/lib/search/search-client";
+import {
   GlobalSearchStats,
-  unifiedSearchSystem 
+  SearchResponse,
+  SearchResult,
 } from "@/lib/search/unified-search";
+import {
+  Clock,
+  Filter,
+  MessageCircle,
+  Search,
+  Star,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function SearchPage() {
   const [currentResults, setCurrentResults] = useState<SearchResult[]>([]);
   const [currentQuery, setCurrentQuery] = useState("");
-  const [searchStats, setSearchStats] = useState<GlobalSearchStats | null>(null);
+  const [searchStats, setSearchStats] = useState<GlobalSearchStats | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -26,10 +40,10 @@ export default function SearchPage() {
 
   const loadSearchStatistics = async () => {
     try {
-      const stats = await unifiedSearchSystem.getSearchStatistics();
+      const stats = await searchClient.getStatistics();
       setSearchStats(stats);
     } catch (error) {
-      console.error('Erro ao carregar estatísticas:', error);
+      console.error("Erro ao carregar estatísticas:", error);
     }
   };
 
@@ -47,11 +61,11 @@ export default function SearchPage() {
   const handleAdvancedSearch = async (criteria: any) => {
     setLoading(true);
     try {
-      const response = await unifiedSearchSystem.advancedSearch(criteria);
+      const response = await searchClient.advancedSearch(criteria);
       setCurrentResults(response.results);
       setCurrentQuery(JSON.stringify(criteria));
     } catch (error) {
-      console.error('Erro na busca avançada:', error);
+      console.error("Erro na busca avançada:", error);
     } finally {
       setLoading(false);
     }
@@ -63,20 +77,76 @@ export default function SearchPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Busca Unificada
+            Busca Inteligente
           </h1>
           <p className="text-gray-600">
-            Pesquise em todo o sistema: pacientes, consultas, registros médicos e muito mais
+            Sistema unificado com IA: busque usando linguagem natural ou filtros
+            avançados
           </p>
         </div>
 
-        {/* Busca principal */}
+        {/* Search Interface Tabs */}
         <div className="mb-8">
-          <UnifiedSearch 
-            onResultSelect={handleResultClick}
-            showFilters={true}
-            showHistory={true}
-          />
+          <Tabs defaultValue="smart" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger
+                value="smart"
+                className="flex items-center space-x-2"
+              >
+                <Zap className="h-4 w-4" />
+                <span>Busca Inteligente</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="traditional"
+                className="flex items-center space-x-2"
+              >
+                <Search className="h-4 w-4" />
+                <span>Busca Tradicional</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="smart" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <MessageCircle className="h-5 w-5" />
+                    <span>Busca com IA e Linguagem Natural</span>
+                    <Badge variant="secondary" className="ml-2">
+                      Novo
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SmartSearchInterface
+                    userId="current-user" // This should be passed from auth context
+                    userRole="user"
+                    maxResults={50}
+                    enableFilters={true}
+                    enableNLP={true}
+                    onResultSelect={handleResultClick}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="traditional" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Filter className="h-5 w-5" />
+                    <span>Busca com Filtros Avançados</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <UnifiedSearch
+                    onResultSelect={handleResultClick}
+                    showFilters={true}
+                    showHistory={true}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Estatísticas rápidas */}
@@ -132,7 +202,7 @@ export default function SearchPage() {
                 <div>
                   <p className="text-sm text-gray-600">Termo Mais Buscado</p>
                   <p className="text-lg font-bold text-gray-900">
-                    {searchStats.mostSearchedTerms[0]?.term || 'N/A'}
+                    {searchStats.mostSearchedTerms[0]?.term || "N/A"}
                   </p>
                 </div>
               </div>
@@ -187,8 +257,8 @@ export default function SearchPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Tipos de Evento
                     </label>
-                    <select 
-                      multiple 
+                    <select
+                      multiple
                       className="w-full border border-gray-300 rounded-lg px-3 py-2"
                     >
                       <option value="appointment">Consultas</option>
@@ -233,7 +303,7 @@ export default function SearchPage() {
                     disabled={loading}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {loading ? 'Buscando...' : 'Buscar'}
+                    {loading ? "Buscando..." : "Buscar"}
                   </button>
                 </div>
               </div>
@@ -250,22 +320,33 @@ export default function SearchPage() {
                 Termos Mais Buscados
               </h3>
               <div className="space-y-3">
-                {searchStats.mostSearchedTerms.slice(0, 5).map((term, index) => (
-                  <div key={index} className="flex justify-between items-center">
-                    <span className="text-gray-900">{term.term}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ 
-                            width: `${(term.count / searchStats.mostSearchedTerms[0].count) * 100}%` 
-                          }}
-                        />
+                {searchStats.mostSearchedTerms
+                  .slice(0, 5)
+                  .map((term, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
+                      <span className="text-gray-900">{term.term}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-500 h-2 rounded-full"
+                            style={{
+                              width: `${
+                                (term.count /
+                                  searchStats.mostSearchedTerms[0].count) *
+                                100
+                              }%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {term.count}
+                        </span>
                       </div>
-                      <span className="text-sm text-gray-500">{term.count}</span>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
 
@@ -276,17 +357,26 @@ export default function SearchPage() {
               </h3>
               <div className="space-y-3">
                 {Object.entries(searchStats.searchesByType)
-                  .sort(([,a], [,b]) => b - a)
+                  .sort(([, a], [, b]) => b - a)
                   .slice(0, 5)
                   .map(([type, count]) => (
-                    <div key={type} className="flex justify-between items-center">
+                    <div
+                      key={type}
+                      className="flex justify-between items-center"
+                    >
                       <span className="text-gray-900 capitalize">{type}</span>
                       <div className="flex items-center gap-2">
                         <div className="w-20 bg-gray-200 rounded-full h-2">
-                          <div 
+                          <div
                             className="bg-green-500 h-2 rounded-full"
-                            style={{ 
-                              width: `${(count / Math.max(...Object.values(searchStats.searchesByType))) * 100}%` 
+                            style={{
+                              width: `${
+                                (count /
+                                  Math.max(
+                                    ...Object.values(searchStats.searchesByType)
+                                  )) *
+                                100
+                              }%`,
                             }}
                           />
                         </div>

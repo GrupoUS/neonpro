@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ProfileManager } from '@/lib/patients/profile-manager';
-import { PatientInsights } from '@/lib/ai/patient-insights';
 import { createClient } from '@/app/utils/supabase/server';
+import { PatientInsights } from '@/lib/ai/patient-insights';
+import { ProfileManager } from '@/lib/patients/profile-manager';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -12,7 +12,7 @@ const patientInsights = new PatientInsights();
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient();
@@ -26,7 +26,7 @@ export async function GET(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Get patient profile
     const profile = await profileManager.getPatientProfile(id);
@@ -86,7 +86,7 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient();
@@ -100,7 +100,7 @@ export async function POST(
       );
     }
 
-    const { id } = params;
+    const { id } = await params;
 
     // Get patient profile
     const profile = await profileManager.getPatientProfile(id);

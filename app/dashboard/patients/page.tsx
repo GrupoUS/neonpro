@@ -1,11 +1,18 @@
-// app/dashboard/patients/page.tsx
 import { createClient } from "@/app/utils/supabase/server";
 import { DashboardLayout } from "@/components/navigation/dashboard-layout";
-import PatientSearch from "@/components/patients/patient-search";
+import MedicalTimeline from "@/components/patients/medical-timeline";
 import PatientProfile from "@/components/patients/patient-profile";
+import PatientSearch from "@/components/patients/patient-search";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserPlus, Users, Activity, Heart } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Activity, FileText, Heart, UserPlus, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -25,7 +32,7 @@ export default async function PatientsPage() {
 
   const breadcrumbs = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Pacientes" }
+    { title: "Pacientes" },
   ];
 
   // Mock stats for patient management
@@ -33,7 +40,7 @@ export default async function PatientsPage() {
     totalPatients: 1247,
     activePatients: 892,
     newThisMonth: 45,
-    chronicPatients: 156
+    chronicPatients: 156,
   };
 
   return (
@@ -46,7 +53,8 @@ export default async function PatientsPage() {
               Gerenciamento de Pacientes
             </h2>
             <p className="text-muted-foreground">
-              Visualize, pesquise e gerencie todos os seus pacientes em um só lugar.
+              Visualize, pesquise e gerencie todos os seus pacientes em um só
+              lugar.
             </p>
           </div>
           <div className="flex gap-2">
@@ -87,9 +95,7 @@ export default async function PatientsPage() {
               <div className="text-2xl font-bold">
                 {patientStats.activePatients.toLocaleString()}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Últimos 6 meses
-              </p>
+              <p className="text-xs text-muted-foreground">Últimos 6 meses</p>
             </CardContent>
           </Card>
 
@@ -154,9 +160,33 @@ export default async function PatientsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Suspense fallback={<div>Carregando perfil...</div>}>
-                <PatientProfile />
-              </Suspense>
+              <Tabs defaultValue="profile" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="profile">Perfil</TabsTrigger>
+                  <TabsTrigger value="timeline">Histórico</TabsTrigger>
+                  <TabsTrigger value="reports">Relatórios</TabsTrigger>
+                </TabsList>
+                <TabsContent value="profile" className="mt-4">
+                  <Suspense fallback={<div>Carregando perfil...</div>}>
+                    <PatientProfile />
+                  </Suspense>
+                </TabsContent>
+                <TabsContent value="timeline" className="mt-4">
+                  <Suspense
+                    fallback={<div>Carregando histórico médico...</div>}
+                  >
+                    <MedicalTimeline patientId="1" />
+                  </Suspense>
+                </TabsContent>
+                <TabsContent value="reports" className="mt-4">
+                  <div className="flex items-center justify-center h-32 text-muted-foreground">
+                    <div className="text-center">
+                      <FileText className="h-8 w-8 mx-auto mb-2" />
+                      <p>Relatórios em desenvolvimento</p>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
@@ -171,19 +201,31 @@ export default async function PatientsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col gap-2"
+              >
                 <UserPlus className="h-6 w-6" />
                 <span>Cadastrar Paciente</span>
               </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col gap-2"
+              >
                 <Activity className="h-6 w-6" />
                 <span>Relatórios</span>
               </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col gap-2"
+              >
                 <Heart className="h-6 w-6" />
                 <span>Pacientes Especiais</span>
               </Button>
-              <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
+              <Button
+                variant="outline"
+                className="h-auto p-4 flex flex-col gap-2"
+              >
                 <Users className="h-6 w-6" />
                 <span>Grupos de Pacientes</span>
               </Button>

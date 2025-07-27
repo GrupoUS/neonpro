@@ -224,20 +224,21 @@ export async function GET(request: Request) {
 
     // For search, we need to use text search on patient name
     // Since we can't search on joined tables directly, we'll filter after fetching
-    let { data: appointments, error } = await query.order("start_time", { ascending: true });
+    const { data: appointmentsData, error } = await query.order("start_time", { ascending: true });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     // Apply search filter on patient name or notes if provided
+    let appointments = appointmentsData;
     if (search && appointments) {
       const searchLower = search.toLowerCase();
       appointments = appointments.filter(appointment => {
-        const patientName = appointment.patients?.full_name?.toLowerCase() || '';
+        const patientName = (appointment.patients as any)?.[0]?.full_name?.toLowerCase() || '';
         const notes = appointment.notes?.toLowerCase() || '';
-        const professionalName = appointment.professionals?.full_name?.toLowerCase() || '';
-        const serviceName = appointment.service_types?.name?.toLowerCase() || '';
+        const professionalName = (appointment.professionals as any)?.[0]?.full_name?.toLowerCase() || '';
+        const serviceName = (appointment.service_types as any)?.[0]?.name?.toLowerCase() || '';
         
         return (
           patientName.includes(searchLower) ||

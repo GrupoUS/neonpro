@@ -502,7 +502,7 @@ export class ForecastingEngine {
     confidenceLevel: number
   ): ForecastResult[] {
     const predictions: ForecastResult[] = []
-    let extendedData = [...historicalData]
+    const extendedData = [...historicalData]
 
     for (let i = 0; i < horizon; i++) {
       // Prepare features for next prediction

@@ -1,13 +1,16 @@
 // lib/search/unified-search.ts
 import { createClient } from "@/app/utils/supabase/server";
-import { profileManager } from "@/lib/patients/profile-manager";
-import { medicalTimelineManager } from "@/lib/medical/timeline-manager";
-import { duplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
-import { photoRecognitionSystem } from "@/lib/patients/photo-recognition";
-import { aiInsightsEngine } from "@/lib/ai/insights-engine";
+import { AIInsightsEngine } from "@/lib/ai/insights-engine";
+import { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
+import { DuplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
+import { PhotoRecognitionSystem } from "@/lib/patients/photo-recognition";
+import { ProfileManager } from "@/lib/patients/profile-manager";
+import { nlpSearchEngine, type NLPSearchQuery, type SearchContext } from "./nlp-engine";
 
 export interface SearchQuery {
   term: string;
+  nlpAnalysis?: NLPSearchQuery; // Add NLP analysis
+  context?: SearchContext; // Add search context
   filters?: {
     types?: SearchType[];
     dateRange?: {
@@ -25,6 +28,7 @@ export interface SearchQuery {
     sortOrder?: 'asc' | 'desc';
     fuzzy?: boolean;
     highlight?: boolean;
+    useNLP?: boolean; // Enable/disable NLP processing
   };
 }
 
@@ -62,6 +66,7 @@ export interface SearchAction {
 
 export interface SearchResponse {
   query: SearchQuery;
+  nlpAnalysis?: NLPSearchQuery; // Include NLP analysis in response
   results: SearchResult[];
   totalCount: number;
   executionTime: number;
@@ -80,21 +85,38 @@ export interface GlobalSearchStats {
 
 export class UnifiedSearchSystem {
   private supabase = createClient();
+  private profileManager = new ProfileManager();
+  private timelineManager = new MedicalTimelineManager();
+  private duplicateDetection = new DuplicateDetectionSystem();
+  private photoRecognition = new PhotoRecognitionSystem();
+  private insightsEngine = new AIInsightsEngine();
 
   /**
-   * Executa busca unificada em todo o sistema
+   * Executa busca unificada em todo o sistema com análise NLP
    */
   async search(query: SearchQuery): Promise<SearchResponse> {
     const startTime = performance.now();
     
     try {
+      // Process query with NLP if enabled
+      let nlpAnalysis: NLPSearchQuery | undefined;
+      if (query.options?.useNLP !== false) {
+        nlpAnalysis = await nlpSearchEngine.processQuery(query.term, query.context);
+        query.nlpAnalysis = nlpAnalysis;
+      }
+
       let allResults: SearchResult[] = [];
       const searchPromises: Promise<SearchResult[]>[] = [];
 
-      // Determinar tipos de busca baseado nos filtros
-      const searchTypes = query.filters?.types || [
+      // Determinar tipos de busca baseado nos filtros ou análise NLP
+      let searchTypes = query.filters?.types || [
         'patients', 'appointments', 'medical_records', 'insights', 'timeline_events'
       ];
+
+      // Refine search types based on NLP intent
+      if (nlpAnalysis) {
+        searchTypes = this.refineSearchTypesFromNLP(searchTypes, nlpAnalysis);
+      }
 
       // Executar buscas em paralelo para cada tipo
       if (searchTypes.includes('patients')) {
@@ -133,7 +155,7 @@ export class UnifiedSearchSystem {
       const searchResults = await Promise.all(searchPromises);
       allResults = searchResults.flat();
 
-      // Ordenar por relevância
+      // Ordenar por relevância (considerando scores NLP se disponível)
       allResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
       // Aplicar paginação
@@ -143,12 +165,16 @@ export class UnifiedSearchSystem {
 
       const executionTime = performance.now() - startTime;
 
+      // Use NLP suggestions if available, otherwise fall back to original logic
+      const suggestions = nlpAnalysis?.suggestions || this.generateSearchSuggestions(query.term);
+
       return {
         query,
+        nlpAnalysis,
         results: paginatedResults,
         totalCount: allResults.length,
         executionTime,
-        suggestions: this.generateSearchSuggestions(query.term),
+        suggestions,
         facets: this.generateSearchFacets(allResults)
       };
     } catch (error) {
@@ -158,39 +184,187 @@ export class UnifiedSearchSystem {
   }
 
   /**
-   * Busca pacientes
+   * Refina tipos de busca baseado na análise NLP
+   */
+  private refineSearchTypesFromNLP(defaultTypes: SearchType[], nlpAnalysis: NLPSearchQuery): SearchType[] {
+    const refinedTypes = [...defaultTypes];
+
+    // Based on intent target, prioritize certain search types
+    switch (nlpAnalysis.intent.target) {
+      case 'patient':
+        if (!refinedTypes.includes('patients')) refinedTypes.unshift('patients');
+        if (!refinedTypes.includes('photos')) refinedTypes.push('photos');
+        if (!refinedTypes.includes('duplicates')) refinedTypes.push('duplicates');
+        break;
+      
+      case 'appointment':
+        if (!refinedTypes.includes('appointments')) refinedTypes.unshift('appointments');
+        break;
+      
+      case 'treatment':
+        if (!refinedTypes.includes('medical_records')) refinedTypes.unshift('medical_records');
+        if (!refinedTypes.includes('timeline_events')) refinedTypes.push('timeline_events');
+        break;
+      
+      case 'procedure':
+        if (!refinedTypes.includes('timeline_events')) refinedTypes.unshift('timeline_events');
+        if (!refinedTypes.includes('medical_records')) refinedTypes.push('medical_records');
+        break;
+      
+      case 'record':
+        if (!refinedTypes.includes('medical_records')) refinedTypes.unshift('medical_records');
+        if (!refinedTypes.includes('documents')) refinedTypes.push('documents');
+        break;
+    }
+
+    // Based on entities found, add relevant search types
+    const hasPersonEntity = nlpAnalysis.entities.some(e => e.type === 'person');
+    const hasProcedureEntity = nlpAnalysis.entities.some(e => e.type === 'procedure');
+    const hasConditionEntity = nlpAnalysis.entities.some(e => e.type === 'condition');
+
+    if (hasPersonEntity && !refinedTypes.includes('patients')) {
+      refinedTypes.unshift('patients');
+    }
+
+    if (hasProcedureEntity && !refinedTypes.includes('timeline_events')) {
+      refinedTypes.push('timeline_events');
+    }
+
+    if (hasConditionEntity && !refinedTypes.includes('medical_records')) {
+      refinedTypes.push('medical_records');
+    }
+
+    return refinedTypes;
+  }
+
+  /**
+   * Busca pacientes com melhorias NLP
    */
   private async searchPatients(query: SearchQuery): Promise<SearchResult[]> {
     try {
       const results: SearchResult[] = [];
+      const nlpAnalysis = query.nlpAnalysis;
       
-      // Simular busca de pacientes
+      // Enhanced search logic using NLP analysis
+      const searchTerm = query.term;
+      let nameFilter: string | undefined;
+      let ageFilter: { min?: number; max?: number } | undefined;
+      let specialtyFilter: string | undefined;
+      
+      // Extract filters from NLP analysis if available
+      if (nlpAnalysis) {
+        // Use person entities as name filters
+        const personEntities = nlpAnalysis.entities.filter(e => e.type === 'person');
+        if (personEntities.length > 0) {
+          nameFilter = personEntities[0].value;
+        }
+        
+        // Use age entities for age filtering
+        const ageEntities = nlpAnalysis.entities.filter(e => e.type === 'age');
+        if (ageEntities.length > 0) {
+          const age = parseInt(ageEntities[0].value);
+          ageFilter = { min: age - 2, max: age + 2 }; // Allow some variance
+        }
+        
+        // Use specialty entities
+        const specialtyEntities = nlpAnalysis.entities.filter(e => e.type === 'specialty');
+        if (specialtyEntities.length > 0) {
+          specialtyFilter = specialtyEntities[0].value;
+        }
+      }
+      
+      // Simular busca de pacientes com filtros NLP
       const mockPatients = [
         {
           id: 'pat_123',
           name: 'João Silva Santos',
           email: 'joao.silva@email.com',
           phone: '(11) 99999-9999',
-          birthDate: '1985-03-15'
+          birthDate: '1985-03-15',
+          age: 39,
+          specialty: 'dermatologia'
         },
         {
           id: 'pat_456',
           name: 'Maria Santos Silva',
           email: 'maria.santos@email.com',
           phone: '(11) 88888-8888',
-          birthDate: '1990-07-22'
+          birthDate: '1990-07-22',
+          age: 34,
+          specialty: 'estética'
+        },
+        {
+          id: 'pat_789',
+          name: 'Ana Botox Cliente',
+          email: 'ana.cliente@email.com',
+          phone: '(11) 77777-7777',
+          birthDate: '1988-11-10',
+          age: 36,
+          specialty: 'estética'
         }
       ];
 
       for (const patient of mockPatients) {
-        if (this.matchesSearchTerm(query.term, patient.name, patient.email, patient.phone)) {
+        let matches = false;
+        let matchScore = 0.5;
+        const matchReasons: string[] = [];
+
+        // Check name match
+        if (nameFilter) {
+          if (patient.name.toLowerCase().includes(nameFilter.toLowerCase())) {
+            matches = true;
+            matchScore += 0.3;
+            matchReasons.push(`Nome corresponde: ${nameFilter}`);
+          }
+        } else if (this.matchesSearchTerm(searchTerm, patient.name, patient.email, patient.phone)) {
+          matches = true;
+          matchScore += 0.2;
+          matchReasons.push('Corresponde ao termo de busca');
+        }
+
+        // Check age match
+        if (ageFilter) {
+          if (patient.age >= (ageFilter.min || 0) && patient.age <= (ageFilter.max || 120)) {
+            matches = true;
+            matchScore += 0.2;
+            matchReasons.push(`Idade corresponde: ${patient.age} anos`);
+          }
+        }
+
+        // Check specialty match
+        if (specialtyFilter) {
+          if (patient.specialty.toLowerCase().includes(specialtyFilter.toLowerCase())) {
+            matches = true;
+            matchScore += 0.2;
+            matchReasons.push(`Especialidade: ${patient.specialty}`);
+          }
+        }
+
+        // Check for procedure entities (enhanced matching)
+        if (nlpAnalysis) {
+          const procedureEntities = nlpAnalysis.entities.filter(e => e.type === 'procedure');
+          for (const proc of procedureEntities) {
+            if (proc.value.toLowerCase() === 'botox' && patient.name.toLowerCase().includes('botox')) {
+              matches = true;
+              matchScore += 0.3;
+              matchReasons.push(`Procedimento relacionado: ${proc.value}`);
+            }
+          }
+        }
+
+        if (matches) {
           results.push({
             id: patient.id,
             type: 'patients',
             title: patient.name,
-            description: `${patient.email} • ${patient.phone}`,
-            relevanceScore: this.calculateRelevance(query.term, patient.name),
-            metadata: patient,
+            description: `${patient.email} • ${patient.phone} • ${patient.age} anos • ${patient.specialty}`,
+            relevanceScore: Math.min(matchScore, 1.0),
+            metadata: { 
+              ...patient, 
+              matchReasons,
+              nlpEnhanced: !!nlpAnalysis 
+            },
+            highlights: matchReasons,
             url: `/patients/${patient.id}`,
             actions: [
               { id: 'view', label: 'Ver Perfil', url: `/patients/${patient.id}` },
@@ -201,7 +375,7 @@ export class UnifiedSearchSystem {
         }
       }
 
-      return results;
+      return results.sort((a, b) => b.relevanceScore - a.relevanceScore);
     } catch (error) {
       console.error('Erro na busca de pacientes:', error);
       return [];
@@ -314,7 +488,7 @@ export class UnifiedSearchSystem {
       const results: SearchResult[] = [];
 
       // Simular busca de duplicatas
-      const duplicates = await duplicateDetectionSystem.detectDuplicates();
+      const duplicates = await this.duplicateDetection.detectDuplicates();
 
       for (const duplicate of duplicates) {
         if (this.matchesSearchTerm(query.term, duplicate.id, duplicate.status)) {
@@ -484,7 +658,74 @@ export class UnifiedSearchSystem {
   }
 
   /**
-   * Busca avançada com múltiplos critérios
+   * Busca inteligente com NLP automático
+   */
+  async smartSearch(
+    term: string, 
+    context?: SearchContext,
+    options?: {
+      limit?: number;
+      types?: SearchType[];
+      includeInactive?: boolean;
+    }
+  ): Promise<SearchResponse> {
+    const query: SearchQuery = {
+      term,
+      context,
+      filters: {
+        types: options?.types || ['patients', 'appointments', 'timeline_events', 'insights']
+      },
+      options: {
+        useNLP: true, // Force NLP processing
+        limit: options?.limit || 20,
+        sortBy: 'relevance'
+      }
+    };
+
+    return await this.search(query);
+  }
+
+  /**
+   * Busca conversacional - interface amigável para usuários
+   */
+  async conversationalSearch(
+    naturalLanguageQuery: string,
+    userId: string,
+    userRole: string = 'user'
+  ): Promise<SearchResponse> {
+    const context: SearchContext = {
+      userId,
+      userRole,
+      recentSearches: [] // Could be loaded from database
+    };
+
+    // Enable NLP for natural language processing
+    const query: SearchQuery = {
+      term: naturalLanguageQuery,
+      context,
+      options: {
+        useNLP: true,
+        limit: 15,
+        sortBy: 'relevance',
+        highlight: true
+      }
+    };
+
+    const response = await this.search(query);
+
+    // Add conversational context to response
+    if (response.nlpAnalysis) {
+      // Log the search for future context
+      console.log(`Conversational search by ${userId}: "${naturalLanguageQuery}"`);
+      console.log(`Intent: ${response.nlpAnalysis.intent.action} ${response.nlpAnalysis.intent.target}`);
+      console.log(`Entities: ${response.nlpAnalysis.entities.map(e => `${e.type}:${e.value}`).join(', ')}`);
+    }
+
+    return response;
+  }
+
+  /**
+   * Busca avançada com múltiplos critérios e NLP
    */
   async advancedSearch(criteria: {
     patientName?: string;
@@ -492,14 +733,29 @@ export class UnifiedSearchSystem {
     eventTypes?: string[];
     providers?: string[];
     keywords?: string[];
+    useNLP?: boolean;
+    context?: SearchContext;
   }): Promise<SearchResponse> {
     try {
       // Construir query baseada nos critérios
+      const searchTerms = [
+        criteria.patientName,
+        ...(criteria.keywords || []),
+        ...(criteria.eventTypes || []),
+        ...(criteria.providers || [])
+      ].filter(Boolean).join(' ');
+
       const query: SearchQuery = {
-        term: criteria.keywords?.join(' ') || '',
+        term: searchTerms,
+        context: criteria.context,
         filters: {
           dateRange: criteria.dateRange,
           types: ['patients', 'timeline_events', 'appointments'] as SearchType[]
+        },
+        options: {
+          useNLP: criteria.useNLP !== false, // Default to true for advanced search
+          limit: 50,
+          sortBy: 'relevance'
         }
       };
 

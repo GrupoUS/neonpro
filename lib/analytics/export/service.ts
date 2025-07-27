@@ -281,7 +281,7 @@ export class AnalyticsExportService {
     // Add footer
     if (options.footer) {
       const pageHeight = doc.internal.pageSize.height
-      let footerY = pageHeight - options.margins.bottom
+      const footerY = pageHeight - options.margins.bottom
       
       if (options.footer.includePageNumbers) {
         doc.text(`Page 1`, doc.internal.pageSize.width - options.margins.right - 20, footerY)

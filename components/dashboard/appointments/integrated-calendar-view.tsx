@@ -184,7 +184,7 @@ export default function IntegratedCalendarView({
   const eventStyleGetter = useCallback((event: CalendarEvent) => {
     let backgroundColor = '#3174ad'; // Default blue
     let borderColor = '#265985';
-    let color = 'white';
+    const color = 'white';
     
     if (event.isAlternativeSlot) {
       // Alternative slot styling (research-based colors)

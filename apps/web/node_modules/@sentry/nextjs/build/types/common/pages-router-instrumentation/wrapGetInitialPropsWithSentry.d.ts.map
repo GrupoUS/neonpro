@@ -1,0 +1,1 @@
+{"version":3,"file":"wrapGetInitialPropsWithSentry.d.ts","sourceRoot":"","sources":["../../../../src/common/pages-router-instrumentation/wrapGetInitialPropsWithSentry.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,MAAM,CAAC;AAKrC,KAAK,eAAe,GAAG,QAAQ,CAAC,QAAQ,CAAC,CAAC,iBAAiB,CAAC,CAAC;AAE7D;;;;;;GAMG;AACH,wBAAgB,6BAA6B,CAAC,mBAAmB,EAAE,eAAe,GAAG,eAAe,CAkDnG"}

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { Database } from '@/types/supabase';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { Database } from '@/types/supabase';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Get Patient Medical Timeline
@@ -9,11 +9,11 @@ import { Database } from '@/types/supabase';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const patientId = params.id;
+    const { id: patientId } = await params;
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
@@ -91,11 +91,11 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createRouteHandlerClient<Database>({ cookies });
-    const patientId = params.id;
+    const { id: patientId } = await params;
     const body = await request.json();
 
     // Get user session

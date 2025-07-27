@@ -1,5 +1,5 @@
-import type { Config } from 'jest'
-import nextJest from 'next/jest.js'
+import type { Config } from 'jest';
+import nextJest from 'next/jest.js';
 
 // Set timezone to UTC for consistent date testing across all environments
 process.env.TZ = 'UTC';
@@ -12,7 +12,7 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const config: Config = {
   coverageProvider: 'v8',
-  testEnvironment: 'jsdom',
+  testEnvironment: '<rootDir>/jest.environment.ts',
   
   // Add more setup options before each test is run
   setupFilesAfterEnv: [

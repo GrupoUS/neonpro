@@ -1,0 +1,11 @@
+/**
+ * Determines whether input is a Next.js not-found error.
+ * https://beta.nextjs.org/docs/api-reference/notfound#notfound
+ */
+export declare function isNotFoundNavigationError(subject: unknown): boolean;
+/**
+ * Determines whether input is a Next.js redirect error.
+ * https://beta.nextjs.org/docs/api-reference/redirect#redirect
+ */
+export declare function isRedirectNavigationError(subject: unknown): boolean;
+//# sourceMappingURL=nextNavigationErrorUtils.d.ts.map

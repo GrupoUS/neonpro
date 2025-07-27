@@ -353,7 +353,7 @@ export const shallowEqual = <P extends object>(prevProps: P, nextProps: P): bool
     return false
   }
   
-  for (let key of keys1) {
+  for (const key of keys1) {
     if (prevProps[key] !== nextProps[key]) {
       return false
     }

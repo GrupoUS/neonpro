@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/191</span>
+                <span class='fraction'>0/194</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/191</span>
+                <span class='fraction'>0/194</span>
             </div>
         
             
@@ -253,7 +253,11 @@
 <a name='L188'></a><a href='#L188'>188</a>
 <a name='L189'></a><a href='#L189'>189</a>
 <a name='L190'></a><a href='#L190'>190</a>
-<a name='L191'></a><a href='#L191'>191</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -443,15 +447,19 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { NextRequest, NextResponse } from 'next/server';</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { createClient } from '@/app/utils/supabase/server';</span></span></span>
+<span class="cstat-no" title="statement not covered" >import { PatientInsightsEngine } from '@/lib/ai/patient-insights';</span>
 <span class="cstat-no" title="statement not covered" >import { ProfileManager } from '@/lib/patients/profile-manager';</span>
-<span class="cstat-no" title="statement not covered" >import { PatientInsights } from '@/lib/ai/patient-insights';</span>
-<span class="cstat-no" title="statement not covered" >import { createClient } from '@/app/utils/supabase/server';</span>
+<span class="cstat-no" title="statement not covered" >import { NextRequest, NextResponse } from 'next/server';</span>
 <span class="cstat-no" title="statement not covered" >import { z } from 'zod';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >// Initialize services</span>
 <span class="cstat-no" title="statement not covered" >const profileManager = new ProfileManager();</span>
-<span class="cstat-no" title="statement not covered" >const patientInsights = new PatientInsights();</span>
+<span class="cstat-no" title="statement not covered" >const patientInsights = new PatientInsightsEngine();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >// Validation schema for updates</span>
 <span class="cstat-no" title="statement not covered" >const UpdateProfileSchema = z.object({</span>
@@ -485,45 +493,49 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function GET(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const supabase = createClient();</span>
-<span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user }, error: authError } = await supabase.auth.getUser();</span>
-<span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Unauthorized' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
+<span class="cstat-no" title="statement not covered" >    const { id: patientId } = await params;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { id } = params;</span>
+<span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
+<span class="cstat-no" title="statement not covered" >    const { data: { session } } = await supabase.auth.getSession();</span>
+<span class="cstat-no" title="statement not covered" >    if (!session) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Get patient profile</span>
-<span class="cstat-no" title="statement not covered" >    const profile = await profileManager.getPatientProfile(id);</span>
-<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const profile = await profileManager.getPatientProfile(patientId);</span>
 <span class="cstat-no" title="statement not covered" >    if (!profile) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Patient profile not found' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 404 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Get latest insights</span>
-<span class="cstat-no" title="statement not covered" >    const insights = await patientInsights.generateComprehensiveInsights(profile);</span>
+<span class="cstat-no" title="statement not covered" >    // Generate AI insights for the profile</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      const riskAssessment = await patientInsights.generateRiskAssessment(patientId);</span>
+<span class="cstat-no" title="statement not covered" >      const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);</span>
+<span class="cstat-no" title="statement not covered" >      const recommendations = await patientInsights.generateTreatmentRecommendations(patientId);</span>
+<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" >      const profileWithInsights = {</span>
+<span class="cstat-no" title="statement not covered" >        ...profile,</span>
+<span class="cstat-no" title="statement not covered" >        ai_insights: {</span>
+<span class="cstat-no" title="statement not covered" >          risk_assessment: riskAssessment,</span>
+<span class="cstat-no" title="statement not covered" >          behavior_analysis: behaviorAnalysis,</span>
+<span class="cstat-no" title="statement not covered" >          recommendations: recommendations.slice(0, 3) // Top 3 recommendations</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      };</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
-<span class="cstat-no" title="statement not covered" >      profile,</span>
-<span class="cstat-no" title="statement not covered" >      insights,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Patient profile retrieved successfully'</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(profileWithInsights);</span>
+<span class="cstat-no" title="statement not covered" >    } catch (insightsError) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Error generating AI insights:', insightsError);</span>
+<span class="cstat-no" title="statement not covered" >      // Return profile without insights if AI fails</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(profile);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Error retrieving patient profile:', error);</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Error fetching patient profile:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
+<span class="cstat-no" title="statement not covered" >      { error: 'Failed to fetch patient profile' },</span>
 <span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
 <span class="cstat-no" title="statement not covered" >    );</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
@@ -534,57 +546,62 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function PUT(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const supabase = createClient();</span>
-<span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user }, error: authError } = await supabase.auth.getUser();</span>
-<span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Unauthorized' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
+<span class="cstat-no" title="statement not covered" >    const { id: patientId } = await params;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { id } = params;</span>
+<span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
+<span class="cstat-no" title="statement not covered" >    const { data: { session } } = await supabase.auth.getSession();</span>
+<span class="cstat-no" title="statement not covered" >    if (!session) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Parse and validate request body</span>
 <span class="cstat-no" title="statement not covered" >    const body = await request.json();</span>
-<span class="cstat-no" title="statement not covered" >    const validatedData = UpdateProfileSchema.parse(body);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Update patient profile</span>
-<span class="cstat-no" title="statement not covered" >    const updatedProfile = await profileManager.updatePatientProfile(id, validatedData);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (!updatedProfile) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Patient profile not found or update failed' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 404 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Regenerate insights after update</span>
-<span class="cstat-no" title="statement not covered" >    const insights = await patientInsights.generateComprehensiveInsights(updatedProfile);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
-<span class="cstat-no" title="statement not covered" >      profile: updatedProfile,</span>
-<span class="cstat-no" title="statement not covered" >      insights,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Patient profile updated successfully'</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error('Error updating patient profile:', error);</span>
+<span class="cstat-no" title="statement not covered" >    const validation = UpdateProfileSchema.safeParse(body);</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    if (error instanceof z.ZodError) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!validation.success) {</span>
 <span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Invalid request data', details: error.errors },</span>
+<span class="cstat-no" title="statement not covered" >        { error: 'Invalid request data', details: validation.error.issues },</span>
 <span class="cstat-no" title="statement not covered" >        { status: 400 }</span>
 <span class="cstat-no" title="statement not covered" >      );</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    // Check if patient exists</span>
+<span class="cstat-no" title="statement not covered" >    const existingProfile = await profileManager.getPatientProfile(patientId);</span>
+<span class="cstat-no" title="statement not covered" >    if (!existingProfile) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    // Update profile</span>
+<span class="cstat-no" title="statement not covered" >    const updatedProfile = await profileManager.updatePatientProfile(patientId, validation.data);</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Generate updated AI insights</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+<span class="cstat-no" title="statement not covered" >      const riskAssessment = await patientInsights.generateRiskAssessment(patientId);</span>
+<span class="cstat-no" title="statement not covered" >      const behaviorAnalysis = await patientInsights.analyzeBehaviorPatterns(patientId);</span>
+<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" >      const profileWithInsights = {</span>
+<span class="cstat-no" title="statement not covered" >        ...updatedProfile,</span>
+<span class="cstat-no" title="statement not covered" >        ai_insights: {</span>
+<span class="cstat-no" title="statement not covered" >          risk_assessment: riskAssessment,</span>
+<span class="cstat-no" title="statement not covered" >          behavior_analysis: behaviorAnalysis,</span>
+<span class="cstat-no" title="statement not covered" >          last_updated: new Date().toISOString()</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      };</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(profileWithInsights);</span>
+<span class="cstat-no" title="statement not covered" >    } catch (insightsError) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Error generating updated AI insights:', insightsError);</span>
+<span class="cstat-no" title="statement not covered" >      // Return updated profile without insights if AI fails</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json(updatedProfile);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Error updating patient profile:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
+<span class="cstat-no" title="statement not covered" >      { error: 'Failed to update patient profile' },</span>
 <span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
 <span class="cstat-no" title="statement not covered" >    );</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
@@ -595,52 +612,47 @@
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" >export async function DELETE(</span>
 <span class="cstat-no" title="statement not covered" >  request: NextRequest,</span>
-<span class="cstat-no" title="statement not covered" >  { params }: { params: { id: string } }</span>
+<span class="cstat-no" title="statement not covered" >  { params }: { params: Promise&lt;{ id: string }&gt; }</span>
 <span class="cstat-no" title="statement not covered" >) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const supabase = createClient();</span>
-<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
+<span class="cstat-no" title="statement not covered" >    const { id: patientId } = await params;</span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Verify authentication</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user }, error: authError } = await supabase.auth.getUser();</span>
-<span class="cstat-no" title="statement not covered" >    if (authError || !user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Unauthorized' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 401 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
+<span class="cstat-no" title="statement not covered" >    const { data: { session } } = await supabase.auth.getSession();</span>
+<span class="cstat-no" title="statement not covered" >    if (!session) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { id } = params;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Archive patient profile (soft delete)</span>
-<span class="cstat-no" title="statement not covered" >    const archivedProfile = await profileManager.archivePatientProfile(id);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (!archivedProfile) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >        { error: 'Patient profile not found or archival failed' },</span>
-<span class="cstat-no" title="statement not covered" >        { status: 404 }</span>
-<span class="cstat-no" title="statement not covered" >      );</span>
+<span class="cstat-no" title="statement not covered" >    // Check if patient exists</span>
+<span class="cstat-no" title="statement not covered" >    const existingProfile = await profileManager.getPatientProfile(patientId);</span>
+<span class="cstat-no" title="statement not covered" >    if (!existingProfile) {</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Patient not found' }, { status: 404 });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
-<span class="cstat-no" title="statement not covered" >      profile: archivedProfile,</span>
-<span class="cstat-no" title="statement not covered" >      message: 'Patient profile archived successfully'</span>
+<span class="cstat-no" title="statement not covered" >    // Archive patient (soft delete)</span>
+<span class="cstat-no" title="statement not covered" >    await profileManager.archivePatient(patientId);</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    return NextResponse.json({ </span>
+<span class="cstat-no" title="statement not covered" >      message: 'Patient profile archived successfully',</span>
+<span class="cstat-no" title="statement not covered" >      archived_at: new Date().toISOString()</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
 <span class="cstat-no" title="statement not covered" >    console.error('Error archiving patient profile:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >      { error: 'Internal server error' },</span>
+<span class="cstat-no" title="statement not covered" >      { error: 'Failed to archive patient profile' },</span>
 <span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
 <span class="cstat-no" title="statement not covered" >    );</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-26T15:05:33.757Z
+                at 2025-07-27T00:27:56.489Z
             </div>
         <script src="../../../../../../prettify.js"></script>
         <script>

@@ -55,7 +55,7 @@ export function WeekView({
     const endHour = 18;
     
     for (let hour = startHour; hour < endHour; hour++) {
-      for (let minutes of [0, 15, 30, 45]) {
+      for (const minutes of [0, 15, 30, 45]) {
         slots.push({ hour, minutes, time: `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}` });
       }
     }

@@ -523,6 +523,34 @@ export class ProfileManager {
       emergency_contacts: updateData.emergency_contacts || currentProfile.emergency_contacts
     };
   }
+
+  /**
+   * Archive patient profile (soft delete)
+   */
+  async archivePatient(patientId: string): Promise<boolean> {
+    try {
+      const profile = this.mockProfiles.get(patientId);
+      
+      if (!profile) {
+        console.error(`Patient ${patientId} not found for archiving`);
+        return false;
+      }
+
+      // Mark as inactive (soft delete)
+      profile.is_active = false;
+      profile.updated_at = new Date().toISOString();
+      
+      // Update the profile in the mock database
+      this.mockProfiles.set(patientId, profile);
+      
+      console.log(`Archived patient profile for ${patientId}`);
+      return true;
+
+    } catch (error) {
+      console.error('Error in archivePatient:', error);
+      return false;
+    }
+  }
 }
 
 export default ProfileManager;

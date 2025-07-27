@@ -1,0 +1,86 @@
+{
+  "mcp_routing_intelligence": {
+    "description": "Intelligent MCP routing for NeonPro Code Guardian based on task complexity and healthcare requirements",
+    "routing_matrix": {
+      "code_analysis_tasks": {
+        "complexity_1_3": {
+          "primary": ["mcp__context7__*", "mcp__desktop-commander__*"],
+          "description": "Focused efficiency for simple code analysis",
+          "healthcare_optimization": "LGPD compliance validation"
+        },
+        "complexity_4_6": {
+          "primary": ["mcp__context7__*", "mcp__desktop-commander__*", "mcp__sequential-thinking__*"],
+          "secondary": ["mcp__tavily__*"],
+          "description": "Enhanced analysis with reasoning",
+          "healthcare_optimization": "ANVISA compliance + performance validation"
+        },
+        "complexity_7_10": {
+          "primary": ["mcp__context7__*", "mcp__sequential-thinking__*", "mcp__desktop-commander__*"],
+          "secondary": ["mcp__tavily__*", "mcp__exa__*", "mcp__supabase-mcp__*"],
+          "description": "Full orchestration for complex analysis",
+          "healthcare_optimization": "Complete LGPD/ANVISA/CFM compliance"
+        }
+      },
+      "debugging_investigations": {
+        "primary": ["mcp__sequential-thinking__*", "mcp__desktop-commander__*"],
+        "secondary": ["mcp__tavily__*", "mcp__context7__*"],
+        "healthcare_specific": "Patient data debugging protocols",
+        "description": "Systematic root cause analysis with healthcare safety"
+      },
+      "quality_validation": {
+        "primary": ["mcp__desktop-commander__*", "mcp__context7__*"],
+        "secondary": ["mcp__supabase-mcp__*", "mcp__exa__*"],
+        "healthcare_specific": "LGPD compliance validation and medical workflow testing",
+        "description": "Comprehensive QA with healthcare standards"
+      },
+      "architecture_analysis": {
+        "primary": ["mcp__context7__*", "mcp__sequential-thinking__*"],
+        "secondary": ["mcp__tavily__*", "mcp__exa__*"],
+        "healthcare_specific": "Multi-tenant architecture and healthcare compliance",
+        "description": "Strategic analysis with healthcare business context"
+      }
+    },
+    "healthcare_specializations": {
+      "lgpd_compliance": {
+        "required_mcps": ["mcp__context7__*", "mcp__supabase-mcp__*"],
+        "validation": "Patient data encryption and consent management"
+      },
+      "anvisa_compliance": {
+        "required_mcps": ["mcp__context7__*", "mcp__exa__*"],
+        "validation": "Medical device software compliance"
+      },
+      "cfm_compliance": {
+        "required_mcps": ["mcp__context7__*", "mcp__tavily__*"],
+        "validation": "Digital health regulations adherence"
+      },
+      "performance_optimization": {
+        "required_mcps": ["mcp__desktop-commander__*", "mcp__sequential-thinking__*"],
+        "targets": "<100ms API response for patient data"
+      }
+    },
+    "auto_selection_logic": {
+      "complexity_detection": {
+        "keywords_simple": ["format", "add", "fix", "basic", "simple"],
+        "keywords_medium": ["refactor", "implement", "debug", "optimize", "integrate"],
+        "keywords_complex": ["design", "architecture", "distributed", "security", "performance"],
+        "healthcare_keywords": ["patient", "medical", "lgpd", "anvisa", "cfm", "clinic", "healthcare"]
+      },
+      "performance_thresholds": {
+        "response_time_ms": 300,
+        "quality_score": 9.5,
+        "healthcare_compliance": 100,
+        "confidence_level": 95
+      }
+    }
+  },
+  "voidbeast_integration": {
+    "enforcement_mode": "absolute",
+    "quality_threshold": 9.5,
+    "healthcare_priority": true,
+    "auto_activation": {
+      "complexity_threshold": 3,
+      "healthcare_detection": true,
+      "quality_monitoring": true
+    }
+  }
+}

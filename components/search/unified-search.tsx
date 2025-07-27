@@ -1,15 +1,15 @@
 // components/search/unified-search.tsx
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
-import { Search, Filter, Clock, Bookmark, TrendingUp, X } from "lucide-react";
-import { 
-  unifiedSearchSystem, 
-  SearchQuery, 
-  SearchResult, 
+import { searchClient } from "@/lib/search/search-client";
+import {
+  SearchQuery,
+  SearchResponse,
+  SearchResult,
   SearchType,
-  SearchResponse 
 } from "@/lib/search/unified-search";
+import { Bookmark, Clock, Search, X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UnifiedSearchProps {
   onResultSelect?: (result: SearchResult) => void;
@@ -26,7 +26,7 @@ export default function UnifiedSearch({
   showFilters = true,
   showHistory = true,
   initialQuery = "",
-  types
+  types,
 }: UnifiedSearchProps) {
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -34,63 +34,71 @@ export default function UnifiedSearch({
   const [showResults, setShowResults] = useState(false);
   const [searchStats, setSearchStats] = useState<SearchResponse | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<SearchType[]>(
-    types || ['patients', 'appointments', 'medical_records']
+    types || ["patients", "appointments", "medical_records"]
   );
   const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const [savedSearches, setSavedSearches] = useState<Array<{ name: string; query: string }>>([]);
+  const [savedSearches, setSavedSearches] = useState<
+    Array<{ name: string; query: string }>
+  >([]);
 
   // Carrega histórico de busca do localStorage
   useEffect(() => {
-    const history = localStorage.getItem('searchHistory');
+    const history = localStorage.getItem("searchHistory");
     if (history) {
       setSearchHistory(JSON.parse(history));
     }
 
-    const saved = localStorage.getItem('savedSearches');
+    const saved = localStorage.getItem("savedSearches");
     if (saved) {
       setSavedSearches(JSON.parse(saved));
     }
   }, []);
 
   // Função de busca debounced
-  const performSearch = useCallback(async (searchTerm: string) => {
-    if (!searchTerm.trim()) {
-      setResults([]);
-      setShowResults(false);
-      return;
-    }
+  const performSearch = useCallback(
+    async (searchTerm: string) => {
+      if (!searchTerm.trim()) {
+        setResults([]);
+        setShowResults(false);
+        return;
+      }
 
-    setLoading(true);
-    setShowResults(true);
+      setLoading(true);
+      setShowResults(true);
 
-    try {
-      const searchQuery: SearchQuery = {
-        term: searchTerm,
-        filters: {
-          types: selectedTypes
-        },
-        options: {
-          limit: 20,
-          fuzzy: true,
-          highlight: true
-        }
-      };
+      try {
+        const searchQuery: SearchQuery = {
+          term: searchTerm,
+          filters: {
+            types: selectedTypes,
+          },
+          options: {
+            limit: 20,
+            fuzzy: true,
+            highlight: true,
+          },
+        };
 
-      const response = await unifiedSearchSystem.search(searchQuery);
-      setResults(response.results);
-      setSearchStats(response);
+        const response = await searchClient.search(searchQuery);
+        setResults(response.results);
+        setSearchStats(response);
 
-      // Adiciona ao histórico
-      const newHistory = [searchTerm, ...searchHistory.filter(h => h !== searchTerm)].slice(0, 10);
-      setSearchHistory(newHistory);
-      localStorage.setItem('searchHistory', JSON.stringify(newHistory));
-    } catch (error) {
-      console.error('Erro na busca:', error);
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedTypes, searchHistory]);
+        // Adiciona ao histórico
+        const newHistory = [
+          searchTerm,
+          ...searchHistory.filter((h) => h !== searchTerm),
+        ].slice(0, 10);
+        setSearchHistory(newHistory);
+        localStorage.setItem("searchHistory", JSON.stringify(newHistory));
+      } catch (error) {
+        console.error("Erro na busca:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedTypes, searchHistory]
+  );
 
   // Debounce para busca automática
   useEffect(() => {
@@ -111,21 +119,19 @@ export default function UnifiedSearch({
   };
 
   const handleTypeToggle = (type: SearchType) => {
-    setSelectedTypes(prev => 
-      prev.includes(type) 
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
 
   const saveCurrentSearch = () => {
     if (!query.trim()) return;
 
-    const name = prompt('Nome para esta busca:');
+    const name = prompt("Nome para esta busca:");
     if (name) {
       const newSaved = [...savedSearches, { name, query }];
       setSavedSearches(newSaved);
-      localStorage.setItem('savedSearches', JSON.stringify(newSaved));
+      localStorage.setItem("savedSearches", JSON.stringify(newSaved));
     }
   };
 
@@ -136,32 +142,32 @@ export default function UnifiedSearch({
 
   const getTypeIcon = (type: SearchType) => {
     const icons = {
-      patients: '👤',
-      appointments: '📅',
-      medical_records: '📋',
-      lab_results: '🧪',
-      medications: '💊',
-      documents: '📄',
-      insights: '🧠',
-      timeline_events: '📈',
-      duplicates: '👥',
-      photos: '📸'
+      patients: "👤",
+      appointments: "📅",
+      medical_records: "📋",
+      lab_results: "🧪",
+      medications: "💊",
+      documents: "📄",
+      insights: "🧠",
+      timeline_events: "📈",
+      duplicates: "👥",
+      photos: "📸",
     };
-    return icons[type] || '📄';
+    return icons[type] || "📄";
   };
 
   const getTypeLabel = (type: SearchType) => {
     const labels = {
-      patients: 'Pacientes',
-      appointments: 'Consultas',
-      medical_records: 'Registros',
-      lab_results: 'Exames',
-      medications: 'Medicamentos',
-      documents: 'Documentos',
-      insights: 'Insights',
-      timeline_events: 'Timeline',
-      duplicates: 'Duplicatas',
-      photos: 'Fotos'
+      patients: "Pacientes",
+      appointments: "Consultas",
+      medical_records: "Registros",
+      lab_results: "Exames",
+      medications: "Medicamentos",
+      documents: "Documentos",
+      insights: "Insights",
+      timeline_events: "Timeline",
+      duplicates: "Duplicatas",
+      photos: "Fotos",
     };
     return labels[type] || type;
   };
@@ -179,16 +185,16 @@ export default function UnifiedSearch({
             placeholder={placeholder}
             className="w-full pl-10 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />
-          
+
           {query && (
             <button
-              onClick={() => setQuery('')}
+              onClick={() => setQuery("")}
               className="absolute right-12 p-1 text-gray-400 hover:text-gray-600"
             >
               <X className="h-4 w-4" />
             </button>
           )}
-          
+
           <button
             onClick={saveCurrentSearch}
             disabled={!query.trim()}
@@ -209,14 +215,22 @@ export default function UnifiedSearch({
       {/* Filtros de tipo */}
       {showFilters && (
         <div className="mt-3 flex flex-wrap gap-2">
-          {(['patients', 'appointments', 'medical_records', 'insights', 'timeline_events'] as SearchType[]).map(type => (
+          {(
+            [
+              "patients",
+              "appointments",
+              "medical_records",
+              "insights",
+              "timeline_events",
+            ] as SearchType[]
+          ).map((type) => (
             <button
               key={type}
               onClick={() => handleTypeToggle(type)}
               className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 selectedTypes.includes(type)
-                  ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                  : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
+                  ? "bg-blue-100 text-blue-800 border border-blue-200"
+                  : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
               }`}
             >
               <span>{getTypeIcon(type)}</span>
@@ -278,19 +292,21 @@ export default function UnifiedSearch({
           {searchStats && (
             <div className="p-3 border-b border-gray-100 text-xs text-gray-500 flex justify-between">
               <span>
-                {searchStats.totalCount} resultados em {searchStats.executionTime.toFixed(0)}ms
+                {searchStats.totalCount} resultados em{" "}
+                {searchStats.executionTime.toFixed(0)}ms
               </span>
-              {searchStats.suggestions && searchStats.suggestions.length > 0 && (
-                <span className="text-blue-600">
-                  Você quis dizer: {searchStats.suggestions[0]}?
-                </span>
-              )}
+              {searchStats.suggestions &&
+                searchStats.suggestions.length > 0 && (
+                  <span className="text-blue-600">
+                    Você quis dizer: {searchStats.suggestions[0]}?
+                  </span>
+                )}
             </div>
           )}
 
           {results.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
-              {loading ? 'Buscando...' : 'Nenhum resultado encontrado'}
+              {loading ? "Buscando..." : "Nenhum resultado encontrado"}
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
@@ -316,7 +332,7 @@ export default function UnifiedSearch({
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="w-16 bg-gray-200 rounded-full h-1">
-                          <div 
+                          <div
                             className="bg-blue-500 h-1 rounded-full"
                             style={{ width: `${result.relevanceScore * 100}%` }}
                           />
@@ -336,8 +352,8 @@ export default function UnifiedSearch({
 
       {/* Overlay para fechar resultados */}
       {showResults && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => setShowResults(false)}
         />
       )}

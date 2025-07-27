@@ -1,0 +1,15 @@
+interface FunctionComponent {
+    (...args: unknown[]): unknown;
+}
+interface ClassComponent {
+    new (...args: unknown[]): {
+        props?: unknown;
+        render(...args: unknown[]): unknown;
+    };
+}
+/**
+ * Wraps a page component with Sentry error instrumentation.
+ */
+export declare function wrapPageComponentWithSentry(pageComponent: FunctionComponent | ClassComponent): unknown;
+export {};
+//# sourceMappingURL=wrapPageComponentWithSentry.d.ts.map

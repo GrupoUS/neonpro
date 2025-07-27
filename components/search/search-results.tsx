@@ -1,22 +1,21 @@
 // components/search/search-results.tsx
 "use client";
 
-import React, { useState } from "react";
-import { 
-  Filter, 
-  Grid, 
-  List, 
-  Download, 
-  Share2, 
-  Calendar,
-  User,
-  FileText,
+import { SearchResult, SearchType } from "@/lib/search/unified-search";
+import {
   Activity,
   Brain,
+  Calendar,
+  Camera,
+  Download,
+  FileText,
+  Grid,
+  List,
+  Share2,
+  User,
   Users,
-  Camera
 } from "lucide-react";
-import { SearchResult, SearchType } from "@/lib/search/unified-search";
+import { useState } from "react";
 
 interface SearchResultsProps {
   results: SearchResult[];
@@ -35,11 +34,13 @@ export default function SearchResults({
   onResultClick,
   onLoadMore,
   hasMore = false,
-  loading = false
+  loading = false,
 }: SearchResultsProps) {
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-  const [sortBy, setSortBy] = useState<'relevance' | 'date' | 'type'>('relevance');
-  const [filterByType, setFilterByType] = useState<SearchType | 'all'>('all');
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [sortBy, setSortBy] = useState<"relevance" | "date" | "type">(
+    "relevance"
+  );
+  const [filterByType, setFilterByType] = useState<SearchType | "all">("all");
 
   const getTypeIcon = (type: SearchType) => {
     const iconMap = {
@@ -52,42 +53,45 @@ export default function SearchResults({
       insights: Brain,
       timeline_events: Activity,
       duplicates: Users,
-      photos: Camera
+      photos: Camera,
     };
-    
+
     const IconComponent = iconMap[type] || FileText;
     return <IconComponent className="h-4 w-4" />;
   };
 
   const getTypeColor = (type: SearchType) => {
     const colorMap = {
-      patients: 'bg-blue-100 text-blue-800',
-      appointments: 'bg-green-100 text-green-800',
-      medical_records: 'bg-purple-100 text-purple-800',
-      lab_results: 'bg-orange-100 text-orange-800',
-      medications: 'bg-pink-100 text-pink-800',
-      documents: 'bg-gray-100 text-gray-800',
-      insights: 'bg-indigo-100 text-indigo-800',
-      timeline_events: 'bg-teal-100 text-teal-800',
-      duplicates: 'bg-red-100 text-red-800',
-      photos: 'bg-yellow-100 text-yellow-800'
+      patients: "bg-blue-100 text-blue-800",
+      appointments: "bg-green-100 text-green-800",
+      medical_records: "bg-purple-100 text-purple-800",
+      lab_results: "bg-orange-100 text-orange-800",
+      medications: "bg-pink-100 text-pink-800",
+      documents: "bg-gray-100 text-gray-800",
+      insights: "bg-indigo-100 text-indigo-800",
+      timeline_events: "bg-teal-100 text-teal-800",
+      duplicates: "bg-red-100 text-red-800",
+      photos: "bg-yellow-100 text-yellow-800",
     };
-    
-    return colorMap[type] || 'bg-gray-100 text-gray-800';
+
+    return colorMap[type] || "bg-gray-100 text-gray-800";
   };
 
-  const filteredResults = results.filter(result => 
-    filterByType === 'all' || result.type === filterByType
+  const filteredResults = results.filter(
+    (result) => filterByType === "all" || result.type === filterByType
   );
 
   const sortedResults = [...filteredResults].sort((a, b) => {
     switch (sortBy) {
-      case 'relevance':
+      case "relevance":
         return b.relevanceScore - a.relevanceScore;
-      case 'date':
+      case "date":
         // Assumindo que temos data no metadata
-        return new Date(b.metadata?.date || 0).getTime() - new Date(a.metadata?.date || 0).getTime();
-      case 'type':
+        return (
+          new Date(b.metadata?.date || 0).getTime() -
+          new Date(a.metadata?.date || 0).getTime()
+        );
+      case "type":
         return a.type.localeCompare(b.type);
       default:
         return 0;
@@ -101,18 +105,20 @@ export default function SearchResults({
 
   const exportResults = () => {
     const csvContent = [
-      ['Tipo', 'Título', 'Descrição', 'Relevância'],
-      ...sortedResults.map(result => [
+      ["Tipo", "Título", "Descrição", "Relevância"],
+      ...sortedResults.map((result) => [
         result.type,
         result.title,
         result.description,
-        (result.relevanceScore * 100).toFixed(1) + '%'
-      ])
-    ].map(row => row.join(',')).join('\n');
+        (result.relevanceScore * 100).toFixed(1) + "%",
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `search-results-${query}.csv`;
     a.click();
@@ -125,14 +131,14 @@ export default function SearchResults({
         await navigator.share({
           title: `Resultados da busca: ${query}`,
           text: `${totalCount} resultados encontrados`,
-          url: window.location.href
+          url: window.location.href,
         });
       } catch (error) {
-        console.error('Erro ao compartilhar:', error);
+        console.error("Erro ao compartilhar:", error);
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copiado para a área de transferência');
+      alert("Link copiado para a área de transferência");
     }
   };
 
@@ -145,11 +151,9 @@ export default function SearchResults({
             <h1 className="text-2xl font-bold text-gray-900">
               Resultados para "{query}"
             </h1>
-            <p className="text-gray-600">
-              {totalCount} resultados encontrados
-            </p>
+            <p className="text-gray-600">{totalCount} resultados encontrados</p>
           </div>
-          
+
           <div className="flex gap-2">
             <button
               onClick={exportResults}
@@ -158,7 +162,7 @@ export default function SearchResults({
               <Download className="h-4 w-4" />
               Exportar
             </button>
-            
+
             <button
               onClick={shareResults}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -174,7 +178,9 @@ export default function SearchResults({
           {Object.entries(typeGroups).map(([type, count]) => (
             <span
               key={type}
-              className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(type as SearchType)}`}
+              className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
+                type as SearchType
+              )}`}
             >
               {type}: {count}
             </span>
@@ -189,7 +195,9 @@ export default function SearchResults({
             {/* Filtro por tipo */}
             <select
               value={filterByType}
-              onChange={(e) => setFilterByType(e.target.value as SearchType | 'all')}
+              onChange={(e) =>
+                setFilterByType(e.target.value as SearchType | "all")
+              }
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="all">Todos os tipos</option>
@@ -203,7 +211,9 @@ export default function SearchResults({
             {/* Ordenação */}
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'relevance' | 'date' | 'type')}
+              onChange={(e) =>
+                setSortBy(e.target.value as "relevance" | "date" | "type")
+              }
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="relevance">Relevância</option>
@@ -215,14 +225,22 @@ export default function SearchResults({
           {/* Modo de visualização */}
           <div className="flex border border-gray-300 rounded-lg">
             <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setViewMode("list")}
+              className={`p-2 ${
+                viewMode === "list"
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-600"
+              }`}
             >
               <List className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-600'}`}
+              onClick={() => setViewMode("grid")}
+              className={`p-2 ${
+                viewMode === "grid"
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-600"
+              }`}
             >
               <Grid className="h-4 w-4" />
             </button>
@@ -238,7 +256,7 @@ export default function SearchResults({
           </div>
         ) : (
           <>
-            {viewMode === 'list' ? (
+            {viewMode === "list" ? (
               <div className="divide-y divide-gray-100">
                 {sortedResults.map((result) => (
                   <div
@@ -247,37 +265,48 @@ export default function SearchResults({
                     className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start gap-4">
-                      <div className={`p-2 rounded-lg ${getTypeColor(result.type)}`}>
+                      <div
+                        className={`p-2 rounded-lg ${getTypeColor(
+                          result.type
+                        )}`}
+                      >
                         {getTypeIcon(result.type)}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-semibold text-gray-900 truncate">
                             {result.title}
                           </h3>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(result.type)}`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                              result.type
+                            )}`}
+                          >
                             {result.type}
                           </span>
                         </div>
-                        
+
                         <p className="text-gray-600 mb-3">
                           {result.description}
                         </p>
-                        
+
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div className="flex-1 bg-gray-200 rounded-full h-2 w-24">
-                              <div 
+                              <div
                                 className="bg-blue-500 h-2 rounded-full"
-                                style={{ width: `${result.relevanceScore * 100}%` }}
+                                style={{
+                                  width: `${result.relevanceScore * 100}%`,
+                                }}
                               />
                             </div>
                             <span className="text-sm text-gray-500">
-                              {(result.relevanceScore * 100).toFixed(0)}% relevante
+                              {(result.relevanceScore * 100).toFixed(0)}%
+                              relevante
                             </span>
                           </div>
-                          
+
                           {result.actions && (
                             <div className="flex gap-2">
                               {result.actions.slice(0, 2).map((action) => (
@@ -287,7 +316,7 @@ export default function SearchResults({
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     if (action.url) {
-                                      window.open(action.url, '_blank');
+                                      window.open(action.url, "_blank");
                                     }
                                   }}
                                 >
@@ -311,25 +340,33 @@ export default function SearchResults({
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-md cursor-pointer transition-all"
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className={`p-2 rounded-lg ${getTypeColor(result.type)}`}>
+                      <div
+                        className={`p-2 rounded-lg ${getTypeColor(
+                          result.type
+                        )}`}
+                      >
                         {getTypeIcon(result.type)}
                       </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(result.type)}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                          result.type
+                        )}`}
+                      >
                         {result.type}
                       </span>
                     </div>
-                    
+
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
                       {result.title}
                     </h3>
-                    
+
                     <p className="text-gray-600 text-sm mb-3 line-clamp-3">
                       {result.description}
                     </p>
-                    
+
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-200 rounded-full h-1">
-                        <div 
+                        <div
                           className="bg-blue-500 h-1 rounded-full"
                           style={{ width: `${result.relevanceScore * 100}%` }}
                         />
@@ -351,7 +388,7 @@ export default function SearchResults({
                   disabled={loading}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {loading ? 'Carregando...' : 'Carregar mais resultados'}
+                  {loading ? "Carregando..." : "Carregar mais resultados"}
                 </button>
               </div>
             )}

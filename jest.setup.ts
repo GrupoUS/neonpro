@@ -1,15 +1,25 @@
-import '@testing-library/jest-dom'
-import { TextDecoder, TextEncoder } from 'util'
+import '@testing-library/jest-dom';
+import { TextDecoder, TextEncoder } from 'util';
 
 // Set timezone to UTC for consistent date testing across all environments
 process.env.TZ = 'UTC';
 
+// React 19 compatibility fix for Jest environment
+(global as any).IS_REACT_ACT_ENVIRONMENT = true;
+Object.defineProperty(globalThis, 'IS_REACT_ACT_ENVIRONMENT', {
+  writable: true,
+  value: true,
+});
+
+// Mock scheduler for React hooks in Jest
+jest.mock('scheduler', () => require('scheduler/unstable_mock'));
+
 // Add global polyfills for WebAuthn dependencies
-global.TextDecoder = TextDecoder
-global.TextEncoder = TextEncoder
+(global as any).TextDecoder = TextDecoder;
+(global as any).TextEncoder = TextEncoder;
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
+(global as any).IntersectionObserver = class IntersectionObserver {
   constructor() {}
   observe() { return null }
   disconnect() { return null }

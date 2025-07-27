@@ -5,8 +5,8 @@
  * profile creation, updates, search functionality, and AI insights integration.
  */
 
+import { patientInsights } from '../../lib/ai/patient-insights';
 import { ProfileManager } from '../../lib/patients/profile-manager';
-import { PatientInsights } from '../../lib/ai/patient-insights';
 
 // Mock the entire Supabase module to avoid ES module issues
 jest.mock('@supabase/auth-helpers-nextjs', () => ({
@@ -29,7 +29,6 @@ jest.mock('../../lib/auth/audit/audit-logger', () => ({
 
 describe('Patient Profile System Integration Tests', () => {
   let profileManager: ProfileManager;
-  let patientInsights: PatientInsights;
   let mockSupabaseClient: any;
   
   const mockPatientData = {
@@ -111,7 +110,7 @@ describe('Patient Profile System Integration Tests', () => {
     };
     
     profileManager = new ProfileManager();
-    patientInsights = new PatientInsights();
+    // patientInsights is now imported as a ready-to-use object
   });
 
   describe('ProfileManager Core Operations', () => {

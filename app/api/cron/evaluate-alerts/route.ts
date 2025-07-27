@@ -399,7 +399,7 @@ export async function POST(request: NextRequest) {
       batches.push(clinicIds.slice(i, i + BATCH_SIZE));
     }
 
-    let totalResult: ProcessingResult = {
+    const totalResult: ProcessingResult = {
       clinicsProcessed: 0,
       alertsGenerated: 0,
       errors: [],

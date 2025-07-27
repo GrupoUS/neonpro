@@ -75,6 +75,12 @@ export default async function DashboardPage() {
                 Gerenciar Pacientes
               </a>
             </Button>
+            <Button variant="outline" asChild>
+              <a href="/dashboard/search">
+                <Search className="mr-2 h-4 w-4" />
+                Busca Unificada
+              </a>
+            </Button>
           </div>
         </div>
 
