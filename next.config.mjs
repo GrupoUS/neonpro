@@ -1,5 +1,55 @@
 /** @type {import('next').NextConfig} */
 
+// Zod schema for environment validation
+import { z } from "zod";
+
+// Environment variables validation schema
+const envSchema = z.object({
+  // Supabase (CRITICAL - Required for app to function)
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url("Invalid Supabase URL"),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key required"),
+  
+  // Optional but important environment variables
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  
+  // AI Services (Optional for basic functionality)
+  ANTHROPIC_API_KEY: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
+  GOOGLE_API_KEY: z.string().optional(),
+  
+  // Search Services (Optional)
+  TAVILY_API_KEY: z.string().optional(),
+  EXA_API_KEY: z.string().optional(),
+  
+  // Email Service (Optional)
+  RESEND_API_KEY: z.string().optional(),
+  
+  // Payment Processing (Optional)
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  STRIPE_SECRET_KEY: z.string().optional(),
+});
+
+// Validate environment variables
+const validateEnv = () => {
+  try {
+    const env = envSchema.parse(process.env);
+    console.log("✅ Environment variables validated successfully");
+    return env;
+  } catch (error) {
+    console.error("❌ Environment validation failed:");
+    if (error instanceof z.ZodError) {
+      error.errors.forEach((err) => {
+        console.error(`  - ${err.path.join(".")}: ${err.message}`);
+      });
+    }
+    throw new Error("Invalid environment configuration");
+  }
+};
+
+// Validate environment on build
+const validatedEnv = validateEnv();
+
 // Bundle Analyzer Configuration
 import bundleAnalyzer from "@next/bundle-analyzer";
 
@@ -8,22 +58,56 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig = {
-  // Simplified configuration for Vercel compatibility
+  // ESLint configuration for healthcare compliance
+  eslint: {
+    // ESLint enabled for production builds to catch errors early
+    ignoreDuringBuilds: false,
+    dirs: [
+      "app",
+      "components", 
+      "lib",
+      "hooks",
+      "middleware",
+      "contexts",
+      "types",
+    ],
+  },
+
+  // TypeScript configuration for strict type safety
+  typescript: {
+    // TypeScript type checking enabled for production builds
+    // This ensures type safety in production deployments
+    ignoreBuildErrors: false,
+  },
+
+  // Experimental optimizations for performance
   experimental: {
-    // Only essential optimizations
+    // Optimize package imports for better performance
     optimizePackageImports: [
+      "@radix-ui/react-icons",
+      "lucide-react",
       "@supabase/supabase-js",
       "recharts",
       "date-fns",
     ],
   },
 
+  // Compiler optimizations (Next.js 15 with swcMinify default)
+  compiler: {
+    // Remove console.log in production builds
+    removeConsole:
+      process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+  },
+
+  // Output configuration for deployment
+  output: "standalone",
+
   // External packages that should not be bundled
   serverExternalPackages: ["sharp"],
 
-  // Simplified webpack configuration
+  // Enhanced webpack configuration
   webpack: (config) => {
-    // SVG optimization
+    // SVG optimization for healthcare icons
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],
@@ -32,7 +116,7 @@ const nextConfig = {
     return config;
   },
 
-  // Image optimization configuration
+  // Image optimization configuration for medical images
   images: {
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
@@ -48,13 +132,13 @@ const nextConfig = {
     ],
   },
 
-  // Headers for performance and security
+  // Security and performance headers for healthcare compliance
   async headers() {
     return [
       {
         source: "/(.*)",
         headers: [
-          // Security headers
+          // Healthcare-grade security headers
           {
             key: "X-Frame-Options",
             value: "DENY",
@@ -67,6 +151,14 @@ const nextConfig = {
             key: "Referrer-Policy",
             value: "origin-when-cross-origin",
           },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
           // Performance headers
           {
             key: "X-DNS-Prefetch-Control",
@@ -74,7 +166,7 @@ const nextConfig = {
           },
         ],
       },
-      // Static assets caching
+      // Static assets caching for performance
       {
         source: "/static/(.*)",
         headers: [
@@ -84,7 +176,7 @@ const nextConfig = {
           },
         ],
       },
-      // API routes caching
+      // API routes caching for healthcare APIs
       {
         source: "/api/(.*)",
         headers: [
@@ -97,13 +189,11 @@ const nextConfig = {
     ];
   },
 
-  // Compress responses
+  // Compress responses for performance
   compress: true,
 
   // Generate ETags for better caching
   generateEtags: true,
-
-
 
   // Environment variables to expose to the client
   env: {
@@ -111,34 +201,30 @@ const nextConfig = {
     NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
   },
 
-  // Logging configuration for development
+  // Logging configuration for development and debugging
   logging: {
     fetches: {
       fullUrl: process.env.NODE_ENV === "development",
     },
   },
 
-  // TypeScript and ESLint settings for production builds
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
-  // Redirects for SEO optimization
+  // Healthcare-specific redirects for SEO optimization
   async redirects() {
     return [
-      // Redirect old URLs if any
+      // Redirect old analytics URLs
       {
         source: "/dashboard/analytics",
         destination: "/dashboard/analytics/overview",
         permanent: true,
       },
+      // Legacy patient management redirects
+      {
+        source: "/patients",
+        destination: "/dashboard/patients",
+        permanent: true,
+      },
     ];
   },
-
-
 };
 
 export default withBundleAnalyzer(nextConfig);

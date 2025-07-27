@@ -1,321 +1,380 @@
-import { createClient } from "@/app/utils/supabase/server";
-import { DashboardLayout } from "@/components/navigation/dashboard-layout";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  DollarSign,
+"use client";
+
+/**
+ * Financial Management Dashboard Page
+ * Created: January 27, 2025
+ * Purpose: Central dashboard for Epic 4 - Financial Management System
+ * Features: Invoice generation, payment tracking, financial reporting
+ */
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+// UI Components
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+
+// Icons
+import { 
+  DollarSign, 
+  CreditCard, 
+  FileText, 
   TrendingUp,
-  TrendingDown,
-  CreditCard,
-  Receipt,
-  PiggyBank,
-  Calendar,
-  BarChart3,
-} from "lucide-react";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  Plus,
+  Users,
+  Calendar
+} from 'lucide-react';
 
-export default async function FinancialPage() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+// Components
+import { InvoiceManager } from '@/components/financial/invoice-manager';
+import { PaymentManager } from '@/components/financial/payment-manager';
+import FinancialReportingDashboard from '@/components/financial/financial-reporting-dashboard';
+import PredictiveCashFlowDashboard from '@/components/financial/predictive-cash-flow-dashboard';
 
-  if (!session) {
-    redirect("/login");
-  }
+// Types
+import type { Invoice, Payment } from '@/lib/types/financial';
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+// Services
+import { 
+  listInvoices, 
+  getFinancialSummary,
+  generateInvoicePDF
+} from '@/lib/supabase/financial';
 
-  // Mock data para demonstração
-  const financialData = {
-    monthlyRevenue: 45680,
-    monthlyExpenses: 18500,
-    netProfit: 27180,
-    pendingPayments: 8950,
-    recentTransactions: [
-      {
-        id: 1,
-        type: "Receita",
-        description: "Consulta - João Silva",
-        amount: 150,
-        date: "2024-01-15",
-        status: "Pago",
-      },
-      {
-        id: 2,
-        type: "Despesa",
-        description: "Material médico",
-        amount: -350,
-        date: "2024-01-14",
-        status: "Pago",
-      },
-      {
-        id: 3,
-        type: "Receita",
-        description: "Exame - Maria Santos",
-        amount: 280,
-        date: "2024-01-14",
-        status: "Pendente",
-      },
-    ],
+interface FinancialSummary {
+  total_invoices: number;
+  total_revenue: number;
+  pending_payments: number;
+  overdue_invoices: number;
+  monthly_revenue: number;
+  monthly_growth: number;
+  payment_success_rate: number;
+}
+
+export default function FinancialDashboard() {
+  const router = useRouter();
+  
+  // State Management
+  const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'payments' | 'reports'>('overview');
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [summary, setSummary] = useState<FinancialSummary | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
+
+  // Load Data
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      
+      // Load summary data
+      const summaryResult = await getFinancialSummary();
+      setSummary(summaryResult);
+      
+      // Load recent invoices
+      const invoicesResult = await listInvoices({
+        page: 1,
+        per_page: 10,
+        sort_by: 'created_at',
+        sort_order: 'desc'
+      });
+      setInvoices(invoicesResult.invoices);
+      
+      // TODO: Load recent payments
+      // const paymentsResult = await listPayments();
+      // setPayments(paymentsResult);
+      
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      toast.error('Erro ao carregar dados financeiros');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const breadcrumbs = [
-    { title: "Dashboard", href: "/dashboard" },
-    { title: "Financeiro" },
-  ];
+  // Handlers
+  const handleExportReport = async (type: 'pdf' | 'excel') => {
+    try {
+      setLoading(true);
+      
+      const report = await generateFinancialReport({
+        format: type,
+        date_range: {
+          start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          end_date: new Date().toISOString().split('T')[0]
+        },
+        include_invoices: true,
+        include_payments: true,
+        include_summary: true
+      });
+      
+      // Create download link
+      const blob = new Blob([report.content], { 
+        type: type === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `relatorio-financeiro-${new Date().toISOString().split('T')[0]}.${type}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Relatório exportado com sucesso!');
+    } catch (error) {
+      console.error('Failed to export report:', error);
+      toast.error('Erro ao exportar relatório');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDownloadInvoice = async (invoiceId: string) => {
+    try {
+      const pdfData = await generateInvoicePDF(invoiceId);
+      
+      // Create download link
+      const blob = new Blob([pdfData.content], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `fatura-${invoiceId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Fatura baixada com sucesso!');
+    } catch (error) {
+      console.error('Failed to download invoice:', error);
+      toast.error('Erro ao baixar fatura');
+    }
+  };
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(amount / 100);
+  };
+
+  // Get status badge
+  const getInvoiceStatusBadge = (status: Invoice['status']) => {
+    const statusMap = {
+      'draft': { label: 'Rascunho', color: 'bg-gray-500' },
+      'issued': { label: 'Emitida', color: 'bg-blue-500' },
+      'sent': { label: 'Enviada', color: 'bg-yellow-500' },
+      'paid': { label: 'Paga', color: 'bg-green-500' },
+      'cancelled': { label: 'Cancelada', color: 'bg-red-500' },
+      'overdue': { label: 'Vencida', color: 'bg-orange-500' },
+    };
+    
+    const { label, color } = statusMap[status] || { label: 'Desconhecido', color: 'bg-gray-500' };
+    
+    return (
+      <Badge className={color}>
+        {label}
+      </Badge>
+    );
+  };
 
   return (
-    <DashboardLayout user={user} breadcrumbs={breadcrumbs}>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Financeiro</h2>
-            <p className="text-muted-foreground">
-              Controle financeiro da sua clínica
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Link href="/dashboard/financial/reports">
-              <Button variant="outline">
-                <BarChart3 className="mr-2 h-4 w-4" />
-                Relatórios
-              </Button>
-            </Link>
-            <Button>
-              <Receipt className="mr-2 h-4 w-4" />
-              Nova Transação
-            </Button>
-          </div>
+    <div className="container mx-auto py-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Gestão Financeira</h1>
+          <p className="text-muted-foreground">
+            Gerencie faturas, pagamentos e relatórios financeiros
+          </p>
         </div>
-
-        {/* Financial Overview */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Receita Mensal
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                R$ {financialData.monthlyRevenue.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +12%
-                </span>
-                vs mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Despesas Mensais
-              </CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-600">
-                R$ {financialData.monthlyExpenses.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-red-600 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +5%
-                </span>
-                vs mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Lucro Líquido
-              </CardTitle>
-              <PiggyBank className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">
-                R$ {financialData.netProfit.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                <span className="text-green-600 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  +18%
-                </span>
-                vs mês anterior
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Pagamentos Pendentes
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">
-                R$ {financialData.pendingPayments.toLocaleString()}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                15 transações pendentes
-              </p>
-            </CardContent>
-          </Card>
+        
+        <div className="flex items-center space-x-2">
+          {/* Export functionality is now handled by the Financial Reporting Dashboard */}
         </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Recent Transactions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Transações Recentes</CardTitle>
-              <CardDescription>
-                Últimas movimentações financeiras
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {financialData.recentTransactions.map((transaction) => (
-                  <div
-                    key={transaction.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant={
-                            transaction.type === "Receita" ? "default" : "secondary"
-                          }
-                        >
-                          {transaction.type}
-                        </Badge>
-                        <span className="text-sm font-medium">
-                          {transaction.description}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(transaction.date).toLocaleDateString("pt-BR")}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div
-                        className={`text-sm font-bold ${
-                          transaction.amount > 0 ? "text-green-600" : "text-red-600"
-                        }`}
-                      >
-                        {transaction.amount > 0 ? "+" : ""}R${" "}
-                        {Math.abs(transaction.amount).toLocaleString()}
-                      </div>
-                      <Badge
-                        variant={
-                          transaction.status === "Pago" ? "default" : "outline"
-                        }
-                        className="text-xs"
-                      >
-                        {transaction.status}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4">
-                <Link href="/dashboard/financial/payments">
-                  <Button variant="outline" className="w-full">
-                    Ver Todas as Transações
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ações Rápidas</CardTitle>
-              <CardDescription>
-                Acesso rápido às funcionalidades financeiras
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                <Link href="/dashboard/financial/revenue">
-                  <Button variant="outline" className="w-full h-16 flex-col gap-2">
-                    <DollarSign className="h-6 w-6" />
-                    <span>Gerenciar Receitas</span>
-                  </Button>
-                </Link>
-                <Link href="/dashboard/financial/payments">
-                  <Button variant="outline" className="w-full h-16 flex-col gap-2">
-                    <CreditCard className="h-6 w-6" />
-                    <span>Controlar Pagamentos</span>
-                  </Button>
-                </Link>
-                <Link href="/dashboard/financial/reports">
-                  <Button variant="outline" className="w-full h-16 flex-col gap-2">
-                    <BarChart3 className="h-6 w-6" />
-                    <span>Relatórios Financeiros</span>
-                  </Button>
-                </Link>
-                <Button variant="outline" className="w-full h-16 flex-col gap-2">
-                  <Receipt className="h-6 w-6" />
-                  <span>Emitir Nota Fiscal</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Financial Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Resumo Financeiro do Mês</CardTitle>
-            <CardDescription>
-              Visão geral das finanças de {new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="text-center p-4 border rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  R$ {financialData.monthlyRevenue.toLocaleString()}
-                </div>
-                <p className="text-sm text-muted-foreground">Total de Receitas</p>
-              </div>
-              <div className="text-center p-4 border rounded-lg">
-                <div className="text-2xl font-bold text-red-600">
-                  R$ {financialData.monthlyExpenses.toLocaleString()}
-                </div>
-                <p className="text-sm text-muted-foreground">Total de Despesas</p>
-              </div>
-              <div className="text-center p-4 border rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
-                  R$ {financialData.netProfit.toLocaleString()}
-                </div>
-                <p className="text-sm text-muted-foreground">Lucro Líquido</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </DashboardLayout>
+
+      {/* Main Interface */}
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+          <TabsTrigger value="invoices">Faturas</TabsTrigger>
+          <TabsTrigger value="payments">Pagamentos</TabsTrigger>
+          <TabsTrigger value="reports">Relatórios</TabsTrigger>
+          <TabsTrigger value="predictive">Previsões</TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {summary ? formatCurrency(summary.total_revenue) : '--'}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {summary && summary.monthly_growth > 0 ? '+' : ''}
+                  {summary?.monthly_growth.toFixed(1)}% em relação ao mês anterior
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Faturas Emitidas</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {summary?.total_invoices || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {summary?.pending_payments || 0} pendentes
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Taxa de Sucesso</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {summary?.payment_success_rate.toFixed(1) || 0}%
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Pagamentos processados com sucesso
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Faturas Vencidas</CardTitle>
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-red-600">
+                  {summary?.overdue_invoices || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Requer atenção imediata
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Invoices */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Faturas Recentes</CardTitle>
+              <CardDescription>
+                Últimas faturas emitidas no sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8">Carregando...</div>
+              ) : invoices.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhuma fatura encontrada
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {invoices.slice(0, 5).map((invoice) => (
+                    <div 
+                      key={invoice.id} 
+                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                      onClick={() => {
+                        setSelectedInvoiceId(invoice.id);
+                        setActiveTab('invoices');
+                      }}
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium">#{invoice.invoice_number}</span>
+                          {getInvoiceStatusBadge(invoice.status)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {invoice.patient?.name || 'Paciente não encontrado'}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Emitida: {new Date(invoice.issue_date).toLocaleDateString('pt-BR')}
+                        </div>
+                      </div>
+                      
+                      <div className="text-right space-y-1">
+                        <div className="font-semibold">
+                          {formatCurrency(invoice.total_amount)}
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadInvoice(invoice.id);
+                          }}
+                        >
+                          <Download className="h-4 w-4 mr-1" />
+                          PDF
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Invoices Tab */}
+        <TabsContent value="invoices">
+          <InvoiceManager 
+            defaultView={selectedInvoiceId ? 'edit' : 'list'}
+            selectedInvoiceId={selectedInvoiceId}
+          />
+        </TabsContent>
+
+        {/* Payments Tab */}
+        <TabsContent value="payments">
+          <PaymentManager />
+        </TabsContent>
+
+        {/* Reports Tab - Advanced Financial Reporting Dashboard */}
+        <TabsContent value="reports" className="space-y-6">
+          <FinancialReportingDashboard 
+            clinicId={clinicId || 'default-clinic-id'} 
+            className="w-full"
+          />
+        </TabsContent>
+
+        {/* Predictive Tab - Predictive Cash Flow Analysis */}
+        <TabsContent value="predictive" className="space-y-6">
+          <PredictiveCashFlowDashboard 
+            clinicId={clinicId || 'default-clinic-id'} 
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
