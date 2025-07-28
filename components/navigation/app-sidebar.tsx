@@ -192,6 +192,29 @@ const navigationData = {
       icon: Bot,
     },
     {
+      title: "Retenção de Pacientes",
+      url: "/dashboard/patient-retention",
+      icon: Activity,
+      items: [
+        {
+          title: "Analytics de Retenção",
+          url: "/dashboard/patient-retention",
+        },
+        {
+          title: "Predições de Churn",
+          url: "/dashboard/patient-retention?tab=predictions",
+        },
+        {
+          title: "Intervenções",
+          url: "/dashboard/patient-retention?tab=interventions",
+        },
+        {
+          title: "Insights IA",
+          url: "/dashboard/patient-retention?tab=insights",
+        },
+      ],
+    },
+    {
       title: "Relatórios",
       url: "/dashboard/reports",
       icon: BarChart3,

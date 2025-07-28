@@ -269,19 +269,25 @@ export interface SegmentPerformance {
   
   // Performance Metrics
   member_count: number;
+  total_members: number;
   new_members: number;
   departed_members: number;
   member_retention_rate?: number; // 0-1
   
   // Engagement Metrics
   average_engagement_score?: number; // 0-1
+  engagement_rate: number; // 0-1
   total_interactions: number;
   response_rate?: number; // 0-1
   conversion_rate?: number; // 0-1
+  retention_rate: number; // 0-1
   
   // Financial Metrics
   total_revenue: number;
   average_revenue_per_member?: number;
+  avg_lifetime_value: number;
+  revenue_generated: number;
+  cost_per_acquisition: number;
   roi?: number; // Return on investment
   
   // Campaign Performance
@@ -294,6 +300,10 @@ export interface SegmentPerformance {
   treatment_success_rate?: number; // 0-1
   patient_satisfaction_score?: number; // 0-1
   health_improvement_rate?: number; // 0-1
+  
+  // Additional tracking
+  active_members: number;
+  analysis_date: string;
   
   // Metadata
   calculated_at: string;
@@ -410,11 +420,18 @@ export interface SegmentMembersResponse {
 }
 
 export interface SegmentAnalytics {
+  segment_id: string;
   total_members: number;
   active_members: number;
   average_membership_score: number;
+  avg_lifetime_value: number;
+  engagement_rate: number;
+  conversion_rate: number;
+  retention_rate: number;
   top_characteristics: string[];
   performance_summary: SegmentPerformanceSummary;
+  trends: any;
+  last_updated: string;
 }
 
 export interface SegmentPerformanceSummary {
@@ -544,4 +561,77 @@ export interface PerformancePrediction {
   expected_retention: number;
   expected_revenue_impact: number;
   confidence: number;
+}
+
+// =====================================================================================
+// ADDITIONAL SERVICE INTERFACES
+// =====================================================================================
+
+export interface SegmentMembership {
+  id: string;
+  patient_id: string;
+  segment_id: string;
+  membership_score: number;
+  join_date: string;
+  last_updated: string;
+  engagement_level: EngagementLevel;
+  lifetime_value_prediction?: number;
+}
+
+export interface PatientBehaviorAnalysis {
+  patient_id: string;
+  demographic_profile: {
+    age_group: string;
+    gender: string;
+    location_segment: string;
+  };
+  behavioral_profile: {
+    visit_frequency: string;
+    treatment_preferences: string[];
+    engagement_level: EngagementLevel;
+    seasonal_patterns: any;
+  };
+  psychographic_profile: {
+    lifestyle_indicators: string[];
+    value_orientation: string;
+    communication_preferences: string[];
+  };
+  predictive_scores: {
+    lifetime_value: number;
+    churn_probability: number;
+    treatment_propensity: number;
+    engagement_score: number;
+  };
+  last_analyzed: string;
+}
+
+export interface CreateSegmentRequest {
+  segment_name: string;
+  description?: string;
+  criteria?: SegmentCriteria;
+  segment_type: SegmentType;
+  ai_model?: string;
+  expected_accuracy?: number;
+}
+
+export interface UpdateSegmentRequest extends Partial<CreateSegmentRequest> {
+  id: string;
+  is_active?: boolean;
+}
+
+export interface CreateSegmentationRuleRequest {
+  rule_name: string;
+  description?: string;
+  conditions: any;
+  auto_execute?: boolean;
+  execution_schedule?: string;
+}
+
+export interface SegmentMembershipUpdate {
+  patient_id: string;
+  segment_id: string;
+  membership_score: number;
+  join_date?: string;
+  engagement_level: EngagementLevel;
+  lifetime_value_prediction?: number;
 }

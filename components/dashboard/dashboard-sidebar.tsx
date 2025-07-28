@@ -13,8 +13,10 @@ import {
   FileText,
   Home,
   LogOut,
+  MessageCircle,
   Package,
   Settings,
+  Target,
   Users,
   Wrench,
 } from "lucide-react";
@@ -69,6 +71,24 @@ const navigationItems = [
     href: "/dashboard/maintenance",
     icon: Wrench,
     description: "Manutenção de equipamentos",
+  },
+  {
+    title: "Segmentação",
+    href: "/dashboard/segmentation",
+    icon: Target,
+    description: "Segmentação de pacientes e análise inteligente",
+  },
+  {
+    title: "Campanhas",
+    href: "/dashboard/marketing-campaigns",
+    icon: MessageCircle,
+    description: "Campanhas de marketing automatizadas",
+  },
+  {
+    title: "Follow-up",
+    href: "/dashboard/treatment-followup",
+    icon: Activity,
+    description: "Acompanhamento automatizado de tratamentos",
   },
   {
     title: "Relatórios",
