@@ -7,6 +7,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Brain,
   Building2,
   Calendar,
   CreditCard,
@@ -91,10 +92,22 @@ const navigationItems = [
     description: "Acompanhamento automatizado de tratamentos",
   },
   {
+    title: "Predição IA",
+    href: "/dashboard/treatment-prediction",
+    icon: Brain,
+    description: "Predição de sucesso de tratamentos com IA",
+  },
+  {
     title: "Relatórios",
     href: "/dashboard/reports",
     icon: BarChart3,
     description: "Relatórios e análises",
+  },
+  {
+    title: "Report Builder",
+    href: "/dashboard/report-builder",
+    icon: FileText,
+    description: "Construtor de relatórios personalizados",
   },
   {
     title: "Prontuários",

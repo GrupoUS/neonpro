@@ -1,17 +1,16 @@
 // Backend service for Patient Retention Analytics + Predictions
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
-import { createClient } from '../../utils/supabase/client';
 import type {
     ChurnRiskLevel,
     InterventionChannel,
     InterventionStatus,
     PatientChurnPrediction,
     PatientRetentionAnalytics,
-    RetentionCampaignAnalytics,
     RetentionIntervention,
     RetentionMetrics
 } from '../../types/retention';
+import { createClient } from '../../utils/supabase/client';
 
 export class RetentionService {
   private static getClient() {

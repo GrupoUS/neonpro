@@ -1,0 +1,21 @@
+import { PredictiveAnalyticsService } from '@/app/lib/services/predictive-analytics';
+import { NextRequest, NextResponse } from 'next/server';
+
+const service = new PredictiveAnalyticsService();
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const model_id = searchParams.get('model_id') || undefined;
+
+    const recommendations = await service.getOptimizationRecommendations(model_id);
+
+    return NextResponse.json(recommendations);
+  } catch (error) {
+    console.error('Erro ao buscar recomendações:', error);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    );
+  }
+}

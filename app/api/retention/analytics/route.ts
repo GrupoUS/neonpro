@@ -1,12 +1,12 @@
 // API endpoint for patient retention analytics
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
+import { NextRequest, NextResponse } from 'next/server';
 import { RetentionService } from '../../../lib/services/retention';
 import {
     CreatePatientRetentionAnalyticsSchema,
     RetentionAnalyticsQuerySchema
 } from '../../../lib/validations/retention';
-import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
