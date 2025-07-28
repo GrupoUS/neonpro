@@ -5,7 +5,7 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { createClient } from '@/lib/supabase/client';
+import { createClient } from '@/app/utils/supabase/client';
 import {
   KPICalculation,
   PerformanceMetrics,

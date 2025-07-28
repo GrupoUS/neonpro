@@ -1,22 +1,25 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
+  Activity,
   BarChart3,
+  Bell,
+  Building2,
   Calendar,
   CreditCard,
   FileText,
   Home,
+  LogOut,
+  Package,
   Settings,
   Users,
-  Activity,
-  Bell,
-  LogOut,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface DashboardSidebarProps {
   open: boolean;
@@ -48,6 +51,24 @@ const navigationItems = [
     href: "/dashboard/financial",
     icon: CreditCard,
     description: "Controle financeiro",
+  },
+  {
+    title: "Inventário",
+    href: "/dashboard/inventory",
+    icon: Package,
+    description: "Gestão de estoque",
+  },
+  {
+    title: "Fornecedores",
+    href: "/dashboard/suppliers",
+    icon: Building2,
+    description: "Gestão de fornecedores",
+  },
+  {
+    title: "Manutenção",
+    href: "/dashboard/maintenance",
+    icon: Wrench,
+    description: "Manutenção de equipamentos",
   },
   {
     title: "Relatórios",
@@ -84,10 +105,14 @@ const secondaryItems = [
   },
 ];
 
-export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarProps) {
+export function DashboardSidebar({
+  open,
+  onOpenChange,
+  user,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
 
-  const NavItem = ({ item }: { item: typeof navigationItems[0] }) => {
+  const NavItem = ({ item }: { item: (typeof navigationItems)[0] }) => {
     const isActive = pathname === item.href;
     const Icon = item.icon;
 
@@ -96,7 +121,9 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
         href={item.href}
         className={cn(
           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
-          isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+          isActive
+            ? "bg-accent text-accent-foreground"
+            : "text-muted-foreground"
         )}
         onClick={() => onOpenChange(false)}
       >
@@ -143,7 +170,7 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
                   ))}
                 </ul>
               </li>
-              
+
               <li>
                 <div className="text-xs font-semibold leading-6 text-muted-foreground">
                   FERRAMENTAS
@@ -177,7 +204,7 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
                 </p>
               </div>
             </div>
-            
+
             <form action="/api/auth/signout" method="post" className="mt-2">
               <Button
                 type="submit"
@@ -194,10 +221,12 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
       </div>
 
       {/* Mobile Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 z-50 flex w-64 flex-col transition-transform duration-300 ease-in-out lg:hidden",
-        open ? "translate-x-0" : "-translate-x-full"
-      )}>
+      <div
+        className={cn(
+          "fixed inset-y-0 z-50 flex w-64 flex-col transition-transform duration-300 ease-in-out lg:hidden",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 pb-4">
           {/* Same content as desktop sidebar */}
           <div className="flex h-16 shrink-0 items-center">
@@ -230,7 +259,7 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
                   ))}
                 </ul>
               </li>
-              
+
               <li>
                 <div className="text-xs font-semibold leading-6 text-muted-foreground">
                   FERRAMENTAS
@@ -263,7 +292,7 @@ export function DashboardSidebar({ open, onOpenChange, user }: DashboardSidebarP
                 </p>
               </div>
             </div>
-            
+
             <form action="/api/auth/signout" method="post" className="mt-2">
               <Button
                 type="submit"

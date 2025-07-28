@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, Users, ArrowRight } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle, ArrowRight, Users } from "lucide-react";
+import React from "react";
 
 interface Patient {
   id: string;
@@ -27,13 +27,17 @@ interface Props {
   onDismiss: (groupId: string) => void;
 }
 
-export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss }: Props) {
+export default function DuplicateManagerClassic({
+  duplicates,
+  onMerge,
+  onDismiss,
+}: Props) {
   // Using React.useState with tuple access instead of destructuring
   const selectedGroupState = React.useState<string | null>(null);
   const selectedGroup = selectedGroupState[0];
   const setSelectedGroup = selectedGroupState[1];
 
-  const selectedPrimaryState = React.useState<string>('');
+  const selectedPrimaryState = React.useState<string>("");
   const selectedPrimary = selectedPrimaryState[0];
   const setSelectedPrimary = selectedPrimaryState[1];
 
@@ -46,14 +50,14 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
 
     setProcessing(true);
     try {
-      const group = duplicates.find(g => g.id === selectedGroup);
+      const group = duplicates.find((g) => g.id === selectedGroup);
       if (group) {
         const secondaryIds = group.patients
-          .filter(p => p.id !== selectedPrimary)
-          .map(p => p.id);
+          .filter((p) => p.id !== selectedPrimary)
+          .map((p) => p.id);
         await onMerge(selectedGroup, selectedPrimary, secondaryIds);
         setSelectedGroup(null);
-        setSelectedPrimary('');
+        setSelectedPrimary("");
       }
     } finally {
       setProcessing(false);
@@ -81,7 +85,8 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
       <div className="flex items-center gap-2">
         <AlertTriangle className="h-5 w-5 text-amber-500" />
         <h2 className="text-lg font-semibold">
-          Found {duplicates.length} potential duplicate{duplicates.length > 1 ? 's' : ''}
+          Found {duplicates.length} potential duplicate
+          {duplicates.length > 1 ? "s" : ""}
         </h2>
       </div>
 
@@ -92,7 +97,10 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
               <CardTitle className="text-base">
                 Potential Duplicate Group
               </CardTitle>
-              <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+              <Badge
+                variant="secondary"
+                className="bg-amber-100 text-amber-800"
+              >
                 {Math.round(group.confidence * 100)}% confidence
               </Badge>
             </div>
@@ -104,8 +112,8 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
                   key={patient.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
                     selectedPrimary === patient.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
                   onClick={() => setSelectedPrimary(patient.id)}
                 >
@@ -134,7 +142,7 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
               >
                 Not a duplicate
               </Button>
-              
+
               <div className="flex items-center gap-2">
                 {selectedPrimary && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -150,7 +158,7 @@ export default function DuplicateManagerClassic({ duplicates, onMerge, onDismiss
                   disabled={!selectedPrimary || processing}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  {processing ? 'Merging...' : 'Merge Records'}
+                  {processing ? "Merging..." : "Merge Records"}
                 </Button>
               </div>
             </div>

@@ -5,7 +5,6 @@
  * Standards: Brazilian NFSe compliance + Shadow validation
  */
 
-import { z } from 'zod';
 
 // Base financial types
 export type Currency = 'BRL';

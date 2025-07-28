@@ -5,43 +5,33 @@
  * Standards: Shadow validation + NFSe integration + Error handling
  */
 
-import { createClient } from '@supabase/supabase-js';
-import type { 
-  Invoice, 
-  InvoiceItem, 
-  Payment, 
-  PaymentInstallment,
-  CreateInvoiceInput,
-  CreatePaymentInput,
-  UpdateInvoiceInput,
-  UpdatePaymentInput,
-  InvoiceReportFilters,
-  PaymentReportFilters,
-  FinancialSummary,
-  ShadowValidation,
-  PaymentReminder,
-  InvoiceListResponse,
-  PaymentListResponse,
-  InvoiceDetailsResponse,
-  ShadowCalculationResult,
-  NFSeRequest,
-  NFSeResponse,
-  PaymentProcessingRequest,
-  PaymentProcessingResponse,
-  InvoiceStatus,
-  PaymentStatus,
-  PaymentMethod,
-  AmountInCentavos
+import type {
+    CreateInvoiceInput,
+    CreatePaymentInput,
+    FinancialSummary,
+    Invoice,
+    InvoiceListResponse,
+    InvoiceReportFilters,
+    InvoiceStatus,
+    NFSeResponse,
+    Payment,
+    PaymentMethod,
+    PaymentProcessingResponse,
+    ShadowCalculationResult,
+    ShadowValidation,
+    UpdateInvoiceInput,
+    UpdatePaymentInput
 } from '@/lib/types/financial';
-import { 
-  createInvoiceSchema,
-  updateInvoiceSchema,
-  createPaymentSchema,
-  updatePaymentSchema,
-  reaisToCentavos,
-  centavosToReais,
-  formatCurrency
+import {
+    centavosToReais,
+    createInvoiceSchema,
+    createPaymentSchema,
+    formatCurrency,
+    reaisToCentavos,
+    updateInvoiceSchema,
+    updatePaymentSchema
 } from '@/lib/validations/financial';
+import { createClient } from '@supabase/supabase-js';
 
 // Get Supabase client
 const supabase = createClient(
@@ -749,4 +739,5 @@ async function processPayment(payment: Payment): Promise<PaymentProcessingRespon
 }
 
 // Utility functions
-export { reaisToCentavos, centavosToReais, formatCurrency };
+export { centavosToReais, formatCurrency, reaisToCentavos };
+

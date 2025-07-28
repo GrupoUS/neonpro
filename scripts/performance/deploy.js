@@ -37,14 +37,17 @@ async function validateEnvironment() {
   info('Validating deployment environment...')
   
   const checks = [
-    { name: 'Node.js version', cmd: 'node --version' },
-    { name: 'pnpm version', cmd: 'pnpm --version' },
-    { name: 'Next.js installation', cmd: 'npx next --version' },
+    { name: 'Node.js version', cmd: 'node', args: ['--version'] },
+    { name: 'pnpm version', cmd: 'pnpm', args: ['--version'] },
+    { name: 'Next.js installation', cmd: 'npx', args: ['next', '--version'] },
   ]
   
   for (const check of checks) {
     try {
-      const result = execSync(check.cmd, { encoding: 'utf8' }).trim()
+      const result = execSync(`${check.cmd} ${check.args.join(' ')}`, { 
+        encoding: 'utf8',
+        shell: false 
+      }).trim()
       success(`${check.name}: ${result}`)
     } catch (err) {
       error(`${check.name}: Failed - ${err.message}`)
@@ -98,14 +101,14 @@ function analyzeBundle() {
   try {
     // Build the project for analysis
     info('Building project for bundle analysis...')
-    execSync('pnpm build', { stdio: 'inherit' })
+    execSync('pnpm build', { stdio: 'inherit', shell: false })
     
     success('Build completed successfully')
     
     // Check if bundle analyzer is available
     if (process.env.ANALYZE === 'true') {
       info('Running bundle analyzer...')
-      execSync('ANALYZE=true pnpm build', { stdio: 'inherit' })
+      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false })
     }
     
     return true
@@ -119,7 +122,7 @@ function testPerformanceIntegration() {
   info('Running performance integration tests...')
   
   try {
-    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit' })
+    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit', shell: false })
     return true
   } catch (err) {
     warning(`Performance tests completed with some warnings`)

@@ -1,4 +1,4 @@
-// lib/search/unified-search.ts
+// lib/search/unified-search.ts - Server-side search implementation
 import { createClient } from "@/app/utils/supabase/server";
 import { AIInsightsEngine } from "@/lib/ai/insights-engine";
 import { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
@@ -7,54 +7,21 @@ import { PhotoRecognitionSystem } from "@/lib/patients/photo-recognition";
 import { ProfileManager } from "@/lib/patients/profile-manager";
 import { nlpSearchEngine, type NLPSearchQuery, type SearchContext } from "./nlp-engine";
 
-export interface SearchQuery {
-  term: string;
-  nlpAnalysis?: NLPSearchQuery; // Add NLP analysis
-  context?: SearchContext; // Add search context
-  filters?: {
-    types?: SearchType[];
-    dateRange?: {
-      start: Date;
-      end: Date;
-    };
-    patientId?: string;
-    status?: string[];
-    priority?: string[];
-  };
-  options?: {
-    limit?: number;
-    offset?: number;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-    fuzzy?: boolean;
-    highlight?: boolean;
-    useNLP?: boolean; // Enable/disable NLP processing
-  };
-}
-
-export type SearchType = 
-  | 'patients' 
-  | 'appointments' 
-  | 'medical_records' 
-  | 'lab_results' 
-  | 'medications' 
-  | 'documents' 
-  | 'insights' 
-  | 'timeline_events'
-  | 'duplicates'
-  | 'photos';
-
-export interface SearchResult {
-  id: string;
-  type: SearchType;
-  title: string;
-  description: string;
-  relevanceScore: number;
-  metadata: Record<string, any>;
-  highlights?: string[];
-  url?: string;
-  actions?: SearchAction[];
-}
+// Re-export types from the shared types file
+export type {
+  SearchQuery,
+  SearchType,
+  SearchResult,
+  SearchResponse,
+  GlobalSearchStats,
+  NLPSearchQuery,
+  SearchContext,
+  NLPInsights,
+  SearchFacets,
+  SearchStats,
+  SavedSearch,
+  SearchHistory
+} from "./types";
 
 export interface SearchAction {
   id: string;
@@ -62,25 +29,6 @@ export interface SearchAction {
   icon?: string;
   url?: string;
   handler?: string;
-}
-
-export interface SearchResponse {
-  query: SearchQuery;
-  nlpAnalysis?: NLPSearchQuery; // Include NLP analysis in response
-  results: SearchResult[];
-  totalCount: number;
-  executionTime: number;
-  suggestions?: string[];
-  facets?: Record<string, Array<{ value: string; count: number }>>;
-}
-
-export interface GlobalSearchStats {
-  totalSearches: number;
-  averageResultsPerSearch: number;
-  mostSearchedTerms: Array<{ term: string; count: number }>;
-  searchesByType: Record<SearchType, number>;
-  averageExecutionTime: number;
-  userSearchPatterns: any;
 }
 
 export class UnifiedSearchSystem {

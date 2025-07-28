@@ -54,7 +54,7 @@ import {
 /**
  * Create a new prediction model
  */
-export async function createPredictionModel(
+async function createPredictionModel(
   supabase: ReturnType<typeof createClient>,
   input: CreatePredictionModelInput
 ): Promise<{ data: PredictionModel | null; error: string | null }> {
@@ -90,7 +90,7 @@ export async function createPredictionModel(
 /**
  * Update a prediction model
  */
-export async function updatePredictionModel(
+async function updatePredictionModel(
   supabase: ReturnType<typeof createClient>,
   id: string,
   input: UpdatePredictionModelInput
@@ -123,7 +123,7 @@ export async function updatePredictionModel(
 /**
  * Get prediction models with filtering
  */
-export async function getPredictionModels(
+async function getPredictionModels(
   supabase: ReturnType<typeof createClient>,
   filters: ModelFilters = {},
   pagination: PaginationParams = {}
@@ -912,23 +912,3 @@ function generateRecommendedActions(
 
   return actions;
 }
-
-export {
-  createPredictionModel,
-  updatePredictionModel,
-  getPredictionModels,
-  getPredictionModel,
-  deletePredictionModel,
-  createCashFlowPrediction,
-  updateCashFlowPrediction,
-  getCashFlowPredictions,
-  createForecastingScenario,
-  updateForecastingScenario,
-  getForecastingScenarios,
-  createPredictionAccuracy,
-  createPredictionAlert,
-  updatePredictionAlert,
-  getPredictionAlerts,
-  getModelAccuracySummary,
-  generateCashFlowForecast,
-};

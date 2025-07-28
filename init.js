@@ -10,7 +10,6 @@
  * Usage: node init.js or npm run init
  */
 
-const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 

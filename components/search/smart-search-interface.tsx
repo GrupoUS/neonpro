@@ -29,8 +29,7 @@ import type {
   SearchResponse,
   SearchResult,
   SearchType,
-} from "@/lib/search/unified-search";
-import { unifiedSearchSystem } from "@/lib/search/unified-search";
+} from "@/lib/search/types";
 import {
   Activity,
   Calendar,
@@ -108,31 +107,41 @@ export function SmartSearchInterface({
         let response: SearchResponse;
 
         if (enableNLP) {
-          // Use conversational search for NLP processing
-          response = await unifiedSearchSystem.conversationalSearch(
-            searchTerm,
-            userId,
-            userRole
-          );
+          // Use conversational search for NLP processing via API
+          const apiResponse = await fetch('/api/search/conversational', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              term: searchTerm, 
+              userId, 
+              userRole 
+            })
+          });
+          response = await apiResponse.json();
         } else {
-          // Use traditional search
-          response = await unifiedSearchSystem.search({
-            term: searchTerm,
-            filters: {
-              types: searchFilters.types,
-              dateRange: searchFilters.dateRange
+          // Use traditional search via API
+          const apiResponse = await fetch('/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              term: searchTerm,
+              filters: {
+                types: searchFilters.types,
+                dateRange: searchFilters.dateRange
                 ? {
                     start: new Date(searchFilters.dateRange.start),
                     end: new Date(searchFilters.dateRange.end),
                   }
                 : undefined,
-            },
-            options: {
-              useNLP: false,
-              limit: maxResults,
-              sortBy: searchFilters.sortBy,
-            },
+              },
+              options: {
+                useNLP: false,
+                limit: maxResults,
+                sortBy: searchFilters.sortBy,
+              },
+            }),
           });
+          response = await apiResponse.json();
         }
 
         setSearchResponse(response);

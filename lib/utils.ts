@@ -34,3 +34,12 @@ export function formatDateTime(date: string | Date): string {
     minute: "2-digit",
   }).format(dateObj);
 }
+
+// Format percentage
+export function formatPercentage(value: number, decimals: number = 2): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "percent",
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value / 100);
+}

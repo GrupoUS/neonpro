@@ -1,7 +1,8 @@
 // Professional Management Supabase Functions
 // FHIR-compliant healthcare professional data management with modern automation
 
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/app/utils/supabase/client';
+const supabase = createClient();
 import type { Database } from '@/types/supabase';
 import type {
   Professional,

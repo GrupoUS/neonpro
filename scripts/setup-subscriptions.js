@@ -53,7 +53,7 @@ async function checkDependencies() {
     // Verificar se node_modules existe
     if (!fs.existsSync("node_modules")) {
       console.log("   Instalando dependências...");
-      execSync("npm install", { stdio: "pipe" });
+      execSync("npm install", { stdio: "pipe", shell: false });
     }
 
     console.log("   Dependências verificadas");

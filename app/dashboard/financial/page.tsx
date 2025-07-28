@@ -38,6 +38,10 @@ import { InvoiceManager } from '@/components/financial/invoice-manager';
 import { PaymentManager } from '@/components/financial/payment-manager';
 import FinancialReportingDashboard from '@/components/financial/financial-reporting-dashboard';
 import PredictiveCashFlowDashboard from '@/components/financial/predictive-cash-flow-dashboard';
+import RevenueAnalyticsDashboard from '@/components/financial/revenue-analytics-dashboard';
+import ExpenseBudgetDashboard from '@/components/financial/expense-budget-dashboard';
+import KPIDashboard from '@/components/analytics/kpi-dashboard';
+import TaxDashboard from '@/components/tax/tax-dashboard';
 
 // Types
 import type { Invoice, Payment } from '@/lib/types/financial';
@@ -210,12 +214,16 @@ export default function FinancialDashboard() {
 
       {/* Main Interface */}
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="invoices">Faturas</TabsTrigger>
           <TabsTrigger value="payments">Pagamentos</TabsTrigger>
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
+          <TabsTrigger value="kpis">KPI Dashboard</TabsTrigger>
+          <TabsTrigger value="revenue">Revenue Analytics</TabsTrigger>
+          <TabsTrigger value="expenses">Despesas & Orçamento</TabsTrigger>
           <TabsTrigger value="predictive">Previsões</TabsTrigger>
+          <TabsTrigger value="tax">Fiscal</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -368,10 +376,36 @@ export default function FinancialDashboard() {
           />
         </TabsContent>
 
+        {/* KPI Dashboard Tab - Story 5.4 Implementation */}
+        <TabsContent value="kpis" className="space-y-6">
+          <KPIDashboard 
+            userId={clinicId || 'default-clinic-id'}
+            isEditable={true}
+            refreshInterval={30000}
+          />
+        </TabsContent>
+
+        {/* Revenue Analytics Tab - Story 5.1 Task 4 */}
+        <TabsContent value="revenue" className="space-y-6">
+          <RevenueAnalyticsDashboard />
+        </TabsContent>
+
+        {/* Expenses & Budget Tab - Story 5.1 Task 5 */}
+        <TabsContent value="expenses" className="space-y-6">
+          <ExpenseBudgetDashboard />
+        </TabsContent>
+
         {/* Predictive Tab - Predictive Cash Flow Analysis */}
         <TabsContent value="predictive" className="space-y-6">
           <PredictiveCashFlowDashboard 
             clinicId={clinicId || 'default-clinic-id'} 
+          />
+        </TabsContent>
+
+        {/* Tax Management Tab - Story 5.5 Implementation */}
+        <TabsContent value="tax" className="space-y-6">
+          <TaxDashboard 
+            clinicId={clinicId || 'default-clinic-id'}
           />
         </TabsContent>
       </Tabs>

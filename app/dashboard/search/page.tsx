@@ -12,7 +12,7 @@ import {
   GlobalSearchStats,
   SearchResponse,
   SearchResult,
-} from "@/lib/search/unified-search";
+} from "@/lib/search/types";
 import {
   Clock,
   Filter,
