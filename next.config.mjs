@@ -113,6 +113,39 @@ const nextConfig = {
       use: ["@svgr/webpack"],
     });
 
+    // Suppress OpenTelemetry critical dependency warnings
+    // These warnings are cosmetic and do not affect functionality
+    if (!config.ignoreWarnings) {
+      config.ignoreWarnings = [];
+    }
+    
+    // Suppress all OpenTelemetry instrumentation critical dependency warnings
+    config.ignoreWarnings.push(
+      // Match any file in OpenTelemetry instrumentation modules
+      (warning) => {
+        return (
+          warning.module &&
+          warning.module.resource &&
+          warning.module.resource.includes('@opentelemetry/instrumentation') &&
+          warning.message &&
+          warning.message.includes('Critical dependency: the request of a dependency is an expression')
+        );
+      }
+    );
+    
+    // Suppress require-in-the-middle warnings
+    config.ignoreWarnings.push(
+      (warning) => {
+        return (
+          warning.module &&
+          warning.module.resource &&
+          warning.module.resource.includes('require-in-the-middle') &&
+          warning.message &&
+          warning.message.includes('Critical dependency')
+        );
+      }
+    );
+
     return config;
   },
 

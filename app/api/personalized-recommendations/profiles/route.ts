@@ -1,16 +1,16 @@
 // Story 9.2: Personalized Treatment Recommendations - API Profiles Route
 // Recommendation profiles API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
+import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
-    createRecommendationProfileSchema,
-    updateRecommendationProfileSchema
-} from '@/app/lib/validations/personalized-recommendations';
+    createRecommendationProfileRequestSchema,
+    updateRecommendationProfileRequestSchema
+} from '../../../lib/validations/personalized-recommendations';
 import {
     CreateRecommendationProfileRequest,
     UpdateRecommendationProfileRequest
-} from '@/app/types/personalized-recommendations';
-import { NextRequest, NextResponse } from 'next/server';
+} from '../../../types/personalized-recommendations';
 
 // Get recommendation profiles
 export async function GET(request: NextRequest) {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = createRecommendationProfileSchema.safeParse(body);
+    const validationResult = createRecommendationProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 
@@ -82,7 +82,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = updateRecommendationProfileSchema.safeParse(body);
+    const validationResult = updateRecommendationProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 

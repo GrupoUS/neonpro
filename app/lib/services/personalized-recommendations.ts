@@ -23,8 +23,8 @@ import type {
     TreatmentRecommendation,
     UpdateRecommendationProfileRequest,
     UpdateSafetyProfileRequest
-} from '@/app/types/personalized-recommendations';
-import { createClient } from '@/app/utils/supabase/server';
+} from '../../types/personalized-recommendations';
+import { createClient } from '../../utils/supabase/server';
 
 // Query interfaces for this service
 interface RecommendationQuery {
@@ -383,7 +383,7 @@ export class PersonalizedRecommendationService {
     safetyProfile: SafetyProfile | null,
     recommendationCount: number
   ): string {
-    const factorTypes = [...new Set(factors.map(f => f.factor_type))];
+    const factorTypes = Array.from(new Set(factors.map(f => f.factor_type)));
     const hasCommonFactors = factorTypes.includes('demographic') && factorTypes.includes('medical_history');
     
     let explanation = `Generated ${recommendationCount} personalized recommendations based on `;

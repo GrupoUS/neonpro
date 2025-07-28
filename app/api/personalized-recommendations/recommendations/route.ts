@@ -1,16 +1,16 @@
 // Story 9.2: Personalized Treatment Recommendations - API Recommendations Route
 // Treatment recommendations API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
+import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
-    approveRecommendationSchema,
-    createTreatmentRecommendationSchema
-} from '@/app/lib/validations/personalized-recommendations';
+    approveRecommendationRequestSchema,
+    createTreatmentRecommendationRequestSchema
+} from '../../../lib/validations/personalized-recommendations';
 import {
     ApproveRecommendationRequest,
     CreateTreatmentRecommendationRequest
-} from '@/app/types/personalized-recommendations';
-import { NextRequest, NextResponse } from 'next/server';
+} from '../../../types/personalized-recommendations';
 
 // Get treatment recommendations
 export async function GET(request: NextRequest) {
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = createTreatmentRecommendationSchema.safeParse(body);
+    const validationResult = createTreatmentRecommendationRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 
@@ -83,7 +83,7 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = approveRecommendationSchema.safeParse(body);
+    const validationResult = approveRecommendationRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 

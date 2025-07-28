@@ -98,6 +98,18 @@ const navigationItems = [
     description: "Predição de sucesso de tratamentos com IA",
   },
   {
+    title: "Recomendações Personalizadas",
+    href: "/dashboard/personalized-recommendations",
+    icon: Target,
+    description: "Recomendações de tratamento personalizadas com IA",
+  },
+  {
+    title: "Otimização de Protocolos",
+    href: "/dashboard/automated-protocol-optimization",
+    icon: Settings,
+    description: "Otimização automatizada de protocolos com IA",
+  },
+  {
     title: "Relatórios",
     href: "/dashboard/reports",
     icon: BarChart3,

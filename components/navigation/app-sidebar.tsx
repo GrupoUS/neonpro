@@ -2,10 +2,13 @@
 
 import {
   Activity,
+  AlertTriangle,
   BarChart3,
   Bell,
+  BookOpen,
   Bot,
   Calendar,
+  Camera,
   CreditCard,
   FileText,
   HelpCircle,
@@ -13,6 +16,7 @@ import {
   LogOut,
   Settings,
   Shield,
+  TrendingUp,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -230,6 +234,106 @@ const navigationData = {
         {
           title: "Exportar Dados",
           url: "/dashboard/reports/export",
+        },
+      ],
+    },
+    {
+      title: "Risk Assessment",
+      url: "/dashboard/risk-assessment",
+      icon: AlertTriangle,
+      items: [
+        {
+          title: "Análise de Riscos",
+          url: "/dashboard/risk-assessment",
+        },
+        {
+          title: "Validações",
+          url: "/dashboard/risk-assessment?tab=validations",
+        },
+        {
+          title: "Alertas",
+          url: "/dashboard/risk-assessment?tab=alerts",
+        },
+        {
+          title: "Configurações",
+          url: "/dashboard/risk-assessment?tab=settings",
+        },
+      ],
+    },
+    {
+      title: "Base de Conhecimento Médico",
+      url: "/dashboard/medical-knowledge",
+      icon: BookOpen,
+      items: [
+        {
+          title: "Visão Geral",
+          url: "/dashboard/medical-knowledge",
+        },
+        {
+          title: "Medicamentos",
+          url: "/dashboard/medical-knowledge?tab=drugs",
+        },
+        {
+          title: "Interações",
+          url: "/dashboard/medical-knowledge?tab=interactions",
+        },
+        {
+          title: "Validação de Evidências",
+          url: "/dashboard/medical-knowledge?tab=validation",
+        },
+      ],
+    },
+    {
+      title: "Análise Antes/Depois",
+      url: "/dashboard/automated-analysis",
+      icon: Camera,
+      items: [
+        {
+          title: "Visão Geral",
+          url: "/dashboard/automated-analysis",
+        },
+        {
+          title: "Sessões de Análise",
+          url: "/dashboard/automated-analysis?tab=sessions",
+        },
+        {
+          title: "Processamento",
+          url: "/dashboard/automated-analysis?tab=analysis",
+        },
+        {
+          title: "Relatórios",
+          url: "/dashboard/automated-analysis?tab=reports",
+        },
+        {
+          title: "Qualidade",
+          url: "/dashboard/automated-analysis?tab=quality",
+        },
+      ],
+    },
+    {
+      title: "Acompanhamento de Progresso",
+      url: "/dashboard/progress-tracking",
+      icon: TrendingUp,
+      items: [
+        {
+          title: "Visão Geral",
+          url: "/dashboard/progress-tracking",
+        },
+        {
+          title: "Sessões de Acompanhamento",
+          url: "/dashboard/progress-tracking?tab=tracking",
+        },
+        {
+          title: "Marcos de Progresso",
+          url: "/dashboard/progress-tracking?tab=milestones",
+        },
+        {
+          title: "Alertas",
+          url: "/dashboard/progress-tracking?tab=alerts",
+        },
+        {
+          title: "Análises Avançadas",
+          url: "/dashboard/progress-tracking?tab=analytics",
         },
       ],
     },

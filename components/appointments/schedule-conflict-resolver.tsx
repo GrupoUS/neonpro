@@ -77,7 +77,7 @@ export function ScheduleConflictResolver({
       const professional = professionals.find(p => p.id === appointment.professionalId)
       
       // Find if there's an existing group for this professional with overlapping time
-      let existingGroup = groups.find(group => 
+      const existingGroup = groups.find(group => 
         group.professionalId === appointment.professionalId &&
         (
           (appointment.start >= group.timeRange.start && appointment.start < group.timeRange.end) ||

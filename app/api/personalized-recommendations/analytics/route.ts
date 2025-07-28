@@ -1,13 +1,12 @@
 // Story 9.2: Personalized Treatment Recommendations - API Analytics Route
 // Recommendation analytics API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
-import { 
-  recordPerformanceRequestSchema,
-  updateEffectivenessSchema 
-} from '@/app/lib/validations/personalized-recommendations';
-import { RecordPerformanceRequest } from '@/app/types/personalized-recommendations';
 import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import {
+    recordPerformanceRequestSchema
+} from '../../../lib/validations/personalized-recommendations';
+import { RecordPerformanceRequest } from '../../../types/personalized-recommendations';
 
 // Get recommendation analytics
 export async function GET(request: NextRequest) {
@@ -19,12 +18,10 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    const analytics = await personalizedRecommendationsService.getAnalytics({
-      provider_id: providerId || undefined,
-      patient_id: patientId || undefined,
-      start_date: startDate || undefined,
-      end_date: endDate || undefined
-    });
+    const analytics = await personalizedRecommendationsService.getRecommendationAnalytics(
+      startDate || undefined,
+      endDate || undefined
+    );
     
     return NextResponse.json({
       analytics,
@@ -45,7 +42,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = recordPerformanceSchema.safeParse(body);
+    const validationResult = recordPerformanceRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 
@@ -57,8 +54,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const performanceData: RecordPerformanceRequest = validationResult.data;
-    const performance = await personalizedRecommendationsService.recordPerformance(performanceData);
+    // The validated data is guaranteed to have all required fields by the schema
+    const performance = await personalizedRecommendationsService.recordRecommendationPerformance(
+      validationResult.data as RecordPerformanceRequest
+    );
     
     return NextResponse.json({
       performance,

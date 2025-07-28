@@ -1,10 +1,10 @@
 // Story 9.2: Personalized Treatment Recommendations - API Feedback Route
 // Recommendation feedback API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
-import { createRecommendationFeedbackSchema } from '@/app/lib/validations/personalized-recommendations';
-import { CreateRecommendationFeedbackRequest } from '@/app/types/personalized-recommendations';
 import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createRecommendationFeedbackRequestSchema } from '../../../lib/validations/personalized-recommendations';
+import { CreateRecommendationFeedbackRequest } from '../../../types/personalized-recommendations';
 
 // Get recommendation feedback
 export async function GET(request: NextRequest) {
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = createRecommendationFeedbackSchema.safeParse(body);
+    const validationResult = createRecommendationFeedbackRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 

@@ -1,10 +1,10 @@
 // Story 9.2: Personalized Treatment Recommendations - API Safety Route
 // Safety profiles API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
-import { updateSafetyProfileSchema } from '@/app/lib/validations/personalized-recommendations';
-import { UpdateSafetyProfileRequest } from '@/app/types/personalized-recommendations';
 import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { updateSafetyProfileRequestSchema } from '../../../lib/validations/personalized-recommendations';
+import { UpdateSafetyProfileRequest } from '../../../types/personalized-recommendations';
 
 // Get safety profile
 export async function GET(request: NextRequest) {
@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = updateSafetyProfileSchema.safeParse(body);
+    const validationResult = updateSafetyProfileRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 

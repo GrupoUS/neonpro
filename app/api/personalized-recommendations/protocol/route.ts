@@ -1,10 +1,10 @@
 // Story 9.2: Personalized Treatment Recommendations - API Protocol Route
 // Protocol customizations API endpoint
 
-import { personalizedRecommendationsService } from '@/app/lib/services/personalized-recommendations';
-import { createProtocolCustomizationSchema } from '@/app/lib/validations/personalized-recommendations';
-import { CreateProtocolCustomizationRequest } from '@/app/types/personalized-recommendations';
 import { NextRequest, NextResponse } from 'next/server';
+import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createProtocolCustomizationRequestSchema } from '../../../lib/validations/personalized-recommendations';
+import { CreateProtocolCustomizationRequest } from '../../../types/personalized-recommendations';
 
 // Get protocol customizations
 export async function GET(request: NextRequest) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate request body
-    const validationResult = createProtocolCustomizationSchema.safeParse(body);
+    const validationResult = createProtocolCustomizationRequestSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         { 

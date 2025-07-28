@@ -760,7 +760,7 @@ export class TreatmentFollowupService {
       scheduledFollowups.push(initialFollowup);
 
       // Subsequent follow-ups
-      let currentDate = new Date(initialDate);
+      const currentDate = new Date(initialDate);
       for (let i = 0; i < Math.min(protocol.subsequent_intervals.length, protocol.max_followups - 1); i++) {
         currentDate.setDate(currentDate.getDate() + protocol.subsequent_intervals[i]);
         

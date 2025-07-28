@@ -139,7 +139,7 @@ export function AppointmentCalendar({
     const isBusinessHours = hour >= 8 && hour < 18
     const isLunchTime = hour >= 12 && hour < 14
     
-    let style: React.CSSProperties = {}
+    const style: React.CSSProperties = {}
     
     if (!isBusinessHours) {
       style.backgroundColor = '#F3F4F6' // gray-100
@@ -157,7 +157,7 @@ export function AppointmentCalendar({
     const isToday = moment(date).isSame(moment(), 'day')
     
     let className = ''
-    let style: React.CSSProperties = {}
+    const style: React.CSSProperties = {}
     
     if (isWeekend) {
       className += ' weekend-day'

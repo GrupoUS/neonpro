@@ -1,8 +1,9 @@
 // app/utils/supabase/server.ts
-// Comentário: Cria um cliente Supabase para uso no lado do servidor (Server Components, Route Handlers, Server Actions).
-// Gerencia a sessão de forma segura através de cookies.
+// Task 1.3 - CONNECTION POOLING OPTIMIZATION
+// Updated server client with connection pooling integration
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { getConnectionPoolManager } from "@/lib/supabase/connection-pool-manager";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -37,3 +38,12 @@ export async function createClient() {
 
 // Export alias for compatibility
 export { createClient as createServerClient };
+
+// New optimized server client factory with pooling
+export async function createOptimizedServerClient(clinicId: string) {
+  const poolManager = getConnectionPoolManager()
+  return await poolManager.getServerClient(clinicId)
+}
+
+// Legacy support - gradually migrate to optimized version
+export { createClient as createLegacyServerClient };

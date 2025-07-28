@@ -54,7 +54,7 @@ export class SupplierManagementService {
     const supabase = await this.getSupabaseClient();
     
     // Generate unique supplier code if not provided or verify uniqueness
-    let supplierCode = supplierData.supplier_code;
+    const supplierCode = supplierData.supplier_code;
     const { data: existingCode } = await supabase
       .from('suppliers')
       .select('id')

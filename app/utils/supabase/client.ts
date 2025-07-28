@@ -1,8 +1,18 @@
 // app/utils/supabase/client.ts
-// Comentário: Cria um cliente Supabase para ser usado em Componentes de Cliente (executados no navegador).
-// É essencial para interações de UI como login, logout, etc.
+// Task 1.3 - CONNECTION POOLING OPTIMIZATION
+// Updated client with connection pooling integration
 import { createBrowserClient } from "@supabase/ssr"
+import { getConnectionPoolManager } from "@/lib/supabase/connection-pool-manager"
 
 export function createClient() {
   return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
 }
+
+// New optimized client factory with pooling
+export function createOptimizedClient(clinicId: string) {
+  const poolManager = getConnectionPoolManager()
+  return poolManager.getBrowserClient(clinicId)
+}
+
+// Legacy support - gradually migrate to optimized version
+export { createClient as createLegacyClient }
