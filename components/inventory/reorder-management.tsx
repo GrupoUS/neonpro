@@ -1,27 +1,16 @@
-'use client'
+"use client";
 
-import { useState, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select'
-import { 
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -29,167 +18,183 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Progress } from '@/components/ui/progress'
-import { 
-  ShoppingCart,
-  TrendingUp,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   AlertTriangle,
+  Bot,
+  Calculator,
   CheckCircle,
   Clock,
-  Package,
-  Calculator,
-  Bot,
+  DollarSign,
   FileText,
+  Package,
+  ShoppingCart,
+  TrendingUp,
   Truck,
-  DollarSign
-} from 'lucide-react'
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface ReorderSuggestion {
-  productId: string
-  productName: string
-  category: string
-  currentStock: number
-  minStock: number
-  maxStock: number
-  unit: string
-  
+  productId: string;
+  productName: string;
+  category: string;
+  currentStock: number;
+  minStock: number;
+  maxStock: number;
+  unit: string;
+
   // Análise preditiva
-  averageConsumption: number // por mês
-  consumptionTrend: 'increasing' | 'stable' | 'decreasing'
-  seasonalFactor: number // multiplicador sazonal
-  leadTime: number // dias para entrega
-  safetyStock: number
-  
+  averageConsumption: number; // por mês
+  consumptionTrend: "increasing" | "stable" | "decreasing";
+  seasonalFactor: number; // multiplicador sazonal
+  leadTime: number; // dias para entrega
+  safetyStock: number;
+
   // Sugestão de pedido
-  suggestedQuantity: number
-  suggestedOrderDate: string
-  urgency: 'critical' | 'high' | 'medium' | 'low'
-  
+  suggestedQuantity: number;
+  suggestedOrderDate: string;
+  urgency: "critical" | "high" | "medium" | "low";
+
   // Fornecedor e custos
-  preferredSupplierId: string
-  preferredSupplierName: string
-  unitCost: number
-  totalCost: number
-  minOrderQuantity: number
-  bulkDiscountAvailable: boolean
-  bulkDiscountTier?: { quantity: number; discount: number }
-  
+  preferredSupplierId: string;
+  preferredSupplierName: string;
+  unitCost: number;
+  totalCost: number;
+  minOrderQuantity: number;
+  bulkDiscountAvailable: boolean;
+  bulkDiscountTier?: { quantity: number; discount: number };
+
   // Histórico e análise
-  lastOrderDate?: string
-  lastOrderQuantity?: number
-  stockoutRisk: number // 0-100%
-  daysUntilStockout: number
-  
+  lastOrderDate?: string;
+  lastOrderQuantity?: number;
+  stockoutRisk: number; // 0-100%
+  daysUntilStockout: number;
+
   // Compliance
-  temperatureControlled: boolean
-  anvisaRegistration?: string
-  shelfLife: number // meses
-  
+  temperatureControlled: boolean;
+  anvisaRegistration?: string;
+  shelfLife: number; // meses
+
   // Status
-  status: 'suggested' | 'approved' | 'ordered' | 'received' | 'rejected'
-  approvedBy?: string
-  approvedAt?: string
-  orderNumber?: string
+  status: "suggested" | "approved" | "ordered" | "received" | "rejected";
+  approvedBy?: string;
+  approvedAt?: string;
+  orderNumber?: string;
 }
 
 // Mock data for demonstration
 const mockReorderSuggestions: ReorderSuggestion[] = [
   {
-    productId: 'PRD001',
-    productName: 'Botox Allergan 100U',
-    category: 'botox',
+    productId: "PRD001",
+    productName: "Botox Allergan 100U",
+    category: "botox",
     currentStock: 8,
     minStock: 10,
     maxStock: 50,
-    unit: 'frasco',
+    unit: "frasco",
     averageConsumption: 12,
-    consumptionTrend: 'increasing',
+    consumptionTrend: "increasing",
     seasonalFactor: 1.2,
     leadTime: 5,
     safetyStock: 3,
     suggestedQuantity: 25,
-    suggestedOrderDate: '2024-11-18',
-    urgency: 'critical',
-    preferredSupplierId: 'SUP001',
-    preferredSupplierName: 'Medfarma Distribuidora',
-    unitCost: 650.00,
-    totalCost: 16250.00,
+    suggestedOrderDate: "2024-11-18",
+    urgency: "critical",
+    preferredSupplierId: "SUP001",
+    preferredSupplierName: "Medfarma Distribuidora",
+    unitCost: 650.0,
+    totalCost: 16250.0,
     minOrderQuantity: 10,
     bulkDiscountAvailable: true,
     bulkDiscountTier: { quantity: 20, discount: 5 },
-    lastOrderDate: '2024-10-15',
+    lastOrderDate: "2024-10-15",
     lastOrderQuantity: 30,
     stockoutRisk: 85,
     daysUntilStockout: 3,
     temperatureControlled: true,
-    anvisaRegistration: '10295770028',
+    anvisaRegistration: "10295770028",
     shelfLife: 24,
-    status: 'suggested'
+    status: "suggested",
   },
   {
-    productId: 'PRD002',
-    productName: 'Ácido Hialurônico Juvederm Ultra',
-    category: 'fillers',
+    productId: "PRD002",
+    productName: "Ácido Hialurônico Juvederm Ultra",
+    category: "fillers",
     currentStock: 12,
     minStock: 8,
     maxStock: 40,
-    unit: 'seringa',
+    unit: "seringa",
     averageConsumption: 8,
-    consumptionTrend: 'stable',
+    consumptionTrend: "stable",
     seasonalFactor: 1.0,
     leadTime: 3,
     safetyStock: 2,
     suggestedQuantity: 20,
-    suggestedOrderDate: '2024-11-25',
-    urgency: 'medium',
-    preferredSupplierId: 'SUP002',
-    preferredSupplierName: 'Beauty Supply LTDA',
-    unitCost: 950.00,
-    totalCost: 19000.00,
+    suggestedOrderDate: "2024-11-25",
+    urgency: "medium",
+    preferredSupplierId: "SUP002",
+    preferredSupplierName: "Beauty Supply LTDA",
+    unitCost: 950.0,
+    totalCost: 19000.0,
     minOrderQuantity: 5,
     bulkDiscountAvailable: false,
-    lastOrderDate: '2024-11-01',
+    lastOrderDate: "2024-11-01",
     lastOrderQuantity: 15,
     stockoutRisk: 35,
     daysUntilStockout: 18,
     temperatureControlled: true,
-    anvisaRegistration: '10295770029',
+    anvisaRegistration: "10295770029",
     shelfLife: 18,
-    status: 'suggested'
-  }
-]
+    status: "suggested",
+  },
+];
 
 const urgencyConfig = {
   critical: {
-    color: 'bg-red-100 text-red-800 border-red-200',
-    label: 'Crítico',
+    color: "bg-red-100 text-red-800 border-red-200",
+    label: "Crítico",
     icon: AlertTriangle,
-    bgColor: 'bg-red-50'
+    bgColor: "bg-red-50",
   },
   high: {
-    color: 'bg-orange-100 text-orange-800 border-orange-200',
-    label: 'Alto',
+    color: "bg-orange-100 text-orange-800 border-orange-200",
+    label: "Alto",
     icon: Clock,
-    bgColor: 'bg-orange-50'
+    bgColor: "bg-orange-50",
   },
   medium: {
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    label: 'Médio',
+    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    label: "Médio",
     icon: Package,
-    bgColor: 'bg-yellow-50'
+    bgColor: "bg-yellow-50",
   },
   low: {
-    color: 'bg-green-100 text-green-800 border-green-200',
-    label: 'Baixo',
+    color: "bg-green-100 text-green-800 border-green-200",
+    label: "Baixo",
     icon: CheckCircle,
-    bgColor: 'bg-green-50'
-  }
-}
+    bgColor: "bg-green-50",
+  },
+};
 
 /**
  * Reorder Management Component for NeonPro Inventory System
- * 
+ *
  * Features:
  * - AI-powered predictive analysis for reorder suggestions
  * - Seasonal consumption pattern analysis
@@ -200,81 +205,92 @@ const urgencyConfig = {
  * - Automated approval workflow
  * - Integration with purchase order system
  * - Cost optimization recommendations
- * 
+ *
  * @author VoidBeast V4.0 + neonpro-code-guardian
  * @version 1.0.0
  * @compliance ANVISA, CFM, LGPD
  */
 export function ReorderManagement() {
-  const [selectedUrgency, setSelectedUrgency] = useState<string>('all')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([])
-  const [isBulkOrderOpen, setIsBulkOrderOpen] = useState(false)
+  const [selectedUrgency, setSelectedUrgency] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
+  const [isBulkOrderOpen, setIsBulkOrderOpen] = useState(false);
 
   const filteredSuggestions = useMemo(() => {
-    return mockReorderSuggestions.filter(suggestion => {
-      const matchesUrgency = selectedUrgency === 'all' || suggestion.urgency === selectedUrgency
-      const matchesCategory = selectedCategory === 'all' || suggestion.category === selectedCategory
-      return matchesUrgency && matchesCategory
-    })
-  }, [selectedUrgency, selectedCategory])
+    return mockReorderSuggestions.filter((suggestion) => {
+      const matchesUrgency =
+        selectedUrgency === "all" || suggestion.urgency === selectedUrgency;
+      const matchesCategory =
+        selectedCategory === "all" || suggestion.category === selectedCategory;
+      return matchesUrgency && matchesCategory;
+    });
+  }, [selectedUrgency, selectedCategory]);
 
   const summaryMetrics = useMemo(() => {
-    const totalSuggestions = filteredSuggestions.length
-    const criticalCount = filteredSuggestions.filter(s => s.urgency === 'critical').length
-    const totalValue = filteredSuggestions.reduce((sum, s) => sum + s.totalCost, 0)
-    const avgStockoutRisk = filteredSuggestions.reduce((sum, s) => sum + s.stockoutRisk, 0) / totalSuggestions || 0
-    
+    const totalSuggestions = filteredSuggestions.length;
+    const criticalCount = filteredSuggestions.filter(
+      (s) => s.urgency === "critical"
+    ).length;
+    const totalValue = filteredSuggestions.reduce(
+      (sum, s) => sum + s.totalCost,
+      0
+    );
+    const avgStockoutRisk =
+      filteredSuggestions.reduce((sum, s) => sum + s.stockoutRisk, 0) /
+        totalSuggestions || 0;
+
     return {
       totalSuggestions,
       criticalCount,
       totalValue,
-      avgStockoutRisk
-    }
-  }, [filteredSuggestions])
+      avgStockoutRisk,
+    };
+  }, [filteredSuggestions]);
 
   const formatCurrency = (value: number) => {
-    return value.toLocaleString('pt-BR', { 
-      style: 'currency', 
-      currency: 'BRL',
-      minimumFractionDigits: 2 
-    })
-  }
+    return value.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    });
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
-  }
+    return new Date(dateString).toLocaleDateString("pt-BR");
+  };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'increasing':
-        return <TrendingUp className="w-3 h-3 text-green-500" />
-      case 'decreasing':
-        return <TrendingUp className="w-3 h-3 text-red-500 rotate-180" />
+      case "increasing":
+        return <TrendingUp className="w-3 h-3 text-green-500" />;
+      case "decreasing":
+        return <TrendingUp className="w-3 h-3 text-red-500 rotate-180" />;
       default:
-        return <div className="w-3 h-3 bg-blue-500 rounded-full" />
+        return <div className="w-3 h-3 bg-blue-500 rounded-full" />;
     }
-  }
+  };
 
   const handleSuggestionSelect = (suggestionId: string, checked: boolean) => {
     if (checked) {
-      setSelectedSuggestions([...selectedSuggestions, suggestionId])
+      setSelectedSuggestions([...selectedSuggestions, suggestionId]);
     } else {
-      setSelectedSuggestions(selectedSuggestions.filter(id => id !== suggestionId))
+      setSelectedSuggestions(
+        selectedSuggestions.filter((id) => id !== suggestionId)
+      );
     }
-  }
+  };
 
   const handleApproveSelected = () => {
     // In a real implementation, this would update the database
-    console.log('Approving suggestions:', selectedSuggestions)
-    setSelectedSuggestions([])
-  }
+    console.log("Approving suggestions:", selectedSuggestions);
+    setSelectedSuggestions([]);
+  };
 
   const handleGeneratePO = () => {
     // In a real implementation, this would generate purchase orders
-    console.log('Generating purchase orders for approved suggestions')
-    setIsBulkOrderOpen(false)
-  }
+    console.log("Generating purchase orders for approved suggestions");
+    setIsBulkOrderOpen(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -284,8 +300,12 @@ export function ReorderManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Sugestões Ativas</p>
-                <p className="text-2xl font-bold">{summaryMetrics.totalSuggestions}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Sugestões Ativas
+                </p>
+                <p className="text-2xl font-bold">
+                  {summaryMetrics.totalSuggestions}
+                </p>
               </div>
               <Bot className="h-8 w-8 text-blue-500" />
             </div>
@@ -296,8 +316,12 @@ export function ReorderManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Críticos</p>
-                <p className="text-2xl font-bold text-red-600">{summaryMetrics.criticalCount}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Críticos
+                </p>
+                <p className="text-2xl font-bold text-red-600">
+                  {summaryMetrics.criticalCount}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-500" />
             </div>
@@ -308,8 +332,12 @@ export function ReorderManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
-                <p className="text-2xl font-bold text-green-600">{formatCurrency(summaryMetrics.totalValue)}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Valor Total
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {formatCurrency(summaryMetrics.totalValue)}
+                </p>
               </div>
               <DollarSign className="h-8 w-8 text-green-500" />
             </div>
@@ -320,15 +348,18 @@ export function ReorderManagement() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Risco Médio</p>
-                <p className="text-2xl font-bold text-amber-600">{summaryMetrics.avgStockoutRisk.toFixed(1)}%</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Risco Médio
+                </p>
+                <p className="text-2xl font-bold text-amber-600">
+                  {summaryMetrics.avgStockoutRisk.toFixed(1)}%
+                </p>
               </div>
               <Calculator className="h-8 w-8 text-amber-500" />
             </div>
           </CardContent>
         </Card>
       </div>
-
       {/* Filters and Controls */}
       <div className="flex flex-col sm:flex-row gap-4">
         <Select value={selectedUrgency} onValueChange={setSelectedUrgency}>
@@ -365,7 +396,7 @@ export function ReorderManagement() {
               Aprovar Selecionados ({selectedSuggestions.length})
             </Button>
           )}
-          
+
           <Dialog open={isBulkOrderOpen} onOpenChange={setIsBulkOrderOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -380,26 +411,31 @@ export function ReorderManagement() {
                   Consolidar sugestões aprovadas em pedidos de compra
                 </DialogDescription>
               </DialogHeader>
-              
+
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  Sistema gerará pedidos otimizados por fornecedor com aprovação automática...
+                  Sistema gerará pedidos otimizados por fornecedor com aprovação
+                  automática...
                 </p>
               </div>
-              
+
               <DialogFooter>
                 <Button onClick={handleGeneratePO}>Gerar Pedidos</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
-      </div>      {/* Reorder Suggestions Table */}
+      </div>{" "}
+      {/* Reorder Suggestions Table */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Sugestões de Reposição ({filteredSuggestions.length})</span>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+              <Badge
+                variant="outline"
+                className="bg-blue-50 text-blue-700 border-blue-200"
+              >
                 <Bot className="w-3 h-3 mr-1" />
                 IA Preditiva
               </Badge>
@@ -416,12 +452,17 @@ export function ReorderManagement() {
                 <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedSuggestions.length === filteredSuggestions.length}
+                      checked={
+                        selectedSuggestions.length ===
+                        filteredSuggestions.length
+                      }
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          setSelectedSuggestions(filteredSuggestions.map(s => s.productId))
+                          setSelectedSuggestions(
+                            filteredSuggestions.map((s) => s.productId)
+                          );
                         } else {
-                          setSelectedSuggestions([])
+                          setSelectedSuggestions([]);
                         }
                       }}
                     />
@@ -437,45 +478,63 @@ export function ReorderManagement() {
               </TableHeader>
               <TableBody>
                 {filteredSuggestions.map((suggestion) => {
-                  const urgencyConfig_ = urgencyConfig[suggestion.urgency]
-                  const UrgencyIcon = urgencyConfig_.icon
-                  const isSelected = selectedSuggestions.includes(suggestion.productId)
-                  
+                  const urgencyConfig_ = urgencyConfig[suggestion.urgency];
+                  const UrgencyIcon = urgencyConfig_.icon;
+                  const isSelected = selectedSuggestions.includes(
+                    suggestion.productId
+                  );
+
                   return (
-                    <TableRow key={suggestion.productId} className="hover:bg-muted/50">
+                    <TableRow
+                      key={suggestion.productId}
+                      className="hover:bg-muted/50"
+                    >
                       <TableCell>
                         <Checkbox
                           checked={isSelected}
-                          onCheckedChange={(checked) => 
-                            handleSuggestionSelect(suggestion.productId, checked as boolean)
+                          onCheckedChange={(checked) =>
+                            handleSuggestionSelect(
+                              suggestion.productId,
+                              checked as boolean
+                            )
                           }
                         />
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium">{suggestion.productName}</div>
+                          <div className="font-medium">
+                            {suggestion.productName}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             ID: {suggestion.productId}
                           </div>
                           {suggestion.temperatureControlled && (
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                            <Badge
+                              variant="outline"
+                              className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                            >
                               Refrigerado
                             </Badge>
                           )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium">{suggestion.currentStock} {suggestion.unit}</span>
+                            <span className="font-medium">
+                              {suggestion.currentStock} {suggestion.unit}
+                            </span>
                             <div className="text-xs text-muted-foreground">
                               / {suggestion.maxStock} max
                             </div>
                           </div>
-                          <Progress 
-                            value={(suggestion.currentStock / suggestion.maxStock) * 100} 
+                          <Progress
+                            value={
+                              (suggestion.currentStock / suggestion.maxStock) *
+                              100
+                            }
                             className="h-2"
                           />
                           <div className="text-xs text-muted-foreground">
@@ -483,52 +542,67 @@ export function ReorderManagement() {
                           </div>
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-2">
                           <div className="flex items-center gap-2 text-sm">
                             {getTrendIcon(suggestion.consumptionTrend)}
-                            <span>{suggestion.averageConsumption} {suggestion.unit}/mês</span>
+                            <span>
+                              {suggestion.averageConsumption} {suggestion.unit}
+                              /mês
+                            </span>
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Tendência: {
-                              suggestion.consumptionTrend === 'increasing' ? 'Crescente' :
-                              suggestion.consumptionTrend === 'decreasing' ? 'Decrescente' : 'Estável'
-                            }
+                            Tendência:{" "}
+                            {suggestion.consumptionTrend === "increasing"
+                              ? "Crescente"
+                              : suggestion.consumptionTrend === "decreasing"
+                                ? "Decrescente"
+                                : "Estável"}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Sazonal: {(suggestion.seasonalFactor * 100).toFixed(0)}%
+                            Sazonal:{" "}
+                            {(suggestion.seasonalFactor * 100).toFixed(0)}%
                           </div>
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-2">
                           <div className="font-medium text-green-600">
                             {suggestion.suggestedQuantity} {suggestion.unit}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            Pedir até: {formatDate(suggestion.suggestedOrderDate)}
+                            Pedir até:{" "}
+                            {formatDate(suggestion.suggestedOrderDate)}
                           </div>
                           <div className="text-sm font-medium">
                             {formatCurrency(suggestion.totalCost)}
                           </div>
-                          {suggestion.bulkDiscountAvailable && suggestion.bulkDiscountTier && (
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
-                              {suggestion.bulkDiscountTier.discount}% desc. > {suggestion.bulkDiscountTier.quantity}
-                            </Badge>
-                          )}
+                          {suggestion.bulkDiscountAvailable &&
+                            suggestion.bulkDiscountTier && (
+                              <Badge
+                                variant="outline"
+                                className="bg-green-50 text-green-700 border-green-200 text-xs"
+                              >
+                                {suggestion.bulkDiscountTier.discount}% desc.
+                                &gt; {suggestion.bulkDiscountTier.quantity}
+                              </Badge>
+                            )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium text-sm">{suggestion.preferredSupplierName}</div>
+                          <div className="font-medium text-sm">
+                            {suggestion.preferredSupplierName}
+                          </div>
                           <div className="text-xs text-muted-foreground">
                             Lead time: {suggestion.leadTime} dias
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            Min. pedido: {suggestion.minOrderQuantity} {suggestion.unit}
+                            Min. pedido: {suggestion.minOrderQuantity}{" "}
+                            {suggestion.unit}
                           </div>
                           {suggestion.lastOrderDate && (
                             <div className="text-xs text-muted-foreground">
@@ -537,12 +611,12 @@ export function ReorderManagement() {
                           )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <Progress 
-                              value={suggestion.stockoutRisk} 
+                            <Progress
+                              value={suggestion.stockoutRisk}
                               className="h-2 w-20"
                             />
                             <span className="text-sm font-medium text-red-600">
@@ -553,26 +627,32 @@ export function ReorderManagement() {
                             Ruptura em {suggestion.daysUntilStockout} dias
                           </div>
                           {suggestion.stockoutRisk > 70 && (
-                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-xs">
+                            <Badge
+                              variant="outline"
+                              className="bg-red-50 text-red-700 border-red-200 text-xs"
+                            >
                               <AlertTriangle className="w-3 h-3 mr-1" />
                               Alto Risco
                             </Badge>
                           )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
-                        <Badge variant="outline" className={urgencyConfig_.color}>
+                        <Badge
+                          variant="outline"
+                          className={urgencyConfig_.color}
+                        >
                           <UrgencyIcon className="w-3 h-3 mr-1" />
                           {urgencyConfig_.label}
                         </Badge>
                       </TableCell>
                     </TableRow>
-                  )
+                  );
                 })}
               </TableBody>
             </Table>
-            
+
             {filteredSuggestions.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 <Bot className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -582,7 +662,6 @@ export function ReorderManagement() {
           </div>
         </CardContent>
       </Card>
-
       {/* AI Insights and Recommendations */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* AI Insights */}
@@ -601,32 +680,38 @@ export function ReorderManagement() {
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium text-blue-800">Tendência de Consumo</span>
+                  <span className="font-medium text-blue-800">
+                    Tendência de Consumo
+                  </span>
                 </div>
                 <p className="text-sm text-blue-700">
-                  Produtos de toxina botulínica apresentam crescimento de 15% no consumo mensal. 
-                  Considere aumentar estoque de segurança.
+                  Produtos de toxina botulínica apresentam crescimento de 15% no
+                  consumo mensal. Considere aumentar estoque de segurança.
                 </p>
               </div>
 
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Clock className="w-4 h-4 text-amber-600" />
-                  <span className="font-medium text-amber-800">Sazonalidade</span>
+                  <span className="font-medium text-amber-800">
+                    Sazonalidade
+                  </span>
                 </div>
                 <p className="text-sm text-amber-700">
-                  Dezembro apresenta aumento de 20% na demanda por procedimentos estéticos. 
-                  Ajuste automático aplicado nas sugestões.
+                  Dezembro apresenta aumento de 20% na demanda por procedimentos
+                  estéticos. Ajuste automático aplicado nas sugestões.
                 </p>
               </div>
 
               <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <DollarSign className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-green-800">Otimização de Custos</span>
+                  <span className="font-medium text-green-800">
+                    Otimização de Custos
+                  </span>
                 </div>
                 <p className="text-sm text-green-700">
-                  Identificados descontos de 5-8% para pedidos em lote. 
+                  Identificados descontos de 5-8% para pedidos em lote.
                   Potencial economia de {formatCurrency(2450)} este mês.
                 </p>
               </div>
@@ -634,11 +719,14 @@ export function ReorderManagement() {
               <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Package className="w-4 h-4 text-purple-600" />
-                  <span className="font-medium text-purple-800">Estoque de Segurança</span>
+                  <span className="font-medium text-purple-800">
+                    Estoque de Segurança
+                  </span>
                 </div>
                 <p className="text-sm text-purple-700">
-                  Recomendado aumento de 10% no estoque de segurança para produtos 
-                  com controle de temperatura devido ao prazo de entrega.
+                  Recomendado aumento de 10% no estoque de segurança para
+                  produtos com controle de temperatura devido ao prazo de
+                  entrega.
                 </p>
               </div>
             </div>
@@ -660,8 +748,13 @@ export function ReorderManagement() {
             <div className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Medfarma Distribuidora</span>
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                  <span className="text-sm font-medium">
+                    Medfarma Distribuidora
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="bg-green-50 text-green-700 border-green-200"
+                  >
                     Excelente
                   </Badge>
                 </div>
@@ -684,8 +777,13 @@ export function ReorderManagement() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Beauty Supply LTDA</span>
-                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                  <span className="text-sm font-medium">
+                    Beauty Supply LTDA
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                  >
                     Bom
                   </Badge>
                 </div>
@@ -722,7 +820,6 @@ export function ReorderManagement() {
           </CardContent>
         </Card>
       </div>
-
       {/* Automated Workflow Status */}
       <Card>
         <CardHeader>
@@ -738,19 +835,25 @@ export function ReorderManagement() {
           <div className="grid gap-4 md:grid-cols-4">
             <div className="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">12</div>
-              <div className="text-sm text-muted-foreground">Sugestões Geradas</div>
+              <div className="text-sm text-muted-foreground">
+                Sugestões Geradas
+              </div>
             </div>
-            
+
             <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="text-2xl font-bold text-yellow-600">8</div>
-              <div className="text-sm text-muted-foreground">Aguardando Aprovação</div>
+              <div className="text-sm text-muted-foreground">
+                Aguardando Aprovação
+              </div>
             </div>
-            
+
             <div className="text-center p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="text-2xl font-bold text-green-600">3</div>
-              <div className="text-sm text-muted-foreground">Pedidos Enviados</div>
+              <div className="text-sm text-muted-foreground">
+                Pedidos Enviados
+              </div>
             </div>
-            
+
             <div className="text-center p-4 bg-purple-50 border border-purple-200 rounded-lg">
               <div className="text-2xl font-bold text-purple-600">1</div>
               <div className="text-sm text-muted-foreground">Recebidos</div>
@@ -759,5 +862,5 @@ export function ReorderManagement() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

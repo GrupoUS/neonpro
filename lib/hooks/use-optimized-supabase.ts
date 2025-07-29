@@ -10,10 +10,10 @@
  * - Multi-tenant isolation support
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { SupabaseClient } from '@supabase/supabase-js'
-import { getConnectionPoolManager, HealthcheckResult, ConnectionMetrics } from '@/lib/supabase/connection-pool-manager'
+import { ConnectionMetrics, getConnectionPoolManager, HealthcheckResult } from '@/lib/supabase/connection-pool-manager'
 import { Database } from '@/types/database'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // Healthcare operation types for optimal routing
 type HealthcareOperationType = 'critical' | 'standard' | 'analytics' | 'administrative'
@@ -288,7 +288,7 @@ export function useHealthcareCompliantSupabase(clinicId: string, operationType: 
  * Hook for pool analytics and monitoring
  */
 export function usePoolAnalytics() {
-  const [analytics, setAnalytics] = useState<ReturnType<typeof getConnectionPoolManager().getPoolAnalytics> | null>(null)
+  const [analytics, setAnalytics] = useState<any | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   
   const poolManager = useMemo(() => getConnectionPoolManager(), [])

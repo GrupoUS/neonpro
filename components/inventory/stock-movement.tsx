@@ -332,294 +332,294 @@ export function StockMovement() {
   }
 
   return (
-    &lt;div className="space-y-6"&gt;
+    <div className="space-y-6">
       {/* Summary Cards */}
-      &lt;div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"&gt;
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Total Movimentações&lt;/p&gt;
-                &lt;p className="text-2xl font-bold"&gt;{movementSummary.total}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Package className="h-8 w-8 text-muted-foreground" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Movimentações</p>
+                <p className="text-2xl font-bold">{movementSummary.total}</p>
+              </div>
+              <Package className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Este Mês&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-blue-600"&gt;{movementSummary.thisMonth}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;CalendarIcon className="h-8 w-8 text-blue-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Este Mês</p>
+                <p className="text-2xl font-bold text-blue-600">{movementSummary.thisMonth}</p>
+              </div>
+              <CalendarIcon className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Pendentes&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-amber-600"&gt;{movementSummary.pending}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Clock className="h-8 w-8 text-amber-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Pendentes</p>
+                <p className="text-2xl font-bold text-amber-600">{movementSummary.pending}</p>
+              </div>
+              <Clock className="h-8 w-8 text-amber-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;ANVISA OK&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-green-600"&gt;{movementSummary.anvisaCompliant}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Shield className="h-8 w-8 text-green-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/div&gt;      {/* Filters and Search */}
-      &lt;div className="flex flex-col sm:flex-row gap-4"&gt;
-        &lt;div className="relative flex-1"&gt;
-          &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" /&gt;
-          &lt;Input
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">ANVISA OK</p>
+                <p className="text-2xl font-bold text-green-600">{movementSummary.anvisaCompliant}</p>
+              </div>
+              <Shield className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>      {/* Filters and Search */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
             placeholder="Buscar por produto, lote, usuário ou referência..."
             value={searchTerm}
-            onChange={(e) =&gt; setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
-          /&gt;
-        &lt;/div&gt;
+          />
+        </div>
         
-        &lt;Select value={selectedType} onValueChange={setSelectedType}&gt;
-          &lt;SelectTrigger className="w-40"&gt;
-            &lt;SelectValue placeholder="Tipo" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="all"&gt;Todos os Tipos&lt;/SelectItem&gt;
-            &lt;SelectItem value="entry"&gt;Entrada&lt;/SelectItem&gt;
-            &lt;SelectItem value="exit"&gt;Saída&lt;/SelectItem&gt;
-            &lt;SelectItem value="adjustment"&gt;Ajuste&lt;/SelectItem&gt;
-            &lt;SelectItem value="transfer"&gt;Transferência&lt;/SelectItem&gt;
-            &lt;SelectItem value="return"&gt;Devolução&lt;/SelectItem&gt;
-            &lt;SelectItem value="disposal"&gt;Descarte&lt;/SelectItem&gt;
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+        <Select value={selectedType} onValueChange={setSelectedType}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Tipos</SelectItem>
+            <SelectItem value="entry">Entrada</SelectItem>
+            <SelectItem value="exit">Saída</SelectItem>
+            <SelectItem value="adjustment">Ajuste</SelectItem>
+            <SelectItem value="transfer">Transferência</SelectItem>
+            <SelectItem value="return">Devolução</SelectItem>
+            <SelectItem value="disposal">Descarte</SelectItem>
+          </SelectContent>
+        </Select>
 
-        &lt;Select value={selectedStatus} onValueChange={setSelectedStatus}&gt;
-          &lt;SelectTrigger className="w-32"&gt;
-            &lt;SelectValue placeholder="Status" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="all"&gt;Todos&lt;/SelectItem&gt;
-            &lt;SelectItem value="pending"&gt;Pendente&lt;/SelectItem&gt;
-            &lt;SelectItem value="approved"&gt;Aprovado&lt;/SelectItem&gt;
-            &lt;SelectItem value="completed"&gt;Concluído&lt;/SelectItem&gt;
-            &lt;SelectItem value="rejected"&gt;Rejeitado&lt;/SelectItem&gt;
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="pending">Pendente</SelectItem>
+            <SelectItem value="approved">Aprovado</SelectItem>
+            <SelectItem value="completed">Concluído</SelectItem>
+            <SelectItem value="rejected">Rejeitado</SelectItem>
+          </SelectContent>
+        </Select>
 
-        &lt;Popover&gt;
-          &lt;PopoverTrigger asChild&gt;
-            &lt;Button variant="outline" className="w-32"&gt;
-              &lt;CalendarIcon className="mr-2 h-4 w-4" /&gt;
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-32">
+              <CalendarIcon className="mr-2 h-4 w-4" />
               Período
-            &lt;/Button&gt;
-          &lt;/PopoverTrigger&gt;
-          &lt;PopoverContent className="w-auto p-0" align="start"&gt;
-            &lt;Calendar
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
               initialFocus
               mode="range"
               defaultMonth={dateRange?.from}
               selected={{ from: dateRange.from, to: dateRange.to }}
-              onSelect={(range) =&gt; setDateRange(range || {})}
+              onSelect={(range) => setDateRange(range || {})}
               numberOfMonths={2}
-            /&gt;
-          &lt;/PopoverContent&gt;
-        &lt;/Popover&gt;
+            />
+          </PopoverContent>
+        </Popover>
 
-        &lt;Button onClick={exportMovements}&gt;
-          &lt;Download className="w-4 h-4 mr-2" /&gt;
+        <Button onClick={exportMovements}>
+          <Download className="w-4 h-4 mr-2" />
           Exportar
-        &lt;/Button&gt;
+        </Button>
 
-        &lt;Dialog open={isNewMovementOpen} onOpenChange={setIsNewMovementOpen}&gt;
-          &lt;DialogTrigger asChild&gt;
-            &lt;Button&gt;
-              &lt;Plus className="w-4 h-4 mr-2" /&gt;
+        <Dialog open={isNewMovementOpen} onOpenChange={setIsNewMovementOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
               Nova Movimentação
-            &lt;/Button&gt;
-          &lt;/DialogTrigger&gt;
-          &lt;DialogContent className="sm:max-w-[600px]"&gt;
-            &lt;DialogHeader&gt;
-              &lt;DialogTitle&gt;Nova Movimentação de Estoque&lt;/DialogTitle&gt;
-              &lt;DialogDescription&gt;
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Nova Movimentação de Estoque</DialogTitle>
+              <DialogDescription>
                 Registrar nova movimentação com compliance ANVISA
-              &lt;/DialogDescription&gt;
-            &lt;/DialogHeader&gt;
+              </DialogDescription>
+            </DialogHeader>
             
             {/* Simplified form for space - would be more complete in real implementation */}
-            &lt;div className="grid gap-4 py-4"&gt;
-              &lt;div className="text-sm text-muted-foreground"&gt;
+            <div className="grid gap-4 py-4">
+              <div className="text-sm text-muted-foreground">
                 Formulário completo de movimentação seria implementado aqui...
-              &lt;/div&gt;
-            &lt;/div&gt;
+              </div>
+            </div>
             
-            &lt;DialogFooter&gt;
-              &lt;Button type="submit"&gt;Registrar Movimentação&lt;/Button&gt;
-            &lt;/DialogFooter&gt;
-          &lt;/DialogContent&gt;
-        &lt;/Dialog&gt;
-      &lt;/div&gt;
+            <DialogFooter>
+              <Button type="submit">Registrar Movimentação</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       {/* Movements Table */}
-      &lt;Card&gt;
-        &lt;CardHeader&gt;
-          &lt;CardTitle className="flex items-center justify-between"&gt;
-            &lt;span&gt;Histórico de Movimentações ({filteredMovements.length})&lt;/span&gt;
-            &lt;div className="flex items-center gap-2"&gt;
-              &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"&gt;
-                &lt;Shield className="w-3 h-3 mr-1" /&gt;
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Histórico de Movimentações ({filteredMovements.length})</span>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Shield className="w-3 h-3 mr-1" />
                 Auditoria Completa
-              &lt;/Badge&gt;
-            &lt;/div&gt;
-          &lt;/CardTitle&gt;
-          &lt;CardDescription&gt;
+              </Badge>
+            </div>
+          </CardTitle>
+          <CardDescription>
             Trilha de auditoria completa com compliance ANVISA/CFM/LGPD
-          &lt;/CardDescription&gt;
-        &lt;/CardHeader&gt;
-        &lt;CardContent&gt;
-          &lt;div className="overflow-x-auto"&gt;
-            &lt;Table&gt;
-              &lt;TableHeader&gt;
-                &lt;TableRow&gt;
-                  &lt;TableHead&gt;Data/Hora&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Tipo&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Produto/Lote&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Qtd/Valor&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Localização&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Usuário&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Compliance&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Status&lt;/TableHead&gt;
-                &lt;/TableRow&gt;
-              &lt;/TableHeader&gt;
-              &lt;TableBody&gt;
-                {filteredMovements.map((movement) =&gt; {
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data/Hora</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Produto/Lote</TableHead>
+                  <TableHead>Qtd/Valor</TableHead>
+                  <TableHead>Localização</TableHead>
+                  <TableHead>Usuário</TableHead>
+                  <TableHead>Compliance</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMovements.map((movement) => {
                   const typeConfig = movementTypeConfig[movement.type]
                   const TypeIcon = typeConfig.icon
                   
                   return (
-                    &lt;TableRow key={movement.id} className="hover:bg-muted/50"&gt;
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="flex items-center gap-1 text-sm"&gt;
-                            &lt;CalendarIcon className="w-3 h-3 text-muted-foreground" /&gt;
+                    <TableRow key={movement.id} className="hover:bg-muted/50">
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-sm">
+                            <CalendarIcon className="w-3 h-3 text-muted-foreground" />
                             {formatBrazilianDateTime(movement.timestamp)}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             ID: {movement.id}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;Badge variant="outline" className={typeConfig.color}&gt;
-                          &lt;TypeIcon className="w-3 h-3 mr-1" /&gt;
+                      <TableCell>
+                        <Badge variant="outline" className={typeConfig.color}>
+                          <TypeIcon className="w-3 h-3 mr-1" />
                           {typeConfig.label}
-                        &lt;/Badge&gt;
-                      &lt;/TableCell&gt;
+                        </Badge>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium text-sm"&gt;{movement.productName}&lt;/div&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium text-sm">{movement.productName}</div>
                           {movement.batchNumber && (
-                            &lt;div className="flex items-center gap-1 text-xs text-muted-foreground"&gt;
-                              &lt;Package className="w-3 h-3" /&gt;
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Package className="w-3 h-3" />
                               Lote: {movement.batchNumber}
-                            &lt;/div&gt;
+                            </div>
                           )}
                           {movement.reference && (
-                            &lt;div className="text-xs text-blue-600"&gt;
+                            <div className="text-xs text-blue-600">
                               Ref: {movement.reference}
-                            &lt;/div&gt;
+                            </div>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className={`font-medium text-sm ${
-                            movement.quantity &gt; 0 ? 'text-green-600' : 'text-red-600'
-                          }`}&gt;
-                            {movement.quantity &gt; 0 ? '+' : ''}{movement.quantity} {movement.unit}
-                          &lt;/div&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className={`font-medium text-sm ${
+                            movement.quantity > 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {movement.quantity > 0 ? '+' : ''}{movement.quantity} {movement.unit}
+                          </div>
                           {movement.totalValue && (
-                            &lt;div className="text-xs text-muted-foreground"&gt;
+                            <div className="text-xs text-muted-foreground">
                               {formatCurrency(movement.totalValue)}
-                            &lt;/div&gt;
+                            </div>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1 text-sm"&gt;
+                      <TableCell>
+                        <div className="space-y-1 text-sm">
                           {movement.location.from && (
-                            &lt;div className="text-red-600"&gt;
+                            <div className="text-red-600">
                               De: {movement.location.from}
-                            &lt;/div&gt;
+                            </div>
                           )}
-                          &lt;div className="text-green-600"&gt;
+                          <div className="text-green-600">
                             Para: {movement.location.to}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="flex items-center gap-1 text-sm"&gt;
-                            &lt;User className="w-3 h-3 text-muted-foreground" /&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-sm">
+                            <User className="w-3 h-3 text-muted-foreground" />
                             {movement.userName}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             {movement.userRole}
-                          &lt;/div&gt;
+                          </div>
                           {movement.auditTrail.verified && (
-                            &lt;Badge variant="outline" className="bg-green-50 text-green-700 border-green-200"&gt;
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               Verificado
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
                           {movement.anvisaCompliance.required && (
-                            &lt;Badge 
+                            <Badge 
                               variant="outline" 
                               className={
                                 movement.anvisaCompliance.validated 
                                   ? 'bg-green-50 text-green-700 border-green-200 text-xs'
                                   : 'bg-yellow-50 text-yellow-700 border-yellow-200 text-xs'
                               }
-                            &gt;
-                              &lt;Shield className="w-3 h-3 mr-1" /&gt;
+                            >
+                              <Shield className="w-3 h-3 mr-1" />
                               ANVISA {movement.anvisaCompliance.validated ? 'OK' : 'Pendente'}
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
                           {movement.patientId && (
-                            &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs"&gt;
-                              &lt;FileText className="w-3 h-3 mr-1" /&gt;
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                              <FileText className="w-3 h-3 mr-1" />
                               LGPD Protected
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;Badge 
+                      <TableCell>
+                        <Badge 
                           variant="outline" 
                           className={
                             movement.status === 'completed' 
@@ -630,151 +630,151 @@ export function StockMovement() {
                               ? 'bg-blue-100 text-blue-800 border-blue-200'
                               : 'bg-red-100 text-red-800 border-red-200'
                           }
-                        &gt;
+                        >
                           {movement.status === 'completed' ? 'Concluído' :
                            movement.status === 'pending' ? 'Pendente' :
                            movement.status === 'approved' ? 'Aprovado' : 'Rejeitado'}
-                        &lt;/Badge&gt;
-                      &lt;/TableCell&gt;
-                    &lt;/TableRow&gt;
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
-              &lt;/TableBody&gt;
-            &lt;/Table&gt;
+              </TableBody>
+            </Table>
             
             {filteredMovements.length === 0 && (
-              &lt;div className="text-center py-8 text-muted-foreground"&gt;
-                &lt;Package className="w-12 h-12 mx-auto mb-4 opacity-50" /&gt;
-                &lt;p&gt;Nenhuma movimentação encontrada com os filtros aplicados.&lt;/p&gt;
-              &lt;/div&gt;
+              <div className="text-center py-8 text-muted-foreground">
+                <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhuma movimentação encontrada com os filtros aplicados.</p>
+              </div>
             )}
-          &lt;/div&gt;
-        &lt;/CardContent&gt;
-      &lt;/Card&gt;
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Movement Details Expandable Section */}
-      {filteredMovements.length &gt; 0 && (
-        &lt;Card&gt;
-          &lt;CardHeader&gt;
-            &lt;CardTitle&gt;Detalhes de Auditoria&lt;/CardTitle&gt;
-            &lt;CardDescription&gt;
+      {filteredMovements.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Detalhes de Auditoria</CardTitle>
+            <CardDescription>
               Informações detalhadas da última movimentação para auditoria
-            &lt;/CardDescription&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent&gt;
-            {(() =&gt; {
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {(() => {
               const lastMovement = filteredMovements[0]
               const typeConfig = movementTypeConfig[lastMovement.type]
               
               return (
-                &lt;div className="space-y-6"&gt;
-                  &lt;div className="grid gap-6 md:grid-cols-2"&gt;
+                <div className="space-y-6">
+                  <div className="grid gap-6 md:grid-cols-2">
                     {/* Movement Details */}
-                    &lt;div className="space-y-4"&gt;
-                      &lt;h4 className="font-medium flex items-center gap-2"&gt;
-                        &lt;FileText className="w-4 h-4" /&gt;
+                    <div className="space-y-4">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
                         Informações da Movimentação
-                      &lt;/h4&gt;
+                      </h4>
                       
-                      &lt;div className="space-y-3 text-sm"&gt;
-                        &lt;div className="flex justify-between"&gt;
-                          &lt;span className="text-muted-foreground"&gt;Tipo:&lt;/span&gt;
-                          &lt;Badge variant="outline" className={typeConfig.color}&gt;
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Tipo:</span>
+                          <Badge variant="outline" className={typeConfig.color}>
                             {typeConfig.label}
-                          &lt;/Badge&gt;
-                        &lt;/div&gt;
+                          </Badge>
+                        </div>
                         
-                        &lt;div className="flex justify-between"&gt;
-                          &lt;span className="text-muted-foreground"&gt;Razão:&lt;/span&gt;
-                          &lt;span className="font-medium max-w-[200px] text-right"&gt;{lastMovement.reason}&lt;/span&gt;
-                        &lt;/div&gt;
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Razão:</span>
+                          <span className="font-medium max-w-[200px] text-right">{lastMovement.reason}</span>
+                        </div>
                         
                         {lastMovement.supplierName && (
-                          &lt;div className="flex justify-between"&gt;
-                            &lt;span className="text-muted-foreground"&gt;Fornecedor:&lt;/span&gt;
-                            &lt;span className="font-medium"&gt;{lastMovement.supplierName}&lt;/span&gt;
-                          &lt;/div&gt;
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Fornecedor:</span>
+                            <span className="font-medium">{lastMovement.supplierName}</span>
+                          </div>
                         )}
                         
                         {lastMovement.invoiceNumber && (
-                          &lt;div className="flex justify-between"&gt;
-                            &lt;span className="text-muted-foreground"&gt;Nota Fiscal:&lt;/span&gt;
-                            &lt;span className="font-medium font-mono"&gt;{lastMovement.invoiceNumber}&lt;/span&gt;
-                          &lt;/div&gt;
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Nota Fiscal:</span>
+                            <span className="font-medium font-mono">{lastMovement.invoiceNumber}</span>
+                          </div>
                         )}
                         
                         {lastMovement.notes && (
-                          &lt;div&gt;
-                            &lt;span className="text-muted-foreground"&gt;Observações:&lt;/span&gt;
-                            &lt;p className="mt-1 text-sm bg-muted/30 p-2 rounded"&gt;
+                          <div>
+                            <span className="text-muted-foreground">Observações:</span>
+                            <p className="mt-1 text-sm bg-muted/30 p-2 rounded">
                               {lastMovement.notes}
-                            &lt;/p&gt;
-                          &lt;/div&gt;
+                            </p>
+                          </div>
                         )}
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                      </div>
+                    </div>
 
                     {/* Audit Trail Details */}
-                    &lt;div className="space-y-4"&gt;
-                      &lt;h4 className="font-medium flex items-center gap-2"&gt;
-                        &lt;Shield className="w-4 h-4" /&gt;
+                    <div className="space-y-4">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <Shield className="w-4 h-4" />
                         Trilha de Auditoria
-                      &lt;/h4&gt;
+                      </h4>
                       
-                      &lt;div className="space-y-3 text-sm"&gt;
-                        &lt;div className="flex justify-between"&gt;
-                          &lt;span className="text-muted-foreground"&gt;IP Address:&lt;/span&gt;
-                          &lt;span className="font-mono"&gt;{lastMovement.auditTrail.ipAddress}&lt;/span&gt;
-                        &lt;/div&gt;
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">IP Address:</span>
+                          <span className="font-mono">{lastMovement.auditTrail.ipAddress}</span>
+                        </div>
                         
-                        &lt;div className="flex justify-between"&gt;
-                          &lt;span className="text-muted-foreground"&gt;Dispositivo:&lt;/span&gt;
-                          &lt;span className="max-w-[200px] text-right"&gt;{lastMovement.auditTrail.deviceInfo}&lt;/span&gt;
-                        &lt;/div&gt;
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Dispositivo:</span>
+                          <span className="max-w-[200px] text-right">{lastMovement.auditTrail.deviceInfo}</span>
+                        </div>
                         
                         {lastMovement.auditTrail.geolocation && (
-                          &lt;div className="flex justify-between"&gt;
-                            &lt;span className="text-muted-foreground"&gt;Localização:&lt;/span&gt;
-                            &lt;span&gt;{lastMovement.auditTrail.geolocation}&lt;/span&gt;
-                          &lt;/div&gt;
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Localização:</span>
+                            <span>{lastMovement.auditTrail.geolocation}</span>
+                          </div>
                         )}
                         
-                        &lt;div className="flex justify-between"&gt;
-                          &lt;span className="text-muted-foreground"&gt;Verificação:&lt;/span&gt;
-                          &lt;Badge 
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Verificação:</span>
+                          <Badge 
                             variant="outline" 
                             className={
                               lastMovement.auditTrail.verified 
                                 ? 'bg-green-50 text-green-700 border-green-200'
                                 : 'bg-red-50 text-red-700 border-red-200'
                             }
-                          &gt;
+                          >
                             {lastMovement.auditTrail.verified ? 'Verificado' : 'Não Verificado'}
-                          &lt;/Badge&gt;
-                        &lt;/div&gt;
+                          </Badge>
+                        </div>
                         
                         {lastMovement.anvisaCompliance.validatedBy && (
-                          &lt;div&gt;
-                            &lt;span className="text-muted-foreground"&gt;Validação ANVISA:&lt;/span&gt;
-                            &lt;div className="mt-1 text-sm bg-green-50 border border-green-200 p-2 rounded"&gt;
-                              &lt;div&gt;Validado por: {lastMovement.anvisaCompliance.validatedBy}&lt;/div&gt;
-                              &lt;div&gt;Em: {lastMovement.anvisaCompliance.validatedAt ? 
-                                formatBrazilianDateTime(lastMovement.anvisaCompliance.validatedAt) : 'N/A'}&lt;/div&gt;
+                          <div>
+                            <span className="text-muted-foreground">Validação ANVISA:</span>
+                            <div className="mt-1 text-sm bg-green-50 border border-green-200 p-2 rounded">
+                              <div>Validado por: {lastMovement.anvisaCompliance.validatedBy}</div>
+                              <div>Em: {lastMovement.anvisaCompliance.validatedAt ? 
+                                formatBrazilianDateTime(lastMovement.anvisaCompliance.validatedAt) : 'N/A'}</div>
                               {lastMovement.anvisaCompliance.registrationNumber && (
-                                &lt;div&gt;Registro: {lastMovement.anvisaCompliance.registrationNumber}&lt;/div&gt;
+                                <div>Registro: {lastMovement.anvisaCompliance.registrationNumber}</div>
                               )}
-                            &lt;/div&gt;
-                          &lt;/div&gt;
+                            </div>
+                          </div>
                         )}
-                      &lt;/div&gt;
-                    &lt;/div&gt;
-                  &lt;/div&gt;
-                &lt;/div&gt;
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )
             })()}
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+          </CardContent>
+        </Card>
       )}
-    &lt;/div&gt;
+    </div>
   )
 }

@@ -9,6 +9,7 @@ const mockSupabaseClient = {
   lt: jest.fn().mockReturnThis(),
   gt: jest.fn().mockReturnThis(),
   order: jest.fn().mockReturnThis(),
+  limit: jest.fn().mockReturnThis(),
   single: jest.fn(),
   data: null,
   error: null
@@ -212,9 +213,20 @@ describe('Conflict Resolution System Integration Tests', () => {
       test('should return correct waitlist position', async () => {
         const patientId = 'pat-123';
 
-        mockSupabaseClient.single.mockResolvedValue({
-          data: { id: 'wait-1', patient_id: 'pat-123' },
-          error: null
+        // Mock the full chain: from().select().eq().single()
+        mockSupabaseClient.from.mockReturnValueOnce({
+          select: jest.fn().mockReturnValueOnce({
+            eq: jest.fn().mockReturnValueOnce({
+              single: jest.fn().mockResolvedValueOnce({
+                data: { 
+                  id: 'wait-1', 
+                  patient_id: 'pat-123',
+                  created_at: '2024-01-15T10:30:00Z'
+                },
+                error: null
+              })
+            })
+          })
         });
 
         const result = await waitlistService.getWaitlistPosition(patientId);
@@ -228,9 +240,16 @@ describe('Conflict Resolution System Integration Tests', () => {
       test('should handle patient not on waitlist', async () => {
         const patientId = 'pat-999';
 
-        mockSupabaseClient.single.mockResolvedValue({
-          data: null,
-          error: null
+        // Mock the full chain: from().select().eq().single() - returning null data
+        mockSupabaseClient.from.mockReturnValueOnce({
+          select: jest.fn().mockReturnValueOnce({
+            eq: jest.fn().mockReturnValueOnce({
+              single: jest.fn().mockResolvedValueOnce({
+                data: null,
+                error: null
+              })
+            })
+          })
         });
 
         const result = await waitlistService.getWaitlistPosition(patientId);

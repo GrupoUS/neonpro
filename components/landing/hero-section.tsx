@@ -23,7 +23,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps) {
   return (
-    <section className="relative py-20 bg-gradient-to-br from-[#6366f1] via-[#7c3aed] to-[#8b5cf6] overflow-hidden">
+    <section className="relative py-20 bg-gradient-to-br from-purple-600 via-purple-700 to-purple-500 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-white/20 blur-xl"></div>
@@ -66,7 +66,6 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                 reduzindo tempo administrativo em <strong>70%</strong>.
               </p>
             </div>
-
             {/* Key Stats */}
             <div className="grid grid-cols-3 gap-6 py-6">
               <div className="text-center">
@@ -88,7 +87,7 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
               <Button
                 size="lg"
                 onClick={onLoginClick}
-                className="bg-white text-[#6366f1] hover:bg-white/90 font-semibold shadow-xl h-14 px-8"
+                className="bg-white text-purple-600 hover:bg-white/90 font-semibold shadow-xl h-14 px-8"
               >
                 <Heart className="h-5 w-5 mr-2" />
                 Começar Agora
@@ -122,7 +121,6 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
               </span>
             </div>
           </div>
-
           {/* Right Content - Feature Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* AI Intelligence Card */}
@@ -152,7 +150,7 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
             <Card className="bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/15 transition-all duration-300">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center space-x-3">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-400 to-indigo-400 flex items-center justify-center">
                     <Calendar className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -170,7 +168,6 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
                 </div>
               </CardContent>
             </Card>
-
             {/* Analytics Card */}
             <Card className="bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/15 transition-all duration-300">
               <CardContent className="p-6 space-y-4">
@@ -218,7 +215,6 @@ export function HeroSection({ onLoginClick, onRegisterClick }: HeroSectionProps)
             </Card>
           </div>
         </div>
-
         {/* Bottom Trust Indicators */}
         <div className="mt-16 pt-8 border-t border-white/20">
           <div className="text-center text-white/80 space-y-4">

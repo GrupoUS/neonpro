@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/292</span>
+                <span class='fraction'>0/295</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/292</span>
+                <span class='fraction'>0/295</span>
             </div>
         
             
@@ -354,7 +354,13 @@
 <a name='L289'></a><a href='#L289'>289</a>
 <a name='L290'></a><a href='#L290'>290</a>
 <a name='L291'></a><a href='#L291'>291</a>
-<a name='L292'></a><a href='#L292'>292</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L292'></a><a href='#L292'>292</a>
+<a name='L293'></a><a href='#L293'>293</a>
+<a name='L294'></a><a href='#L294'>294</a>
+<a name='L295'></a><a href='#L295'>295</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -684,14 +690,17 @@
 <span class="cstat-no" title="statement not covered" >  info('Validating deployment environment...')</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  const checks = [</span>
-<span class="cstat-no" title="statement not covered" >    { name: 'Node.js version', cmd: 'node --version' },</span>
-<span class="cstat-no" title="statement not covered" >    { name: 'pnpm version', cmd: 'pnpm --version' },</span>
-<span class="cstat-no" title="statement not covered" >    { name: 'Next.js installation', cmd: 'npx next --version' },</span>
+<span class="cstat-no" title="statement not covered" >    { name: 'Node.js version', cmd: 'node', args: ['--version'] },</span>
+<span class="cstat-no" title="statement not covered" >    { name: 'pnpm version', cmd: 'pnpm', args: ['--version'] },</span>
+<span class="cstat-no" title="statement not covered" >    { name: 'Next.js installation', cmd: 'npx', args: ['next', '--version'] },</span>
 <span class="cstat-no" title="statement not covered" >  ]</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  for (const check of checks) {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      const result = execSync(check.cmd, { encoding: 'utf8' }).trim()</span>
+<span class="cstat-no" title="statement not covered" >      const result = execSync(`${check.cmd} ${check.args.join(' ')}`, { </span>
+<span class="cstat-no" title="statement not covered" >        encoding: 'utf8',</span>
+<span class="cstat-no" title="statement not covered" >        shell: false </span>
+<span class="cstat-no" title="statement not covered" >      }).trim()</span>
 <span class="cstat-no" title="statement not covered" >      success(`${check.name}: ${result}`)</span>
 <span class="cstat-no" title="statement not covered" >    } catch (err) {</span>
 <span class="cstat-no" title="statement not covered" >      error(`${check.name}: Failed - ${err.message}`)</span>
@@ -745,14 +754,14 @@
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    // Build the project for analysis</span>
 <span class="cstat-no" title="statement not covered" >    info('Building project for bundle analysis...')</span>
-<span class="cstat-no" title="statement not covered" >    execSync('pnpm build', { stdio: 'inherit' })</span>
+<span class="cstat-no" title="statement not covered" >    execSync('pnpm build', { stdio: 'inherit', shell: false })</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    success('Build completed successfully')</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Check if bundle analyzer is available</span>
 <span class="cstat-no" title="statement not covered" >    if (process.env.ANALYZE === 'true') {</span>
 <span class="cstat-no" title="statement not covered" >      info('Running bundle analyzer...')</span>
-<span class="cstat-no" title="statement not covered" >      execSync('ANALYZE=true pnpm build', { stdio: 'inherit' })</span>
+<span class="cstat-no" title="statement not covered" >      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false })</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    return true</span>
@@ -766,7 +775,7 @@
 <span class="cstat-no" title="statement not covered" >  info('Running performance integration tests...')</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit' })</span>
+<span class="cstat-no" title="statement not covered" >    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit', shell: false })</span>
 <span class="cstat-no" title="statement not covered" >    return true</span>
 <span class="cstat-no" title="statement not covered" >  } catch (err) {</span>
 <span class="cstat-no" title="statement not covered" >    warning(`Performance tests completed with some warnings`)</span>
@@ -943,7 +952,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-27T00:27:56.489Z
+                at 2025-07-29T02:00:17.188Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

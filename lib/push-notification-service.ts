@@ -1,6 +1,6 @@
 import webpush from 'web-push'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+// FIXED: Removed direct import of 'next/headers' to avoid client-side errors
 
 // Configure web-push with VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
@@ -41,12 +41,46 @@ export interface PushNotificationPayload {
 }
 
 class PushNotificationService {
-  private supabase = createServerComponentClient({ cookies })
+  private supabase: any = null
+
+  // Initialize Supabase client with dynamic cookies import
+  private async getSupabaseClient() {
+    if (this.supabase) {
+      return this.supabase
+    }
+
+    // Check if we're on the server side
+    if (typeof window === 'undefined') {
+      try {
+        // Dynamic import to avoid client-side errors
+        const { cookies } = await import('next/headers')
+        this.supabase = createServerComponentClient({ cookies })
+      } catch (error) {
+        console.error('Error importing next/headers:', error)
+        // Fallback to basic client without cookies
+        const { createClient } = await import('@supabase/supabase-js')
+        this.supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+      }
+    } else {
+      // Client-side fallback
+      const { createClient } = await import('@supabase/supabase-js')
+      this.supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+    }
+
+    return this.supabase
+  }
 
   // Save push subscription for a user
   async saveSubscription(userId: string, subscription: PushSubscription): Promise<{ success: boolean; error?: string }> {
     try {
-      const { error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { error } = await supabase
         .from('push_subscriptions')
         .upsert({
           user_id: userId,
@@ -75,7 +109,8 @@ class PushNotificationService {
   // Remove push subscription for a user
   async removeSubscription(userId: string, endpoint: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const { error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { error } = await supabase
         .from('push_subscriptions')
         .update({ is_active: false })
         .eq('user_id', userId)
@@ -99,7 +134,8 @@ class PushNotificationService {
   // Get all active subscriptions for a user
   async getUserSubscriptions(userId: string): Promise<PushSubscription[]> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { data, error } = await supabase
         .from('push_subscriptions')
         .select('endpoint, p256dh_key, auth_key')
         .eq('user_id', userId)

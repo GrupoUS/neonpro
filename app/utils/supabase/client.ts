@@ -1,18 +1,23 @@
 // app/utils/supabase/client.ts
-// Task 1.3 - CONNECTION POOLING OPTIMIZATION
-// Updated client with connection pooling integration
+// Updated client with proper error handling
 import { createBrowserClient } from "@supabase/ssr"
-import { getConnectionPoolManager } from "@/lib/supabase/connection-pool-manager"
 
 export function createClient() {
-  return createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Missing Supabase environment variables')
+    throw new Error('Supabase configuration is missing')
+  }
+  
+  return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
 
-// New optimized client factory with pooling
-export function createOptimizedClient(clinicId: string) {
-  const poolManager = getConnectionPoolManager()
-  return poolManager.getBrowserClient(clinicId)
-}
-
-// Legacy support - gradually migrate to optimized version
+// Legacy support
 export { createClient as createLegacyClient }
+
+// Simplified optimized client for now
+export function createOptimizedClient(clinicId: string) {
+  return createClient()
+}

@@ -1,5 +1,3 @@
-'use client'
-
 import { Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,13 +12,6 @@ import {
   Activity,
   Settings
 } from 'lucide-react'
-import { ProductCatalog } from '@/components/inventory/product-catalog'
-import { StockAlerts } from '@/components/inventory/stock-alerts'
-import { SupplierManagement } from '@/components/inventory/supplier-management'
-import { BatchTracking } from '@/components/inventory/batch-tracking'
-import { StockMovement } from '@/components/inventory/stock-movement'
-import { CostAnalysis } from '@/components/inventory/cost-analysis'
-import { ReorderManagement } from '@/components/inventory/reorder-management'
 
 /**
  * Inventory Management Dashboard for NeonPro Aesthetic Clinic
@@ -39,243 +30,257 @@ import { ReorderManagement } from '@/components/inventory/reorder-management'
  */
 export default function InventoryPage() {
   return (
-    &lt;div className="space-y-6 p-6"&gt;
+    <div className="space-y-6 p-6">
       {/* Header Section */}
-      &lt;div className="flex items-center justify-between"&gt;
-        &lt;div&gt;
-          &lt;h1 className="text-3xl font-bold tracking-tight text-gray-900"&gt;
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             Gestão de Estoque
-          &lt;/h1&gt;
-          &lt;p className="text-muted-foreground mt-2"&gt;
+          </h1>
+          <p className="text-muted-foreground mt-2">
             Sistema completo de controle de estoque para clínica estética com compliance ANVISA/CFM/LGPD
-          &lt;/p&gt;
-        &lt;/div&gt;
-        &lt;div className="flex items-center gap-2"&gt;
-          &lt;Badge variant="outline" className="bg-green-50 text-green-700 border-green-200"&gt;
-            &lt;Activity className="w-3 h-3 mr-1" /&gt;
-            Sistema Ativo
-          &lt;/Badge&gt;
-          &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"&gt;
-            ANVISA Compliant
-          &lt;/Badge&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant="secondary" className="flex items-center gap-1">
+            <Package className="h-3 w-3" />
+            1,247 produtos
+          </Badge>
+          <Badge variant="destructive" className="flex items-center gap-1">
+            <AlertTriangle className="h-3 w-3" />
+            23 alertas
+          </Badge>
+        </div>
+      </div>
 
-      {/* Quick Stats Overview */}
-      &lt;div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"&gt;
-        &lt;Card&gt;
-          &lt;CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"&gt;
-            &lt;CardTitle className="text-sm font-medium"&gt;
-              Produtos Ativos
-            &lt;/CardTitle&gt;
-            &lt;Package className="h-4 w-4 text-muted-foreground" /&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent&gt;
-            &lt;div className="text-2xl font-bold"&gt;247&lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
-              +12 este mês
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+      {/* Stats Overview */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Valor Total do Estoque</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">R$ 1.245.678,90</div>
+            <p className="text-xs text-muted-foreground">
+              +12.3% em relação ao mês anterior
+            </p>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"&gt;
-            &lt;CardTitle className="text-sm font-medium"&gt;
-              Alertas Críticos
-            &lt;/CardTitle&gt;
-            &lt;AlertTriangle className="h-4 w-4 text-amber-500" /&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent&gt;
-            &lt;div className="text-2xl font-bold text-amber-600"&gt;8&lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
-              Requer atenção imediata
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Produtos em Falta</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">23</div>
+            <p className="text-xs text-muted-foreground">
+              -5 produtos desde ontem
+            </p>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"&gt;
-            &lt;CardTitle className="text-sm font-medium"&gt;
-              Valor do Estoque
-            &lt;/CardTitle&gt;
-            &lt;TrendingUp className="h-4 w-4 text-green-500" /&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent&gt;
-            &lt;div className="text-2xl font-bold"&gt;R$ 89.247&lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
-              +5.2% vs mês anterior
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Giro de Estoque</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">4.2x</div>
+            <p className="text-xs text-muted-foreground">
+              +0.3x vs. mês anterior
+            </p>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2"&gt;
-            &lt;CardTitle className="text-sm font-medium"&gt;
-              Pedidos Pendentes
-            &lt;/CardTitle&gt;
-            &lt;ShoppingCart className="h-4 w-4 text-blue-500" /&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent&gt;
-            &lt;div className="text-2xl font-bold"&gt;23&lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
-              Entrega prevista 3-7 dias
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/div&gt;
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Próximos Vencimentos</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">47</div>
+            <p className="text-xs text-muted-foreground">
+              Próximos 30 dias
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Main Tabs Navigation */}
-      &lt;Tabs defaultValue="catalog" className="space-y-4"&gt;
-        &lt;TabsList className="grid w-full grid-cols-7"&gt;
-          &lt;TabsTrigger value="catalog" className="flex items-center gap-2"&gt;
-            &lt;Package className="w-4 h-4" /&gt;
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="catalog" className="w-full">
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="catalog" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
             Catálogo
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="alerts" className="flex items-center gap-2"&gt;
-            &lt;AlertTriangle className="w-4 h-4" /&gt;
+          </TabsTrigger>
+          <TabsTrigger value="alerts" className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4" />
             Alertas
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="suppliers" className="flex items-center gap-2"&gt;
-            &lt;FileText className="w-4 h-4" /&gt;
-            Fornecedores
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="batches" className="flex items-center gap-2"&gt;
-            &lt;Barcode className="w-4 h-4" /&gt;
-            Lotes
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="movements" className="flex items-center gap-2"&gt;
-            &lt;Activity className="w-4 h-4" /&gt;
+          </TabsTrigger>
+          <TabsTrigger value="movement" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
             Movimentação
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="costs" className="flex items-center gap-2"&gt;
-            &lt;TrendingUp className="w-4 h-4" /&gt;
-            Custos
-          &lt;/TabsTrigger&gt;
-          &lt;TabsTrigger value="reorder" className="flex items-center gap-2"&gt;
-            &lt;ShoppingCart className="w-4 h-4" /&gt;
+          </TabsTrigger>
+          <TabsTrigger value="suppliers" className="flex items-center gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            Fornecedores
+          </TabsTrigger>
+          <TabsTrigger value="batches" className="flex items-center gap-2">
+            <Barcode className="h-4 w-4" />
+            Lotes
+          </TabsTrigger>
+          <TabsTrigger value="reorder" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
             Reposição
-          &lt;/TabsTrigger&gt;
-        &lt;/TabsList&gt;
+          </TabsTrigger>
+          <TabsTrigger value="analysis" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Análises
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Product Catalog Tab */}
-        &lt;TabsContent value="catalog" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Catálogo de Produtos&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Gestão completa do catálogo com categorias médicas e controle ANVISA
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando catálogo...&lt;/div&gt;}&gt;
-                &lt;ProductCatalog /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="catalog" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Catálogo de Produtos</CardTitle>
+              <CardDescription>
+                Gestão completa do catálogo de produtos com rastreabilidade ANVISA
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Catálogo de Produtos</h3>
+                <p className="text-muted-foreground">
+                  Sistema de gestão de produtos em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Stock Alerts Tab */}
-        &lt;TabsContent value="alerts" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Alertas de Estoque&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Monitoramento de estoque baixo, vencimentos e alertas ANVISA
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando alertas...&lt;/div&gt;}&gt;
-                &lt;StockAlerts /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="alerts" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Alertas de Estoque</CardTitle>
+              <CardDescription>
+                Monitoramento inteligente de níveis críticos e vencimentos
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Sistema de Alertas</h3>
+                <p className="text-muted-foreground">
+                  Alertas inteligentes em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Supplier Management Tab */}
-        &lt;TabsContent value="suppliers" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Gestão de Fornecedores&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Cadastro com validação CNPJ e compliance fiscal brasileiro
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando fornecedores...&lt;/div&gt;}&gt;
-                &lt;SupplierManagement /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="movement" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Movimentação de Estoque</CardTitle>
+              <CardDescription>
+                Histórico completo de entradas, saídas e transferências
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <Activity className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Controle de Movimentação</h3>
+                <p className="text-muted-foreground">
+                  Sistema de movimentação em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Batch Tracking Tab */}
-        &lt;TabsContent value="batches" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Rastreamento de Lotes&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Controle de lotes médicos com rastreabilidade ANVISA completa
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando lotes...&lt;/div&gt;}&gt;
-                &lt;BatchTracking /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="suppliers" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestão de Fornecedores</CardTitle>
+              <CardDescription>
+                Cadastro e gestão de fornecedores com compliance LGPD
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Fornecedores</h3>
+                <p className="text-muted-foreground">
+                  Gestão de fornecedores em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Stock Movement Tab */}
-        &lt;TabsContent value="movements" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Movimentação de Estoque&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Auditoria completa de entradas e saídas com trilha de auditoria
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando movimentações...&lt;/div&gt;}&gt;
-                &lt;StockMovement /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="batches" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Rastreamento de Lotes</CardTitle>
+              <CardDescription>
+                Controle rigoroso de lotes com rastreabilidade completa
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <Barcode className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Controle de Lotes</h3>
+                <p className="text-muted-foreground">
+                  Rastreamento de lotes em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Cost Analysis Tab */}
-        &lt;TabsContent value="costs" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Análise de Custos&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Relatórios de custos e margens com cálculos fiscais brasileiros
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando análise...&lt;/div&gt;}&gt;
-                &lt;CostAnalysis /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
+        <TabsContent value="reorder" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gestão de Reposição</CardTitle>
+              <CardDescription>
+                Sistema inteligente de reposição automática
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Sistema de Reposição</h3>
+                <p className="text-muted-foreground">
+                  Reposição automática em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Reorder Management Tab */}
-        &lt;TabsContent value="reorder" className="space-y-4"&gt;
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle&gt;Gestão de Reposição&lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
-                Sugestões automáticas de reposição com análise preditiva
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;Suspense fallback={&lt;div&gt;Carregando reposição...&lt;/div&gt;}&gt;
-                &lt;ReorderManagement /&gt;
-              &lt;/Suspense&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/TabsContent&gt;
-      &lt;/Tabs&gt;
-    &lt;/div&gt;
+        <TabsContent value="analysis" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Análises e Relatórios</CardTitle>
+              <CardDescription>
+                Analytics avançados para otimização de estoque
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">Analytics de Estoque</h3>
+                <p className="text-muted-foreground">
+                  Relatórios avançados em desenvolvimento
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }

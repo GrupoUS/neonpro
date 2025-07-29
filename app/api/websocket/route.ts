@@ -270,7 +270,7 @@ function generateClientId(): string {
 /**
  * Broadcast message to specific channel
  */
-export function broadcastToChannel(channel: string, message: any) {
+function broadcastToChannel(channel: string, message: any) {
   clients.forEach((client, clientId) => {
     if (client.subscriptions.has(channel) && client.ws.readyState === client.ws.OPEN) {
       client.ws.send(JSON.stringify({
@@ -286,7 +286,7 @@ export function broadcastToChannel(channel: string, message: any) {
 /**
  * Broadcast message to specific user
  */
-export function broadcastToUser(userId: string, message: any) {
+function broadcastToUser(userId: string, message: any) {
   clients.forEach((client, clientId) => {
     if (client.userId === userId && client.ws.readyState === client.ws.OPEN) {
       client.ws.send(JSON.stringify({
@@ -301,14 +301,14 @@ export function broadcastToUser(userId: string, message: any) {
 /**
  * Get connected clients count
  */
-export function getConnectedClientsCount(): number {
+function getConnectedClientsCount(): number {
   return clients.size
 }
 
 /**
  * Get connected clients for a specific channel
  */
-export function getChannelSubscribers(channel: string): number {
+function getChannelSubscribers(channel: string): number {
   let count = 0
   clients.forEach((client) => {
     if (client.subscriptions.has(channel)) {

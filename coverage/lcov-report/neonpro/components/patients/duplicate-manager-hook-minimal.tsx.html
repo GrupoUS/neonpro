@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/59</span>
+                <span class='fraction'>0/65</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/59</span>
+                <span class='fraction'>0/65</span>
             </div>
         
             
@@ -122,7 +122,13 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -181,10 +187,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >'use client';</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >"use client";</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import React from 'react';</span>
-<span class="cstat-no" title="statement not covered" >import { Button } from '@/components/ui/button';</span>
+<span class="cstat-no" title="statement not covered" >import { Button } from "@/components/ui/button";</span>
+<span class="cstat-no" title="statement not covered" >import React from "react";</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface DuplicateManagerHookMinimalProps {</span>
 <span class="cstat-no" title="statement not covered" >  duplicates: Array&lt;{</span>
@@ -203,14 +215,16 @@
 <span class="cstat-no" title="statement not covered" >  }&gt;;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default function DuplicateManagerHookMinimal({ duplicates }: DuplicateManagerHookMinimalProps) {</span>
+<span class="cstat-no" title="statement not covered" >export default function DuplicateManagerHookMinimal({</span>
+<span class="cstat-no" title="statement not covered" >  duplicates,</span>
+<span class="cstat-no" title="statement not covered" >}: DuplicateManagerHookMinimalProps) {</span>
 <span class="cstat-no" title="statement not covered" >  // Test minimal hook usage</span>
 <span class="cstat-no" title="statement not covered" >  const [selectedId, setSelectedId] = React.useState&lt;string | null&gt;(null);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div className="space-y-4"&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;h2 className="text-xl font-semibold"&gt;Hook Minimal Duplicate Manager&lt;/h2&gt;</span>
-<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {duplicates.map((duplicate) =&gt; (</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div key={duplicate.id} className="border p-4 rounded-lg"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className="flex justify-between items-center mb-4"&gt;</span>
@@ -224,15 +238,19 @@
 <span class="cstat-no" title="statement not covered" >              {selectedId === duplicate.id ? "Selected" : "Select"}</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/Button&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          </span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className="grid grid-cols-2 gap-4"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;div className="border p-3 rounded"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;h4 className="font-medium"&gt;{duplicate.patient1.name}&lt;/h4&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;p className="text-sm text-muted-foreground"&gt;{duplicate.patient1.email}&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;p className="text-sm text-muted-foreground"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                {duplicate.patient1.email}</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;div className="border p-3 rounded"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;h4 className="font-medium"&gt;{duplicate.patient2.name}&lt;/h4&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;p className="text-sm text-muted-foreground"&gt;{duplicate.patient2.email}&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;p className="text-sm text-muted-foreground"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                {duplicate.patient2.email}</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
@@ -247,7 +265,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-27T00:27:56.489Z
+                at 2025-07-29T02:00:17.188Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

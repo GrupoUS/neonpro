@@ -1,40 +1,57 @@
 /**
  * Calendar View Component
  * NeonPro Intelligent Scheduling System
- * 
+ *
  * Advanced calendar component with multi-professional scheduling,
  * conflict detection, and real-time updates
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Calendar as CalendarIcon, 
-  Clock, 
-  Users, 
-  Plus, 
-  Filter,
-  RefreshCw,
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addWeeks,
+  eachDayOfInterval,
+  endOfWeek,
+  format,
+  isSameDay,
+  startOfWeek,
+  subWeeks,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  AlertTriangle,
+  Calendar as CalendarIcon,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Grid3X3,
   List,
-  AlertTriangle,
-  CheckCircle
-} from 'lucide-react';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSame } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+  Plus,
+  RefreshCw,
+  Users,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
 
 // Types
 interface Appointment {
@@ -42,7 +59,14 @@ interface Appointment {
   patient_id: string;
   professional_id: string;
   service_type_id: string;
-  status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled';
+  status:
+    | "scheduled"
+    | "confirmed"
+    | "in_progress"
+    | "completed"
+    | "cancelled"
+    | "no_show"
+    | "rescheduled";
   start_time: string;
   end_time: string;
   notes?: string;
@@ -90,43 +114,59 @@ interface CalendarViewProps {
 const CalendarView: React.FC<CalendarViewProps> = ({
   onAppointmentClick,
   onTimeSlotClick,
-  onCreateAppointment
+  onCreateAppointment,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentWeek, setCurrentWeek] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('week');
-  const [selectedProfessional, setSelectedProfessional] = useState<string>('all');
-  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<"month" | "week" | "day">("week");
+  const [selectedProfessional, setSelectedProfessional] =
+    useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const supabase = createClientComponentClient();
   const queryClient = useQueryClient();
 
   // Fetch appointments
-  const { data: appointments = [], isLoading: appointmentsLoading, error: appointmentsError } = useQuery({
-    queryKey: ['appointments', selectedDate, selectedProfessional, selectedStatus],
+  const {
+    data: appointments = [],
+    isLoading: appointmentsLoading,
+    error: appointmentsError,
+  } = useQuery({
+    queryKey: [
+      "appointments",
+      selectedDate,
+      selectedProfessional,
+      selectedStatus,
+    ],
     queryFn: async () => {
-      const startDate = viewMode === 'month' ? startOfWeek(selectedDate) : startOfWeek(currentWeek);
-      const endDate = viewMode === 'month' ? endOfWeek(selectedDate) : endOfWeek(currentWeek);
-      
+      const startDate =
+        viewMode === "month"
+          ? startOfWeek(selectedDate)
+          : startOfWeek(currentWeek);
+      const endDate =
+        viewMode === "month" ? endOfWeek(selectedDate) : endOfWeek(currentWeek);
+
       let query = supabase
-        .from('appointments')
-        .select(`
+        .from("appointments")
+        .select(
+          `
           *,
           patients (id, full_name, phone),
           professionals (id, full_name, color),
           service_types (id, name, duration_minutes, color)
-        `)
-        .gte('start_time', startDate.toISOString())
-        .lte('start_time', endDate.toISOString())
-        .order('start_time', { ascending: true });
+        `
+        )
+        .gte("start_time", startDate.toISOString())
+        .lte("start_time", endDate.toISOString())
+        .order("start_time", { ascending: true });
 
-      if (selectedProfessional !== 'all') {
-        query = query.eq('professional_id', selectedProfessional);
+      if (selectedProfessional !== "all") {
+        query = query.eq("professional_id", selectedProfessional);
       }
 
-      if (selectedStatus !== 'all') {
-        query = query.eq('status', selectedStatus);
+      if (selectedStatus !== "all") {
+        query = query.eq("status", selectedStatus);
       }
 
       const { data, error } = await query;
@@ -138,14 +178,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
   // Fetch professionals
   const { data: professionals = [] } = useQuery({
-    queryKey: ['professionals'],
+    queryKey: ["professionals"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('professionals')
-        .select('*')
-        .eq('is_active', true)
-        .order('full_name');
-      
+        .from("professionals")
+        .select("*")
+        .eq("is_active", true)
+        .order("full_name");
+
       if (error) throw error;
       return data as Professional[];
     },
@@ -153,14 +193,14 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
   // Fetch service types
   const { data: serviceTypes = [] } = useQuery({
-    queryKey: ['service_types'],
+    queryKey: ["service_types"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('service_types')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-      
+        .from("service_types")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+
       if (error) throw error;
       return data as ServiceType[];
     },
@@ -186,7 +226,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
     const slots = [];
     for (let hour = 8; hour <= 18; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        const timeString = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
         slots.push(timeString);
       }
     }
@@ -197,30 +237,34 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   const weekDays = useMemo(() => {
     return eachDayOfInterval({
       start: startOfWeek(currentWeek, { weekStartsOn: 1 }), // Monday start
-      end: endOfWeek(currentWeek, { weekStartsOn: 1 })
+      end: endOfWeek(currentWeek, { weekStartsOn: 1 }),
     });
   }, [currentWeek]);
 
   // Get appointments for a specific date and time
-  const getAppointmentsForSlot = (date: Date, time: string, professionalId?: string) => {
+  const getAppointmentsForSlot = (
+    date: Date,
+    time: string,
+    professionalId?: string
+  ) => {
     const slotDateTime = new Date(date);
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hours, minutes] = time.split(":").map(Number);
     slotDateTime.setHours(hours, minutes, 0, 0);
 
-    return appointments.filter(appointment => {
+    return appointments.filter((appointment) => {
       const appointmentStart = new Date(appointment.start_time);
       const appointmentEnd = new Date(appointment.end_time);
-      
+
       const slotEnd = new Date(slotDateTime);
       slotEnd.setMinutes(slotEnd.getMinutes() + 30);
 
-      const hasTimeOverlap = (
+      const hasTimeOverlap =
         (appointmentStart <= slotDateTime && appointmentEnd > slotDateTime) ||
         (appointmentStart < slotEnd && appointmentEnd >= slotEnd) ||
-        (appointmentStart >= slotDateTime && appointmentEnd <= slotEnd)
-      );
+        (appointmentStart >= slotDateTime && appointmentEnd <= slotEnd);
 
-      const matchesProfessional = !professionalId || appointment.professional_id === professionalId;
+      const matchesProfessional =
+        !professionalId || appointment.professional_id === professionalId;
 
       return hasTimeOverlap && matchesProfessional;
     });
@@ -229,32 +273,43 @@ const CalendarView: React.FC<CalendarViewProps> = ({
   // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'scheduled': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in_progress': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'completed': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      case 'no_show': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'rescheduled': return 'bg-purple-100 text-purple-800 border-purple-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "scheduled":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "confirmed":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "in_progress":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "completed":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "no_show":
+        return "bg-gray-100 text-gray-800 border-gray-200";
+      case "rescheduled":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   // Get priority indicator
   const getPriorityIcon = (priority: number) => {
-    if (priority >= 4) return <AlertTriangle className="w-3 h-3 text-red-500" />;
+    if (priority >= 4)
+      return <AlertTriangle className="w-3 h-3 text-red-500" />;
     if (priority >= 3) return <Clock className="w-3 h-3 text-yellow-500" />;
     return null;
   };
 
   // Appointment Card Component
-  const AppointmentCard: React.FC<{ appointment: Appointment }> = ({ appointment }) => (
+  const AppointmentCard: React.FC<{ appointment: Appointment }> = ({
+    appointment,
+  }) => (
     <div
       className={`p-2 rounded-md text-xs cursor-pointer transition-all hover:shadow-md border ${getStatusColor(appointment.status)}`}
       onClick={() => onAppointmentClick?.(appointment)}
-      style={{ 
-        borderLeftWidth: '4px',
-        borderLeftColor: appointment.professionals.color || '#3B82F6'
+      style={{
+        borderLeftWidth: "4px",
+        borderLeftColor: appointment.professionals.color || "#3B82F6",
       }}
     >
       <div className="flex items-center justify-between mb-1">
@@ -264,7 +319,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         {getPriorityIcon(appointment.priority)}
       </div>
       <div className="text-gray-600 mb-1">
-        {format(new Date(appointment.start_time), 'HH:mm')} - {format(new Date(appointment.end_time), 'HH:mm')}
+        {format(new Date(appointment.start_time), "HH:mm")} -{" "}
+        {format(new Date(appointment.end_time), "HH:mm")}
       </div>
       <div className="text-gray-500 truncate">
         {appointment.service_types.name}
@@ -282,13 +338,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         {/* Header with days */}
         <div className="grid grid-cols-8 gap-1 mb-4">
           <div className="p-2 font-medium text-sm text-gray-600">Horário</div>
-          {weekDays.map(day => (
+          {weekDays.map((day) => (
             <div key={day.toISOString()} className="p-2 text-center">
               <div className="font-medium text-sm">
-                {format(day, 'EEEEEE', { locale: ptBR })}
+                {format(day, "EEEEEE", { locale: ptBR })}
               </div>
-              <div className={`text-lg ${isSame(day, new Date(), 'day') ? 'text-blue-600 font-bold' : ''}`}>
-                {format(day, 'd')}
+              <div
+                className={`text-lg ${isSameDay(day, new Date()) ? "text-blue-600 font-bold" : ""}`}
+              >
+                {format(day, "d")}
               </div>
             </div>
           ))}
@@ -296,12 +354,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
         {/* Time slots */}
         <div className="space-y-1">
-          {timeSlots.map(time => (
+          {timeSlots.map((time) => (
             <div key={time} className="grid grid-cols-8 gap-1">
               <div className="p-2 text-sm text-gray-600 font-mono border-r">
                 {time}
               </div>
-              {weekDays.map(day => {
+              {weekDays.map((day) => {
                 const slotAppointments = getAppointmentsForSlot(day, time);
                 return (
                   <div
@@ -310,8 +368,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                     onClick={() => onTimeSlotClick?.(day, time)}
                   >
                     <div className="space-y-1">
-                      {slotAppointments.map(appointment => (
-                        <AppointmentCard key={appointment.id} appointment={appointment} />
+                      {slotAppointments.map((appointment) => (
+                        <AppointmentCard
+                          key={appointment.id}
+                          appointment={appointment}
+                        />
                       ))}
                     </div>
                   </div>
@@ -334,25 +395,29 @@ const CalendarView: React.FC<CalendarViewProps> = ({
         className="rounded-md border"
         locale={ptBR}
       />
-      
+
       {/* Appointments for selected date */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Agendamentos - {format(selectedDate, 'dd/MM/yyyy', { locale: ptBR })}
+            Agendamentos -{" "}
+            {format(selectedDate, "dd/MM/yyyy", { locale: ptBR })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {appointments
-              .filter(appointment => 
-                isSame(new Date(appointment.start_time), selectedDate, 'day')
+              .filter((appointment) =>
+                isSameDay(new Date(appointment.start_time), selectedDate)
               )
-              .map(appointment => (
-                <AppointmentCard key={appointment.id} appointment={appointment} />
+              .map((appointment) => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                />
               ))}
-            {appointments.filter(appointment => 
-              isSame(new Date(appointment.start_time), selectedDate, 'day')
+            {appointments.filter((appointment) =>
+              isSameDay(new Date(appointment.start_time), selectedDate)
             ).length === 0 && (
               <p className="text-gray-500 text-center py-4">
                 Nenhum agendamento para este dia
@@ -390,11 +455,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             </div>
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             {/* View Mode Tabs */}
-            <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as 'month' | 'week' | 'day')} className="w-full lg:w-auto">
+            <Tabs
+              value={viewMode}
+              onValueChange={(value) =>
+                setViewMode(value as "month" | "week" | "day")
+              }
+              className="w-full lg:w-auto"
+            >
               <TabsList>
                 <TabsTrigger value="month" className="flex items-center gap-2">
                   <Grid3X3 className="w-4 h-4" />
@@ -408,13 +479,23 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             </Tabs>
 
             {/* Navigation Controls */}
-            {viewMode === 'week' && (
+            {viewMode === "week" && (
               <div className="flex items-center gap-2">
                 <Button onClick={goToPreviousWeek} variant="outline" size="sm">
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
                 <span className="px-4 py-2 text-sm font-medium">
-                  {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), 'dd/MM', { locale: ptBR })} - {format(endOfWeek(currentWeek, { weekStartsOn: 1 }), 'dd/MM/yyyy', { locale: ptBR })}
+                  {format(
+                    startOfWeek(currentWeek, { weekStartsOn: 1 }),
+                    "dd/MM",
+                    { locale: ptBR }
+                  )}{" "}
+                  -{" "}
+                  {format(
+                    endOfWeek(currentWeek, { weekStartsOn: 1 }),
+                    "dd/MM/yyyy",
+                    { locale: ptBR }
+                  )}
                 </span>
                 <Button onClick={goToNextWeek} variant="outline" size="sm">
                   <ChevronRight className="w-4 h-4" />
@@ -424,13 +505,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
             {/* Filters */}
             <div className="flex items-center gap-2 w-full lg:w-auto">
-              <Select value={selectedProfessional} onValueChange={setSelectedProfessional}>
+              <Select
+                value={selectedProfessional}
+                onValueChange={setSelectedProfessional}
+              >
                 <SelectTrigger className="w-full lg:w-[200px]">
                   <SelectValue placeholder="Profissional" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os profissionais</SelectItem>
-                  {professionals.map(professional => (
+                  {professionals.map((professional) => (
                     <SelectItem key={professional.id} value={professional.id}>
                       {professional.full_name}
                     </SelectItem>
@@ -452,13 +536,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 </SelectContent>
               </Select>
 
-              <Button 
-                onClick={() => queryClient.invalidateQueries({ queryKey: ['appointments'] })}
-                variant="outline" 
+              <Button
+                onClick={() =>
+                  queryClient.invalidateQueries({ queryKey: ["appointments"] })
+                }
+                variant="outline"
                 size="sm"
                 disabled={appointmentsLoading}
               >
-                <RefreshCw className={`w-4 h-4 ${appointmentsLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-4 h-4 ${appointmentsLoading ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
           </div>
@@ -504,9 +592,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Total Hoje</p>
                 <p className="text-2xl font-bold">
-                  {appointments.filter(apt => 
-                    isSame(new Date(apt.start_time), new Date(), 'day')
-                  ).length}
+                  {
+                    appointments.filter((apt) =>
+                      isSameDay(new Date(apt.start_time), new Date())
+                    ).length
+                  }
                 </p>
               </div>
               <CalendarIcon className="w-8 h-8 text-blue-500" />
@@ -520,7 +610,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Confirmados</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {appointments.filter(apt => apt.status === 'confirmed').length}
+                  {
+                    appointments.filter((apt) => apt.status === "confirmed")
+                      .length
+                  }
                 </p>
               </div>
               <CheckCircle className="w-8 h-8 text-green-500" />
@@ -534,7 +627,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               <div>
                 <p className="text-sm text-gray-600">Em Andamento</p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {appointments.filter(apt => apt.status === 'in_progress').length}
+                  {
+                    appointments.filter((apt) => apt.status === "in_progress")
+                      .length
+                  }
                 </p>
               </div>
               <Clock className="w-8 h-8 text-yellow-500" />
@@ -547,9 +643,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Profissionais</p>
-                <p className="text-2xl font-bold">
-                  {professionals.length}
-                </p>
+                <p className="text-2xl font-bold">{professionals.length}</p>
               </div>
               <Users className="w-8 h-8 text-purple-500" />
             </div>

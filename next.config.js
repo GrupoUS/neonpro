@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    instrumentationHook: true,
-    serverComponentsExternalPackages: ['@opentelemetry/api'],
-  },
+  // instrumentationHook is now available by default in Next.js 15
+  // serverComponentsExternalPackages moved to serverExternalPackages
+  serverExternalPackages: ['@opentelemetry/api'],
   webpack: (config, { isServer }) => {
     // DEFINITIVE SOLUTION: Comprehensive OpenTelemetry warning suppression
     // Based on extensive research from VS Code docs, GitHub issues, and Next.js best practices

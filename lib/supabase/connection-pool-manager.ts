@@ -15,7 +15,6 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { createBrowserClient, createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { Database } from '@/types/database'
 
 // Healthcare-specific connection pool types
@@ -132,41 +131,63 @@ export class NeonProConnectionPoolManager {
 
   /**
    * Get client for server-side operations with session management
+   * FIXED: Dynamic import for next/headers to avoid client-side import errors
    */
   public async getServerClient(clinicId: string): Promise<SupabaseClient<Database>> {
     const poolKey = `server_${clinicId}`
     
     if (!this.pools.has(poolKey)) {
-      const cookieStore = await cookies()
-      
-      const client = createServerClient<Database>(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get(name: string) {
-              return cookieStore.get(name)?.value
-            },
-            set(name: string, value: string, options: any) {
-              try {
-                cookieStore.set({ name, value, ...options })
-              } catch (error) {
-                console.warn('Cookie set error in server pooling:', error)
-              }
-            },
-            remove(name: string, options: any) {
-              try {
-                cookieStore.set({ name, value: '', ...options })
-              } catch (error) {
-                console.warn('Cookie remove error in server pooling:', error)
-              }
-            },
-          },
+      // Verificar se estamos no servidor antes de importar next/headers
+      if (typeof window === 'undefined') {
+        try {
+          // Importação dinâmica para evitar erro no cliente
+          const { cookies } = await import('next/headers')
+          const cookieStore = await cookies()
+          
+          const client = createServerClient<Database>(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+              cookies: {
+                get(name: string) {
+                  return cookieStore.get(name)?.value
+                },
+                set(name: string, value: string, options: any) {
+                  try {
+                    cookieStore.set({ name, value, ...options })
+                  } catch (error) {
+                    console.warn('Cookie set error in server pooling:', error)
+                  }
+                },
+                remove(name: string, options: any) {
+                  try {
+                    cookieStore.set({ name, value: '', ...options })
+                  } catch (error) {
+                    console.warn('Cookie remove error in server pooling:', error)
+                  }
+                },
+              },
+            }
+          )
+          
+          this.pools.set(poolKey, client)
+          this.initializeMetrics(poolKey)
+        } catch (error) {
+          console.error('Error creating server client with cookies:', error)
+          // Fallback para cliente básico sem cookies
+          const fallbackClient = createClient<Database>(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+          )
+          this.pools.set(poolKey, fallbackClient)
+          this.initializeMetrics(poolKey)
         }
-      )
-      
-      this.pools.set(poolKey, client)
-      this.initializeMetrics(poolKey)
+      } else {
+        // No lado do cliente, usar browser client
+        const browserClient = this.getBrowserClient(clinicId)
+        this.pools.set(poolKey, browserClient)
+        this.initializeMetrics(poolKey)
+      }
     }
     
     this.updateConnectionMetrics(poolKey)
@@ -266,9 +287,7 @@ export class NeonProConnectionPoolManager {
       
       this.metrics.set(poolKey, metrics)
     }
-  }
-
-  /**
+  }  /**
    * Start continuous health monitoring
    */
   private startHealthMonitoring(): void {

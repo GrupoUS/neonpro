@@ -217,216 +217,216 @@ export function StockAlerts() {
   }
 
   return (
-    &lt;div className="space-y-6"&gt;
+    <div className="space-y-6">
       {/* Alert Summary Cards */}
-      &lt;div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"&gt;
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Total de Alertas&lt;/p&gt;
-                &lt;p className="text-2xl font-bold"&gt;{alertCounts.total}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Bell className="h-8 w-8 text-muted-foreground" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total de Alertas</p>
+                <p className="text-2xl font-bold">{alertCounts.total}</p>
+              </div>
+              <Bell className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Críticos&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-red-600"&gt;{alertCounts.critical}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;XCircle className="h-8 w-8 text-red-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Críticos</p>
+                <p className="text-2xl font-bold text-red-600">{alertCounts.critical}</p>
+              </div>
+              <XCircle className="h-8 w-8 text-red-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Avisos&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-amber-600"&gt;{alertCounts.warning}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;AlertTriangle className="h-8 w-8 text-amber-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Avisos</p>
+                <p className="text-2xl font-bold text-amber-600">{alertCounts.warning}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-amber-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Ação Necessária&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-blue-600"&gt;{alertCounts.actionRequired}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;CheckCircle className="h-8 w-8 text-blue-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/div&gt;      {/* Filters */}
-      &lt;div className="flex gap-4"&gt;
-        &lt;Tabs value={selectedSeverity} onValueChange={setSelectedSeverity}&gt;
-          &lt;TabsList&gt;
-            &lt;TabsTrigger value="all"&gt;Todos&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="critical"&gt;Críticos&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="warning"&gt;Avisos&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="info"&gt;Informativos&lt;/TabsTrigger&gt;
-          &lt;/TabsList&gt;
-        &lt;/Tabs&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Ação Necessária</p>
+                <p className="text-2xl font-bold text-blue-600">{alertCounts.actionRequired}</p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>      {/* Filters */}
+      <div className="flex gap-4">
+        <Tabs value={selectedSeverity} onValueChange={setSelectedSeverity}>
+          <TabsList>
+            <TabsTrigger value="all">Todos</TabsTrigger>
+            <TabsTrigger value="critical">Críticos</TabsTrigger>
+            <TabsTrigger value="warning">Avisos</TabsTrigger>
+            <TabsTrigger value="info">Informativos</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-        &lt;Tabs value={selectedType} onValueChange={setSelectedType}&gt;
-          &lt;TabsList&gt;
-            &lt;TabsTrigger value="all"&gt;Todos os Tipos&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="expired"&gt;Vencidos&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="expiring"&gt;Vencendo&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="low_stock"&gt;Estoque Baixo&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="anvisa_compliance"&gt;ANVISA&lt;/TabsTrigger&gt;
-          &lt;/TabsList&gt;
-        &lt;/Tabs&gt;
-      &lt;/div&gt;
+        <Tabs value={selectedType} onValueChange={setSelectedType}>
+          <TabsList>
+            <TabsTrigger value="all">Todos os Tipos</TabsTrigger>
+            <TabsTrigger value="expired">Vencidos</TabsTrigger>
+            <TabsTrigger value="expiring">Vencendo</TabsTrigger>
+            <TabsTrigger value="low_stock">Estoque Baixo</TabsTrigger>
+            <TabsTrigger value="anvisa_compliance">ANVISA</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
       {/* Alerts List */}
-      &lt;div className="space-y-4"&gt;
-        {filteredAlerts.map((alert) =&gt; {
+      <div className="space-y-4">
+        {filteredAlerts.map((alert) => {
           const config = alertTypeConfig[alert.type]
           const Icon = config.icon
           
           return (
-            &lt;Card key={alert.id} className={`border-l-4 ${alert.severity === 'critical' ? 'border-l-red-500' : alert.severity === 'warning' ? 'border-l-amber-500' : 'border-l-blue-500'}`}&gt;
-              &lt;CardHeader className="pb-3"&gt;
-                &lt;div className="flex items-start justify-between"&gt;
-                  &lt;div className="flex items-start gap-3"&gt;
-                    &lt;div className={`p-2 rounded-lg ${config.bgColor}`}&gt;
-                      &lt;Icon className="w-5 h-5" /&gt;
-                    &lt;/div&gt;
+            <Card key={alert.id} className={`border-l-4 ${alert.severity === 'critical' ? 'border-l-red-500' : alert.severity === 'warning' ? 'border-l-amber-500' : 'border-l-blue-500'}`}>
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg ${config.bgColor}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
                     
-                    &lt;div className="space-y-1"&gt;
-                      &lt;div className="flex items-center gap-2"&gt;
-                        &lt;CardTitle className="text-base"&gt;{alert.message}&lt;/CardTitle&gt;
-                        &lt;Badge variant="outline" className={getSeverityBadgeColor(alert.severity)}&gt;
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-base">{alert.message}</CardTitle>
+                        <Badge variant="outline" className={getSeverityBadgeColor(alert.severity)}>
                           {alert.severity === 'critical' ? 'Crítico' : 
                            alert.severity === 'warning' ? 'Aviso' : 'Info'}
-                        &lt;/Badge&gt;
-                        &lt;Badge variant="outline" className={config.color}&gt;
+                        </Badge>
+                        <Badge variant="outline" className={config.color}>
                           {config.label}
-                        &lt;/Badge&gt;
-                      &lt;/div&gt;
+                        </Badge>
+                      </div>
                       
-                      &lt;CardDescription className="text-sm"&gt;
-                        &lt;strong&gt;{alert.productName}&lt;/strong&gt; • {alert.category}
-                      &lt;/CardDescription&gt;
-                    &lt;/div&gt;
-                  &lt;/div&gt;
+                      <CardDescription className="text-sm">
+                        <strong>{alert.productName}</strong> • {alert.category}
+                      </CardDescription>
+                    </div>
+                  </div>
                   
-                  &lt;div className="flex items-center gap-2"&gt;
+                  <div className="flex items-center gap-2">
                     {alert.actionRequired && (
-                      &lt;Badge variant="outline" className="bg-red-50 text-red-700 border-red-200"&gt;
+                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
                         Ação Necessária
-                      &lt;/Badge&gt;
+                      </Badge>
                     )}
-                    &lt;Button 
+                    <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() =&gt; handleResolveAlert(alert.id)}
-                    &gt;
-                      &lt;CheckCircle className="w-4 h-4 mr-1" /&gt;
+                      onClick={() => handleResolveAlert(alert.id)}
+                    >
+                      <CheckCircle className="w-4 h-4 mr-1" />
                       Resolver
-                    &lt;/Button&gt;
-                  &lt;/div&gt;
-                &lt;/div&gt;
-              &lt;/CardHeader&gt;
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
               
-              &lt;CardContent className="pt-0"&gt;
-                &lt;div className="space-y-3"&gt;
-                  &lt;p className="text-sm text-muted-foreground"&gt;
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
                     {alert.details}
-                  &lt;/p&gt;
+                  </p>
                   
-                  &lt;div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm"&gt;
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     {alert.location && (
-                      &lt;div&gt;
-                        &lt;span className="font-medium text-muted-foreground"&gt;Localização:&lt;/span&gt;
-                        &lt;br /&gt;
+                      <div>
+                        <span className="font-medium text-muted-foreground">Localização:</span>
+                        <br />
                         {alert.location}
-                      &lt;/div&gt;
+                      </div>
                     )}
                     
                     {alert.batchNumber && (
-                      &lt;div&gt;
-                        &lt;span className="font-medium text-muted-foreground"&gt;Lote:&lt;/span&gt;
-                        &lt;br /&gt;
+                      <div>
+                        <span className="font-medium text-muted-foreground">Lote:</span>
+                        <br />
                         {alert.batchNumber}
-                      &lt;/div&gt;
+                      </div>
                     )}
                     
                     {alert.anvisaRegistration && (
-                      &lt;div&gt;
-                        &lt;span className="font-medium text-muted-foreground"&gt;ANVISA:&lt;/span&gt;
-                        &lt;br /&gt;
-                        &lt;Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs"&gt;
-                          &lt;Shield className="w-3 h-3 mr-1" /&gt;
+                      <div>
+                        <span className="font-medium text-muted-foreground">ANVISA:</span>
+                        <br />
+                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                          <Shield className="w-3 h-3 mr-1" />
                           {alert.anvisaRegistration}
-                        &lt;/Badge&gt;
-                      &lt;/div&gt;
+                        </Badge>
+                      </div>
                     )}
                     
                     {alert.temperatureReading && (
-                      &lt;div&gt;
-                        &lt;span className="font-medium text-muted-foreground"&gt;Temperatura:&lt;/span&gt;
-                        &lt;br /&gt;
-                        &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs"&gt;
-                          &lt;Thermometer className="w-3 h-3 mr-1" /&gt;
+                      <div>
+                        <span className="font-medium text-muted-foreground">Temperatura:</span>
+                        <br />
+                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+                          <Thermometer className="w-3 h-3 mr-1" />
                           {alert.temperatureReading}°C
-                        &lt;/Badge&gt;
+                        </Badge>
                         {alert.targetTemperatureRange && (
-                          &lt;div className="text-xs text-muted-foreground mt-1"&gt;
+                          <div className="text-xs text-muted-foreground mt-1">
                             Ideal: {alert.targetTemperatureRange}
-                          &lt;/div&gt;
+                          </div>
                         )}
-                      &lt;/div&gt;
+                      </div>
                     )}
-                  &lt;/div&gt;
+                  </div>
                   
-                  &lt;div className="flex items-center justify-between pt-2 border-t border-muted"&gt;
-                    &lt;span className="text-xs text-muted-foreground"&gt;
+                  <div className="flex items-center justify-between pt-2 border-t border-muted">
+                    <span className="text-xs text-muted-foreground">
                       Criado em: {new Date(alert.createdAt).toLocaleString('pt-BR')}
-                    &lt;/span&gt;
+                    </span>
                     
                     {alert.type === 'anvisa_compliance' && (
-                      &lt;Alert className="max-w-md"&gt;
-                        &lt;Shield className="h-4 w-4" /&gt;
-                        &lt;AlertTitle&gt;Compliance ANVISA&lt;/AlertTitle&gt;
-                        &lt;AlertDescription className="text-xs"&gt;
+                      <Alert className="max-w-md">
+                        <Shield className="h-4 w-4" />
+                        <AlertTitle>Compliance ANVISA</AlertTitle>
+                        <AlertDescription className="text-xs">
                           Este alerta requer ação imediata para manter compliance regulatório.
-                        &lt;/AlertDescription&gt;
-                      &lt;/Alert&gt;
+                        </AlertDescription>
+                      </Alert>
                     )}
-                  &lt;/div&gt;
-                &lt;/div&gt;
-              &lt;/CardContent&gt;
-            &lt;/Card&gt;
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           )
         })}
         
         {filteredAlerts.length === 0 && (
-          &lt;Card&gt;
-            &lt;CardContent className="p-8 text-center"&gt;
-              &lt;CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500 opacity-50" /&gt;
-              &lt;h3 className="text-lg font-medium mb-2"&gt;Nenhum alerta encontrado&lt;/h3&gt;
-              &lt;p className="text-muted-foreground"&gt;
+          <Card>
+            <CardContent className="p-8 text-center">
+              <CheckCircle className="w-12 h-12 mx-auto mb-4 text-green-500 opacity-50" />
+              <h3 className="text-lg font-medium mb-2">Nenhum alerta encontrado</h3>
+              <p className="text-muted-foreground">
                 {selectedSeverity === 'all' && selectedType === 'all' 
                   ? 'Todos os alertas foram resolvidos. Excelente trabalho!'
                   : 'Nenhum alerta corresponde aos filtros selecionados.'
                 }
-              &lt;/p&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
+              </p>
+            </CardContent>
+          </Card>
         )}
-      &lt;/div&gt;
-    &lt;/div&gt;
+      </div>
+    </div>
   )
 }

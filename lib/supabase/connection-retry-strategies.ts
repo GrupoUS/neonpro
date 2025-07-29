@@ -11,9 +11,9 @@
  * - Emergency escalation protocols
  */
 
+import { Database } from '@/types/database'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { getConnectionPoolManager } from './connection-pool-manager'
-import { Database } from '@/types/database'
 
 // Healthcare retry configuration
 interface HealthcareRetryConfig {
@@ -563,7 +563,7 @@ class HealthcareConnectionRetryManager {
   }
 
   private recordFailure(key: string): void {
-    let breaker = this.circuitBreakers.get(key) || {
+    const breaker = this.circuitBreakers.get(key) || {
       state: 'closed' as CircuitBreakerState,
       failures: 0,
       lastFailure: new Date(),
@@ -669,12 +669,10 @@ class HealthcareConnectionRetryManager {
 export const getRetryManager = () => HealthcareConnectionRetryManager.getInstance()
 
 // Export types
-export type { 
-  HealthcareRetryConfig, 
-  RetryResult, 
-  HealthcareErrorClassification, 
-  HealthcarePriority,
-  CircuitBreakerState 
+export type {
+    CircuitBreakerState, HealthcareErrorClassification,
+    HealthcarePriority, HealthcareRetryConfig,
+    RetryResult
 }
 
 // Helper function for quick retry execution

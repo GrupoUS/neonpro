@@ -59,6 +59,14 @@ export const FREQUENCY_TYPES = {
   QUARTERLY: 'quarterly'
 } as const;
 
+export const DASHBOARD_REFRESH_INTERVALS = {
+  REAL_TIME: 5000,      // 5 seconds
+  FREQUENT: 30000,      // 30 seconds  
+  NORMAL: 60000,        // 1 minute
+  SLOW: 300000,         // 5 minutes
+  MANUAL: 0             // No auto refresh
+} as const;
+
 // Base financial report interface
 export interface FinancialReport {
   id: string;

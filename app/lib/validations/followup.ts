@@ -1,4 +1,3 @@
-// Treatment Follow-up System Validation Schemas
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
@@ -99,75 +98,35 @@ export const followupCommunicationSchema = z.object({
   response_time_minutes: z.number().int().min(0).optional(),
   response_content: z.string().max(1000).optional(),
   
-  // Performance metrics
-  engagement_score: z.number().min(0).max(1).optional(),
-  conversion_achieved: z.boolean().default(false),
-  
-  // Technical metadata
-  message_id: z.string().max(255).optional(),
-  provider: z.string().max(50).optional(),
-  cost_cents: z.number().int().min(0).optional()
-});
-
-export const treatmentOutcomeSchema = z.object({
-  id: z.string().uuid().optional(),
-  patient_id: z.string().uuid(),
-  treatment_id: z.string().uuid().optional(),
-  followup_id: z.string().uuid().optional(),
-  
-  // Outcome measurements
-  outcome_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida'),
-  measurement_type: z.string().min(1).max(50),
-  value_numeric: z.number().optional(),
-  value_text: z.string().max(500).optional(),
-  scale_type: z.enum(['1_to_10', 'percentage', 'yes_no', 'custom']),
-  
-  // Clinical assessment
-  clinical_improvement: z.boolean().optional(),
-  meets_treatment_goals: z.boolean().optional(),
-  requires_additional_treatment: z.boolean().optional(),
-  
-  // Patient reported outcomes
-  patient_satisfaction: z.number().int().min(1).max(10).optional(),
-  quality_of_life_score: z.number().min(0).max(1).optional(),
-  pain_level: z.number().int().min(0).max(10).optional(),
-  mobility_score: z.number().min(0).max(1).optional(),
-  
-  // Follow-up recommendations
-  next_followup_recommended: z.boolean().default(true),
-  followup_interval_days: z.number().int().min(1).max(365).optional(),
-  escalation_required: z.boolean().default(false),
-  referral_needed: z.boolean().default(false),
-  specialist_type: z.string().max(100).optional(),
-  
-  // Data source
-  data_source: z.enum(['patient_report', 'clinical_exam', 'automated_assessment']).default('patient_report'),
-  reliability_score: z.number().min(0).max(1).default(0.8),
-  
-  // AI analysis
-  ai_analyzed: z.boolean().default(false),
-  ai_confidence_score: z.number().min(0).max(1).optional(),
-  ai_recommendations: z.string().max(1000).optional()
+  // Metadata
+  cost_cents: z.number().int().min(0).optional(),
+  provider_message_id: z.string().max(255).optional(),
+  internal_notes: z.string().max(1000).optional()
 });
 
 export const escalationRuleSchema = z.object({
   id: z.string().uuid().optional(),
   protocol_id: z.string().uuid(),
   
-  // Escalation conditions
-  condition_type: z.enum(['no_response', 'poor_outcome', 'urgent_symptoms', 'compliance_issue']),
-  threshold_value: z.number().optional(),
+  // Trigger conditions
+  trigger_condition: z.enum(['missed_followup', 'negative_response', 'urgent_symptoms', 'manual_escalation']),
+  trigger_threshold: z.number().int().min(1).default(1),
   time_threshold_hours: z.number().int().min(1).max(168).optional(),
-  attempts_threshold: z.number().int().min(1).max(10).optional(),
   
-  // Escalation actions
-  escalation_level: z.enum(['low', 'medium', 'high', 'critical']).default('low'),
-  notify_roles: z.array(z.string().max(50)),
-  auto_schedule_appointment: z.boolean().default(false),
-  priority_level: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  // Escalation levels
+  escalation_level: z.enum(['low', 'medium', 'high', 'critical']),
+  escalation_path: z.array(z.string().max(100)),
   
-  // Templates and scripts
-  escalation_message_template: z.string().max(1000).optional(),
+  // Actions
+  auto_assign_staff: z.boolean().default(false),
+  staff_role: z.string().max(50).optional(),
+  create_task: z.boolean().default(true),
+  task_priority: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+  
+  // Notifications
+  notify_immediately: z.boolean().default(true),
+  notification_channels: z.array(z.enum(['email', 'sms', 'whatsapp', 'phone', 'dashboard'])),
+  notification_template: z.string().max(1000).optional(),
   internal_alert_template: z.string().max(1000).optional(),
   
   is_active: z.boolean().default(true)
@@ -249,19 +208,6 @@ export const createPatientFollowupSchema = z.object({
   shadow_test_variant: z.string().max(50).optional()
 });
 
-export const updateFollowupStatusSchema = z.object({
-  status: z.enum(['scheduled', 'sent', 'completed', 'missed', 'cancelled', 'escalated']),
-  patient_responded: z.boolean().optional(),
-  response_channel: z.enum(['sms', 'whatsapp', 'email', 'phone']).optional(),
-  response_content: z.string().max(1000).optional(),
-  satisfaction_score: z.number().int().min(1).max(10).optional(),
-  treatment_compliance_score: z.number().min(0).max(1).optional(),
-  symptoms_improved: z.boolean().optional(),
-  side_effects_reported: z.boolean().optional(),
-  additional_care_needed: z.boolean().optional(),
-  notes: z.string().max(2000).optional()
-});
-
 export const createTreatmentOutcomeSchema = z.object({
   patient_id: z.string().uuid('ID do paciente inválido'),
   treatment_id: z.string().uuid('ID do tratamento inválido').optional(),
@@ -285,6 +231,47 @@ export const createTreatmentOutcomeSchema = z.object({
   specialist_type: z.string().max(100).optional(),
   data_source: z.enum(['patient_report', 'clinical_exam', 'automated_assessment']).default('patient_report'),
   reliability_score: z.number().min(0).max(1).default(0.8)
+});
+
+export const treatmentOutcomeSchema = z.object({
+  id: z.string().uuid().optional(),
+  patient_id: z.string().uuid(),
+  treatment_id: z.string().uuid().optional(),
+  followup_id: z.string().uuid().optional(),
+  outcome_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  measurement_type: z.string().max(50),
+  value_numeric: z.number().optional(),
+  value_text: z.string().max(500).optional(),
+  scale_type: z.enum(['1_to_10', 'percentage', 'yes_no', 'custom']),
+  clinical_improvement: z.boolean().optional(),
+  meets_treatment_goals: z.boolean().optional(),
+  requires_additional_treatment: z.boolean().optional(),
+  patient_satisfaction: z.number().int().min(1).max(10).optional(),
+  quality_of_life_score: z.number().min(0).max(1).optional(),
+  pain_level: z.number().int().min(0).max(10).optional(),
+  mobility_score: z.number().min(0).max(1).optional(),
+  next_followup_recommended: z.boolean().default(true),
+  followup_interval_days: z.number().int().min(1).max(365).optional(),
+  escalation_required: z.boolean().default(false),
+  referral_needed: z.boolean().default(false),
+  specialist_type: z.string().max(100).optional(),
+  data_source: z.enum(['patient_report', 'clinical_exam', 'automated_assessment']).default('patient_report'),
+  reliability_score: z.number().min(0).max(1).default(0.8),
+  created_at: z.string().datetime().optional(),
+  updated_at: z.string().datetime().optional()
+});
+
+export const updateFollowupStatusSchema = z.object({
+  status: z.enum(['scheduled', 'sent', 'completed', 'missed', 'cancelled', 'escalated']),
+  patient_responded: z.boolean().optional(),
+  response_channel: z.enum(['sms', 'whatsapp', 'email', 'phone']).optional(),
+  response_content: z.string().max(1000).optional(),
+  satisfaction_score: z.number().int().min(1).max(10).optional(),
+  treatment_compliance_score: z.number().min(0).max(1).optional(),
+  symptoms_improved: z.boolean().optional(),
+  side_effects_reported: z.boolean().optional(),
+  additional_care_needed: z.boolean().optional(),
+  notes: z.string().max(2000).optional()
 });
 
 export const followupFiltersSchema = z.object({
@@ -346,10 +333,3 @@ export const aiPersonalizationSchema = z.object({
   escalation_threshold: z.number().min(0).max(1),
   personalization_confidence: z.number().min(0).max(1)
 });
-
-// Export all schemas
-export {
-    aiPersonalizationSchema, aiTimingOptimizationSchema, createFollowupProtocolSchema,
-    createPatientFollowupSchema, createTreatmentOutcomeSchema, escalationRuleSchema, followupCommunicationSchema, followupFiltersSchema, followupProtocolSchema, messageTemplateSchema, patientFollowupSchema, performanceAnalyticsSchema, treatmentOutcomeSchema, updateFollowupStatusSchema
-};
-

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/674</span>
+                <span class='fraction'>0/683</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/674</span>
+                <span class='fraction'>0/683</span>
             </div>
         
             
@@ -737,7 +737,25 @@
 <a name='L672'></a><a href='#L672'>672</a>
 <a name='L673'></a><a href='#L673'>673</a>
 <a name='L674'></a><a href='#L674'>674</a>
-<a name='L675'></a><a href='#L675'>675</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L675'></a><a href='#L675'>675</a>
+<a name='L676'></a><a href='#L676'>676</a>
+<a name='L677'></a><a href='#L677'>677</a>
+<a name='L678'></a><a href='#L678'>678</a>
+<a name='L679'></a><a href='#L679'>679</a>
+<a name='L680'></a><a href='#L680'>680</a>
+<a name='L681'></a><a href='#L681'>681</a>
+<a name='L682'></a><a href='#L682'>682</a>
+<a name='L683'></a><a href='#L683'>683</a>
+<a name='L684'></a><a href='#L684'>684</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1442,8 +1460,7 @@
 <span class="cstat-no" title="statement not covered" >  SearchResponse,</span>
 <span class="cstat-no" title="statement not covered" >  SearchResult,</span>
 <span class="cstat-no" title="statement not covered" >  SearchType,</span>
-<span class="cstat-no" title="statement not covered" >} from "@/lib/search/unified-search";</span>
-<span class="cstat-no" title="statement not covered" >import { unifiedSearchSystem } from "@/lib/search/unified-search";</span>
+<span class="cstat-no" title="statement not covered" >} from "@/lib/search/types";</span>
 <span class="cstat-no" title="statement not covered" >import {</span>
 <span class="cstat-no" title="statement not covered" >  Activity,</span>
 <span class="cstat-no" title="statement not covered" >  Calendar,</span>
@@ -1521,31 +1538,41 @@
 <span class="cstat-no" title="statement not covered" >        let response: SearchResponse;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >        if (enableNLP) {</span>
-<span class="cstat-no" title="statement not covered" >          // Use conversational search for NLP processing</span>
-<span class="cstat-no" title="statement not covered" >          response = await unifiedSearchSystem.conversationalSearch(</span>
-<span class="cstat-no" title="statement not covered" >            searchTerm,</span>
-<span class="cstat-no" title="statement not covered" >            userId,</span>
-<span class="cstat-no" title="statement not covered" >            userRole</span>
-<span class="cstat-no" title="statement not covered" >          );</span>
+<span class="cstat-no" title="statement not covered" >          // Use conversational search for NLP processing via API</span>
+<span class="cstat-no" title="statement not covered" >          const apiResponse = await fetch('/api/search/conversational', {</span>
+<span class="cstat-no" title="statement not covered" >            method: 'POST',</span>
+<span class="cstat-no" title="statement not covered" >            headers: { 'Content-Type': 'application/json' },</span>
+<span class="cstat-no" title="statement not covered" >            body: JSON.stringify({ </span>
+<span class="cstat-no" title="statement not covered" >              term: searchTerm, </span>
+<span class="cstat-no" title="statement not covered" >              userId, </span>
+<span class="cstat-no" title="statement not covered" >              userRole </span>
+<span class="cstat-no" title="statement not covered" >            })</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >          response = await apiResponse.json();</span>
 <span class="cstat-no" title="statement not covered" >        } else {</span>
-<span class="cstat-no" title="statement not covered" >          // Use traditional search</span>
-<span class="cstat-no" title="statement not covered" >          response = await unifiedSearchSystem.search({</span>
-<span class="cstat-no" title="statement not covered" >            term: searchTerm,</span>
-<span class="cstat-no" title="statement not covered" >            filters: {</span>
-<span class="cstat-no" title="statement not covered" >              types: searchFilters.types,</span>
-<span class="cstat-no" title="statement not covered" >              dateRange: searchFilters.dateRange</span>
+<span class="cstat-no" title="statement not covered" >          // Use traditional search via API</span>
+<span class="cstat-no" title="statement not covered" >          const apiResponse = await fetch('/api/search', {</span>
+<span class="cstat-no" title="statement not covered" >            method: 'POST',</span>
+<span class="cstat-no" title="statement not covered" >            headers: { 'Content-Type': 'application/json' },</span>
+<span class="cstat-no" title="statement not covered" >            body: JSON.stringify({</span>
+<span class="cstat-no" title="statement not covered" >              term: searchTerm,</span>
+<span class="cstat-no" title="statement not covered" >              filters: {</span>
+<span class="cstat-no" title="statement not covered" >                types: searchFilters.types,</span>
+<span class="cstat-no" title="statement not covered" >                dateRange: searchFilters.dateRange</span>
 <span class="cstat-no" title="statement not covered" >                ? {</span>
 <span class="cstat-no" title="statement not covered" >                    start: new Date(searchFilters.dateRange.start),</span>
 <span class="cstat-no" title="statement not covered" >                    end: new Date(searchFilters.dateRange.end),</span>
 <span class="cstat-no" title="statement not covered" >                  }</span>
 <span class="cstat-no" title="statement not covered" >                : undefined,</span>
-<span class="cstat-no" title="statement not covered" >            },</span>
-<span class="cstat-no" title="statement not covered" >            options: {</span>
-<span class="cstat-no" title="statement not covered" >              useNLP: false,</span>
-<span class="cstat-no" title="statement not covered" >              limit: maxResults,</span>
-<span class="cstat-no" title="statement not covered" >              sortBy: searchFilters.sortBy,</span>
-<span class="cstat-no" title="statement not covered" >            },</span>
+<span class="cstat-no" title="statement not covered" >              },</span>
+<span class="cstat-no" title="statement not covered" >              options: {</span>
+<span class="cstat-no" title="statement not covered" >                useNLP: false,</span>
+<span class="cstat-no" title="statement not covered" >                limit: maxResults,</span>
+<span class="cstat-no" title="statement not covered" >                sortBy: searchFilters.sortBy,</span>
+<span class="cstat-no" title="statement not covered" >              },</span>
+<span class="cstat-no" title="statement not covered" >            }),</span>
 <span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >          response = await apiResponse.json();</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >        setSearchResponse(response);</span>
@@ -2092,7 +2119,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-27T00:27:56.489Z
+                at 2025-07-29T02:00:17.188Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

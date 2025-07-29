@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+// FIXED: Removed direct import of 'next/headers' to avoid client-side errors
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -32,13 +32,47 @@ export interface BulkEmailData {
 }
 
 class EmailService {
-  private supabase = createServerComponentClient({ cookies })
+  private supabase: any = null
   private defaultFrom = process.env.DEFAULT_FROM_EMAIL || 'neonpro@example.com'
   private defaultReplyTo = process.env.DEFAULT_REPLY_TO_EMAIL
 
+  // Initialize Supabase client with dynamic cookies import
+  private async getSupabaseClient() {
+    if (this.supabase) {
+      return this.supabase
+    }
+
+    // Check if we're on the server side
+    if (typeof window === 'undefined') {
+      try {
+        // Dynamic import to avoid client-side errors
+        const { cookies } = await import('next/headers')
+        this.supabase = createServerComponentClient({ cookies })
+      } catch (error) {
+        console.error('Error importing next/headers:', error)
+        // Fallback to basic client without cookies
+        const { createClient } = await import('@supabase/supabase-js')
+        this.supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+      }
+    } else {
+      // Client-side fallback
+      const { createClient } = await import('@supabase/supabase-js')
+      this.supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+    }
+
+    return this.supabase
+  }
+
   async getTemplate(templateName: string): Promise<EmailTemplate | null> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { data, error } = await supabase
         .from('email_templates')
         .select('*')
         .eq('name', templateName)
@@ -291,7 +325,8 @@ class EmailService {
   async testConnection(): Promise<{ success: boolean; error?: string }> {
     try {
       // Test by getting templates
-      const { data, error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { data, error } = await supabase
         .from('email_templates')
         .select('id')
         .limit(1)

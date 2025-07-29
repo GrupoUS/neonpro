@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type React from "react";
@@ -28,8 +29,7 @@ export default function LoginPage() {
   // Usando contexto de autenticação em vez de cliente direto
   const { user, signIn } = useAuth();
 
-  // Verifica se o usuário já está logado
-  useEffect(() => {
+  // Verifica se o usuário já está logado  useEffect(() => {
     console.log("🔄 Login page - checking user state:", !!user);
     if (user) {
       console.log("✅ User detected in login page, redirecting to dashboard");
@@ -64,9 +64,13 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-background p-4">
+      {/* Botão de alternância de tema no canto superior direito */}
+      <div className="absolute top-4 right-4 z-10">
+        <ThemeToggle />
+      </div>
+      
       <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login - NEON PRO</CardTitle>
@@ -92,7 +96,6 @@ export default function LoginPage() {
             />
 
             <Separator className="my-2" />
-
             <form onSubmit={handleSignIn} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>

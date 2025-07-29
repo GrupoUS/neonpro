@@ -249,328 +249,328 @@ export function CostAnalysis() {
   }
 
   return (
-    &lt;div className="space-y-6"&gt;
+    <div className="space-y-6">
       {/* Overview Metrics Cards */}
-      &lt;div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"&gt;
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Custo Total&lt;/p&gt;
-                &lt;p className="text-2xl font-bold"&gt;{formatCurrency(overallMetrics.totalCost)}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;DollarSign className="h-8 w-8 text-green-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Custo Total</p>
+                <p className="text-2xl font-bold">{formatCurrency(overallMetrics.totalCost)}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Receita Total&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-blue-600"&gt;{formatCurrency(overallMetrics.totalRevenue)}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;TrendingUp className="h-8 w-8 text-blue-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Receita Total</p>
+                <p className="text-2xl font-bold text-blue-600">{formatCurrency(overallMetrics.totalRevenue)}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Margem Média&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-green-600"&gt;{formatPercent(overallMetrics.averageMargin)}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;PieChart className="h-8 w-8 text-green-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Margem Média</p>
+                <p className="text-2xl font-bold text-green-600">{formatPercent(overallMetrics.averageMargin)}</p>
+              </div>
+              <PieChart className="h-8 w-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardContent className="p-4"&gt;
-            &lt;div className="flex items-center justify-between"&gt;
-              &lt;div&gt;
-                &lt;p className="text-sm font-medium text-muted-foreground"&gt;Carga Tributária&lt;/p&gt;
-                &lt;p className="text-2xl font-bold text-amber-600"&gt;{formatPercent(overallMetrics.taxBurden)}&lt;/p&gt;
-              &lt;/div&gt;
-              &lt;Receipt className="h-8 w-8 text-amber-500" /&gt;
-            &lt;/div&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/div&gt;
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Carga Tributária</p>
+                <p className="text-2xl font-bold text-amber-600">{formatPercent(overallMetrics.taxBurden)}</p>
+              </div>
+              <Receipt className="h-8 w-8 text-amber-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Filters and Controls */}
-      &lt;div className="flex flex-col sm:flex-row gap-4"&gt;
-        &lt;Select value={selectedCategory} onValueChange={setSelectedCategory}&gt;
-          &lt;SelectTrigger className="w-48"&gt;
-            &lt;SelectValue placeholder="Categoria" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="all"&gt;Todas as categorias&lt;/SelectItem&gt;
-            {categories.map(category =&gt; (
-              &lt;SelectItem key={category.id} value={category.id}&gt;
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as categorias</SelectItem>
+            {categories.map(category => (
+              <SelectItem key={category.id} value={category.id}>
                 {category.icon} {category.name}
-              &lt;/SelectItem&gt;
+              </SelectItem>
             ))}
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+          </SelectContent>
+        </Select>
 
-        &lt;Select value={selectedMetric} onValueChange={setSelectedMetric}&gt;
-          &lt;SelectTrigger className="w-48"&gt;
-            &lt;SelectValue placeholder="Métrica" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="margin"&gt;Margem de Lucro&lt;/SelectItem&gt;
-            &lt;SelectItem value="taxes"&gt;Carga Tributária&lt;/SelectItem&gt;
-            &lt;SelectItem value="profitability"&gt;Rentabilidade&lt;/SelectItem&gt;
-            &lt;SelectItem value="breakeven"&gt;Ponto de Equilíbrio&lt;/SelectItem&gt;
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+        <Select value={selectedMetric} onValueChange={setSelectedMetric}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Métrica" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="margin">Margem de Lucro</SelectItem>
+            <SelectItem value="taxes">Carga Tributária</SelectItem>
+            <SelectItem value="profitability">Rentabilidade</SelectItem>
+            <SelectItem value="breakeven">Ponto de Equilíbrio</SelectItem>
+          </SelectContent>
+        </Select>
 
-        &lt;Tabs value={viewMode} onValueChange={(value) =&gt; setViewMode(value as 'overview' | 'detailed')}&gt;
-          &lt;TabsList&gt;
-            &lt;TabsTrigger value="overview"&gt;Visão Geral&lt;/TabsTrigger&gt;
-            &lt;TabsTrigger value="detailed"&gt;Detalhado&lt;/TabsTrigger&gt;
-          &lt;/TabsList&gt;
-        &lt;/Tabs&gt;
+        <Tabs value={viewMode} onValueChange={(value) => setViewMode(value as 'overview' | 'detailed')}>
+          <TabsList>
+            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="detailed">Detalhado</TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-        &lt;Button onClick={exportCostAnalysis} className="ml-auto"&gt;
-          &lt;Download className="w-4 h-4 mr-2" /&gt;
+        <Button onClick={exportCostAnalysis} className="ml-auto">
+          <Download className="w-4 h-4 mr-2" />
           Exportar Relatório
-        &lt;/Button&gt;
-      &lt;/div&gt;      {/* Cost Analysis Table */}
-      &lt;Card&gt;
-        &lt;CardHeader&gt;
-          &lt;CardTitle className="flex items-center justify-between"&gt;
-            &lt;span&gt;Análise de Custos ({filteredAnalysis.length} produtos)&lt;/span&gt;
-            &lt;div className="flex items-center gap-2"&gt;
-              &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200"&gt;
-                &lt;Calculator className="w-3 h-3 mr-1" /&gt;
+        </Button>
+      </div>      {/* Cost Analysis Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Análise de Custos ({filteredAnalysis.length} produtos)</span>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Calculator className="w-3 h-3 mr-1" />
                 Impostos BR Calculados
-              &lt;/Badge&gt;
-            &lt;/div&gt;
-          &lt;/CardTitle&gt;
-          &lt;CardDescription&gt;
+              </Badge>
+            </div>
+          </CardTitle>
+          <CardDescription>
             Análise completa com impostos brasileiros e margem de lucro
-          &lt;/CardDescription&gt;
-        &lt;/CardHeader&gt;
-        &lt;CardContent&gt;
-          &lt;div className="overflow-x-auto"&gt;
-            &lt;Table&gt;
-              &lt;TableHeader&gt;
-                &lt;TableRow&gt;
-                  &lt;TableHead&gt;Produto&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Custo Base&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Impostos&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Custo Final&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Preço Venda&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Margem&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Rentabilidade&lt;/TableHead&gt;
-                  {viewMode === 'detailed' && &lt;TableHead&gt;Fiscal&lt;/TableHead&gt;}
-                &lt;/TableRow&gt;
-              &lt;/TableHeader&gt;
-              &lt;TableBody&gt;
-                {filteredAnalysis.map((analysis) =&gt; {
-                  const category = categories.find(c =&gt; c.id === analysis.category)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Produto</TableHead>
+                  <TableHead>Custo Base</TableHead>
+                  <TableHead>Impostos</TableHead>
+                  <TableHead>Custo Final</TableHead>
+                  <TableHead>Preço Venda</TableHead>
+                  <TableHead>Margem</TableHead>
+                  <TableHead>Rentabilidade</TableHead>
+                  {viewMode === 'detailed' && <TableHead>Fiscal</TableHead>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAnalysis.map((analysis) => {
+                  const category = categories.find(c => c.id === analysis.category)
                   
                   return (
-                    &lt;TableRow key={analysis.productId} className="hover:bg-muted/50"&gt;
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium"&gt;{analysis.productName}&lt;/div&gt;
-                          &lt;Badge variant="outline" className="text-xs"&gt;
+                    <TableRow key={analysis.productId} className="hover:bg-muted/50">
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium">{analysis.productName}</div>
+                          <Badge variant="outline" className="text-xs">
                             {category?.icon} {category?.name}
-                          &lt;/Badge&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </Badge>
+                          <div className="text-xs text-muted-foreground">
                             {analysis.quantity} {analysis.unit}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium">
                             {formatCurrency(analysis.unitCostBase)}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             Total: {formatCurrency(analysis.totalCostBase)}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium text-amber-600"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium text-amber-600">
                             {formatCurrency(analysis.totalTaxes)}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             {formatPercent((analysis.totalTaxes / analysis.totalCostBase) * 100)} do custo
-                          &lt;/div&gt;
+                          </div>
                           {viewMode === 'detailed' && (
-                            &lt;div className="space-y-1 text-xs"&gt;
-                              &lt;div&gt;ICMS: {formatCurrency(analysis.taxes.icms.value)}&lt;/div&gt;
-                              &lt;div&gt;PIS: {formatCurrency(analysis.taxes.pis.value)}&lt;/div&gt;
-                              &lt;div&gt;COFINS: {formatCurrency(analysis.taxes.cofins.value)}&lt;/div&gt;
-                            &lt;/div&gt;
+                            <div className="space-y-1 text-xs">
+                              <div>ICMS: {formatCurrency(analysis.taxes.icms.value)}</div>
+                              <div>PIS: {formatCurrency(analysis.taxes.pis.value)}</div>
+                              <div>COFINS: {formatCurrency(analysis.taxes.cofins.value)}</div>
+                            </div>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium">
                             {formatCurrency(analysis.finalUnitCost)}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             Total: {formatCurrency(analysis.finalTotalCost)}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="font-medium text-green-600"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="font-medium text-green-600">
                             {formatCurrency(analysis.salePrice)}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             por {analysis.unit}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-2"&gt;
-                          &lt;div className="flex items-center gap-2"&gt;
-                            &lt;span className="text-sm font-medium"&gt;
+                      <TableCell>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">
                               {formatPercent(analysis.netMarginPercent)}
-                            &lt;/span&gt;
-                            {analysis.netMarginPercent &gt; 20 ? (
-                              &lt;TrendingUp className="w-3 h-3 text-green-500" /&gt;
-                            ) : analysis.netMarginPercent &gt; 10 ? (
-                              &lt;BarChart3 className="w-3 h-3 text-yellow-500" /&gt;
+                            </span>
+                            {analysis.netMarginPercent > 20 ? (
+                              <TrendingUp className="w-3 h-3 text-green-500" />
+                            ) : analysis.netMarginPercent > 10 ? (
+                              <BarChart3 className="w-3 h-3 text-yellow-500" />
                             ) : (
-                              &lt;TrendingDown className="w-3 h-3 text-red-500" /&gt;
+                              <TrendingDown className="w-3 h-3 text-red-500" />
                             )}
-                          &lt;/div&gt;
-                          &lt;Progress 
+                          </div>
+                          <Progress 
                             value={Math.min(analysis.netMarginPercent, 50)} 
                             className="h-2"
-                          /&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          />
+                          <div className="text-xs text-muted-foreground">
                             {formatCurrency(analysis.netMargin)} por unidade
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;Badge 
+                      <TableCell>
+                        <div className="space-y-1">
+                          <Badge 
                             variant="outline" 
                             className={getProfitabilityColor(analysis.profitability)}
-                          &gt;
+                          >
                             {analysis.profitability === 'high' ? 'Alta' :
                              analysis.profitability === 'medium' ? 'Média' :
                              analysis.profitability === 'low' ? 'Baixa' : 'Negativa'}
-                          &lt;/Badge&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </Badge>
+                          <div className="text-xs text-muted-foreground">
                             Break-even: {analysis.breakEvenQuantity} {analysis.unit}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
                       {viewMode === 'detailed' && (
-                        &lt;TableCell&gt;
-                          &lt;div className="space-y-1 text-xs"&gt;
-                            &lt;div&gt;NCM: {analysis.ncmCode}&lt;/div&gt;
-                            &lt;div&gt;CFOP: {analysis.cfop}&lt;/div&gt;
-                            &lt;div&gt;CST: {analysis.cst}&lt;/div&gt;
-                          &lt;/div&gt;
-                        &lt;/TableCell&gt;
+                        <TableCell>
+                          <div className="space-y-1 text-xs">
+                            <div>NCM: {analysis.ncmCode}</div>
+                            <div>CFOP: {analysis.cfop}</div>
+                            <div>CST: {analysis.cst}</div>
+                          </div>
+                        </TableCell>
                       )}
-                    &lt;/TableRow&gt;
+                    </TableRow>
                   )
                 })}
-              &lt;/TableBody&gt;
-            &lt;/Table&gt;
+              </TableBody>
+            </Table>
             
             {filteredAnalysis.length === 0 && (
-              &lt;div className="text-center py-8 text-muted-foreground"&gt;
-                &lt;Calculator className="w-12 h-12 mx-auto mb-4 opacity-50" /&gt;
-                &lt;p&gt;Nenhum produto encontrado com os filtros aplicados.&lt;/p&gt;
-              &lt;/div&gt;
+              <div className="text-center py-8 text-muted-foreground">
+                <Calculator className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhum produto encontrado com os filtros aplicados.</p>
+              </div>
             )}
-          &lt;/div&gt;
-        &lt;/CardContent&gt;
-      &lt;/Card&gt;
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Brazilian Tax Breakdown */}
-      {viewMode === 'detailed' && filteredAnalysis.length &gt; 0 && (
-        &lt;div className="grid gap-6 md:grid-cols-2"&gt;
+      {viewMode === 'detailed' && filteredAnalysis.length > 0 && (
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Tax Breakdown Card */}
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle className="flex items-center gap-2"&gt;
-                &lt;Receipt className="w-5 h-5" /&gt;
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Receipt className="w-5 h-5" />
                 Breakdown Tributário Brasileiro
-              &lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
+              </CardTitle>
+              <CardDescription>
                 Análise detalhada dos impostos por categoria
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;div className="space-y-4"&gt;
-                {(() =&gt; {
-                  const totalTaxes = filteredAnalysis.reduce((sum, item) =&gt; sum + item.totalTaxes, 0)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(() => {
+                  const totalTaxes = filteredAnalysis.reduce((sum, item) => sum + item.totalTaxes, 0)
                   const taxBreakdown = {
-                    icms: filteredAnalysis.reduce((sum, item) =&gt; sum + item.taxes.icms.value, 0),
-                    ipi: filteredAnalysis.reduce((sum, item) =&gt; sum + item.taxes.ipi.value, 0),
-                    pis: filteredAnalysis.reduce((sum, item) =&gt; sum + item.taxes.pis.value, 0),
-                    cofins: filteredAnalysis.reduce((sum, item) =&gt; sum + item.taxes.cofins.value, 0),
-                    iss: filteredAnalysis.reduce((sum, item) =&gt; sum + item.taxes.iss.value, 0)
+                    icms: filteredAnalysis.reduce((sum, item) => sum + item.taxes.icms.value, 0),
+                    ipi: filteredAnalysis.reduce((sum, item) => sum + item.taxes.ipi.value, 0),
+                    pis: filteredAnalysis.reduce((sum, item) => sum + item.taxes.pis.value, 0),
+                    cofins: filteredAnalysis.reduce((sum, item) => sum + item.taxes.cofins.value, 0),
+                    iss: filteredAnalysis.reduce((sum, item) => sum + item.taxes.iss.value, 0)
                   }
                   
-                  return Object.entries(taxBreakdown).map(([tax, value]) =&gt; {
+                  return Object.entries(taxBreakdown).map(([tax, value]) => {
                     if (value === 0) return null
                     const percentage = (value / totalTaxes) * 100
                     
                     return (
-                      &lt;div key={tax} className="space-y-2"&gt;
-                        &lt;div className="flex justify-between items-center"&gt;
-                          &lt;span className="text-sm font-medium uppercase"&gt;{tax}&lt;/span&gt;
-                          &lt;span className="text-sm"&gt;{formatCurrency(value)}&lt;/span&gt;
-                        &lt;/div&gt;
-                        &lt;Progress value={percentage} className="h-2" /&gt;
-                        &lt;div className="text-xs text-muted-foreground"&gt;
+                      <div key={tax} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium uppercase">{tax}</span>
+                          <span className="text-sm">{formatCurrency(value)}</span>
+                        </div>
+                        <Progress value={percentage} className="h-2" />
+                        <div className="text-xs text-muted-foreground">
                           {formatPercent(percentage)} do total de impostos
-                        &lt;/div&gt;
-                      &lt;/div&gt;
+                        </div>
+                      </div>
                     )
                   }).filter(Boolean)
                 })()}
-              &lt;/div&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Cost Composition Card */}
-          &lt;Card&gt;
-            &lt;CardHeader&gt;
-              &lt;CardTitle className="flex items-center gap-2"&gt;
-                &lt;PieChart className="w-5 h-5" /&gt;
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PieChart className="w-5 h-5" />
                 Composição de Custos
-              &lt;/CardTitle&gt;
-              &lt;CardDescription&gt;
+              </CardTitle>
+              <CardDescription>
                 Distribuição percentual dos componentes de custo
-              &lt;/CardDescription&gt;
-            &lt;/CardHeader&gt;
-            &lt;CardContent&gt;
-              &lt;div className="space-y-4"&gt;
-                {(() =&gt; {
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(() => {
                   const totalCost = overallMetrics.totalCost
-                  const totalBase = filteredAnalysis.reduce((sum, item) =&gt; sum + item.totalCostBase, 0)
-                  const totalTaxes = filteredAnalysis.reduce((sum, item) =&gt; sum + item.totalTaxes, 0)
-                  const totalAdditional = filteredAnalysis.reduce((sum, item) =&gt; sum + item.totalAdditionalCosts, 0)
+                  const totalBase = filteredAnalysis.reduce((sum, item) => sum + item.totalCostBase, 0)
+                  const totalTaxes = filteredAnalysis.reduce((sum, item) => sum + item.totalTaxes, 0)
+                  const totalAdditional = filteredAnalysis.reduce((sum, item) => sum + item.totalAdditionalCosts, 0)
                   
                   const components = [
                     { name: 'Custo Base', value: totalBase, color: 'bg-blue-500' },
@@ -578,118 +578,118 @@ export function CostAnalysis() {
                     { name: 'Custos Adicionais', value: totalAdditional, color: 'bg-green-500' }
                   ]
                   
-                  return components.map(component =&gt; {
+                  return components.map(component => {
                     const percentage = (component.value / totalCost) * 100
                     
                     return (
-                      &lt;div key={component.name} className="space-y-2"&gt;
-                        &lt;div className="flex justify-between items-center"&gt;
-                          &lt;span className="text-sm font-medium"&gt;{component.name}&lt;/span&gt;
-                          &lt;span className="text-sm"&gt;{formatCurrency(component.value)}&lt;/span&gt;
-                        &lt;/div&gt;
-                        &lt;Progress value={percentage} className="h-2" /&gt;
-                        &lt;div className="text-xs text-muted-foreground"&gt;
+                      <div key={component.name} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">{component.name}</span>
+                          <span className="text-sm">{formatCurrency(component.value)}</span>
+                        </div>
+                        <Progress value={percentage} className="h-2" />
+                        <div className="text-xs text-muted-foreground">
                           {formatPercent(percentage)} do custo total
-                        &lt;/div&gt;
-                      &lt;/div&gt;
+                        </div>
+                      </div>
                     )
                   })
                 })()}
-              &lt;/div&gt;
-            &lt;/CardContent&gt;
-          &lt;/Card&gt;
-        &lt;/div&gt;
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Profitability Analysis */}
-      &lt;Card&gt;
-        &lt;CardHeader&gt;
-          &lt;CardTitle className="flex items-center gap-2"&gt;
-            &lt;BarChart3 className="w-5 h-5" /&gt;
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
             Análise de Rentabilidade
-          &lt;/CardTitle&gt;
-          &lt;CardDescription&gt;
+          </CardTitle>
+          <CardDescription>
             Insights e recomendações baseados na análise de custos
-          &lt;/CardDescription&gt;
-        &lt;/CardHeader&gt;
-        &lt;CardContent&gt;
-          &lt;div className="grid gap-4 md:grid-cols-3"&gt;
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
             {/* High Profitability Products */}
-            &lt;div className="space-y-2"&gt;
-              &lt;h4 className="font-medium text-green-600"&gt;Alta Rentabilidade&lt;/h4&gt;
-              &lt;div className="space-y-2"&gt;
+            <div className="space-y-2">
+              <h4 className="font-medium text-green-600">Alta Rentabilidade</h4>
+              <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(p =&gt; p.profitability === 'high')
-                  .map(product =&gt; (
-                    &lt;div key={product.productId} className="p-2 bg-green-50 border border-green-200 rounded"&gt;
-                      &lt;div className="text-sm font-medium"&gt;{product.productName}&lt;/div&gt;
-                      &lt;div className="text-xs text-muted-foreground"&gt;
+                  .filter(p => p.profitability === 'high')
+                  .map(product => (
+                    <div key={product.productId} className="p-2 bg-green-50 border border-green-200 rounded">
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
                         Margem: {formatPercent(product.netMarginPercent)}
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                      </div>
+                    </div>
                   ))}
-                {filteredAnalysis.filter(p =&gt; p.profitability === 'high').length === 0 && (
-                  &lt;p className="text-sm text-muted-foreground"&gt;Nenhum produto com alta rentabilidade&lt;/p&gt;
+                {filteredAnalysis.filter(p => p.profitability === 'high').length === 0 && (
+                  <p className="text-sm text-muted-foreground">Nenhum produto com alta rentabilidade</p>
                 )}
-              &lt;/div&gt;
-            &lt;/div&gt;
+              </div>
+            </div>
 
             {/* Medium Profitability Products */}
-            &lt;div className="space-y-2"&gt;
-              &lt;h4 className="font-medium text-yellow-600"&gt;Rentabilidade Média&lt;/h4&gt;
-              &lt;div className="space-y-2"&gt;
+            <div className="space-y-2">
+              <h4 className="font-medium text-yellow-600">Rentabilidade Média</h4>
+              <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(p =&gt; p.profitability === 'medium')
-                  .map(product =&gt; (
-                    &lt;div key={product.productId} className="p-2 bg-yellow-50 border border-yellow-200 rounded"&gt;
-                      &lt;div className="text-sm font-medium"&gt;{product.productName}&lt;/div&gt;
-                      &lt;div className="text-xs text-muted-foreground"&gt;
+                  .filter(p => p.profitability === 'medium')
+                  .map(product => (
+                    <div key={product.productId} className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
                         Margem: {formatPercent(product.netMarginPercent)}
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                      </div>
+                    </div>
                   ))}
-              &lt;/div&gt;
-            &lt;/div&gt;
+              </div>
+            </div>
 
             {/* Low/Negative Profitability Products */}
-            &lt;div className="space-y-2"&gt;
-              &lt;h4 className="font-medium text-red-600"&gt;Baixa Rentabilidade&lt;/h4&gt;
-              &lt;div className="space-y-2"&gt;
+            <div className="space-y-2">
+              <h4 className="font-medium text-red-600">Baixa Rentabilidade</h4>
+              <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(p =&gt; p.profitability === 'low' || p.profitability === 'negative')
-                  .map(product =&gt; (
-                    &lt;div key={product.productId} className="p-2 bg-red-50 border border-red-200 rounded"&gt;
-                      &lt;div className="text-sm font-medium"&gt;{product.productName}&lt;/div&gt;
-                      &lt;div className="text-xs text-muted-foreground"&gt;
+                  .filter(p => p.profitability === 'low' || p.profitability === 'negative')
+                  .map(product => (
+                    <div key={product.productId} className="p-2 bg-red-50 border border-red-200 rounded">
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
                         Margem: {formatPercent(product.netMarginPercent)}
-                      &lt;/div&gt;
-                      &lt;div className="text-xs text-red-600 font-medium"&gt;
+                      </div>
+                      <div className="text-xs text-red-600 font-medium">
                         ⚠️ Revisar precificação
-                      &lt;/div&gt;
-                    &lt;/div&gt;
+                      </div>
+                    </div>
                   ))}
-                {filteredAnalysis.filter(p =&gt; p.profitability === 'low' || p.profitability === 'negative').length === 0 && (
-                  &lt;p className="text-sm text-muted-foreground"&gt;Todos os produtos com rentabilidade adequada&lt;/p&gt;
+                {filteredAnalysis.filter(p => p.profitability === 'low' || p.profitability === 'negative').length === 0 && (
+                  <p className="text-sm text-muted-foreground">Todos os produtos com rentabilidade adequada</p>
                 )}
-              &lt;/div&gt;
-            &lt;/div&gt;
-          &lt;/div&gt;
+              </div>
+            </div>
+          </div>
 
           {/* Key Insights */}
-          &lt;div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg"&gt;
-            &lt;h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2"&gt;
-              &lt;FileText className="w-4 h-4" /&gt;
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4" />
               Insights e Recomendações
-            &lt;/h4&gt;
-            &lt;ul className="space-y-1 text-sm text-blue-700"&gt;
-              &lt;li&gt;• Carga tributária média de {formatPercent(overallMetrics.taxBurden)} sobre o custo base&lt;/li&gt;
-              &lt;li&gt;• Margem líquida média de {formatPercent(overallMetrics.averageMargin)} após impostos&lt;/li&gt;
-              &lt;li&gt;• Produtos com baixa rentabilidade necessitam revisão de precificação&lt;/li&gt;
-              &lt;li&gt;• Considerar negociação com fornecedores para redução de custos base&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/div&gt;
-        &lt;/CardContent&gt;
-      &lt;/Card&gt;
-    &lt;/div&gt;
+            </h4>
+            <ul className="space-y-1 text-sm text-blue-700">
+              <li>• Carga tributária média de {formatPercent(overallMetrics.taxBurden)} sobre o custo base</li>
+              <li>• Margem líquida média de {formatPercent(overallMetrics.averageMargin)} após impostos</li>
+              <li>• Produtos com baixa rentabilidade necessitam revisão de precificação</li>
+              <li>• Considerar negociação com fornecedores para redução de custos base</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

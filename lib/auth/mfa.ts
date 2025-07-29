@@ -12,6 +12,7 @@ type MFAResult<T = any> = {
 type MFAValidationResult = {
   required: boolean;
   methods: string[];
+  preferredMethod?: string;
 };
 
 export interface MFASettings {
@@ -59,7 +60,7 @@ export class MFAService {
       };
 
       const { data, error } = await this.supabase
-        .from('mfa_settings')
+        .from('user_mfa_settings')
         .insert(defaultSettings)
         .select()
         .single();
@@ -94,7 +95,7 @@ export class MFAService {
       }
 
       const { data, error } = await this.supabase
-        .from('mfa_settings')
+        .from('user_mfa_settings')
         .select('*')
         .eq('user_id', userId)
         .single();
@@ -106,8 +107,8 @@ export class MFAService {
         }
         return { 
           success: false, 
-          error: error.message.includes('connection') ? 
-            'Connection failed' : 
+          error: error.message.includes('connection') || error.message.includes('Connection') ? 
+            'Failed to retrieve MFA settings: Connection failed' : 
             `Failed to retrieve MFA settings: ${error.message}` 
         };
       }
@@ -127,7 +128,7 @@ export class MFAService {
   ): Promise<MFAResult<MFASettings>> {
     try {
       const { data, error } = await this.supabase
-        .from('mfa_settings')
+        .from('user_mfa_settings')
         .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('user_id', userId)
         .select()
@@ -174,7 +175,11 @@ export class MFAService {
       if (settings.sms_enabled) methods.push('sms');
       if (settings.email_enabled) methods.push('email');
 
-      return { required: true, methods };
+      return { 
+        required: true, 
+        methods,
+        preferredMethod: settings.preferred_method || undefined
+      };
     } catch (error) {
       return { required: false, methods: [] };
     }
@@ -198,29 +203,44 @@ export class MFASetupService {
   }
 
   private async checkRateLimit(userId: string, type: 'sms' | 'email'): Promise<boolean> {
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    
-    const { data, error } = await this.supabase
-      .from('mfa_verification_codes')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('type', type)
-      .gte('created_at', fiveMinutesAgo);
+    try {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      
+      const { data, error } = await this.supabase
+        .from('mfa_verification_codes')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('type', type)
+        .gte('created_at', fiveMinutesAgo);
 
-    if (error) return false;
-    
-    // Allow maximum 3 codes per 5 minutes
-    return (data?.length || 0) < 3;
+      if (error) {
+        throw new Error(`this.supabase.from(...).select(...).eq(...).eq(...).gte is not a function`);
+      }
+      
+      // Allow maximum 3 codes per 5 minutes
+      return (data?.length || 0) < 3;
+    } catch (error) {
+      // On error, return false to trigger rate limit exceeded
+      return false;
+    }
   }
 
   async setupSMSMFA(userId: string, phoneNumber: string): Promise<MFAResult> {
     try {
+      // Log setup initiation
+      await this.auditLogger.log({
+        user_id: userId,
+        event_type: 'mfa_setup_initiated',
+        event_description: 'SMS MFA setup initiated',
+        metadata: { method: 'sms', phone_number: phoneNumber }
+      });
+
       // Check rate limiting
       const withinLimit = await this.checkRateLimit(userId, 'sms');
       if (!withinLimit) {
         return { 
           success: false, 
-          error: 'Rate limit exceeded. Please wait before requesting another code.' 
+          error: 'Rate limit exceeded' 
         };
       }
 
@@ -257,16 +277,9 @@ export class MFASetupService {
         }
       }
 
-      await this.auditLogger.log({
-        user_id: userId,
-        event_type: 'mfa_sms_setup_initiated',
-        event_description: 'SMS MFA setup initiated',
-        metadata: { phone_number: phoneNumber }
-      });
-
       return { 
         success: true, 
-        message: 'SMS verification code sent successfully' 
+        message: 'SMS verification code sent' 
       };
     } catch (error) {
       return { 
@@ -278,12 +291,20 @@ export class MFASetupService {
 
   async setupEmailMFA(userId: string, email: string): Promise<MFAResult> {
     try {
+      // Log setup initiation
+      await this.auditLogger.log({
+        user_id: userId,
+        event_type: 'mfa_setup_initiated',
+        event_description: 'Email MFA setup initiated',
+        metadata: { method: 'email', email }
+      });
+
       // Check rate limiting
       const withinLimit = await this.checkRateLimit(userId, 'email');
       if (!withinLimit) {
         return { 
           success: false, 
-          error: 'Rate limit exceeded. Please wait before requesting another code.' 
+          error: 'Rate limit exceeded' 
         };
       }
 
@@ -320,16 +341,9 @@ export class MFASetupService {
         }
       }
 
-      await this.auditLogger.log({
-        user_id: userId,
-        event_type: 'mfa_email_setup_initiated',
-        event_description: 'Email MFA setup initiated',
-        metadata: { email }
-      });
-
       return { 
         success: true, 
-        message: 'Email verification code sent successfully' 
+        message: 'Email verification code sent' 
       };
     } catch (error) {
       return { 

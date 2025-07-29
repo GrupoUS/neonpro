@@ -741,3 +741,29 @@ async function processPayment(payment: Payment): Promise<PaymentProcessingRespon
 // Utility functions
 export { centavosToReais, formatCurrency, reaisToCentavos };
 
+/**
+ * Generate PDF invoice
+ */
+export async function generateInvoicePDF(invoiceId: string): Promise<Blob> {
+  try {
+    // Get invoice data
+    const invoice = await getInvoiceById(invoiceId);
+    
+    // Mock PDF generation - in production, use a PDF library like puppeteer or jsPDF
+    const mockPDFContent = `
+Invoice #${invoice.invoice_number}
+Date: ${new Date(invoice.issue_date).toLocaleDateString('pt-BR')}
+Patient: ${invoice.patient?.name || 'N/A'}
+Total: ${formatCurrency(invoice.total_amount)}
+`;
+    
+    // Create a blob with mock PDF content
+    const blob = new Blob([mockPDFContent], { type: 'application/pdf' });
+    return blob;
+    
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+

@@ -59,9 +59,11 @@ describe('MFAService Integration Tests', () => {
 
       mockSupabase.from = jest.fn().mockReturnValue({
         insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockResolvedValue({
-            data: [mockSettings],
-            error: null
+          select: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: mockSettings,
+              error: null
+            })
           })
         })
       });
@@ -138,12 +140,29 @@ describe('MFAService Integration Tests', () => {
       const phoneNumber = '+1234567890';
       const mockVerificationCode = '123456';
 
-      // Mock verification code generation and storage
-      mockSupabase.from = jest.fn().mockReturnValue({
-        insert: jest.fn().mockResolvedValue({
-          data: null,
-          error: null
-        })
+      // Mock rate limit check (checkRateLimit method) and verification code storage
+      mockSupabase.from = jest.fn().mockImplementation((table) => {
+        if (table === 'mfa_verification_codes') {
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  gte: jest.fn().mockResolvedValue({
+                    data: [], // Empty array means under rate limit
+                    error: null
+                  })
+                })
+              })
+            }),
+            insert: jest.fn().mockResolvedValue({
+              data: null,
+              error: null
+            })
+          };
+        }
+        return {
+          insert: jest.fn().mockResolvedValue({ data: null, error: null })
+        };
       });
 
       // Mock SMS sending (would use actual service in integration)
@@ -172,29 +191,47 @@ describe('MFAService Integration Tests', () => {
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
       };
 
-      mockSupabase.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
+      mockSupabase.from = jest.fn().mockImplementation((table) => {
+        if (table === 'mfa_verification_codes') {
+          return {
+            select: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
                 eq: jest.fn().mockReturnValue({
-                  gte: jest.fn().mockReturnValue({
-                    single: jest.fn().mockResolvedValue({
-                      data: mockCodeData,
-                      error: null
+                  eq: jest.fn().mockReturnValue({
+                    eq: jest.fn().mockReturnValue({
+                      eq: jest.fn().mockReturnValue({
+                        gt: jest.fn().mockReturnValue({
+                          single: jest.fn().mockResolvedValue({
+                            data: mockCodeData,
+                            error: null
+                          })
+                        })
+                      })
                     })
                   })
                 })
               })
+            }),
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null
+              })
             })
-          })
-        }),
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({
-            data: null,
-            error: null
-          })
-        })
+          };
+        }
+        // Mock for user_mfa_settings update
+        if (table === 'user_mfa_settings') {
+          return {
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null
+              })
+            })
+          };
+        }
+        return {};
       });
 
       const result = await verificationService.verifySMSCode(
@@ -218,10 +255,12 @@ describe('MFAService Integration Tests', () => {
             eq: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
                 eq: jest.fn().mockReturnValue({
-                  gte: jest.fn().mockReturnValue({
-                    single: jest.fn().mockResolvedValue({
-                      data: null,
-                      error: null
+                  eq: jest.fn().mockReturnValue({
+                    gt: jest.fn().mockReturnValue({
+                      single: jest.fn().mockResolvedValue({
+                        data: null,
+                        error: null
+                      })
                     })
                   })
                 })
@@ -246,12 +285,29 @@ describe('MFAService Integration Tests', () => {
     it('should setup Email MFA successfully', async () => {
       const emailAddress = 'test@example.com';
 
-      // Mock verification code generation and storage
-      mockSupabase.from = jest.fn().mockReturnValue({
-        insert: jest.fn().mockResolvedValue({
-          data: null,
-          error: null
-        })
+      // Mock rate limit check (checkRateLimit method) and verification code storage
+      mockSupabase.from = jest.fn().mockImplementation((table) => {
+        if (table === 'mfa_verification_codes') {
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  gte: jest.fn().mockResolvedValue({
+                    data: [], // Empty array means under rate limit
+                    error: null
+                  })
+                })
+              })
+            }),
+            insert: jest.fn().mockResolvedValue({
+              data: null,
+              error: null
+            })
+          };
+        }
+        return {
+          insert: jest.fn().mockResolvedValue({ data: null, error: null })
+        };
       });
 
       // Mock email sending
@@ -280,29 +336,47 @@ describe('MFAService Integration Tests', () => {
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
       };
 
-      mockSupabase.from = jest.fn().mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
+      mockSupabase.from = jest.fn().mockImplementation((table) => {
+        if (table === 'mfa_verification_codes') {
+          return {
+            select: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
                 eq: jest.fn().mockReturnValue({
-                  gte: jest.fn().mockReturnValue({
-                    single: jest.fn().mockResolvedValue({
-                      data: mockCodeData,
-                      error: null
+                  eq: jest.fn().mockReturnValue({
+                    eq: jest.fn().mockReturnValue({
+                      eq: jest.fn().mockReturnValue({
+                        gt: jest.fn().mockReturnValue({
+                          single: jest.fn().mockResolvedValue({
+                            data: mockCodeData,
+                            error: null
+                          })
+                        })
+                      })
                     })
                   })
                 })
               })
+            }),
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null
+              })
             })
-          })
-        }),
-        update: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({
-            data: null,
-            error: null
-          })
-        })
+          };
+        }
+        // Mock for user_mfa_settings update
+        if (table === 'user_mfa_settings') {
+          return {
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null
+              })
+            })
+          };
+        }
+        return {};
       });
 
       const result = await verificationService.verifyEmailCode(
@@ -394,6 +468,18 @@ describe('MFAService Integration Tests', () => {
     it('should handle invalid user ID', async () => {
       const invalidUserId = 'invalid-user-id';
 
+      // Mock error for invalid user ID
+      mockSupabase.from = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({
+              data: null,
+              error: { message: 'Invalid user ID' }
+            })
+          })
+        })
+      });
+
       const result = await mfaService.getMFASettings(invalidUserId);
 
       expect(result.success).toBe(false);
@@ -441,15 +527,37 @@ describe('MFAService Integration Tests', () => {
       });
 
       mockSupabase.from = jest.fn().mockImplementation((table) => {
-        if (table === 'mfa_audit_logs') {
+        if (table === 'mfa_audit_logs' || table === 'audit_logs') {
           return {
             insert: mockLogInsert
+          };
+        }
+        if (table === 'mfa_verification_codes') {
+          return {
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  gte: jest.fn().mockResolvedValue({
+                    data: [], // Empty array means under rate limit
+                    error: null
+                  })
+                })
+              })
+            }),
+            insert: jest.fn().mockResolvedValue({
+              data: null,
+              error: null
+            })
           };
         }
         return {
           insert: jest.fn().mockResolvedValue({ data: null, error: null })
         };
       });
+
+      // Mock SMS sending
+      const mockSendSMS = jest.fn().mockResolvedValue({ success: true });
+      setupService.sendSMS = mockSendSMS;
 
       await setupService.setupSMSMFA(mockUser.id, phoneNumber);
 
@@ -460,7 +568,8 @@ describe('MFAService Integration Tests', () => {
         metadata: expect.objectContaining({
           method: 'sms',
           phone_number: phoneNumber
-        })
+        }),
+        created_at: expect.any(String)
       });
     });
 
@@ -485,7 +594,7 @@ describe('MFAService Integration Tests', () => {
       });
 
       mockSupabase.from = jest.fn().mockImplementation((table) => {
-        if (table === 'mfa_audit_logs') {
+        if (table === 'mfa_audit_logs' || table === 'audit_logs') {
           return {
             insert: mockLogInsert
           };
@@ -497,10 +606,12 @@ describe('MFAService Integration Tests', () => {
                 eq: jest.fn().mockReturnValue({
                   eq: jest.fn().mockReturnValue({
                     eq: jest.fn().mockReturnValue({
-                      gte: jest.fn().mockReturnValue({
-                        single: jest.fn().mockResolvedValue({
-                          data: mockCodeData,
-                          error: null
+                      eq: jest.fn().mockReturnValue({
+                        gt: jest.fn().mockReturnValue({
+                          single: jest.fn().mockResolvedValue({
+                            data: mockCodeData,
+                            error: null
+                          })
                         })
                       })
                     })
@@ -508,6 +619,16 @@ describe('MFAService Integration Tests', () => {
                 })
               })
             }),
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: null,
+                error: null
+              })
+            })
+          };
+        }
+        if (table === 'user_mfa_settings') {
+          return {
             update: jest.fn().mockReturnValue({
               eq: jest.fn().mockResolvedValue({
                 data: null,
@@ -532,7 +653,8 @@ describe('MFAService Integration Tests', () => {
         metadata: expect.objectContaining({
           method: 'sms',
           phone_number: phoneNumber
-        })
+        }),
+        created_at: expect.any(String)
       });
     });
   });

@@ -13,7 +13,7 @@ import {
   DollarSign,
   Download,
   Plus,
-  Refresh,
+  RotateCcw,
   Settings,
   TrendingDown,
   TrendingUp,
@@ -243,7 +243,7 @@ export default function BusinessDashboardPage() {
               size="sm"
               disabled={refreshing}
             >
-              <Refresh
+              <RotateCcw
                 className={`h-4 w-4 mr-2 ${refreshing ? "animate-spin" : ""}`}
               />
               Refresh

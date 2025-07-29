@@ -2,286 +2,169 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NEONPROV1 Healthcare Theme - CSS Variables and Base Styles */
+/* NEONPROV1 Theme - Cores Roxas Corretas baseadas no tema tweakcn */
 :root {
   /* Font Families from layout.tsx */
   --font-inter: 'Inter', sans-serif;
   --font-lora: 'Lora', serif;
   --font-libre-baskerville: 'Libre Baskerville', serif;
   
-  /* NEONPROV1 Color Palette - Healthcare Optimized */
-  --color-primary: 14 165 233; /* Sky-500 - Medical trust blue */
-  --color-primary-foreground: 255 255 255;
-  --color-secondary: 100 116 139; /* Slate-500 - Professional gray */
-  --color-secondary-foreground: 255 255 255;
-  --color-accent: 34 197 94; /* Green-500 - Health/success indicator */
-  --color-accent-foreground: 255 255 255;
-  --color-destructive: 239 68 68; /* Red-500 - Medical alert/danger */
-  --color-destructive-foreground: 255 255 255;
+  /* NEONPROV1 Light Mode - Cores Roxas do tema tweakcn */
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --card-foreground: 15 23 42;
+  --popover: 255 255 255;
+  --popover-foreground: 15 23 42;
+  --primary: 139 92 246; /* Roxo vibrante principal */
+  --primary-foreground: 255 255 255;
+  --secondary: 241 245 249;
+  --secondary-foreground: 15 23 42;
+  --muted: 248 250 252;
+  --muted-foreground: 100 116 139;
+  --accent: 196 181 253; /* Roxo claro para acentos */
+  --accent-foreground: 88 28 135;
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+  --border: 226 232 240;  --input: 226 232 240;
+  --ring: 139 92 246; /* Roxo para focus ring */
+  --radius: 1.25rem;
   
-  /* Background Colors */
-  --color-background: 255 255 255; /* Clean white for medical environments */
-  --color-foreground: 15 23 42; /* Slate-900 - High contrast text */
-  --color-card: 255 255 255;
-  --color-card-foreground: 15 23 42;
-  --color-popover: 255 255 255;
-  --color-popover-foreground: 15 23 42;
+  /* Chart Colors - Paleta Roxa NEONPROV1 */
+  --chart-1: 139 92 246; /* Roxo principal */
+  --chart-2: 124 58 237; /* Roxo médio */
+  --chart-3: 109 40 217; /* Roxo escuro */
+  --chart-4: 168 85 247; /* Roxo claro */
+  --chart-5: 196 181 253; /* Roxo muito claro */
   
-  /* Border and Input Colors */
-  --color-border: 226 232 240; /* Slate-200 - Subtle borders */
-  --color-input: 226 232 240;
-  --color-ring: 14 165 233; /* Primary focus ring */
+  /* Sidebar Colors - NEONPROV1 Roxo */
+  --sidebar: 248 250 252;
+  --sidebar-foreground: 15 23 42;
+  --sidebar-primary: 139 92 246;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 196 181 253;
+  --sidebar-accent-foreground: 88 28 135;
+  --sidebar-border: 226 232 240;
+  --sidebar-ring: 139 92 246;
   
-  /* Muted Colors for Less Important Elements */
-  --color-muted: 248 250 252; /* Slate-50 - Very light background */
-  --color-muted-foreground: 100 116 139; /* Slate-500 - Muted text */
-  
-  /* Medical Status Colors */
-  --color-success: 34 197 94; /* Green-500 - Healthy/positive */
-  --color-warning: 245 158 11; /* Amber-500 - Caution/attention */
-  --color-error: 239 68 68; /* Red-500 - Critical/negative */
-  --color-info: 59 130 246; /* Blue-500 - Information */
-  
-  /* Healthcare-specific semantic colors */
-  --color-vital-normal: 34 197 94; /* Normal vital signs */
-  --color-vital-warning: 245 158 11; /* Attention needed */
-  --color-vital-critical: 239 68 68; /* Critical values */
-  --color-medical-data: 99 102 241; /* Indigo-500 - Medical records */
-  --color-patient-info: 139 69 19; /* Brown-600 - Patient demographics */
+  /* Shadow Variables */
+  --shadow-2xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
-
-/* Dark Mode Variables */
+/* NEONPROV1 Dark Theme - Cores Roxas Escuras */
 .dark {
-  --color-background: 2 6 23; /* Slate-950 - Deep medical dark */
-  --color-foreground: 248 250 252; /* Slate-50 - Light text on dark */
-  --color-card: 15 23 42; /* Slate-900 - Card backgrounds */
-  --color-card-foreground: 248 250 252;
-  --color-popover: 15 23 42;
-  --color-popover-foreground: 248 250 252;
-  --color-border: 51 65 85; /* Slate-700 - Dark borders */
-  --color-input: 51 65 85;
-  --color-muted: 15 23 42; /* Slate-900 - Dark muted background */
-  --color-muted-foreground: 148 163 184; /* Slate-400 - Dark muted text */
+  /* Core Background Colors - Dark Purple Theme */
+  --background: 15 23 42; /* Slate-900 escuro */
+  --foreground: 248 250 252; /* Slate-50 claro */
+  --card: 30 41 59; /* Slate-800 */
+  --card-foreground: 248 250 252;
+  --popover: 30 41 59;
+  --popover-foreground: 248 250 252;
+  --primary: 168 85 247; /* Roxo mais claro para dark mode */
+  --primary-foreground: 15 23 42;
+  --secondary: 51 65 85; /* Slate-700 */
+  --secondary-foreground: 248 250 252;
+  --muted: 51 65 85;
+  --muted-foreground: 148 163 184; /* Slate-400 */
+  --accent: 124 58 237; /* Roxo médio para acentos */
+  --accent-foreground: 248 250 252;
+  --destructive: 239 68 68;
+  --destructive-foreground: 248 250 252;
+  --border: 51 65 85;
+  --input: 51 65 85;
+  --ring: 168 85 247;
+  
+  /* Chart Colors - Dark Mode Purple */
+  --chart-1: 168 85 247;
+  --chart-2: 139 92 246;
+  --chart-3: 124 58 237;
+  --chart-4: 196 181 253;
+  --chart-5: 221 214 254;
+  
+  /* Sidebar Colors - Dark Mode */
+  --sidebar: 30 41 59;
+  --sidebar-foreground: 248 250 252;  --sidebar-primary: 168 85 247;
+  --sidebar-primary-foreground: 15 23 42;
+  --sidebar-accent: 124 58 237;
+  --sidebar-accent-foreground: 248 250 252;
+  --sidebar-border: 51 65 85;
+  --sidebar-ring: 168 85 247;
 }
 
 /* Base Styles */
-* {
-  border-color: rgb(var(--color-border));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-body {
-  background-color: rgb(var(--color-background));
-  color: rgb(var(--color-foreground));
-  font-feature-settings: "rlig" 1, "calt" 1;
-}
-
-/* NEONPROV1 Toast Customizations */
-.neonpro-toast {
-  @apply font-inter;
-  background-color: rgb(var(--color-card));
-  border: 1px solid rgb(var(--color-border));
-  color: rgb(var(--color-card-foreground));
-}
-
-.neonpro-toast-description {
-  color: rgb(var(--color-muted-foreground));
-}
-
-.neonpro-toast-action {
-  @apply bg-sky-600 hover:bg-sky-700 text-white;
-}
-
-.neonpro-toast-cancel {
-  @apply bg-slate-600 hover:bg-slate-700 text-white;
-}
-
-/* Healthcare-specific utility classes */
+/* NEONPROV1 Custom Purple Gradient Classes */
 @layer utilities {
-  /* Font Family Utilities */
-  .font-inter {
-    font-family: var(--font-inter);
+  .bg-gradient-purple-neon {
+    background: linear-gradient(135deg, rgb(139 92 246) 0%, rgb(124 58 237) 50%, rgb(109 40 217) 100%);
   }
   
-  .font-lora {
-    font-family: var(--font-lora);
+  .bg-gradient-purple-soft {
+    background: linear-gradient(135deg, rgb(196 181 253) 0%, rgb(168 85 247) 100%);
   }
   
-  .font-libre-baskerville {
-    font-family: var(--font-libre-baskerville);
+  .text-gradient-purple {
+    background: linear-gradient(135deg, rgb(139 92 246), rgb(124 58 237));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* NEONPROV1 Purple Button Variants */
+@layer components {
+  .btn-purple-primary {
+    @apply bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl;
+  }  
+  .btn-purple-secondary {
+    @apply bg-purple-100 hover:bg-purple-200 text-purple-700 font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-purple-200;
   }
   
-  /* Medical Status Indicators */
-  .status-normal {
-    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+  .btn-purple-ghost {
+    @apply bg-transparent hover:bg-purple-50 text-purple-600 font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300;
+  }
+}
+
+/* NEONPROV1 Purple Card Styles */
+@layer components {
+  .card-purple-gradient {
+    @apply bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+  
+  .card-purple-dark {
+    @apply bg-slate-800 border-purple-500/20 shadow-lg hover:shadow-purple-500/10 transition-all duration-300;
+  }
+}
+
+/* Medical Status Indicators - NEONPROV1 Purple Theme */
+@layer components {
+  .status-healthy {
+    @apply bg-emerald-100 text-emerald-700 border-emerald-200;
   }
   
   .status-warning {
-    @apply bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200;
+    @apply bg-amber-100 text-amber-700 border-amber-200;
   }
   
   .status-critical {
-    @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+    @apply bg-red-100 text-red-700 border-red-200;
   }
   
-  .status-info {
-    @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
-  }
-  
-  /* Accessibility Enhancements */
-  .focus-visible {
-    @apply focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900;
-  }
-  
-  .skip-link {
-    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-50 bg-sky-600 text-white px-4 py-2 rounded-md font-medium hover:bg-sky-700 transition-colors;
-  }
-  
-  /* Healthcare Card Styles */
-  .healthcare-card {
-    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:shadow-md transition-shadow;
-  }
-  
-  .patient-card {
-    @apply healthcare-card p-6 space-y-4;
-  }
-  
-  .vital-signs-card {
-    @apply healthcare-card p-4 space-y-3;
-  }
-  
-  /* Medical Data Display */
-  .medical-value {
-    @apply font-mono text-lg font-semibold text-slate-900 dark:text-slate-100;
-  }
-  
-  .medical-unit {
-    @apply text-sm text-slate-600 dark:text-slate-400 ml-1;
-  }
-  
-  .medical-label {
-    @apply text-sm font-medium text-slate-700 dark:text-slate-300;
-  }
-  
-  /* Form Enhancements for Healthcare */
-  .healthcare-input {
-    @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 dark:bg-slate-800 dark:text-white;
-  }
-  
-  .healthcare-select {
-    @apply healthcare-input pr-10 bg-white dark:bg-slate-800;
-  }
-  
-  .healthcare-textarea {
-    @apply healthcare-input min-h-[100px] resize-vertical;
-  }
-  
-  /* Button Variants */
-  .btn-primary {
-    @apply bg-sky-600 hover:bg-sky-700 focus:bg-sky-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  .btn-secondary {
-    @apply bg-slate-600 hover:bg-slate-700 focus:bg-slate-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  .btn-success {
-    @apply bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  .btn-warning {
-    @apply bg-amber-600 hover:bg-amber-700 focus:bg-amber-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 hover:bg-red-700 focus:bg-red-700 text-white font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  .btn-outline {
-    @apply border-2 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium py-2 px-4 rounded-md transition-colors focus-visible;
-  }
-  
-  /* Loading States */
-  .loading-pulse {
-    @apply animate-pulse bg-slate-200 dark:bg-slate-700;
-  }
-  
-  .loading-spinner {
-    @apply animate-spin rounded-full border-2 border-slate-300 border-t-sky-600;
-  }
-  
-  /* Emergency Styles */
-  .emergency-banner {
-    @apply bg-red-600 text-white p-4 text-center font-semibold;
-  }
-  
-  .emergency-button {
-    @apply bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all focus-visible;
-  }
-}
-
-/* Debug Styles for Development */
-.debug-screens {
-  position: relative;
-}
-
-.debug-screens::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #ef4444 0%, #f97316 25%, #eab308 50%, #22c55e 75%, #3b82f6 100%);
-  z-index: 9999;
-  pointer-events: none;
-}
-
-/* Print Styles for Medical Reports */
-@media print {
-  * {
-    color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-  
-  .no-print {
-    display: none !important;
-  }
-  
-  .print-break-before {
-    page-break-before: always;
-  }
-  
-  .print-break-after {
-    page-break-after: always;
-  }
-  
-  .print-break-inside-avoid {
-    page-break-inside: avoid;
-  }
-  
-  body {
-    font-size: 12pt;
-    line-height: 1.5;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    page-break-after: avoid;
-  }
-  
-  .healthcare-card {
-    border: 1px solid #000;
-    box-shadow: none;
-  }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  .status-purple {
+    @apply bg-purple-100 text-purple-700 border-purple-200;
   }
 }

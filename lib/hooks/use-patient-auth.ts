@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { createClient } from '@/app/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 
@@ -29,35 +29,38 @@ interface PatientAuthContextType {
   isLoading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
-  updatePatient: (data: Partial<Patient>) => Promise<void>
+  updatePatient: (updates: Partial<Patient>) => Promise<void>
   refreshPatient: () => Promise<void>
 }
 
 const PatientAuthContext = createContext<PatientAuthContextType | undefined>(undefined)
 
-export function PatientAuthProvider({ children }: { children: ReactNode }) {
+export function PatientAuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [patient, setPatient] = useState<Patient | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        await fetchPatientData(session.user.id)
+    const getUser = async () => {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (error) throw error
+        
+        setUser(user)
+        if (user) {
+          await fetchPatientData(user.id)
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        toast.error('Erro ao carregar dados do usuário')
+      } finally {
+        setIsLoading(false)
       }
-      
-      setIsLoading(false)
     }
 
-    getInitialSession()
+    getUser()
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         setUser(session?.user ?? null)
@@ -73,19 +76,18 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase.auth])
 
   const fetchPatientData = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('patients')
+        .from('patient_profiles')
         .select('*')
         .eq('user_id', userId)
         .single()
 
-      if (error) {
-        console.error('Error fetching patient data:', error)
-        return
+      if (error && error.code !== 'PGRST116') {
+        throw error
       }
 
       setPatient(data)
@@ -95,31 +97,19 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signIn = async (email: string, password: string) => {
-    setIsLoading(true)
     try {
+      setIsLoading(true)
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       })
 
-      if (error) {
-        throw error
-      }
-
+      if (error) throw error
+      
       toast.success('Login realizado com sucesso!')
     } catch (error: any) {
-      console.error('Sign in error:', error)
-      
-      // Handle specific error messages in Portuguese
-      let errorMessage = 'Erro no login. Verifique suas credenciais.'
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        errorMessage = 'Email ou senha incorretos.'
-      } else if (error.message?.includes('Email not confirmed')) {
-        errorMessage = 'Confirme seu email antes de fazer login.'
-      }
-      
-      toast.error(errorMessage)
+      console.error('Error signing in:', error)
+      toast.error(error.message || 'Erro ao fazer login')
       throw error
     } finally {
       setIsLoading(false)
@@ -128,45 +118,41 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
+      setIsLoading(true)
       const { error } = await supabase.auth.signOut()
       
-      if (error) {
-        throw error
-      }
-
+      if (error) throw error
+      
       setUser(null)
       setPatient(null)
       toast.success('Logout realizado com sucesso!')
     } catch (error: any) {
-      console.error('Sign out error:', error)
-      toast.error('Erro ao fazer logout.')
+      console.error('Error signing out:', error)
+      toast.error(error.message || 'Erro ao fazer logout')
       throw error
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const updatePatient = async (data: Partial<Patient>) => {
-    if (!patient) return
+  const updatePatient = async (updates: Partial<Patient>) => {
+    if (!user || !patient) return
 
     try {
-      const { error } = await supabase
-        .from('patients')
-        .update({
-          ...data,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', patient.id)
+      const { data, error } = await supabase
+        .from('patient_profiles')
+        .update(updates)
+        .eq('user_id', user.id)
+        .select()
+        .single()
 
-      if (error) {
-        throw error
-      }
+      if (error) throw error
 
-      // Update local state
-      setPatient(prev => prev ? { ...prev, ...data } : null)
-      
-      toast.success('Dados atualizados com sucesso!')
+      setPatient(data)
+      toast.success('Perfil atualizado com sucesso!')
     } catch (error: any) {
-      console.error('Update patient error:', error)
-      toast.error('Erro ao atualizar dados.')
+      console.error('Error updating patient:', error)
+      toast.error(error.message || 'Erro ao atualizar perfil')
       throw error
     }
   }
@@ -177,7 +163,7 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const value: PatientAuthContextType = {
+  const contextValue = {
     user,
     patient,
     isLoading,
@@ -187,10 +173,10 @@ export function PatientAuthProvider({ children }: { children: ReactNode }) {
     refreshPatient
   }
 
-  return (
-    <PatientAuthContext.Provider value={value}>
-      {children}
-    </PatientAuthContext.Provider>
+  return React.createElement(
+    PatientAuthContext.Provider,
+    { value: contextValue },
+    children
   )
 }
 

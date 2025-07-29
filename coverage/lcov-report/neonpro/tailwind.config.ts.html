@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/96</span>
+                <span class='fraction'>0/102</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/96</span>
+                <span class='fraction'>0/102</span>
             </div>
         
             
@@ -159,7 +159,12 @@
 <a name='L94'></a><a href='#L94'>94</a>
 <a name='L95'></a><a href='#L95'>95</a>
 <a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -255,110 +260,120 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import type { Config } from "tailwindcss";</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import type { Config } from "tailwindcss";</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const config: Config = {</span>
-<span class="cstat-no" title="statement not covered" >    darkMode: ["class"],</span>
-<span class="cstat-no" title="statement not covered" >    content: [</span>
-<span class="cstat-no" title="statement not covered" >    "./pages/**/*.{js,ts,jsx,tsx,mdx}",</span>
-<span class="cstat-no" title="statement not covered" >    "./components/**/*.{js,ts,jsx,tsx,mdx}",</span>
-<span class="cstat-no" title="statement not covered" >    "./app/**/*.{js,ts,jsx,tsx,mdx}",</span>
-<span class="cstat-no" title="statement not covered" >    "*.{js,ts,jsx,tsx,mdx}"</span>
+<span class="cstat-no" title="statement not covered" >  darkMode: ["class"],</span>
+<span class="cstat-no" title="statement not covered" >  content: [</span>
+<span class="cstat-no" title="statement not covered" >    './pages/**/*.{ts,tsx}',</span>
+<span class="cstat-no" title="statement not covered" >    './components/**/*.{ts,tsx}',</span>
+<span class="cstat-no" title="statement not covered" >    './app/**/*.{ts,tsx}',</span>
+<span class="cstat-no" title="statement not covered" >    './src/**/*.{ts,tsx}',</span>
 <span class="cstat-no" title="statement not covered" >  ],</span>
+<span class="cstat-no" title="statement not covered" >  prefix: "",</span>
 <span class="cstat-no" title="statement not covered" >  theme: {</span>
-<span class="cstat-no" title="statement not covered" >  	extend: {</span>
-<span class="cstat-no" title="statement not covered" >  		colors: {</span>
-<span class="cstat-no" title="statement not covered" >  			background: 'hsl(var(--background))',</span>
-<span class="cstat-no" title="statement not covered" >  			foreground: 'hsl(var(--foreground))',</span>
-<span class="cstat-no" title="statement not covered" >  			card: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--card))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--card-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			popover: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--popover))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--popover-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			primary: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--primary))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--primary-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			secondary: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--secondary))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--secondary-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			muted: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--muted))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--muted-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			accent: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--accent))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--accent-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			destructive: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--destructive))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--destructive-foreground))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			border: 'hsl(var(--border))',</span>
-<span class="cstat-no" title="statement not covered" >  			input: 'hsl(var(--input))',</span>
-<span class="cstat-no" title="statement not covered" >  			ring: 'hsl(var(--ring))',</span>
-<span class="cstat-no" title="statement not covered" >  			chart: {</span>
-<span class="cstat-no" title="statement not covered" >  				'1': 'hsl(var(--chart-1))',</span>
-<span class="cstat-no" title="statement not covered" >  				'2': 'hsl(var(--chart-2))',</span>
-<span class="cstat-no" title="statement not covered" >  				'3': 'hsl(var(--chart-3))',</span>
-<span class="cstat-no" title="statement not covered" >  				'4': 'hsl(var(--chart-4))',</span>
-<span class="cstat-no" title="statement not covered" >  				'5': 'hsl(var(--chart-5))'</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			sidebar: {</span>
-<span class="cstat-no" title="statement not covered" >  				DEFAULT: 'hsl(var(--sidebar-background))',</span>
-<span class="cstat-no" title="statement not covered" >  				foreground: 'hsl(var(--sidebar-foreground))',</span>
-<span class="cstat-no" title="statement not covered" >  				primary: 'hsl(var(--sidebar-primary))',</span>
-<span class="cstat-no" title="statement not covered" >  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',</span>
-<span class="cstat-no" title="statement not covered" >  				accent: 'hsl(var(--sidebar-accent))',</span>
-<span class="cstat-no" title="statement not covered" >  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',</span>
-<span class="cstat-no" title="statement not covered" >  				border: 'hsl(var(--sidebar-border))',</span>
-<span class="cstat-no" title="statement not covered" >  				ring: 'hsl(var(--sidebar-ring))'</span>
-<span class="cstat-no" title="statement not covered" >  			}</span>
-<span class="cstat-no" title="statement not covered" >  		},</span>
-<span class="cstat-no" title="statement not covered" >  		borderRadius: {</span>
-<span class="cstat-no" title="statement not covered" >  			lg: 'var(--radius)',</span>
-<span class="cstat-no" title="statement not covered" >  			md: 'calc(var(--radius) - 2px)',</span>
-<span class="cstat-no" title="statement not covered" >  			sm: 'calc(var(--radius) - 4px)'</span>
-<span class="cstat-no" title="statement not covered" >  		},</span>
-<span class="cstat-no" title="statement not covered" >  		keyframes: {</span>
-<span class="cstat-no" title="statement not covered" >  			'accordion-down': {</span>
-<span class="cstat-no" title="statement not covered" >  				from: {</span>
-<span class="cstat-no" title="statement not covered" >  					height: '0'</span>
-<span class="cstat-no" title="statement not covered" >  				},</span>
-<span class="cstat-no" title="statement not covered" >  				to: {</span>
-<span class="cstat-no" title="statement not covered" >  					height: 'var(--radix-accordion-content-height)'</span>
-<span class="cstat-no" title="statement not covered" >  				}</span>
-<span class="cstat-no" title="statement not covered" >  			},</span>
-<span class="cstat-no" title="statement not covered" >  			'accordion-up': {</span>
-<span class="cstat-no" title="statement not covered" >  				from: {</span>
-<span class="cstat-no" title="statement not covered" >  					height: 'var(--radix-accordion-content-height)'</span>
-<span class="cstat-no" title="statement not covered" >  				},</span>
-<span class="cstat-no" title="statement not covered" >  				to: {</span>
-<span class="cstat-no" title="statement not covered" >  					height: '0'</span>
-<span class="cstat-no" title="statement not covered" >  				}</span>
-<span class="cstat-no" title="statement not covered" >  			}</span>
-<span class="cstat-no" title="statement not covered" >  		},</span>
-<span class="cstat-no" title="statement not covered" >  		animation: {</span>
-<span class="cstat-no" title="statement not covered" >  			'accordion-down': 'accordion-down 0.2s ease-out',</span>
-<span class="cstat-no" title="statement not covered" >  			'accordion-up': 'accordion-up 0.2s ease-out'</span>
-<span class="cstat-no" title="statement not covered" >  		}</span>
-<span class="cstat-no" title="statement not covered" >  	}</span>
+<span class="cstat-no" title="statement not covered" >    container: {</span>
+<span class="cstat-no" title="statement not covered" >      center: true,</span>
+<span class="cstat-no" title="statement not covered" >      padding: "2rem",</span>
+<span class="cstat-no" title="statement not covered" >      screens: {</span>
+<span class="cstat-no" title="statement not covered" >        "2xl": "1400px",</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
+<span class="cstat-no" title="statement not covered" >    extend: {</span>
+<span class="cstat-no" title="statement not covered" >      colors: {</span>
+<span class="cstat-no" title="statement not covered" >        border: "oklch(var(--border))",</span>
+<span class="cstat-no" title="statement not covered" >        input: "oklch(var(--input))",</span>
+<span class="cstat-no" title="statement not covered" >        ring: "oklch(var(--ring))",</span>
+<span class="cstat-no" title="statement not covered" >        background: "oklch(var(--background))",</span>
+<span class="cstat-no" title="statement not covered" >        foreground: "oklch(var(--foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        primary: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--primary))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--primary-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        secondary: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--secondary))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--secondary-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        destructive: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--destructive))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--destructive-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        muted: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--muted))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--muted-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        accent: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--accent))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--accent-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        popover: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--popover))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--popover-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        card: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: "oklch(var(--card))",</span>
+<span class="cstat-no" title="statement not covered" >          foreground: "oklch(var(--card-foreground))",</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        chart: {</span>
+<span class="cstat-no" title="statement not covered" >          '1': 'oklch(var(--chart-1))',</span>
+<span class="cstat-no" title="statement not covered" >          '2': 'oklch(var(--chart-2))',</span>
+<span class="cstat-no" title="statement not covered" >          '3': 'oklch(var(--chart-3))',</span>
+<span class="cstat-no" title="statement not covered" >          '4': 'oklch(var(--chart-4))',</span>
+<span class="cstat-no" title="statement not covered" >          '5': 'oklch(var(--chart-5))'</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        sidebar: {</span>
+<span class="cstat-no" title="statement not covered" >          DEFAULT: 'oklch(var(--sidebar-background))',</span>
+<span class="cstat-no" title="statement not covered" >          foreground: 'oklch(var(--sidebar-foreground))',</span>
+<span class="cstat-no" title="statement not covered" >          primary: 'oklch(var(--sidebar-primary))',</span>
+<span class="cstat-no" title="statement not covered" >          'primary-foreground': 'oklch(var(--sidebar-primary-foreground))',</span>
+<span class="cstat-no" title="statement not covered" >          accent: 'oklch(var(--sidebar-accent))',</span>
+<span class="cstat-no" title="statement not covered" >          'accent-foreground': 'oklch(var(--sidebar-accent-foreground))',</span>
+<span class="cstat-no" title="statement not covered" >          border: 'oklch(var(--sidebar-border))',</span>
+<span class="cstat-no" title="statement not covered" >          ring: 'oklch(var(--sidebar-ring))'</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      borderRadius: {</span>
+<span class="cstat-no" title="statement not covered" >        lg: "var(--radius)",</span>
+<span class="cstat-no" title="statement not covered" >        md: "calc(var(--radius) - 2px)",</span>
+<span class="cstat-no" title="statement not covered" >        sm: "calc(var(--radius) - 4px)",</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      keyframes: {</span>
+<span class="cstat-no" title="statement not covered" >        "accordion-down": {</span>
+<span class="cstat-no" title="statement not covered" >          from: { height: "0" },</span>
+<span class="cstat-no" title="statement not covered" >          to: { height: "var(--radix-accordion-content-height)" },</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        "accordion-up": {</span>
+<span class="cstat-no" title="statement not covered" >          from: { height: "var(--radix-accordion-content-height)" },</span>
+<span class="cstat-no" title="statement not covered" >          to: { height: "0" },</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      animation: {</span>
+<span class="cstat-no" title="statement not covered" >        "accordion-down": "accordion-down 0.2s ease-out",</span>
+<span class="cstat-no" title="statement not covered" >        "accordion-up": "accordion-up 0.2s ease-out",</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      fontFamily: {</span>
+<span class="cstat-no" title="statement not covered" >        sans: ["Inter", "sans-serif"],</span>
+<span class="cstat-no" title="statement not covered" >        serif: ["Lora", "serif"],</span>
+<span class="cstat-no" title="statement not covered" >        mono: ["Libre Baskerville", "serif"],</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >  },</span>
 <span class="cstat-no" title="statement not covered" >  plugins: [require("tailwindcss-animate")],</span>
 <span class="cstat-no" title="statement not covered" >};</span>
-<span class="cstat-no" title="statement not covered" >export default config;</span>
-&nbsp;</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export default config;</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-27T00:27:56.489Z
+                at 2025-07-29T02:00:17.188Z
             </div>
         <script src="../prettify.js"></script>
         <script>

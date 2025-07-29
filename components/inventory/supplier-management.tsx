@@ -267,323 +267,323 @@ export function SupplierManagement() {
   }
 
   return (
-    &lt;div className="space-y-6"&gt;
+    <div className="space-y-6">
       {/* Search and Filters */}
-      &lt;div className="flex flex-col sm:flex-row gap-4"&gt;
-        &lt;div className="relative flex-1"&gt;
-          &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" /&gt;
-          &lt;Input
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
             placeholder="Buscar por nome, CNPJ ou email..."
             value={searchTerm}
-            onChange={(e) =&gt; setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
-          /&gt;
-        &lt;/div&gt;
+          />
+        </div>
         
-        &lt;Select value={selectedStatus} onValueChange={setSelectedStatus}&gt;
-          &lt;SelectTrigger className="w-32"&gt;
-            &lt;SelectValue placeholder="Status" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="all"&gt;Todos&lt;/SelectItem&gt;
-            &lt;SelectItem value="active"&gt;Ativo&lt;/SelectItem&gt;
-            &lt;SelectItem value="inactive"&gt;Inativo&lt;/SelectItem&gt;
-            &lt;SelectItem value="suspended"&gt;Suspenso&lt;/SelectItem&gt;
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+        <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="active">Ativo</SelectItem>
+            <SelectItem value="inactive">Inativo</SelectItem>
+            <SelectItem value="suspended">Suspenso</SelectItem>
+          </SelectContent>
+        </Select>
 
-        &lt;Select value={selectedCategory} onValueChange={setSelectedCategory}&gt;
-          &lt;SelectTrigger className="w-48"&gt;
-            &lt;SelectValue placeholder="Categoria" /&gt;
-          &lt;/SelectTrigger&gt;
-          &lt;SelectContent&gt;
-            &lt;SelectItem value="all"&gt;Todas as categorias&lt;/SelectItem&gt;
-            {categories.map(category =&gt; (
-              &lt;SelectItem key={category.id} value={category.id}&gt;
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as categorias</SelectItem>
+            {categories.map(category => (
+              <SelectItem key={category.id} value={category.id}>
                 {category.icon} {category.name}
-              &lt;/SelectItem&gt;
+              </SelectItem>
             ))}
-          &lt;/SelectContent&gt;
-        &lt;/Select&gt;
+          </SelectContent>
+        </Select>
 
-        &lt;Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}&gt;
-          &lt;DialogTrigger asChild&gt;
-            &lt;Button onClick={() =&gt; setEditingSupplier(null)}&gt;
-              &lt;Plus className="w-4 h-4 mr-2" /&gt;
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setEditingSupplier(null)}>
+              <Plus className="w-4 h-4 mr-2" />
               Novo Fornecedor
-            &lt;/Button&gt;
-          &lt;/DialogTrigger&gt;
-          &lt;DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto"&gt;
-            &lt;DialogHeader&gt;
-              &lt;DialogTitle&gt;
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
                 {editingSupplier ? 'Editar Fornecedor' : 'Novo Fornecedor'}
-              &lt;/DialogTitle&gt;
-              &lt;DialogDescription&gt;
+              </DialogTitle>
+              <DialogDescription>
                 Preencha as informações do fornecedor com compliance LGPD
-              &lt;/DialogDescription&gt;
-            &lt;/DialogHeader&gt;
+              </DialogDescription>
+            </DialogHeader>
             
             {/* Supplier Form would go here - simplified for space */}
-            &lt;div className="grid gap-4 py-4"&gt;
-              &lt;div className="grid grid-cols-4 items-center gap-4"&gt;
-                &lt;Label htmlFor="name" className="text-right"&gt;
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
                   Nome
-                &lt;/Label&gt;
-                &lt;Input
+                </Label>
+                <Input
                   id="name"
                   defaultValue={editingSupplier?.name}
                   className="col-span-3"
-                /&gt;
-              &lt;/div&gt;
-              &lt;div className="grid grid-cols-4 items-center gap-4"&gt;
-                &lt;Label htmlFor="cnpj" className="text-right"&gt;
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="cnpj" className="text-right">
                   CNPJ
-                &lt;/Label&gt;
-                &lt;Input
+                </Label>
+                <Input
                   id="cnpj"
                   defaultValue={editingSupplier?.cnpj}
                   className="col-span-3"
                   placeholder="00.000.000/0000-00"
-                /&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
+                />
+              </div>
+            </div>
             
-            &lt;DialogFooter&gt;
-              &lt;Button type="submit"&gt;
+            <DialogFooter>
+              <Button type="submit">
                 {editingSupplier ? 'Atualizar' : 'Criar'} Fornecedor
-              &lt;/Button&gt;
-            &lt;/DialogFooter&gt;
-          &lt;/DialogContent&gt;
-        &lt;/Dialog&gt;
-      &lt;/div&gt;      {/* Suppliers Table */}
-      &lt;Card&gt;
-        &lt;CardHeader&gt;
-          &lt;CardTitle&gt;Fornecedores ({filteredSuppliers.length})&lt;/CardTitle&gt;
-          &lt;CardDescription&gt;
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>      {/* Suppliers Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Fornecedores ({filteredSuppliers.length})</CardTitle>
+          <CardDescription>
             Gestão completa com validação CNPJ e compliance LGPD
-          &lt;/CardDescription&gt;
-        &lt;/CardHeader&gt;
-        &lt;CardContent&gt;
-          &lt;div className="overflow-x-auto"&gt;
-            &lt;Table&gt;
-              &lt;TableHeader&gt;
-                &lt;TableRow&gt;
-                  &lt;TableHead&gt;Fornecedor&lt;/TableHead&gt;
-                  &lt;TableHead&gt;CNPJ&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Categorias&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Contato&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Localização&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Performance&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Compliance&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Status&lt;/TableHead&gt;
-                  &lt;TableHead&gt;Ações&lt;/TableHead&gt;
-                &lt;/TableRow&gt;
-              &lt;/TableHeader&gt;
-              &lt;TableBody&gt;
-                {filteredSuppliers.map((supplier) =&gt; {
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Fornecedor</TableHead>
+                  <TableHead>CNPJ</TableHead>
+                  <TableHead>Categorias</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead>Localização</TableHead>
+                  <TableHead>Performance</TableHead>
+                  <TableHead>Compliance</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSuppliers.map((supplier) => {
                   const statusBadge = getStatusBadge(supplier.status)
                   const StatusIcon = statusBadge.icon
                   
                   return (
-                    &lt;TableRow key={supplier.id} className="hover:bg-muted/50"&gt;
-                      &lt;TableCell&gt;
-                        &lt;div&gt;
-                          &lt;div className="font-medium flex items-center gap-2"&gt;
-                            &lt;Building className="w-4 h-4 text-muted-foreground" /&gt;
+                    <TableRow key={supplier.id} className="hover:bg-muted/50">
+                      <TableCell>
+                        <div>
+                          <div className="font-medium flex items-center gap-2">
+                            <Building className="w-4 h-4 text-muted-foreground" />
                             {supplier.name}
-                          &lt;/div&gt;
+                          </div>
                           {supplier.tradeName && (
-                            &lt;div className="text-sm text-muted-foreground"&gt;
+                            <div className="text-sm text-muted-foreground">
                               {supplier.tradeName}
-                            &lt;/div&gt;
+                            </div>
                           )}
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          <div className="text-xs text-muted-foreground">
                             Desde: {new Date(supplier.createdAt).toLocaleDateString('pt-BR')}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="font-mono text-sm"&gt;
+                      <TableCell>
+                        <div className="font-mono text-sm">
                           {formatCNPJ(supplier.cnpj)}
-                        &lt;/div&gt;
-                        &lt;div className="text-xs text-muted-foreground"&gt;
+                        </div>
+                        <div className="text-xs text-muted-foreground">
                           {supplier.taxRegime.replace('_', ' ').toUpperCase()}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="flex flex-wrap gap-1"&gt;
-                          {supplier.categories.slice(0, 2).map(categoryId =&gt; {
-                            const category = categories.find(c =&gt; c.id === categoryId)
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {supplier.categories.slice(0, 2).map(categoryId => {
+                            const category = categories.find(c => c.id === categoryId)
                             return category ? (
-                              &lt;Badge key={categoryId} variant="outline" className="text-xs"&gt;
+                              <Badge key={categoryId} variant="outline" className="text-xs">
                                 {category.icon}
-                              &lt;/Badge&gt;
+                              </Badge>
                             ) : null
                           })}
-                          {supplier.categories.length &gt; 2 && (
-                            &lt;Badge variant="outline" className="text-xs"&gt;
+                          {supplier.categories.length > 2 && (
+                            <Badge variant="outline" className="text-xs">
                               +{supplier.categories.length - 2}
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="flex items-center gap-1 text-sm"&gt;
-                            &lt;Mail className="w-3 h-3 text-muted-foreground" /&gt;
-                            &lt;span className="truncate max-w-[120px]"&gt;{supplier.email}&lt;/span&gt;
-                          &lt;/div&gt;
-                          &lt;div className="flex items-center gap-1 text-sm"&gt;
-                            &lt;Phone className="w-3 h-3 text-muted-foreground" /&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1 text-sm">
+                            <Mail className="w-3 h-3 text-muted-foreground" />
+                            <span className="truncate max-w-[120px]">{supplier.email}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-sm">
+                            <Phone className="w-3 h-3 text-muted-foreground" />
                             {supplier.phone}
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             {supplier.contactPerson}
-                          &lt;/div&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                          </div>
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="flex items-center gap-1 text-sm"&gt;
-                          &lt;MapPin className="w-3 h-3 text-muted-foreground" /&gt;
-                          &lt;span&gt;{supplier.address.city}, {supplier.address.state}&lt;/span&gt;
-                        &lt;/div&gt;
-                        &lt;div className="text-xs text-muted-foreground"&gt;
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-sm">
+                          <MapPin className="w-3 h-3 text-muted-foreground" />
+                          <span>{supplier.address.city}, {supplier.address.state}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
                           Entrega: {supplier.deliveryTime} dias
-                        &lt;/div&gt;
-                        &lt;div className="text-xs text-muted-foreground"&gt;
+                        </div>
+                        <div className="text-xs text-muted-foreground">
                           Min: R$ {supplier.minOrderValue.toLocaleString('pt-BR')}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
-                          &lt;div className="flex items-center gap-1"&gt;
-                            &lt;span className="text-sm font-medium"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm font-medium">
                               ★ {supplier.averageRating.toFixed(1)}
-                            &lt;/span&gt;
-                          &lt;/div&gt;
-                          &lt;div className="text-xs text-muted-foreground"&gt;
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
                             {supplier.totalOrders} pedidos
-                          &lt;/div&gt;
+                          </div>
                           {supplier.lastOrderDate && (
-                            &lt;div className="text-xs text-muted-foreground"&gt;
+                            <div className="text-xs text-muted-foreground">
                               Último: {new Date(supplier.lastOrderDate).toLocaleDateString('pt-BR')}
-                            &lt;/div&gt;
+                            </div>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="space-y-1"&gt;
+                      <TableCell>
+                        <div className="space-y-1">
                           {supplier.anvisaAuthorization && (
-                            &lt;Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs"&gt;
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
                               ANVISA
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
                           {supplier.lgpdConsent && (
-                            &lt;Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs"&gt;
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
                               LGPD OK
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
-                          {supplier.certificates.length &gt; 0 && (
-                            &lt;Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs"&gt;
-                              &lt;FileText className="w-3 h-3 mr-1" /&gt;
+                          {supplier.certificates.length > 0 && (
+                            <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs">
+                              <FileText className="w-3 h-3 mr-1" />
                               {supplier.certificates.length} cert.
-                            &lt;/Badge&gt;
+                            </Badge>
                           )}
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
+                        </div>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;Badge variant="outline" className={statusBadge.color}&gt;
-                          &lt;StatusIcon className="w-3 h-3 mr-1" /&gt;
+                      <TableCell>
+                        <Badge variant="outline" className={statusBadge.color}>
+                          <StatusIcon className="w-3 h-3 mr-1" />
                           {statusBadge.label}
-                        &lt;/Badge&gt;
-                      &lt;/TableCell&gt;
+                        </Badge>
+                      </TableCell>
                       
-                      &lt;TableCell&gt;
-                        &lt;div className="flex items-center gap-2"&gt;
-                          &lt;Button
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button
                             size="sm"
                             variant="outline"
-                            onClick={() =&gt; handleEdit(supplier)}
-                          &gt;
-                            &lt;Edit className="w-3 h-3" /&gt;
-                          &lt;/Button&gt;
-                          &lt;Button
+                            onClick={() => handleEdit(supplier)}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button
                             size="sm"
                             variant="outline"
-                            onClick={() =&gt; handleDelete(supplier.id)}
+                            onClick={() => handleDelete(supplier.id)}
                             className="text-red-600 hover:text-red-700"
-                          &gt;
-                            &lt;Trash2 className="w-3 h-3" /&gt;
-                          &lt;/Button&gt;
-                        &lt;/div&gt;
-                      &lt;/TableCell&gt;
-                    &lt;/TableRow&gt;
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
                   )
                 })}
-              &lt;/TableBody&gt;
-            &lt;/Table&gt;
+              </TableBody>
+            </Table>
             
             {filteredSuppliers.length === 0 && (
-              &lt;div className="text-center py-8 text-muted-foreground"&gt;
-                &lt;Building className="w-12 h-12 mx-auto mb-4 opacity-50" /&gt;
-                &lt;p&gt;Nenhum fornecedor encontrado com os filtros aplicados.&lt;/p&gt;
-              &lt;/div&gt;
+              <div className="text-center py-8 text-muted-foreground">
+                <Building className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Nenhum fornecedor encontrado com os filtros aplicados.</p>
+              </div>
             )}
-          &lt;/div&gt;
-        &lt;/CardContent&gt;
-      &lt;/Card&gt;
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Summary Cards */}
-      &lt;div className="grid gap-4 md:grid-cols-3"&gt;
-        &lt;Card&gt;
-          &lt;CardHeader className="pb-3"&gt;
-            &lt;CardTitle className="text-base"&gt;Compliance LGPD&lt;/CardTitle&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent className="pt-0"&gt;
-            &lt;div className="text-2xl font-bold text-green-600"&gt;
-              {mockSuppliers.filter(s =&gt; s.lgpdConsent).length}
-            &lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Compliance LGPD</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-2xl font-bold text-green-600">
+              {mockSuppliers.filter(s => s.lgpdConsent).length}
+            </div>
+            <p className="text-xs text-muted-foreground">
               de {mockSuppliers.length} fornecedores em compliance
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+            </p>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardHeader className="pb-3"&gt;
-            &lt;CardTitle className="text-base"&gt;Autorização ANVISA&lt;/CardTitle&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent className="pt-0"&gt;
-            &lt;div className="text-2xl font-bold text-blue-600"&gt;
-              {mockSuppliers.filter(s =&gt; s.anvisaAuthorization).length}
-            &lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Autorização ANVISA</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-2xl font-bold text-blue-600">
+              {mockSuppliers.filter(s => s.anvisaAuthorization).length}
+            </div>
+            <p className="text-xs text-muted-foreground">
               fornecedores com autorização médica
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
+            </p>
+          </CardContent>
+        </Card>
 
-        &lt;Card&gt;
-          &lt;CardHeader className="pb-3"&gt;
-            &lt;CardTitle className="text-base"&gt;Performance Média&lt;/CardTitle&gt;
-          &lt;/CardHeader&gt;
-          &lt;CardContent className="pt-0"&gt;
-            &lt;div className="text-2xl font-bold text-yellow-600"&gt;
-              {(mockSuppliers.reduce((acc, s) =&gt; acc + s.averageRating, 0) / mockSuppliers.length).toFixed(1)}★
-            &lt;/div&gt;
-            &lt;p className="text-xs text-muted-foreground"&gt;
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Performance Média</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="text-2xl font-bold text-yellow-600">
+              {(mockSuppliers.reduce((acc, s) => acc + s.averageRating, 0) / mockSuppliers.length).toFixed(1)}★
+            </div>
+            <p className="text-xs text-muted-foreground">
               rating médio dos fornecedores
-            &lt;/p&gt;
-          &lt;/CardContent&gt;
-        &lt;/Card&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }
