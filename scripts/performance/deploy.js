@@ -7,7 +7,7 @@
  * Includes Web Vitals, bundle analysis, caching, and optimization
  */
 
-const { execSync } = require('child_process')
+const { spawnSync } = require('child_process')
 const { existsSync, readFileSync } = require('fs')
 const path = require('path')
 
@@ -44,11 +44,13 @@ async function validateEnvironment() {
   
   for (const check of checks) {
     try {
-      const result = execSync(`${check.cmd} ${check.args.join(' ')}`, { 
+      const result = spawnSync(check.cmd, check.args, { 
         encoding: 'utf8',
         shell: false 
-      }).trim()
-      success(`${check.name}: ${result}`)
+      })
+      if (result.error) throw result.error
+      const output = result.stdout.toString().trim()
+      success(`${check.name}: ${output}`)
     } catch (err) {
       error(`${check.name}: Failed - ${err.message}`)
       return false
@@ -101,14 +103,24 @@ function analyzeBundle() {
   try {
     // Build the project for analysis
     info('Building project for bundle analysis...')
-    execSync('pnpm build', { stdio: 'inherit', shell: false })
+    const buildResult = spawnSync('pnpm', ['build'], { stdio: 'inherit', shell: false })
+    if (buildResult.error || buildResult.status !== 0) {
+      throw new Error(`Build failed with status ${buildResult.status}`)
+    }
     
     success('Build completed successfully')
     
     // Check if bundle analyzer is available
     if (process.env.ANALYZE === 'true') {
       info('Running bundle analyzer...')
-      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false })
+      const analyzeResult = spawnSync('pnpm', ['build'], { 
+        stdio: 'inherit', 
+        shell: false,
+        env: { ...process.env, ANALYZE: 'true' }
+      })
+      if (analyzeResult.error || analyzeResult.status !== 0) {
+        throw new Error(`Analyze build failed with status ${analyzeResult.status}`)
+      }
     }
     
     return true
@@ -122,7 +134,10 @@ function testPerformanceIntegration() {
   info('Running performance integration tests...')
   
   try {
-    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit', shell: false })
+    const testResult = spawnSync('node', ['scripts/performance/integration-test.js'], { stdio: 'inherit', shell: false })
+    if (testResult.error) {
+      throw testResult.error
+    }
     return true
   } catch (err) {
     warning(`Performance tests completed with some warnings`)

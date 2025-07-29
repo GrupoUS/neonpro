@@ -1,14 +1,14 @@
 import type {
-    CreateSegmentationRuleRequest,
-    CreateSegmentRequest,
-    EngagementLevel,
-    PatientBehaviorAnalysis,
-    PatientSegment,
-    SegmentAnalytics,
-    SegmentationRule,
-    SegmentMembership,
-    SegmentMembershipUpdate,
-    SegmentPerformance
+  CreateSegmentationRuleRequest,
+  CreateSegmentRequest,
+  EngagementLevel,
+  PatientBehaviorAnalysis,
+  PatientSegment,
+  SegmentAnalytics,
+  SegmentationRule,
+  SegmentMembership,
+  SegmentMembershipUpdate,
+  SegmentPerformance
 } from '@/app/types/segmentation';
 import { createClient } from '@/app/utils/supabase/server';
 
@@ -27,13 +27,14 @@ export class PatientSegmentationService {
     const { data: segment, error } = await supabase
       .from('patient_segments')
       .insert({
-        segment_name: data.segment_name,
+        name: data.segment_name,
         description: data.description,
         criteria: aiCriteria,
         ai_model_used: data.ai_model || 'behavioral_clustering_v2',
         accuracy_score: data.expected_accuracy || 0.85,
         segment_type: data.segment_type,
-        is_active: true
+        is_active: true,
+        clinic_id: '89084c3a-9200-4058-a15a-b440d3c60687' // TODO: Get from user context
       })
       .select()
       .single();

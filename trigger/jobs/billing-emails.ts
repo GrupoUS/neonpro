@@ -1,7 +1,7 @@
+import { createClient } from "@/app/utils/supabase/server";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { Resend } from "resend";
-import { client, JOB_IDS, type InvoiceJobPayload, type EmailJobPayload } from "../client";
-import { createClient } from "@/app/utils/supabase/server";
+import { JOB_IDS, type InvoiceJobPayload } from "../client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -25,7 +25,7 @@ export const invoiceEmailDelivery = task({
     });
 
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Buscar detalhes da fatura no sistema existente
       const { data: invoice, error } = await supabase
@@ -243,7 +243,7 @@ export const paymentReminderEmail = task({
     });
 
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Verificar status atual da fatura
       const { data: invoice } = await supabase

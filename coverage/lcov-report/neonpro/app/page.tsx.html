@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/32</span>
+                <span class='fraction'>0/38</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/32</span>
+                <span class='fraction'>0/38</span>
             </div>
         
             
@@ -94,7 +94,13 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -125,36 +131,48 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >// app/page.tsx - NeonPro Healthcare Landing Page</span></span></span>
-<span class="cstat-no" title="statement not covered" >"use client";</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >"use client";</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import { useAuth } from "@/contexts/auth-context";</span>
-<span class="cstat-no" title="statement not covered" >import { useRouter } from "next/navigation";</span>
-<span class="cstat-no" title="statement not covered" >import { useEffect, useState } from "react";</span>
-<span class="cstat-no" title="statement not covered" >import { HeroSection } from "@/components/landing/hero-section";</span>
-<span class="cstat-no" title="statement not covered" >import { FeaturesSection } from "@/components/landing/features-section";</span>
-<span class="cstat-no" title="statement not covered" >import { TestimonialsSection } from "@/components/landing/testimonials-section";</span>
-<span class="cstat-no" title="statement not covered" >import { ContactSection } from "@/components/landing/contact-section";</span>
-<span class="cstat-no" title="statement not covered" >import { LoginForm } from "@/components/auth/login-form";</span>
-<span class="cstat-no" title="statement not covered" >import { RegisterForm } from "@/components/auth/register-form";</span>
-<span class="cstat-no" title="statement not covered" >import { Button } from "@/components/ui/button";</span>
-<span class="cstat-no" title="statement not covered" >import { Badge } from "@/components/ui/badge";</span>
-<span class="cstat-no" title="statement not covered" >import { Card, CardContent } from "@/components/ui/card";</span>
-<span class="cstat-no" title="statement not covered" >import { Shield, Users, Calendar, BarChart3, Heart, CheckCircle, Moon, Sun } from "lucide-react";</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Simple Theme Toggle Component</span>
-<span class="cstat-no" title="statement not covered" >function SimpleThemeToggle() {</span>
-<span class="cstat-no" title="statement not covered" >  const [isDark, setIsDark] = useState(false);</span>
-<span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  const toggleTheme = () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setIsDark(!isDark);</span>
-<span class="cstat-no" title="statement not covered" >    document.documentElement.classList.toggle('dark');</span>
-<span class="cstat-no" title="statement not covered" >  };</span>
-<span class="cstat-no" title="statement not covered" >  </span>
+<span class="cstat-no" title="statement not covered" >export default function HomePage() {</span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;Button variant="ghost" size="sm" onClick={toggleTheme}&gt;</span>
-<span class="cstat-no" title="statement not covered" >      {isDark ? &lt;Sun className="h-4 w-4" /&gt; : &lt;Moon className="h-4 w-4" /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >    &lt;/Button&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className="min-h-screen bg-gradient-to-br from-purple-600 via-purple-700 to-purple-500 flex items-center justify-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="text-center text-white space-y-6"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;h1 className="text-6xl font-bold mb-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          NeonPro</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/h1&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="text-xl opacity-90"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          Revolução Digital para Clínicas Estéticas</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="flex gap-4 justify-center mt-8"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Começar Grátis</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/button&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            Saiba Mais</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/button&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="mt-12 grid grid-cols-3 gap-8 text-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-3xl font-bold text-yellow-300"&gt;+500&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-sm opacity-80"&gt;Clínicas Ativas&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-3xl font-bold text-yellow-300"&gt;98%&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-sm opacity-80"&gt;Satisfação&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-3xl font-bold text-yellow-300"&gt;24/7&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="text-sm opacity-80"&gt;Suporte Técnico&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >  );</span>
 <span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
 
@@ -163,7 +181,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T02:00:17.188Z
+                at 2025-07-29T17:15:54.067Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -4,6 +4,7 @@ export const config: TriggerConfig = {
   project: process.env.TRIGGER_PROJECT_ID!,
   // Vercel deployment friendly
   logLevel: process.env.NODE_ENV === "development" ? "debug" : "info",
+  maxDuration: 300, // 5 minutos para jobs de longa duração
   retries: {
     enabledInDev: true,
     default: {

@@ -3,12 +3,12 @@
  * Automated bundle analysis and optimization recommendations
  */
 
-import { exec } from 'child_process'
+import { execFile, spawn } from 'child_process'
 import { promisify } from 'util'
 import { writeFileSync, readFileSync } from 'fs'
 import { join } from 'path'
 
-const execAsync = promisify(exec)
+const execFileAsync = promisify(execFile)
 
 interface BundleStats {
   totalSize: number
@@ -28,10 +28,11 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
   console.log('🔍 Starting bundle analysis...')
   
   try {
-    // Run Next.js build with bundle analyzer
-    const { stdout, stderr } = await execAsync('ANALYZE=true npm run build', {
+    // Run Next.js build with bundle analyzer - secure approach
+    const { stdout, stderr } = await execFileAsync('npm', ['run', 'build'], {
       cwd: process.cwd(),
-      maxBuffer: 1024 * 1024 * 10 // 10MB buffer
+      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+      env: { ...process.env, ANALYZE: 'true' } // Pass ANALYZE as environment variable
     })
 
     if (stderr) {
@@ -157,9 +158,14 @@ export async function generateLighthouseReport(url: string = 'http://localhost:3
   console.log(`🔍 Running Lighthouse analysis on ${url}...`)
   
   try {
-    const { stdout } = await execAsync(
-      `npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`
-    )
+    const { stdout } = await execFileAsync('npx', [
+      'lighthouse',
+      url,
+      '--output=json',
+      '--output-path=./performance/lighthouse-report.json',
+      '--chrome-flags=--headless',
+      '--quiet'
+    ])
 
     console.log('✅ Lighthouse report generated at performance/lighthouse-report.json')
     

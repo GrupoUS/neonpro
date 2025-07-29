@@ -206,7 +206,8 @@
 <a name='L141'></a><a href='#L141'>141</a>
 <a name='L142'></a><a href='#L142'>142</a>
 <a name='L143'></a><a href='#L143'>143</a>
-<a name='L144'></a><a href='#L144'>144</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -349,7 +350,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >// app/login/page.tsx</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >// app/login/page.tsx</span></span></span>
 <span class="cstat-no" title="statement not covered" >"use client";</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >import { Button } from "@/components/ui/button";</span>
@@ -366,8 +368,7 @@
 <span class="cstat-no" title="statement not covered" >import { ThemeToggle } from "@/components/ui/theme-toggle";</span>
 <span class="cstat-no" title="statement not covered" >import Link from "next/link";</span>
 <span class="cstat-no" title="statement not covered" >import { useRouter } from "next/navigation";</span>
-<span class="cstat-no" title="statement not covered" >import type React from "react";</span>
-<span class="cstat-no" title="statement not covered" >import { useEffect, useState } from "react";</span>
+<span class="cstat-no" title="statement not covered" >import React, { useEffect, useState } from "react";</span>
 <span class="cstat-no" title="statement not covered" >// Corrigindo importações para usar o contexto de autenticação</span>
 <span class="cstat-no" title="statement not covered" >import { SignInWithGooglePopupButton } from "@/components/auth/google-popup-button";</span>
 <span class="cstat-no" title="statement not covered" >import { useAuth } from "@/contexts/auth-context";</span>
@@ -380,7 +381,8 @@
 <span class="cstat-no" title="statement not covered" >  // Usando contexto de autenticação em vez de cliente direto</span>
 <span class="cstat-no" title="statement not covered" >  const { user, signIn } = useAuth();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Verifica se o usuário já está logado  useEffect(() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  // Verifica se o usuário já está logado</span>
+<span class="cstat-no" title="statement not covered" >  useEffect(() =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    console.log("🔄 Login page - checking user state:", !!user);</span>
 <span class="cstat-no" title="statement not covered" >    if (user) {</span>
 <span class="cstat-no" title="statement not covered" >      console.log("✅ User detected in login page, redirecting to dashboard");</span>
@@ -421,7 +423,7 @@
 <span class="cstat-no" title="statement not covered" >      &lt;div className="absolute top-4 right-4 z-10"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;ThemeToggle /&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >      </span>
+<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      &lt;Card className="mx-auto w-full max-w-sm"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;CardHeader&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;CardTitle className="text-2xl"&gt;Login - NEON PRO&lt;/CardTitle&gt;</span>
@@ -492,14 +494,15 @@
 <span class="cstat-no" title="statement not covered" >      &lt;/Card&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >  );</span>
-<span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T02:00:17.188Z
+                at 2025-07-29T17:15:54.067Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -119,6 +119,10 @@ const navigationData = {
       icon: BarChart3,
       items: [
         {
+          title: "KPI Dashboard",
+          url: "/dashboard/financial/kpi",
+        },
+        {
           title: "Receitas",
           url: "/dashboard/financial/revenue",
         },
@@ -129,6 +133,10 @@ const navigationData = {
         {
           title: "Relatórios",
           url: "/dashboard/financial/reports",
+        },
+        {
+          title: "Sistema Fiscal BR",
+          url: "/dashboard/financial/tax",
         },
       ],
     },
@@ -143,7 +151,7 @@ const navigationData = {
         },
         {
           title: "Fornecedores",
-          url: "/dashboard/accounts-payable/vendors",
+          url: "/dashboard/suppliers",
         },
         {
           title: "Contas a Pagar",

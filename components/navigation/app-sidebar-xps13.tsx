@@ -138,7 +138,7 @@ const navigationData = {
         },
         {
           title: "Fornecedores",
-          url: "/dashboard/accounts-payable/vendors",
+          url: "/dashboard/suppliers",
         },
         {
           title: "Contas a Pagar",

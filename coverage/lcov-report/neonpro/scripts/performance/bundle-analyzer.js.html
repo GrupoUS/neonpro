@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/262</span>
+                <span class='fraction'>0/268</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/262</span>
+                <span class='fraction'>0/268</span>
             </div>
         
             
@@ -324,7 +324,19 @@
 <a name='L259'></a><a href='#L259'>259</a>
 <a name='L260'></a><a href='#L260'>260</a>
 <a name='L261'></a><a href='#L261'>261</a>
-<a name='L262'></a><a href='#L262'>262</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -590,12 +602,12 @@
 <span class="cstat-no" title="statement not covered" > * Automated bundle analysis and optimization recommendations</span>
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >import { exec } from 'child_process'</span>
+<span class="cstat-no" title="statement not covered" >import { execFile, spawn } from 'child_process'</span>
 <span class="cstat-no" title="statement not covered" >import { promisify } from 'util'</span>
 <span class="cstat-no" title="statement not covered" >import { writeFileSync, readFileSync } from 'fs'</span>
 <span class="cstat-no" title="statement not covered" >import { join } from 'path'</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const execAsync = promisify(exec)</span>
+<span class="cstat-no" title="statement not covered" >const execFileAsync = promisify(execFile)</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface BundleStats {</span>
 <span class="cstat-no" title="statement not covered" >  totalSize: number</span>
@@ -615,10 +627,11 @@
 <span class="cstat-no" title="statement not covered" >  console.log('🔍 Starting bundle analysis...')</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    // Run Next.js build with bundle analyzer</span>
-<span class="cstat-no" title="statement not covered" >    const { stdout, stderr } = await execAsync('ANALYZE=true npm run build', {</span>
+<span class="cstat-no" title="statement not covered" >    // Run Next.js build with bundle analyzer - secure approach</span>
+<span class="cstat-no" title="statement not covered" >    const { stdout, stderr } = await execFileAsync('npm', ['run', 'build'], {</span>
 <span class="cstat-no" title="statement not covered" >      cwd: process.cwd(),</span>
-<span class="cstat-no" title="statement not covered" >      maxBuffer: 1024 * 1024 * 10 // 10MB buffer</span>
+<span class="cstat-no" title="statement not covered" >      maxBuffer: 1024 * 1024 * 10, // 10MB buffer</span>
+<span class="cstat-no" title="statement not covered" >      env: { ...process.env, ANALYZE: 'true' } // Pass ANALYZE as environment variable</span>
 <span class="cstat-no" title="statement not covered" >    })</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    if (stderr) {</span>
@@ -744,9 +757,14 @@
 <span class="cstat-no" title="statement not covered" >  console.log(`🔍 Running Lighthouse analysis on ${url}...`)</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const { stdout } = await execAsync(</span>
-<span class="cstat-no" title="statement not covered" >      `npx lighthouse ${url} --output=json --output-path=./performance/lighthouse-report.json --chrome-flags="--headless" --quiet`</span>
-<span class="cstat-no" title="statement not covered" >    )</span>
+<span class="cstat-no" title="statement not covered" >    const { stdout } = await execFileAsync('npx', [</span>
+<span class="cstat-no" title="statement not covered" >      'lighthouse',</span>
+<span class="cstat-no" title="statement not covered" >      url,</span>
+<span class="cstat-no" title="statement not covered" >      '--output=json',</span>
+<span class="cstat-no" title="statement not covered" >      '--output-path=./performance/lighthouse-report.json',</span>
+<span class="cstat-no" title="statement not covered" >      '--chrome-flags=--headless',</span>
+<span class="cstat-no" title="statement not covered" >      '--quiet'</span>
+<span class="cstat-no" title="statement not covered" >    ])</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    console.log('✅ Lighthouse report generated at performance/lighthouse-report.json')</span>
 <span class="cstat-no" title="statement not covered" >    </span>
@@ -853,7 +871,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T02:00:17.188Z
+                at 2025-07-29T17:15:54.067Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

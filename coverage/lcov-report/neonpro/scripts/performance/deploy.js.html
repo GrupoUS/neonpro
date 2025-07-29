@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/295</span>
+                <span class='fraction'>0/310</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/295</span>
+                <span class='fraction'>0/310</span>
             </div>
         
             
@@ -357,7 +357,37 @@
 <a name='L292'></a><a href='#L292'>292</a>
 <a name='L293'></a><a href='#L293'>293</a>
 <a name='L294'></a><a href='#L294'>294</a>
-<a name='L295'></a><a href='#L295'>295</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a>
+<a name='L302'></a><a href='#L302'>302</a>
+<a name='L303'></a><a href='#L303'>303</a>
+<a name='L304'></a><a href='#L304'>304</a>
+<a name='L305'></a><a href='#L305'>305</a>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -660,7 +690,7 @@
 <span class="cstat-no" title="statement not covered" > * Includes Web Vitals, bundle analysis, caching, and optimization</span>
 <span class="cstat-no" title="statement not covered" > */</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const { execSync } = require('child_process')</span>
+<span class="cstat-no" title="statement not covered" >const { spawnSync } = require('child_process')</span>
 <span class="cstat-no" title="statement not covered" >const { existsSync, readFileSync } = require('fs')</span>
 <span class="cstat-no" title="statement not covered" >const path = require('path')</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -697,11 +727,13 @@
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  for (const check of checks) {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >      const result = execSync(`${check.cmd} ${check.args.join(' ')}`, { </span>
+<span class="cstat-no" title="statement not covered" >      const result = spawnSync(check.cmd, check.args, { </span>
 <span class="cstat-no" title="statement not covered" >        encoding: 'utf8',</span>
 <span class="cstat-no" title="statement not covered" >        shell: false </span>
-<span class="cstat-no" title="statement not covered" >      }).trim()</span>
-<span class="cstat-no" title="statement not covered" >      success(`${check.name}: ${result}`)</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      if (result.error) throw result.error</span>
+<span class="cstat-no" title="statement not covered" >      const output = result.stdout.toString().trim()</span>
+<span class="cstat-no" title="statement not covered" >      success(`${check.name}: ${output}`)</span>
 <span class="cstat-no" title="statement not covered" >    } catch (err) {</span>
 <span class="cstat-no" title="statement not covered" >      error(`${check.name}: Failed - ${err.message}`)</span>
 <span class="cstat-no" title="statement not covered" >      return false</span>
@@ -754,14 +786,24 @@
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    // Build the project for analysis</span>
 <span class="cstat-no" title="statement not covered" >    info('Building project for bundle analysis...')</span>
-<span class="cstat-no" title="statement not covered" >    execSync('pnpm build', { stdio: 'inherit', shell: false })</span>
+<span class="cstat-no" title="statement not covered" >    const buildResult = spawnSync('pnpm', ['build'], { stdio: 'inherit', shell: false })</span>
+<span class="cstat-no" title="statement not covered" >    if (buildResult.error || buildResult.status !== 0) {</span>
+<span class="cstat-no" title="statement not covered" >      throw new Error(`Build failed with status ${buildResult.status}`)</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    success('Build completed successfully')</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    // Check if bundle analyzer is available</span>
 <span class="cstat-no" title="statement not covered" >    if (process.env.ANALYZE === 'true') {</span>
 <span class="cstat-no" title="statement not covered" >      info('Running bundle analyzer...')</span>
-<span class="cstat-no" title="statement not covered" >      execSync('ANALYZE=true pnpm build', { stdio: 'inherit', shell: false })</span>
+<span class="cstat-no" title="statement not covered" >      const analyzeResult = spawnSync('pnpm', ['build'], { </span>
+<span class="cstat-no" title="statement not covered" >        stdio: 'inherit', </span>
+<span class="cstat-no" title="statement not covered" >        shell: false,</span>
+<span class="cstat-no" title="statement not covered" >        env: { ...process.env, ANALYZE: 'true' }</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      if (analyzeResult.error || analyzeResult.status !== 0) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error(`Analyze build failed with status ${analyzeResult.status}`)</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    </span>
 <span class="cstat-no" title="statement not covered" >    return true</span>
@@ -775,7 +817,10 @@
 <span class="cstat-no" title="statement not covered" >  info('Running performance integration tests...')</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    execSync('node scripts/performance/integration-test.js', { stdio: 'inherit', shell: false })</span>
+<span class="cstat-no" title="statement not covered" >    const testResult = spawnSync('node', ['scripts/performance/integration-test.js'], { stdio: 'inherit', shell: false })</span>
+<span class="cstat-no" title="statement not covered" >    if (testResult.error) {</span>
+<span class="cstat-no" title="statement not covered" >      throw testResult.error</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >    return true</span>
 <span class="cstat-no" title="statement not covered" >  } catch (err) {</span>
 <span class="cstat-no" title="statement not covered" >    warning(`Performance tests completed with some warnings`)</span>
@@ -952,7 +997,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T02:00:17.188Z
+                at 2025-07-29T17:15:54.067Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

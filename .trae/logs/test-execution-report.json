@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-07-29T16:54:19.693Z",
+  "qualityScore": 7.5,
+  "totalTests": 0,
+  "passedTests": 0,
+  "failedTests": 0,
+  "successRate": 100,
+  "testResults": {},
+  "errors": [
+    "Type check execution failed: spawn npx ENOENT",
+    "Lint test execution failed: spawn npm ENOENT",
+    "Unit test execution failed: spawn npm ENOENT",
+    "Integration test execution failed: spawn npm ENOENT",
+    "E2E test execution failed: spawn npm ENOENT"
+  ],
+  "warnings": [],
+  "isSuccessful": false
+}

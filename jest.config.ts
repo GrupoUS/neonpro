@@ -58,6 +58,12 @@ const config: Config = {
     // Handle image imports
     '^.+\\.(png|jpg|jpeg|gif|webp|avif|ico|bmp|svg)$/i': '<rootDir>/__mocks__/fileMock.js',
     
+    // Handle Supabase client
+    '^@/lib/supabase/client$': '<rootDir>/__mocks__/@/lib/supabase/client.js',
+    
+    // Handle react-hot-toast
+    '^react-hot-toast$': '<rootDir>/__mocks__/react-hot-toast',
+    
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/$1',
     
@@ -66,6 +72,9 @@ const config: Config = {
     
     // Mock server-only
     'server-only': '<rootDir>/__mocks__/empty.js',
+    
+    // Handle React for better testing compatibility
+    '^react$': '<rootDir>/__mocks__/react.js',
   },
   
   // Test path ignore patterns

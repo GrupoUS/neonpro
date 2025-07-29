@@ -1,7 +1,7 @@
+import { createClient } from "@/app/utils/supabase/server";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { Resend } from "resend";
-import { client, JOB_IDS, type AppointmentJobPayload, type EmailJobPayload } from "../client";
-import { createClient } from "@/app/utils/supabase/server";
+import { JOB_IDS, type AppointmentJobPayload } from "../client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,7 +26,7 @@ export const appointmentConfirmationEmail = task({
 
     try {
       // Buscar detalhes completos da consulta via Supabase (usando sistema existente)
-      const supabase = createClient();
+      const supabase = await createClient();
       
       const { data: appointment, error } = await supabase
         .from('appointments')
@@ -85,10 +85,10 @@ export const appointmentConfirmationEmail = task({
                   day: 'numeric' 
                 })}</p>
                 <p><strong>🕐 Horário:</strong> ${appointment.appointment_time}</p>
-                <p><strong>👨‍⚕️ Profissional:</strong> ${appointment.professionals?.name}</p>
-                <p><strong>💅 Serviço:</strong> ${appointment.service_types?.name}</p>
-                <p><strong>⏱️ Duração:</strong> ${appointment.service_types?.duration_minutes} minutos</p>
-                ${appointment.service_types?.price ? `<p><strong>💰 Valor:</strong> R$ ${appointment.service_types.price.toFixed(2)}</p>` : ''}
+                <p><strong>👨‍⚕️ Profissional:</strong> ${Array.isArray(appointment.professionals) ? appointment.professionals[0]?.name : appointment.professionals?.name}</p>
+                <p><strong>💅 Serviço:</strong> ${Array.isArray(appointment.service_types) ? appointment.service_types[0]?.name : appointment.service_types?.name}</p>
+                <p><strong>⏱️ Duração:</strong> ${Array.isArray(appointment.service_types) ? appointment.service_types[0]?.duration_minutes : appointment.service_types?.duration_minutes} minutos</p>
+                ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price) ? `<p><strong>💰 Valor:</strong> R$ ${(Array.isArray(appointment.service_types) ? appointment.service_types[0]?.price : appointment.service_types?.price)?.toFixed(2)}</p>` : ''}
               </div>
             </div>
             
@@ -191,7 +191,7 @@ export const appointmentReminderEmail = task({
     });
 
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Verificar se lembrete já foi enviado
       const { data: appointment } = await supabase

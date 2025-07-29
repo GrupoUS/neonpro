@@ -6,7 +6,7 @@
 
 import { createClient } from "@/app/utils/supabase/server";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
-import InventoryDashboard from "@/components/dashboard/inventory/inventory-dashboard";
+import { InventoryDashboard } from "@/components/inventory/inventory-dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

@@ -1,117 +1,170 @@
 import '@testing-library/jest-dom';
-import { TextDecoder, TextEncoder } from 'util';
 
-// Set timezone to UTC for consistent date testing across all environments
-process.env.TZ = 'UTC';
+// Mock MediaStream
+global.MediaStream = class MockMediaStream {
+  getTracks() { return []; }
+  getAudioTracks() { return []; }
+  getVideoTracks() { return []; }
+  addTrack() {}
+  removeTrack() {}
+  addEventListener() {}
+  removeEventListener() {}
+  dispatchEvent() { return true; }
+  clone() { return new MockMediaStream(); }
+  active = true;
+  id = 'mock-stream-id';
+  onaddtrack = null;
+  onremovetrack = null;
+} as any;
 
-// React 19 compatibility fix for Jest environment
-(global as any).IS_REACT_ACT_ENVIRONMENT = true;
-Object.defineProperty(globalThis, 'IS_REACT_ACT_ENVIRONMENT', {
-  writable: true,
-  value: true,
-});
+// Mock MediaStreamTrack
+global.MediaStreamTrack = class MockMediaStreamTrack {
+  applyConstraints() { return Promise.resolve(); }
+  clone() { return new MockMediaStreamTrack(); }
+  getCapabilities() { return {}; }
+  getConstraints() { return {}; }
+  getSettings() { return {}; }
+  stop() {}
+  addEventListener() {}
+  removeEventListener() {}
+  dispatchEvent() { return true; }
+  enabled = true;
+  id = 'mock-track-id';
+  kind = 'video';
+  label = 'mock track';
+  muted = false;
+  readyState = 'live';
+  onended = null;
+  onmute = null;
+  onunmute = null;
+} as any;
 
-// Mock scheduler for React hooks in Jest
-jest.mock('scheduler', () => require('scheduler/unstable_mock'));
+// Mock BarcodeDetector
+global.BarcodeDetector = class MockBarcodeDetector {
+  constructor() {}
+  detect() { return Promise.resolve([]); }
+  static getSupportedFormats() { return Promise.resolve(['qr_code', 'ean_13']); }
+} as any;
 
-// Add global polyfills for WebAuthn dependencies
-(global as any).TextDecoder = TextDecoder;
-(global as any).TextEncoder = TextEncoder;
+// Mock ResizeObserver
+global.ResizeObserver = class MockResizeObserver {
+  constructor(callback: any) {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+} as any;
 
 // Mock IntersectionObserver
-(global as any).IntersectionObserver = class IntersectionObserver {
-  constructor() {}
-  observe() { return null }
-  disconnect() { return null }
-  unobserve() { return null }
-}
+global.IntersectionObserver = class MockIntersectionObserver {
+  constructor(callback: any, options?: any) {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+  takeRecords() { return []; }
+  root = null;
+  rootMargin = '';
+  thresholds = [];
+} as any;
 
-// Mock ResizeObserver for Recharts
-global.ResizeObserver = class ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {}
-  observe() { return null }
-  disconnect() { return null }
-  unobserve() { return null }
-}
+// Mock HTMLVideoElement
+Object.defineProperty(HTMLVideoElement.prototype, 'srcObject', {
+  set: jest.fn(),
+  get: jest.fn(),
+  configurable: true,
+});
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-})
+Object.defineProperty(HTMLVideoElement.prototype, 'play', {
+  value: jest.fn().mockResolvedValue(undefined),
+  configurable: true,
+});
 
-// Mock next/router
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      pathname: '/',
-      query: {},
-      asPath: '/',
-      push: jest.fn(),
-      pop: jest.fn(),
-      reload: jest.fn(),
-      back: jest.fn(),
-      prefetch: jest.fn().mockResolvedValue(undefined),
-      beforePopState: jest.fn(),
-      events: {
-        on: jest.fn(),
-        off: jest.fn(),
-        emit: jest.fn(),
-      },
-      isFallback: false,
+Object.defineProperty(HTMLVideoElement.prototype, 'pause', {
+  value: jest.fn(),
+  configurable: true,
+});
+
+// Mock canvas methods
+HTMLCanvasElement.prototype.getContext = jest.fn().mockReturnValue({
+  drawImage: jest.fn(),
+  getImageData: jest.fn().mockReturnValue({
+    data: new Uint8ClampedArray(4),
+    width: 1,
+    height: 1,
+  }),
+  putImageData: jest.fn(),
+  clearRect: jest.fn(),
+  fillRect: jest.fn(),
+  stroke: jest.fn(),
+  fill: jest.fn(),
+  beginPath: jest.fn(),
+  moveTo: jest.fn(),
+  lineTo: jest.fn(),
+  arc: jest.fn(),
+  save: jest.fn(),
+  restore: jest.fn(),
+  scale: jest.fn(),
+  rotate: jest.fn(),
+  translate: jest.fn(),
+});
+
+// Mock crypto
+Object.defineProperty(global, 'crypto', {
+  value: {
+    randomUUID: () => 'mock-uuid-' + Math.random().toString(36).substr(2, 9),
+    getRandomValues: (arr: any) => {
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = Math.floor(Math.random() * 256);
+      }
+      return arr;
+    },
+  },
+});
+
+// Mock Notification
+global.Notification = class MockNotification {
+  constructor(title: string, options?: any) {}
+  static permission = 'granted';
+  static requestPermission = jest.fn().mockResolvedValue('granted');
+  onclick = null;
+  onshow = null;
+  onerror = null;
+  onclose = null;
+  close = jest.fn();
+} as any;
+
+// Mock window.open
+global.open = jest.fn();
+
+// Mock console methods for cleaner test output
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+beforeAll(() => {
+  console.error = jest.fn((message, ...args) => {
+    if (
+      typeof message === 'string' &&
+      (message.includes('Warning: ReactDOM.render is deprecated') ||
+       message.includes('Warning: validateDOMNesting') ||
+       message.includes('Warning: Each child in a list should have a unique "key" prop'))
+    ) {
+      return;
     }
-  },
-}))
+    originalConsoleError(message, ...args);
+  });
 
-// Mock next/navigation for App Router
-jest.mock('next/navigation', () => ({
-  useRouter() {
-    return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      refresh: jest.fn(),
-      back: jest.fn(),
-      forward: jest.fn(),
-      prefetch: jest.fn(),
+  console.warn = jest.fn((message, ...args) => {
+    if (
+      typeof message === 'string' &&
+      (message.includes('componentWillReceiveProps') ||
+       message.includes('componentWillUpdate'))
+    ) {
+      return;
     }
-  },
-  useSearchParams() {
-    return new URLSearchParams()
-  },
-  usePathname() {
-    return '/'
-  },
-}))
+    originalConsoleWarn(message, ...args);
+  });
+});
 
-// Extend global environment for tests
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveErrorMessage(message: string): R
-    }
-  }
-}
-
-// Custom Jest matchers
-expect.extend({
-  toHaveErrorMessage(received, message) {
-    const pass = received?.message === message
-    return {
-      pass,
-      message: () =>
-        pass
-          ? `Expected error not to have message: ${message}`
-          : `Expected error to have message: ${message}, but received: ${received?.message}`,
-    }
-  },
-})
+afterAll(() => {
+  console.error = originalConsoleError;
+  console.warn = originalConsoleWarn;
+});

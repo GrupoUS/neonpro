@@ -15,8 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Corrigindo importações para usar o contexto de autenticação
 import { SignInWithGooglePopupButton } from "@/components/auth/google-popup-button";
 import { useAuth } from "@/contexts/auth-context";
@@ -29,7 +28,8 @@ export default function LoginPage() {
   // Usando contexto de autenticação em vez de cliente direto
   const { user, signIn } = useAuth();
 
-  // Verifica se o usuário já está logado  useEffect(() => {
+  // Verifica se o usuário já está logado
+  useEffect(() => {
     console.log("🔄 Login page - checking user state:", !!user);
     if (user) {
       console.log("✅ User detected in login page, redirecting to dashboard");
@@ -70,7 +70,7 @@ export default function LoginPage() {
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
-      
+
       <Card className="mx-auto w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login - NEON PRO</CardTitle>
