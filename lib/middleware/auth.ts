@@ -5,7 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/app/utils/supabase/client';
 
 export interface AuthUser {
   id: string;

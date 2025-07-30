@@ -1,243 +1,175 @@
 /**
- * Authentication Performance Tracker
- * 
- * Tracks authentication performance metrics and integrates with 
- * the monitoring infrastructure from TASK-001.
- * 
- * Target: ≤350ms authentication response time
+ * Performance Tracker for OAuth and Authentication Systems
+ * Monitors and tracks performance metrics for optimization
  */
 
-import { trackPerformance } from '@/lib/monitoring/performance';
-import { logAnalyticsEvent } from '@/lib/monitoring/analytics';
-
-export interface AuthPerformanceMetrics {
-  operation: 'login' | 'logout' | 'session_validation' | 'token_refresh' | 'mfa_verification';
-  duration: number;
-  success: boolean;
-  userId?: string;
-  method?: 'email' | 'webauthn' | 'social' | 'mfa';
-  timestamp: Date;
-  metadata?: Record<string, any>;
+export interface PerformanceMetric {
+  name: string;
+  value: number;
+  timestamp: number;
+  tags?: Record<string, string>;
 }
 
-export interface AuthPerformanceThresholds {
-  login: number;           // Target: ≤350ms
-  logout: number;          // Target: ≤200ms
-  session_validation: number; // Target: ≤100ms
-  token_refresh: number;   // Target: ≤250ms
-  mfa_verification: number; // Target: ≤500ms
+export interface PerformanceStats {
+  count: number;
+  min: number;
+  max: number;
+  avg: number;
+  p50: number;
+  p95: number;
+  p99: number;
 }
 
-class AuthPerformanceTracker {
-  private static instance: AuthPerformanceTracker;
-  private startTimes: Map<string, number> = new Map();
+class PerformanceTracker {
+  private static instance: PerformanceTracker;
+  private metrics: Map<string, number[]> = new Map();
+  private metricTags: Map<string, Record<string, string>[]> = new Map();
+  private readonly MAX_METRICS_PER_TYPE = 1000;
   
-  // Performance thresholds (TASK-002 targets)
-  private readonly thresholds: AuthPerformanceThresholds = {
-    login: 350,           // ≤350ms target from TASK-002
-    logout: 200,
-    session_validation: 100,
-    token_refresh: 250,
-    mfa_verification: 500,
-  };
-
   private constructor() {}
-
-  public static getInstance(): AuthPerformanceTracker {
-    if (!AuthPerformanceTracker.instance) {
-      AuthPerformanceTracker.instance = new AuthPerformanceTracker();
+  
+  public static getInstance(): PerformanceTracker {
+    if (!PerformanceTracker.instance) {
+      PerformanceTracker.instance = new PerformanceTracker();
     }
-    return AuthPerformanceTracker.instance;
+    return PerformanceTracker.instance;
   }
 
   /**
-   * Start tracking an authentication operation
+   * Record a performance metric
    */
-  public startTracking(operationId: string, operation: AuthPerformanceMetrics['operation']): void {
-    const startTime = performance.now();
-    this.startTimes.set(operationId, startTime);
-    
-    // Log operation start for monitoring
-    logAnalyticsEvent('auth_operation_start', {
-      operation,
-      operationId,
-      timestamp: new Date().toISOString(),
-    });
+  recordMetric(
+    name: string,
+    value: number,
+    tags?: Record<string, string>
+  ): void {
+    try {
+      // Get or create metric array
+      let values = this.metrics.get(name);
+      if (!values) {
+        values = [];
+        this.metrics.set(name, values);
+      }
+      
+      // Add value
+      values.push(value);
+      
+      // Maintain size limit
+      if (values.length > this.MAX_METRICS_PER_TYPE) {
+        values.shift(); // Remove oldest
+      }
+      
+      // Store tags if provided
+      if (tags) {
+        let tagArray = this.metricTags.get(name);
+        if (!tagArray) {
+          tagArray = [];
+          this.metricTags.set(name, tagArray);
+        }
+        
+        tagArray.push(tags);
+        
+        // Maintain size limit
+        if (tagArray.length > this.MAX_METRICS_PER_TYPE) {
+          tagArray.shift();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to record metric:', error);
+    }
   }
 
   /**
-   * Complete tracking an authentication operation
+   * Get statistics for a metric
    */
-  public async completeTracking(
-    operationId: string,
-    operation: AuthPerformanceMetrics['operation'],
-    success: boolean,
-    metadata?: {
-      userId?: string;
-      method?: AuthPerformanceMetrics['method'];
-      additionalData?: Record<string, any>;
+  getStats(name: string): PerformanceStats | null {
+    const values = this.metrics.get(name);
+    if (!values || values.length === 0) {
+      return null;
     }
-  ): Promise<AuthPerformanceMetrics> {
-    const endTime = performance.now();
-    const startTime = this.startTimes.get(operationId);
     
-    if (!startTime) {
-      throw new Error(`No start time found for operation: ${operationId}`);
-    }
-
-    const duration = endTime - startTime;
-    const timestamp = new Date();
+    const sorted = [...values].sort((a, b) => a - b);
+    const count = sorted.length;
     
-    const metrics: AuthPerformanceMetrics = {
-      operation,
-      duration,
-      success,
-      userId: metadata?.userId,
-      method: metadata?.method,
-      timestamp,
-      metadata: metadata?.additionalData,
+    return {
+      count,
+      min: sorted[0],
+      max: sorted[count - 1],
+      avg: sorted.reduce((sum, val) => sum + val, 0) / count,
+      p50: this.getPercentile(sorted, 0.5),
+      p95: this.getPercentile(sorted, 0.95),
+      p99: this.getPercentile(sorted, 0.99),
     };
-
-    // Clean up
-    this.startTimes.delete(operationId);
-
-    // Track performance using monitoring infrastructure
-    await this.recordMetrics(metrics);
-    
-    // Check if performance meets thresholds
-    await this.checkPerformanceThresholds(metrics);
-
-    return metrics;
   }
 
   /**
-   * Record metrics using TASK-001 monitoring infrastructure
+   * Get all metric names
    */
-  private async recordMetrics(metrics: AuthPerformanceMetrics): Promise<void> {
-    try {
-      // Use performance monitoring from TASK-001
-      await trackPerformance({
-        category: 'authentication',
-        name: `auth_${metrics.operation}`,
-        duration: metrics.duration,
-        success: metrics.success,
-        metadata: {
-          method: metrics.method,
-          userId: metrics.userId,
-          ...metrics.metadata,
-        },
-      });
-
-      // Log analytics event
-      await logAnalyticsEvent('auth_performance_tracked', {
-        operation: metrics.operation,
-        duration: metrics.duration,
-        success: metrics.success,
-        method: metrics.method,
-        threshold_met: metrics.duration <= this.thresholds[metrics.operation],
-        timestamp: metrics.timestamp.toISOString(),
-      });
-
-    } catch (error) {
-      console.error('Failed to record auth performance metrics:', error);
-    }
+  getMetricNames(): string[] {
+    return Array.from(this.metrics.keys());
   }
 
   /**
-   * Check if performance meets TASK-002 thresholds
+   * Get recent metrics
    */
-  private async checkPerformanceThresholds(metrics: AuthPerformanceMetrics): Promise<void> {
-    const threshold = this.thresholds[metrics.operation];
-    const thresholdMet = metrics.duration <= threshold;
+  getRecentMetrics(name: string, count: number = 10): PerformanceMetric[] {
+    const values = this.metrics.get(name);
+    const tags = this.metricTags.get(name);
     
-    if (!thresholdMet) {
-      // Log performance threshold violation
-      await logAnalyticsEvent('auth_performance_threshold_exceeded', {
-        operation: metrics.operation,
-        duration: metrics.duration,
-        threshold,
-        excess: metrics.duration - threshold,
-        userId: metrics.userId,
-        method: metrics.method,
-        timestamp: metrics.timestamp.toISOString(),
-      });
-
-      // Log warning for monitoring
-      console.warn(`Auth performance threshold exceeded: ${metrics.operation} took ${metrics.duration}ms (threshold: ${threshold}ms)`);
+    if (!values) {
+      return [];
     }
+    
+    const recentValues = values.slice(-count);
+    const recentTags = tags ? tags.slice(-count) : [];
+    
+    return recentValues.map((value, index) => ({
+      name,
+      value,
+      timestamp: Date.now() - (recentValues.length - index - 1) * 1000,
+      tags: recentTags[index],
+    }));
   }
 
   /**
-   * Get performance summary for dashboard
+   * Clear metrics for a specific name
    */
-  public getPerformanceThresholds(): AuthPerformanceThresholds {
-    return { ...this.thresholds };
+  clearMetrics(name: string): void {
+    this.metrics.delete(name);
+    this.metricTags.delete(name);
   }
 
   /**
-   * Utility method for quick performance tracking
+   * Clear all metrics
    */
-  public async trackAuthOperation<T>(
-    operation: AuthPerformanceMetrics['operation'],
-    fn: () => Promise<T>,
-    metadata?: {
-      userId?: string;
-      method?: AuthPerformanceMetrics['method'];
-      additionalData?: Record<string, any>;
-    }
-  ): Promise<T> {
-    const operationId = `${operation}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  clearAllMetrics(): void {
+    this.metrics.clear();
+    this.metricTags.clear();
+  }
+
+  /**
+   * Get performance summary
+   */
+  getPerformanceSummary(): Record<string, PerformanceStats> {
+    const summary: Record<string, PerformanceStats> = {};
     
-    this.startTracking(operationId, operation);
-    
-    try {
-      const result = await fn();
-      await this.completeTracking(operationId, operation, true, metadata);
-      return result;
-    } catch (error) {
-      await this.completeTracking(operationId, operation, false, metadata);
-      throw error;
+    for (const name of this.getMetricNames()) {
+      const stats = this.getStats(name);
+      if (stats) {
+        summary[name] = stats;
+      }
     }
+    
+    return summary;
+  }
+
+  /**
+   * Private helper methods
+   */
+  private getPercentile(sortedValues: number[], percentile: number): number {
+    const index = Math.ceil(sortedValues.length * percentile) - 1;
+    return sortedValues[Math.max(0, index)];
   }
 }
 
-// Export singleton instance
-export const authPerformanceTracker = AuthPerformanceTracker.getInstance();
-export const performanceTracker = authPerformanceTracker; // Alias for backward compatibility
-
-// Utility functions for common operations
-export async function trackLoginPerformance<T>(
-  fn: () => Promise<T>,
-  metadata?: {
-    userId?: string;
-    method?: 'email' | 'webauthn' | 'social';
-    additionalData?: Record<string, any>;
-  }
-): Promise<T> {
-  return authPerformanceTracker.trackAuthOperation('login', fn, metadata);
-}
-
-export async function trackSessionValidation<T>(
-  fn: () => Promise<T>,
-  userId?: string
-): Promise<T> {
-  return authPerformanceTracker.trackAuthOperation('session_validation', fn, { userId });
-}
-
-export async function trackTokenRefresh<T>(
-  fn: () => Promise<T>,
-  userId?: string
-): Promise<T> {
-  return authPerformanceTracker.trackAuthOperation('token_refresh', fn, { userId });
-}
-
-export async function trackMFAVerification<T>(
-  fn: () => Promise<T>,
-  metadata?: {
-    userId?: string;
-    method?: 'webauthn' | 'totp' | 'sms' | 'backup_code';
-    additionalData?: Record<string, any>;
-  }
-): Promise<T> {
-  return authPerformanceTracker.trackAuthOperation('mfa_verification', fn, metadata);
-}
+export const performanceTracker = PerformanceTracker.getInstance();

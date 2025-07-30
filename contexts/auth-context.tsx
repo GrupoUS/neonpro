@@ -4,6 +4,10 @@ import type React from "react";
 
 import { createClient } from "@/app/utils/supabase/client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { enhancedSessionManager } from "@/lib/auth/enhanced-session-manager";
+import { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
+import { securityAuditLogger } from "@/lib/auth/security-audit-logger";
+import { permissionValidator } from "@/lib/auth/permission-validator";
 
 // Supabase Auth types for strict TypeScript compliance
 interface User {
@@ -56,6 +60,9 @@ interface AuthContextType {
     session: Session | null;
     error: AuthError | null;
   }>;
+  checkPermission: (resource: string, action: string) => Promise<boolean>;
+  getUserPermissions: () => Promise<any>;
+  hasRole: (role: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -68,6 +75,9 @@ const AuthContext = createContext<AuthContextType>({
   signInWithGoogle: async () => ({ error: null }),
   refreshSession: async () => ({ error: null }),
   getValidSession: async () => ({ session: null, error: null }),
+  checkPermission: async () => false,
+  getUserPermissions: async () => null,
+  hasRole: async () => false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -178,15 +188,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setUser(null);
+    try {
+      // Log logout attempt
+      if (user) {
+        await securityAuditLogger.logSessionEvent(
+          'session_logout',
+          user.id,
+          { method: 'manual' }
+        );
+      }
+      
+      // Enhanced secure logout
+      if (session) {
+        await enhancedSessionManager.secureLogout(session.access_token);
+      }
+      
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Force logout even if enhanced logout fails
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+    }
   };
 
   const signInWithGoogle = async (): Promise<{ error: AuthError | null }> => {
     try {
-      console.log("=== Initiating Optimized Google OAuth (Popup) ===");
+      console.log("=== Initiating Enhanced Google OAuth (Popup) ===");
       const startTime = Date.now();
+      
+      // Log OAuth attempt
+      await securityAuditLogger.logOAuthEvent(
+        'oauth_attempt',
+        'google',
+        null,
+        { method: 'popup', userAgent: navigator.userAgent }
+      );
 
       // Optimized OAuth call with faster settings
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -203,7 +243,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.error("Error initiating OAuth:", error);
-        return { error };
+        
+        // Log OAuth error
+        await securityAuditLogger.logOAuthEvent(
+          'oauth_error',
+          'google',
+          null,
+          { error: error.message, step: 'initiation' }
+        );
+        
+        // Handle OAuth error with enhanced error handler
+        const handledError = await oauthErrorHandler.handleOAuthError(error, {
+          provider: 'google',
+          method: 'popup',
+          step: 'initiation'
+        });
+        
+        return { error: handledError };
       }
 
       if (data?.url) {
@@ -417,6 +473,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Permission validation methods
+  const checkPermission = async (resource: string, action: string): Promise<boolean> => {
+    if (!user) return false;
+    
+    try {
+      const result = await permissionValidator.checkPermission(
+        user.id,
+        resource,
+        action
+      );
+      return result.granted;
+    } catch (error) {
+      console.error('Error checking permission:', error);
+      return false;
+    }
+  };
+
+  const getUserPermissions = async () => {
+    if (!user) return null;
+    
+    try {
+      return await permissionValidator.getUserPermissions(user.id);
+    } catch (error) {
+      console.error('Error getting user permissions:', error);
+      return null;
+    }
+  };
+
+  const hasRole = async (role: string): Promise<boolean> => {
+    if (!user) return false;
+    
+    try {
+      const permissions = await permissionValidator.getUserPermissions(user.id);
+      return permissions?.roles?.some((r: any) => r.name === role) || false;
+    } catch (error) {
+      console.error('Error checking role:', error);
+      return false;
+    }
+  };
+
   const value = {
     user,
     session,
@@ -427,6 +523,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signInWithGoogle,
     refreshSession,
     getValidSession,
+    checkPermission,
+    getUserPermissions,
+    hasRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

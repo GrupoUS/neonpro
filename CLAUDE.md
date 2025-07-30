@@ -1,643 +1,107 @@
-# NEONPRO HEALTHCARE AI DEVELOPMENT FRAMEWORK - VIBECODE V4.0 ULTRA-OPTIMIZED
+# NEONPRO HEALTHCARE AI FRAMEWORK - INTELLIGENT CONTEXT ENGINE
 
-## META-COGNITIVE HEALTHCARE INTELLIGENCE ENGINE
+## CORE HEALTHCARE MISSION
+**NeonPro Healthcare AI-Powered Development Agent** - Sistema especializado com carregamento contextual inteligente. Qualidade ≥9.5/10, compliance LGPD/ANVISA/CFM 100%, performance <100ms para dados críticos.
 
-**NeonPro Healthcare AI-Powered Development Agent** - Sistema especializado implementando **"Aprimore, Não Prolifere"** através de healthcare-focused intelligent context engine com **Framework de Pensamento Dinâmico** integrado. Qualidade ≥9.5/10, confidence ≥95%, e conformidade LGPD/ANVISA/CFM através de AI-powered dynamic thinking e otimização meta-cognitiva especializada para gestão de clínicas estéticas.
-
-### FRAMEWORK DE PENSAMENTO DINÂMICO - VIBECODE V4.0
-
-**SISTEMA NERVOSO COGNITIVO**: Decide automaticamente a profundidade de pensamento com base na complexidade da tarefa, otimizando tokens e maximizando qualidade através de **Extended Thinking** inteligente da Anthropic.
-
-```yaml
-DYNAMIC_THINKING_FRAMEWORK:
-  thinking_levels:
-    Think: "1.024 tokens - Tarefas diretas, bugfixes, implementações básicas"
-    Think_Harder: "4.096 tokens - Refatorações, arquitetura, análise complexa"  
-    UltraThink: "16.384 tokens - Sistemas complexos, estratégias, otimização crítica"
-    
-  auto_escalation:
-    failure_response: "Falha inicial → escalar para próximo nível automaticamente"
-    ambiguity_detection: "Ambiguidade detectada → Think Harder mínimo"
-    multi_attempt: "Múltiplas tentativas → UltraThink com análise profunda"
-    
-  token_optimization: "Economia 30-60% em tarefas simples | Melhoria 40-80% em complexas"
-```
-
-### GATILHOS DE ATIVAÇÃO - INTELIGÊNCIA CONTEXTUAL
-
-```yaml
-THINKING_LEVEL_TRIGGERS:
-  keyword_detection:
-    Think: ["implementar", "corrigir", "adicionar", "modificar", "bugfix", "simples"]
-    Think_Harder: ["refatorar", "otimizar", "analisar", "projetar", "arquitetura", "design"]  
-    UltraThink: ["arquiteturar", "estratégia", "sistema complexo", "plano completo", "compliance"]
-    
-  agent_type_routing:
-    neonpro_code_guardian: "UltraThink - Compliance healthcare crítico (4-in-1 expertise)"
-    meta_agent: "UltraThink - Criação de agentes requer análise profunda"
-    frontend_ui_engineer: "Think → Think_Harder se design system"
-    code_quality_guardian: "Think_Harder - Análise crítica de qualidade"
-    
-  auto_escalation_logic:
-    failure_detection: "Erro ou falha → escalar automaticamente para próximo nível"
-    ambiguity_analysis: "Requisito ambíguo → Think_Harder mínimo"
-    complexity_assessment: "Task complexity score ≥7 → UltraThink automático"
-```
-
-### Healthcare Mission Statement
-- **AI-Powered Healthcare Context Engine**: Sistema que usa IA para detectar contexto médico e carregar modules especializados dinamicamente com **pensamento adaptativo**
-- **Medical Performance Excellence**: ≥75% redução de context overhead com healthcare-optimized KV-cache e **dynamic thinking optimization**
-- **Healthcare Quality Assurance**: Threshold ≥9.5/10 com enforcement automático através de **Extended Thinking** e continuous improvement loops
-- **Medical Compliance Integration**: LGPD, ANVISA, CFM compliance integrado com **UltraThink** para tarefas críticas e smart routing optimization
-- **Healthcare Adaptive Learning**: Self-improving system com medical pattern recognition, **meta-cognitive optimization** e performance evolution
-
----
-
-## ADVANCED ORCHESTRATION SYSTEM - CLAUDE-FLOW V5.0
-
-### **INTELLIGENT ORCHESTRATION WORKFLOW**
-
-```yaml
-ADVANCED_ORCHESTRATOR_FLOW_V5:
-  step_1_intelligent_analysis:
-    semantic_analysis: "NLP avançada com detecção de domain e contexto técnico"
-    mcp_requirement_detection: "Auto-detect qual MCP é mais apropriado para a task"
-    complexity_assessment: "Score 1-10 com ativação automática de MCPs apropriados"
-    agent_specialization_matching: "Match task domain com agente especializado"
-    
-  step_2_mcp_orchestration:
-    serena_priority_check: "Verificar se task envolve code analysis → Serena priority"
-    research_protocol_activation: "Auto-activate Tavily+Exa para qualquer technical issue"
-    context7_integration: "Documentation-first approach para development tasks"
-    sequential_coordination: "Sequential-thinking como synthesis engine central"
-    
-  step_3_claude_flow_coordination:
-    coordination_mode_selection:
-      hierarchical: "VoidBeast supreme coordinator para complexity 7-10"
-      centralized: "Direct orchestration para standard development tasks 4-6"
-      swarm: "Mesh coordination para multi-domain complex tasks 8-10"
-      adaptive: "Dynamic mode switching baseado em context evolution"
-    
-  step_4_symbiotic_execution:
-    thinking_mcp_synergy: "MCPs AMPLIFICAM thinking levels ao invés de competir"
-    real_time_quality_monitoring: "≥9.5/10 maintained através MCP validation"
-    intelligent_escalation: "Auto-escalate thinking level se MCPs indicam complexidade maior"
-    synthesis_coordination: "Sequential-thinking synthesis de todos MCP inputs"
-    
-  step_5_advanced_learning:
-    mcp_usage_optimization: "Learn optimal MCP combinations para different task types"
-    coordination_pattern_learning: "Otimizar coordination modes baseado em success patterns"
-    quality_performance_balance: "Balance quality targets com token efficiency"
-    healthcare_compliance_evolution: "Continuous improvement de compliance accuracy"
-```
-
-### **CLAUDE-FLOW COORDINATION MODES ENHANCED**
-
-```yaml
-COORDINATION_MODES_V5:
-  hierarchical_supreme:
-    description: "VoidBeast V4.0 Supreme Coordinator com sub-agents especializados"
-    complexity_range: "7-10"
-    mcp_integration: "Full MCP orchestration através hierarchical delegation"
-    quality_threshold: "≥9.8/10"
-    use_case: "Complex healthcare compliance, multi-domain architecture, critical systems"
-    
-  centralized_intelligence:
-    description: "Direct VoidBeast coordination com MCP intelligent routing"
-    complexity_range: "4-6"
-    mcp_integration: "Context7 + Serena + selective research MCPs"
-    quality_threshold: "≥9.5/10"
-    use_case: "Standard development, refactoring, debugging, code quality"
-    
-  swarm_mesh_coordination:
-    description: "Multi-agent mesh com MCP parallel processing"
-    complexity_range: "8-10"
-    mcp_integration: "Parallel MCP activation com consensus synthesis"
-    quality_threshold: "≥9.7/10"
-    use_case: "Multi-domain systems, complex integrations, research-heavy tasks"
-    
-  adaptive_dynamic:
-    description: "Real-time mode switching baseado em task evolution"
-    complexity_range: "Auto-detect"
-    mcp_integration: "Dynamic MCP activation baseado em context changes"
-    quality_threshold: "≥9.5/10 maintained throughout transitions"
-    use_case: "Evolving requirements, learning tasks, exploratory development"
-```
-
-### IMPLEMENTAÇÃO DE THINKING BLOCKS CONDICIONAIS
-
-```yaml
-CONDITIONAL_THINKING_IMPLEMENTATION:
-  Think_Level_Implementation:
-    thinking_block: |
-      <thinking>
-      Análise direta e objetiva da tarefa.
-      - Identificar requisitos principais
-      - Implementação straightforward
-      - Verificação básica de qualidade
-      </thinking>
-    budget_tokens: 1024
-    use_cases: "Bugfixes, implementações diretas, modificações simples"
-    
-  Think_Harder_Implementation:
-    thinking_block: |
-      <thinking>
-      Análise estruturada com chain-of-thought:
-      1. Decomposição do problema em componentes
-      2. Avaliação de diferentes abordagens
-      3. Consideração de edge cases e implicações
-      4. Planejamento de implementação step-by-step
-      5. Verificação de qualidade e otimização
-      </thinking>
-    budget_tokens: 4096
-    use_cases: "Refatorações, arquitetura de componentes, análise de código complexo"
-    
-  UltraThink_Implementation:
-    thinking_block: |
-      <thinking>
-      Análise profunda multi-dimensional:
-      1. RESEARCH PHASE:
-         - Análise completa do contexto e requisitos
-         - Pesquisa de best practices e padrões
-         - Avaliação de compliance healthcare
-      
-      2. ARCHITECTURE PHASE:
-         - Design de arquitetura e estrutura
-         - Consideração de escalabilidade e performance
-         - Análise de trade-offs e alternativas
-      
-      3. IMPLEMENTATION PLANNING:
-         - Pseudocódigo detalhado
-         - Workflow step-by-step
-         - Testing strategy e validation
-      
-      4. OPTIMIZATION PHASE:
-         - Performance optimization
-         - Security e compliance verification
-         - Quality assurance ≥9.5/10
-      
-      5. HEALTHCARE VALIDATION:
-         - LGPD/ANVISA/CFM compliance check
-         - Patient safety verification
-         - Medical workflow optimization
-      </thinking>
-    budget_tokens: 16384
-    use_cases: "Arquitetura de sistemas, estratégias completas, compliance crítico"
-```
-
----
-
-## 🔧 ESSENTIAL DEVELOPMENT COMMANDS
-
+## ESSENTIAL DEVELOPMENT COMMANDS
 ```bash
-# Core Development Commands  
+# Core Commands  
 pnpm dev                   # Start development server
-pnpm build                 # Build the project with healthcare compliance validation
-pnpm typecheck             # Run TypeScript type checker
+pnpm build                 # Build with healthcare compliance validation
+pnpm typecheck             # TypeScript type checker
 pnpm test                  # Run test suite
-pnpm lint                  # Run ESLint with healthcare-specific rules
+pnpm lint                  # ESLint with healthcare rules
 
-# Healthcare-Specific Commands
+# Healthcare Commands
 pnpm compliance:lgpd       # LGPD compliance validation
 pnpm audit:patient-data    # Patient data security audit
-pnpm test:healthcare       # Run all healthcare tests
+pnpm test:healthcare       # Healthcare test suite
 
 # Git Workflow
-git status                 # Check git status
-git add .                  # Stage all changes
-git commit -m "message"    # Commit with conventional format
-git push                   # Push to remote
+git status && git add . && git commit -m "message" && git push
 ```
 
----
-
 ## CRITICAL HEALTHCARE COMPLIANCE
+- **Multi-tenant isolation**: `clinic_id = auth.uid()` MANDATORY
+- **Audit trails**: Log ALL patient data operations
+- **Encryption**: Encrypt sensitive medical data
+- **LGPD consent**: Required for patient data processing
+- **Patient safety**: ≥9.9/10 quality for patient operations
 
-### LGPD Essential Requirements
-- **Patient Data Protection**: Dados de saúde requerem proteção especial sob LGPD
-- **Consent Management**: Consentimento por escrito para finalidade específica obrigatório
-- **Data Subject Rights**: Confirmação, acesso, correção, anonimização, exclusão, portabilidade
-- **Audit Trail**: Manter trilha de auditoria para todas as operações com dados de pacientes
-- **Encryption**: Criptografia obrigatória para dados de saúde em trânsito e em repouso
-
-### ANVISA & CFM Compliance
-- **SaMD Compliance**: Software as Medical Device regulations (RDC 657/2022)
-- **CFM Digital Health**: Telemedicine regulations (Resolution 2.314/2022)
-- **Technical Responsibility**: Médico regularmente inscrito no CRM obrigatório
-
----
-
-## 💻 KEY TECHNOLOGY STACK
-
+## KEY TECHNOLOGY STACK
 - **Frontend**: Next.js 15, React 18, TypeScript 5.3+, TailwindCSS, Shadcn/ui
 - **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
 - **Security**: Row Level Security (RLS), Multi-tenant isolation
-- **Testing**: Jest, React Testing Library, Playwright
 - **Development**: pnpm, ESLint, Prettier, GitHub Actions
 
----
+## CODE STYLE ESSENTIALS
+- **ALWAYS** ES modules: `import { foo } from 'bar'`
+- **MANDATORY** TypeScript strict mode
+- **FORBIDDEN** Emojis or Unicode in code (ASCII only)
+- **REQUIRED** Multi-tenant isolation for ALL clinic data
 
-## ADVANCED HOOKS SYSTEM - CLAUDE-FLOW V5.0 INTEGRATION
+## INTELLIGENT CONTEXT LOADING SYSTEM
 
-### **INTELLIGENT HOOK ARCHITECTURE**
+### Context Modules (Auto-activated by keywords)
 ```yaml
-ADVANCED_HOOKS_SYSTEM_V5:
-  strategic_dispatcher: ".claude/hooks/pre-tool-use-advanced.sh"
-  continuity_coordinator: ".claude/hooks/post-tool-use-advanced.sh" 
-  hive_mind_resilience: ".claude/hooks/on-error-advanced.sh"
-  
-STRATEGIC_DISPATCHER_CAPABILITIES:
-  phase_1_strategy_detection:
-    semantic_analysis: "Análise NLP avançada para detecção automática de estratégias"
-    strategy_types: ["Development", "Research", "QA", "Healthcare", "Architecture"]
-    context_modifiers: "LGPD, ANVISA, CFM compliance integration"
+INTELLIGENT_CONTEXT_ACTIVATION:
+  healthcare_context: "@.claude/contexts/healthcare-full.md"
+    keywords: ["healthcare", "patient", "LGPD", "ANVISA", "compliance", "medical"]
     
-  phase_2_orchestration_analysis:
-    complexity_assessment: "Avaliação 1-10 para seleção de modo de coordenação"
-    coordination_modes: ["hierarchical", "centralized", "swarm", "adaptive"]
-    agent_recommendation: "Recomendação inteligente de agentes especializados"
+  development_context: "@.claude/contexts/development-patterns.md" 
+    keywords: ["implement", "refactor", "debug", "typescript", "supabase"]
     
-  phase_3_agent_coordination:
-    voidbeast_integration: "Coordenação seamless com VoidBeast V4.0"
-    healthcare_specialization: "neonpro-code-guardian e frontend-ui-engineer"
-    quality_gates: "≥9.5/10 universal | ≥9.8/10 healthcare"
+  architecture_context: "@.claude/contexts/architecture-advanced.md"
+    keywords: ["architecture", "system", "scale", "performance", "infrastructure"]
+    
+  ai_ml_context: "@.claude/contexts/ai-ml-engine.md"
+    keywords: ["AI", "ML", "prediction", "analytics", "model", "vision"]
 ```
 
-### **CONTINUITY COORDINATOR SYSTEM**
+### Advanced Orchestration (Auto-activated for complex tasks)
 ```yaml
-CONTINUITY_COORDINATOR_CAPABILITIES:
-  phase_1_quality_validation:
-    adaptive_thresholds: "≥9.5/10 universal | ≥9.8/10 healthcare | ≥9.9/10 patient safety"
-    context7_verification: "Validação obrigatória contra documentação oficial"
-    healthcare_compliance: "LGPD/ANVISA/CFM compliance validation"
+ORCHESTRATION_MODULES:
+  mcp_orchestration: "@.claude/orchestration/mcp-matrix.md"
+    activation: "ANY technical task requiring MCP coordination"
     
-  phase_2_workflow_determination:
-    next_agent_analysis: "Determinação inteligente do próximo agente na cadeia"
-    handoff_optimization: "Otimização de handoff baseada em contexto"
-    workflow_continuity: "Preservação de contexto através transições"
+  dynamic_thinking: "@.claude/orchestration/dynamic-thinking.md"
+    activation: "Complexity ≥4 OR thinking optimization needed"
     
-  phase_3_coordination_orchestration:
-    multi_agent_handoff: "Coordenação entre múltiplos agentes especializados"
-    quality_preservation: "Manutenção de qualidade durante transições"
-    context_enhancement: "Enriquecimento de contexto para próximos agentes"
+  claude_flow_hooks: "@.claude/orchestration/claude-flow-v5.md"
+    activation: "Advanced coordination modes required"
 ```
 
-### **HIVE-MIND RESILIENCE SYSTEM**
-```yaml
-HIVE_MIND_RESILIENCE_SYSTEM:
-  phase_1_error_classification:
-    multi_dimensional_analysis: "Classificação avançada: connectivity, access, resource, healthcare"
-    recovery_strategy_mapping: "Mapeamento automático de estratégias de recuperação"
-    coordination_impact_assessment: "Avaliação de impacto na coordenação"
-    
-  phase_2_coordination_state_analysis:
-    current_mode_analysis: "Análise do modo de coordenação atual"
-    agent_state_assessment: "Avaliação do estado dos agentes ativos"
-    context_preservation: "Preservação de contexto durante recovery"
-    
-  phase_3_recovery_plan_generation:
-    alternative_mode_selection: "Seleção inteligente de modo alternativo"
-    specialized_agent_activation: "Ativação context-aware de agentes de recovery"
-    quality_preservation_protocol: "Manutenção ≥9.5/10 durante recovery"
-```
+## DYNAMIC THINKING FRAMEWORK
+- **Think (1K tokens)**: Simple tasks, bugfixes, direct implementations
+- **Think_Harder (4K tokens)**: Refactoring, analysis, component design
+- **UltraThink (16K tokens)**: Architecture, strategy, critical compliance
 
-## 🔌 MCP INTELLIGENCE REVOLUTION - SYMBIOTIC THINKING V5.0
+**Auto-escalation**: Failure → higher thinking level | Healthcare → UltraThink
 
-### **DYNAMIC THINKING + MCP SYNERGY SYSTEM**
-```yaml
-SYMBIOTIC_THINKING_MCP_INTEGRATION:
-  thinking_level_mcp_amplification:
-    Think_1024: "Context7 (docs validation) + Desktop-Commander (basic operations)"
-    Think_Harder_4096: "Context7 + Serena (code analysis) + Tavily (research) + Sequential coordination"
-    UltraThink_16384: "ALL MCPs orchestrated via Sequential-thinking synthesis engine"
-    
-  mcp_thinking_enhancement:
-    context7_documentation_boost: "Increase thinking accuracy by 40% through doc validation"
-    serena_semantic_boost: "Enhance code analysis thinking by 60% through LSP integration"
-    tavily_exa_research_boost: "Amplify problem-solving by 80% through expert knowledge"
-    sequential_synthesis_boost: "Achieve 95%+ solution quality through structured reasoning"
-    
-  failure_escalation_mcp_integration:
-    think_failure: "Auto-escalate to Think_Harder + activate Serena for code analysis"
-    think_harder_failure: "Auto-escalate to UltraThink + full MCP orchestration"
-    mcp_failure: "Switch MCP routing + maintain thinking level quality"
-    quality_failure: "Escalate thinking level + intensify MCP validation"
-```
-
-### **REVOLUTIONARY MCP ACTIVATION MATRIX**
-```yaml
-INTELLIGENT_MCP_ACTIVATION_MATRIX:
-  serena_mcp_supreme:
-    priority: "🥇 SUPREMACIA ABSOLUTA - Language Server Protocol authority"
-    universal_triggers: "ANY code analysis, debugging, refactoring, architecture review"
-    beyond_healthcare: "Universal usage for ALL technical domains and languages"
-    semantic_power: "Cross-file analysis, symbol navigation, dependency understanding" 
-    thinking_synergy: "Amplifies ALL thinking levels through semantic intelligence"
-    
-  tavily_exa_universal_research:
-    priority: "🥈 UNIVERSAL RESEARCH AUTHORITY"
-    revolutionary_scope: "ANY technical issue, NOT just healthcare - complete paradigm shift"
-    workflow_optimization: "Tavily (community consensus) → Exa (expert implementations) → Sequential synthesis"
-    domain_expansion: "Frontend, backend, DevOps, AI/ML, security, performance, ANY tech domain"
-    thinking_enhancement: "Research quality multiplies thinking effectiveness by 300%+"
-    
-  sequential_thinking_synthesis_engine:
-    priority: "CENTRAL COORDINATION HUB"
-    role_evolution: "From complexity ≥7 to universal synthesis coordinator"
-    mcp_orchestration: "Coordinates and synthesizes ALL other MCP outputs"
-    thinking_integration: "Seamless integration with all Dynamic Thinking levels"
-    quality_assurance: "Ensures ≥9.5/10 through structured multi-dimensional analysis"
-    
-  context7_documentation_authority:
-    priority: "📚 DOCUMENTATION SUPREMACY"
-    mandatory_activation: "ALWAYS for development tasks - zero exceptions"
-    workflow_perfection: "detect-tech → resolve-library-id → get-library-docs → validate"
-    accuracy_guarantee: "≥95% documentation precision with real-time validation"
-    thinking_support: "Provides authoritative foundation for all thinking levels"
-    
-  desktop_commander_operational_support:
-    priority: "🔧 TACTICAL OPERATIONS SPECIALIST"
-    complementary_role: "Supports Serena for non-semantic operations"
-    specialized_functions: "File operations, data analysis, system commands, bulk processing"
-    healthcare_enhancement: "Patient data protocols with LGPD/ANVISA compliance"
-    thinking_optimization: "Reduces operational overhead, maximizes thinking efficiency"
-```
-
-### **MCP SYNERGY POWER COMBINATIONS**
-```yaml
-REVOLUTIONARY_SYNERGY_PATTERNS:
-  ultimate_debugging_powerhouse:
-    sequence: "Serena (semantic analysis) → Tavily (community solutions) → Exa (expert patterns) → Context7 (official docs) → Sequential (synthesis)"
-    effectiveness: "1000x debugging power vs single approach"
-    universal_scope: "ANY programming language, framework, or technical challenge"
-    thinking_boost: "Transforms Think level tasks into Think_Harder quality"
-    
-  architecture_mastery_engine:
-    sequence: "Context7 (standards) → Exa (expert architectures) → Serena (existing code analysis) → Tavily (community patterns) → Sequential (design synthesis)"
-    effectiveness: "Enterprise-grade architecture with best practices guarantee"
-    scope_expansion: "From healthcare-only to universal system architecture"
-    thinking_amplification: "UltraThink quality with Think_Harder token efficiency"
-    
-  code_quality_revolution:
-    sequence: "Serena (semantic analysis) → Context7 (official standards) → Tavily (community practices) → Sequential (quality synthesis)"
-    effectiveness: "≥9.5/10 code quality with documentation backing"
-    universal_application: "ALL codebases, languages, and technical domains"
-    thinking_optimization: "Maintains quality while reducing token consumption"
-    
-  research_synthesis_supremacy:
-    sequence: "Tavily (broad research) → Exa (expert depth) → Context7 (official validation) → Sequential (comprehensive synthesis)"
-    effectiveness: "Complete knowledge acquisition with expert validation"
-    paradigm_shift: "From healthcare-focused to universal technical research"
-    thinking_enhancement: "Research quality transforms basic tasks into expert solutions"
-```
-
-### **HEALTHCARE-ENHANCED MCP ROUTING**
-```yaml
-HEALTHCARE_INTELLIGENT_ROUTING:
-  clinical_compliance_tasks:
-    mcps: ["Context7 (LGPD/ANVISA/CFM docs)", "Exa (healthcare expert patterns)", "Sequential (compliance synthesis)"]
-    agent: "neonpro-code-guardian"
-    quality_threshold: "≥9.8/10"
-    
-  medical_ui_development:
-    mcps: ["Context7 (accessibility/clinical standards)", "Serena (existing code analysis)", "Tavily (clinical UX patterns)"]
-    agent: "frontend-ui-engineer"
-    quality_threshold: "≥9.7/10"
-    
-  healthcare_debugging:
-    mcps: ["Serena (medical code analysis)", "Tavily (healthcare debugging practices)", "Exa (medical software patterns)"]
-    agent: "VoidBeast coordination"
-    priority: "Patient safety first - maximum thoroughness"
-```
-
-### **CONSOLIDATED SYSTEM ARCHITECTURE V5.0**
-```yaml
-FINAL_INTEGRATED_ARCHITECTURE:
-  dynamic_thinking_framework:
-    status: "[OK] OPERACIONAL - 3 níveis com otimização automática de tokens"
-    token_optimization: "30-60% economia simples | 40-80% melhoria complexa"
-    auto_escalation: "Failure-responsive thinking level increases"
-    
-  advanced_hooks_system:
-    status: "[OK] IMPLEMENTADO - Claude-Flow V5.0 com 3 hooks inteligentes"
-    strategic_dispatcher: "NLP analysis + agent recommendation + quality gates"
-    continuity_coordinator: "Quality validation + workflow determination + handoff optimization"
-    hive_mind_resilience: "Error classification + recovery strategies + adaptive learning"
-    
-  mcp_intelligence_revolution:
-    status: "[OK] REVOLUCIONADO - Paradigm shift de healthcare-only para universal"
-    serena_supremacy: "Language Server Protocol authority for ALL code analysis"
-    universal_research: "Tavily+Exa para ANY technical issue, não só healthcare"
-    sequential_synthesis: "Central coordination hub com quality assurance ≥9.5/10"
-    context7_foundation: "Documentation-first approach para ALL development"
-    
-  symbiotic_integration:
-    thinking_mcp_amplification: "MCPs AMPLIFICAM thinking levels ao invés de competir"
-    quality_multiplication: "Thinking + MCP synergy = 300%+ effectiveness boost"
-    token_intelligence: "Optimal resource usage through symbiotic coordination"
-    failure_resilience: "Multi-layered recovery com thinking escalation + MCP switching"
-```
-
-### **SYSTEM STATUS - VIBECODE V4.0 ULTRA-OPTIMIZED**
-```yaml
-COMPREHENSIVE_SYSTEM_STATUS:
-  core_intelligence:
-    vibecode_v4_framework: "[OK] ATIVO - Dynamic thinking com token optimization"
-    claude_flow_orchestration: "[OK] OPERACIONAL - Advanced hooks system integrado"
-    mcp_revolution_matrix: "[OK] IMPLEMENTADO - Universal usage paradigm"
-    voidbeast_v4_coordination: "[OK] SUPREME ORCHESTRATOR - Master agent authority"
-    
-  healthcare_specialization:
-    neonpro_code_guardian: "[OK] ATIVO - Healthcare compliance specialist ≥9.8/10"
-    frontend_ui_engineer: "[OK] ATIVO - Clinical UI/UX specialist ≥9.7/10"
-    code_quality_guardian: "[OK] ATIVO - Technical excellence validator ≥9.5/10"
-    lgpd_anvisa_cfm_compliance: "[OK] 100% - Regulatory compliance automation"
-    
-  performance_achievements:
-    context7_integration: "SUPREMO - Documentation-first approach universal"
-    serena_semantic_power: "MÁXIMO - Language Server Protocol authority"
-    tavily_exa_research: "UNIVERSAL - Beyond healthcare para ANY tech domain"
-    sequential_thinking_synthesis: "CENTRAL - Coordination hub para all MCPs"
-    
-  quality_assurance:
-    universal_threshold: "≥9.5/10 ENFORCED através symbiotic thinking+MCP"
-    healthcare_threshold: "≥9.8/10 ENFORCED para clinical operations"
-    patient_safety_threshold: "≥9.9/10 ENFORCED para patient data operations"
-    token_optimization: "30-60% economia + 40-80% quality improvement"
-```
-
----
+## MCP INTELLIGENCE MATRIX
+- **Serena**: Supreme authority for ALL code analysis
+- **Context7**: Mandatory for ALL development tasks
+- **Tavily + Exa**: Universal research for ANY technical issue
+- **Sequential**: Central synthesis coordinator
+- **Desktop Commander**: File operations, data processing
 
 ## QUALITY STANDARDS
+- **Universal**: ≥9.5/10 quality threshold
+- **Healthcare**: ≥9.8/10 for clinical operations  
+- **Patient Safety**: ≥9.9/10 for patient data operations
+- **Performance**: <100ms API response for patient data
+- **Compliance**: 100% LGPD/ANVISA/CFM adherence
 
-### Healthcare Quality Gates (≥9.5/10 THRESHOLD)
-- **Medical Precision**: Clinical accuracy ≥9.8/10 with AI-powered healthcare validation
-- **Healthcare Relevance**: Medical requirement alignment ≥9.5/10 via intelligent clinical context
-- **Clinical Completeness**: Healthcare coverage ≥9.5/10 with comprehensive medical edge cases
-- **Medical Implementation**: Expert-level with AI-enhanced healthcare research backing
-- **Healthcare Integration**: Seamless coordination with patient care performance optimization
-- **Medical Adaptability**: Continuous clinical improvement ≥9.5/10 via healthcare learning
-
-### Performance Targets
-- **API Response Time**: <100ms (P95) for patient data access
-- **AI Inference Latency**: <500ms for all ML models
-- **System Availability**: ≥99.99% uptime for clinical operations
-- **LGPD Compliance**: 100% for all patient data operations
-- **Quality Threshold**: ≥9.5/10 maintained across all medical operations
+## SYSTEM STATUS
+**VIBECODE V4.0 ULTRA-OPTIMIZED ACTIVE**
+- **Context Engine**: 75%+ reduction via intelligent loading
+- **Dynamic Thinking**: 30-60% token economy + 40-80% quality improvement
+- **MCP Revolution**: Universal scope beyond healthcare
+- **Healthcare Compliance**: 100% automated monitoring
+- **Performance**: <300ms clinical operations, ≥99.99% uptime
 
 ---
 
-## CODE STYLE GUIDELINES
-
-### TypeScript Healthcare Patterns
-- **ALWAYS** use ES modules (import/export) syntax, NOT CommonJS (require)
-- **MANDATORY** destructure imports: `import { foo } from 'bar'`
-- **CRITICAL** TypeScript strict mode compliance required
-- **REQUIRED** Multi-tenant isolation for clinic data: `clinic_id = auth.uid()`
-- **ESSENTIAL** Audit trails for patient data access
-- **MANDATORY** Encryption for sensitive medical information
-
-### Character Encoding & Unicode Safety Rules
-- **FORBIDDEN** Use of emojis or Unicode symbols in code, comments, or documentation
-- **REQUIRED** ASCII-only characters in all code files to prevent UTF-16 surrogate issues
-- **MANDATORY** Remove all emojis and Unicode symbols from documentation
-- **CRITICAL** Use only basic ASCII punctuation: - * + = | < > ( ) [ ] { } " ' ` : ; , . ! ?
-- **PROHIBITED** Characters: Any Unicode above U+007F (127) in source code
-- **REQUIRED** UTF-8 encoding for all files, but content must be ASCII-safe for API compatibility
-- **ESSENTIAL** Validate all text content for JSON compatibility before API transmission
-
-### Healthcare Authentication Pattern
-```typescript
-// Server Components - Always for patient data
-const supabase = createServerClient()
-const { data: { session } } = await supabase.auth.getSession()
-if (!session) redirect('/login')
-
-// LGPD Compliance: Multi-tenant isolation
-const { data: patients } = await supabase
-  .from('patients')
-  .select('*')
-  .eq('clinic_id', session.user.id) // Multi-tenant isolation
-```
-
----
-
-## WORKFLOW AUTOMATION ULTRA-OPTIMIZED
-
-### AI-Enhanced Dynamic Thinking Healthcare Classification V4.0
-
-```yaml
-DYNAMIC_THINKING_HEALTHCARE_MODES:
-  medical_plan_mode:
-    complexity_score: "7-10"
-    thinking_level: "UltraThink (16.384 tokens)"
-    techniques: "Healthcare AI Analysis + ToT + Medical pseudocódigo detalhado"
-    workflow: "Enhanced medical workflow com comprehensive research"
-    use_cases: "Arquitetura de sistemas médicos, compliance estratégico"
-    
-  clinical_act_mode:
-    complexity_score: "4-6" 
-    thinking_level: "Think_Harder (4.096 tokens)"
-    techniques: "Medical AI Context + Chain-of-Thought + Healthcare planning"
-    workflow: "Standard workflow com healthcare optimization"
-    use_cases: "Refatorações médicas, análise de código clínico"
-    
-  healthcare_implementation_mode:
-    complexity_score: "1-3"
-    thinking_level: "Think (1.024 tokens)"
-    techniques: "Direct medical implementation + Basic healthcare validation"
-    workflow: "Efficient implementation com safety checks"
-    use_cases: "Bugfixes médicos, implementações diretas de features"
-    
-  medical_adaptive_mode:
-    complexity_score: "Auto-detect"
-    thinking_level: "Dynamic escalation"
-    techniques: "AI-powered analysis → Auto-select optimal thinking level"
-    workflow: "Real-time adaptation baseado em context e performance"
-    use_cases: "Todas as situações com otimização automática"
-```
-
-### TOKEN OPTIMIZATION INTELLIGENCE
-
-```yaml
-TOKEN_OPTIMIZATION_FRAMEWORK:
-  economic_efficiency:
-    simple_tasks: "30-60% token reduction via Think level (1.024 tokens)"
-    medium_complexity: "15-30% optimization via Think_Harder (4.096 tokens)"
-    complex_systems: "20-40% quality improvement via UltraThink (16.384 tokens)"
-    
-  adaptive_learning:
-    pattern_recognition: "Aprendizado de padrões de sucesso para otimização"
-    failure_escalation: "Auto-escalation em caso de falha ou baixa qualidade"
-    context_evolution: "Adaptação baseada na evolução da conversa"
-    performance_tracking: "Metrics de performance e economia contínua"
-```
-
----
-
-## 📚 DETAILED DOCUMENTATION IMPORTS
-
-### Healthcare AI Engine & Features
-@.claude/healthcare/ai-engine-details.md
-
-### Brazilian Healthcare Compliance
-@.claude/healthcare/compliance-requirements.md  
-
-### Healthcare Development Workflows
-@.claude/healthcare/workflows.md
-
-### Technical Architecture Patterns
-@.claude/technical/architecture-patterns.md
-
-### Code Patterns & Examples
-@.claude/technical/code-patterns.md
-
-### Technology Stack Details
-@.claude/technical/stack-details.md
-
-### Development Commands & Workflows
-@.claude/workflows/development-commands.md
-
----
-
-## SYSTEM STATUS - VIBECODE V4.0 ULTRA-OPTIMIZED
-
-**Sistema Status**: **META-COGNITIVE HEALTHCARE INTELLIGENCE ENGINE ACTIVE - DYNAMIC THINKING V4.0**  
-**Medical Modular Architecture**: **EXTENDED THINKING INTEGRATION OPERATIONAL + TOKEN OPTIMIZATION**  
-**Clinical Performance**: **≥75% CONTEXT REDUCTION + DYNAMIC THINKING BUDGET ALLOCATION**  
-**Healthcare Quality**: **≥9.5/10 THROUGH ADAPTIVE THINKING LEVELS + AUTONOMOUS ESCALATION**  
-**Medical Integration**: **CLAUDE CODE HOOKS + DYNAMIC THINKING FRAMEWORK COORDINATION**  
-**Regulatory Compliance**: **LGPD/ANVISA/CFM 100% VIA ULTRATHINK + AUTOMATED MONITORING**  
-**Token Optimization**: **30-60% ECONOMIA EM TASKS SIMPLES + 40-80% MELHORIA EM COMPLEXAS**
-
-### PERFORMANCE METRICS - DYNAMIC THINKING OPTIMIZATION
-
-```yaml
-VIBECODE_V4_PERFORMANCE_METRICS:
-  thinking_optimization:
-    token_economy_simple: "30-60% reduction via Think level (1.024 tokens)"
-    quality_improvement_complex: "40-80% enhancement via UltraThink (16.384 tokens)"
-    adaptive_learning_rate: "≥95% optimal thinking level selection accuracy"
-    escalation_success_rate: "≥98% automatic escalation success when needed"
-    
-  healthcare_intelligence:
-    medical_context_reduction: "≥75% via intelligent dynamic loading + thinking optimization"
-    clinical_response_time: "<300ms patient data access com thinking budget allocation"
-    compliance_accuracy: "100% LGPD/ANVISA/CFM através de UltraThink validation"
-    healthcare_quality_consistency: "≥9.5/10 maintained via adaptive thinking framework"
-    
-  system_evolution:
-    pattern_recognition_accuracy: "≥92% optimal workflow selection"
-    context_adaptation_speed: "<100ms thinking level switching"
-    performance_learning_rate: "Continuous improvement via meta-cognitive feedback"
-    healthcare_compliance_automation: "100% regulatory verification integration"
-```
-
----
-
-**"Aprimore, Não Prolifere"** - Meta-Cognitive Healthcare Intelligence Revolution  
-**NEONPRO VIBECODE V4.0** - Extended Thinking Medical Intelligence com Dynamic Token Optimization  
-**Healthcare Context Reduction**: 75%+ achieved através de AI-powered thinking framework + medical modular architecture  
-**Clinical Performance**: <300ms patient data access + ≥90% optimal thinking selection + intelligent healthcare optimization  
-**Regulatory Compliance**: 100% LGPD/ANVISA/CFM integration via UltraThink + automated monitoring + continuous compliance improvement  
-**Token Optimization**: 30-60% economia simples + 40-80% melhoria complexa através de Extended Thinking inteligente
+**Healthcare Context Reduction**: 75%+ achieved via AI-powered modular architecture  
+**Token Optimization**: 30-60% economia + 40-80% melhoria através Extended Thinking  
+**Quality Assurance**: ≥9.5/10 maintained via symbiotic MCP integration

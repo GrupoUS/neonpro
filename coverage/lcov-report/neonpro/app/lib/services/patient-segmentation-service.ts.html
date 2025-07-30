@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/624</span>
+                <span class='fraction'>0/625</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/624</span>
+                <span class='fraction'>0/625</span>
             </div>
         
             
@@ -687,7 +687,9 @@
 <a name='L622'></a><a href='#L622'>622</a>
 <a name='L623'></a><a href='#L623'>623</a>
 <a name='L624'></a><a href='#L624'>624</a>
-<a name='L625'></a><a href='#L625'>625</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L625'></a><a href='#L625'>625</a>
+<a name='L626'></a><a href='#L626'>626</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1312,16 +1314,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import type {</span></span></span>
-<span class="cstat-no" title="statement not covered" >    CreateSegmentationRuleRequest,</span>
-<span class="cstat-no" title="statement not covered" >    CreateSegmentRequest,</span>
-<span class="cstat-no" title="statement not covered" >    EngagementLevel,</span>
-<span class="cstat-no" title="statement not covered" >    PatientBehaviorAnalysis,</span>
-<span class="cstat-no" title="statement not covered" >    PatientSegment,</span>
-<span class="cstat-no" title="statement not covered" >    SegmentAnalytics,</span>
-<span class="cstat-no" title="statement not covered" >    SegmentationRule,</span>
-<span class="cstat-no" title="statement not covered" >    SegmentMembership,</span>
-<span class="cstat-no" title="statement not covered" >    SegmentMembershipUpdate,</span>
-<span class="cstat-no" title="statement not covered" >    SegmentPerformance</span>
+<span class="cstat-no" title="statement not covered" >  CreateSegmentationRuleRequest,</span>
+<span class="cstat-no" title="statement not covered" >  CreateSegmentRequest,</span>
+<span class="cstat-no" title="statement not covered" >  EngagementLevel,</span>
+<span class="cstat-no" title="statement not covered" >  PatientBehaviorAnalysis,</span>
+<span class="cstat-no" title="statement not covered" >  PatientSegment,</span>
+<span class="cstat-no" title="statement not covered" >  SegmentAnalytics,</span>
+<span class="cstat-no" title="statement not covered" >  SegmentationRule,</span>
+<span class="cstat-no" title="statement not covered" >  SegmentMembership,</span>
+<span class="cstat-no" title="statement not covered" >  SegmentMembershipUpdate,</span>
+<span class="cstat-no" title="statement not covered" >  SegmentPerformance</span>
 <span class="cstat-no" title="statement not covered" >} from '@/app/types/segmentation';</span>
 <span class="cstat-no" title="statement not covered" >import { createClient } from '@/app/utils/supabase/server';</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -1340,13 +1342,14 @@
 <span class="cstat-no" title="statement not covered" >    const { data: segment, error } = await supabase</span>
 <span class="cstat-no" title="statement not covered" >      .from('patient_segments')</span>
 <span class="cstat-no" title="statement not covered" >      .insert({</span>
-<span class="cstat-no" title="statement not covered" >        segment_name: data.segment_name,</span>
+<span class="cstat-no" title="statement not covered" >        name: data.segment_name,</span>
 <span class="cstat-no" title="statement not covered" >        description: data.description,</span>
 <span class="cstat-no" title="statement not covered" >        criteria: aiCriteria,</span>
 <span class="cstat-no" title="statement not covered" >        ai_model_used: data.ai_model || 'behavioral_clustering_v2',</span>
 <span class="cstat-no" title="statement not covered" >        accuracy_score: data.expected_accuracy || 0.85,</span>
 <span class="cstat-no" title="statement not covered" >        segment_type: data.segment_type,</span>
-<span class="cstat-no" title="statement not covered" >        is_active: true</span>
+<span class="cstat-no" title="statement not covered" >        is_active: true,</span>
+<span class="cstat-no" title="statement not covered" >        clinic_id: '89084c3a-9200-4058-a15a-b440d3c60687' // TODO: Get from user context</span>
 <span class="cstat-no" title="statement not covered" >      })</span>
 <span class="cstat-no" title="statement not covered" >      .select()</span>
 <span class="cstat-no" title="statement not covered" >      .single();</span>
@@ -1942,7 +1945,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T17:15:54.067Z
+                at 2025-07-30T02:53:02.438Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

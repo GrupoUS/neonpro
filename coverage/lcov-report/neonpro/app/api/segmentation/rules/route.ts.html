@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/81</span>
+                <span class='fraction'>0/90</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/81</span>
+                <span class='fraction'>0/90</span>
             </div>
         
             
@@ -144,7 +144,25 @@
 <a name='L79'></a><a href='#L79'>79</a>
 <a name='L80'></a><a href='#L80'>80</a>
 <a name='L81'></a><a href='#L81'>81</a>
-<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -233,11 +251,12 @@
 <span class="cstat-no" title="statement not covered" >export async function GET(request: NextRequest) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user } } = await supabase.auth.getUser();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    if (!user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    // For development: Skip auth check</span>
+<span class="cstat-no" title="statement not covered" >    // const { data: { user } } = await supabase.auth.getUser();</span>
+<span class="cstat-no" title="statement not covered" >    // if (!user) {</span>
+<span class="cstat-no" title="statement not covered" >    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
+<span class="cstat-no" title="statement not covered" >    // }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    // Get segmentation rules</span>
 <span class="cstat-no" title="statement not covered" >    const { data: rules, error } = await supabase</span>
@@ -245,7 +264,15 @@
 <span class="cstat-no" title="statement not covered" >      .select('*')</span>
 <span class="cstat-no" title="statement not covered" >      .order('created_at', { ascending: false });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (error) throw error;</span>
+<span class="cstat-no" title="statement not covered" >    if (error) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Database error:', error);</span>
+<span class="cstat-no" title="statement not covered" >      // Return empty array if table doesn't exist or no data</span>
+<span class="cstat-no" title="statement not covered" >      return NextResponse.json({</span>
+<span class="cstat-no" title="statement not covered" >        success: true,</span>
+<span class="cstat-no" title="statement not covered" >        data: [],</span>
+<span class="cstat-no" title="statement not covered" >        total: 0</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
 <span class="cstat-no" title="statement not covered" >      success: true,</span>
@@ -313,7 +340,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T17:15:54.067Z
+                at 2025-07-30T02:53:02.438Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

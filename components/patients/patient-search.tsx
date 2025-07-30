@@ -26,13 +26,16 @@ export default function PatientSearch({
   const [searchType, setSearchType] = useState<'name' | 'phone' | 'email' | 'cpf'>('name');
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
-  // Debounce search to avoid excessive API calls
+  // Optimized debounce search to avoid excessive API calls
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearchChange(localSearchTerm);
-    }, 300);
+    // Only search if term has minimum length or is empty (for reset)
+    if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
+      const timer = setTimeout(() => {
+        onSearchChange(localSearchTerm);
+      }, 500); // Increased debounce time for better performance
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [localSearchTerm, onSearchChange]);
 
   const handleClearSearch = () => {

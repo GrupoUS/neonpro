@@ -1,5 +1,4 @@
-import { createClient } from '@/app/utils/supabase/server';
-import { createClient as createBrowserClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/app/utils/supabase/client';
 import { performanceTracker } from './performance-tracker';
 
 export interface SessionInfo {

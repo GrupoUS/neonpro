@@ -98,6 +98,12 @@ const navigationItems = [
     description: "Predição de sucesso de tratamentos com IA",
   },
   {
+    title: "Retenção de Pacientes",
+    href: "/dashboard/retention-analytics",
+    icon: Target,
+    description: "Analytics e predições de retenção de pacientes",
+  },
+  {
     title: "Recomendações Personalizadas",
     href: "/dashboard/personalized-recommendations",
     icon: Target,

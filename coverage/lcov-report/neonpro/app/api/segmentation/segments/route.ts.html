@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/86</span>
+                <span class='fraction'>0/112</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/86</span>
+                <span class='fraction'>0/112</span>
             </div>
         
             
@@ -149,7 +149,59 @@
 <a name='L84'></a><a href='#L84'>84</a>
 <a name='L85'></a><a href='#L85'>85</a>
 <a name='L86'></a><a href='#L86'>86</a>
-<a name='L87'></a><a href='#L87'>87</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -243,34 +295,60 @@
 <span class="cstat-no" title="statement not covered" >export async function GET(request: NextRequest) {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
 <span class="cstat-no" title="statement not covered" >    const supabase = await createClient();</span>
-<span class="cstat-no" title="statement not covered" >    const { data: { user } } = await supabase.auth.getUser();</span>
 <span class="cstat-no" title="statement not covered" >    </span>
-<span class="cstat-no" title="statement not covered" >    if (!user) {</span>
-<span class="cstat-no" title="statement not covered" >      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    // For development: Skip auth check or use service role</span>
+<span class="cstat-no" title="statement not covered" >    // const { data: { user } } = await supabase.auth.getUser();</span>
+<span class="cstat-no" title="statement not covered" >    // if (!user) {</span>
+<span class="cstat-no" title="statement not covered" >    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });</span>
+<span class="cstat-no" title="statement not covered" >    // }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    const { searchParams } = new URL(request.url);</span>
 <span class="cstat-no" title="statement not covered" >    const isActive = searchParams.get('is_active');</span>
 <span class="cstat-no" title="statement not covered" >    const segmentType = searchParams.get('segment_type');</span>
-<span class="cstat-no" title="statement not covered" >    const minAccuracy = searchParams.get('min_accuracy');</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const filters: any = {};</span>
-<span class="cstat-no" title="statement not covered" >    if (isActive !== null) filters.is_active = isActive === 'true';</span>
-<span class="cstat-no" title="statement not covered" >    if (segmentType) filters.segment_type = segmentType;</span>
-<span class="cstat-no" title="statement not covered" >    if (minAccuracy) filters.min_accuracy = parseFloat(minAccuracy);</span>
+<span class="cstat-no" title="statement not covered" >    // Simple query to match our database structure</span>
+<span class="cstat-no" title="statement not covered" >    let query = supabase</span>
+<span class="cstat-no" title="statement not covered" >      .from('patient_segments')</span>
+<span class="cstat-no" title="statement not covered" >      .select(`</span>
+<span class="cstat-no" title="statement not covered" >        id,</span>
+<span class="cstat-no" title="statement not covered" >        name,</span>
+<span class="cstat-no" title="statement not covered" >        description,</span>
+<span class="cstat-no" title="statement not covered" >        segment_type,</span>
+<span class="cstat-no" title="statement not covered" >        is_active,</span>
+<span class="cstat-no" title="statement not covered" >        created_at,</span>
+<span class="cstat-no" title="statement not covered" >        ai_generated,</span>
+<span class="cstat-no" title="statement not covered" >        criteria,</span>
+<span class="cstat-no" title="statement not covered" >        accuracy_score,</span>
+<span class="cstat-no" title="statement not covered" >        member_count</span>
+<span class="cstat-no" title="statement not covered" >      `);</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const segments = await patientSegmentationService.getPatientSegments(filters);</span>
+<span class="cstat-no" title="statement not covered" >    if (isActive !== null) {</span>
+<span class="cstat-no" title="statement not covered" >      query = query.eq('is_active', isActive === 'true');</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (segmentType) {</span>
+<span class="cstat-no" title="statement not covered" >      query = query.eq('segment_type', segmentType);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const { data: segments, error } = await query;</span>
+<span class="cstat-no" title="statement not covered" >    if (error) {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('Database error:', error);</span>
+<span class="cstat-no" title="statement not covered" >      throw error;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json({</span>
 <span class="cstat-no" title="statement not covered" >      success: true,</span>
-<span class="cstat-no" title="statement not covered" >      data: segments,</span>
-<span class="cstat-no" title="statement not covered" >      total: segments.length</span>
+<span class="cstat-no" title="statement not covered" >      data: segments || [],</span>
+<span class="cstat-no" title="statement not covered" >      total: segments?.length || 0</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
 <span class="cstat-no" title="statement not covered" >    console.error('Error fetching patient segments:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return NextResponse.json(</span>
-<span class="cstat-no" title="statement not covered" >      { error: 'Failed to fetch patient segments' },</span>
+<span class="cstat-no" title="statement not covered" >      { </span>
+<span class="cstat-no" title="statement not covered" >        error: 'Failed to fetch patient segments', </span>
+<span class="cstat-no" title="statement not covered" >        details: error instanceof Error ? error.message : 'Unknown error'</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
 <span class="cstat-no" title="statement not covered" >      { status: 500 }</span>
 <span class="cstat-no" title="statement not covered" >    );</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
@@ -328,7 +406,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-29T17:15:54.067Z
+                at 2025-07-30T02:53:02.438Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

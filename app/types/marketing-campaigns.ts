@@ -3,6 +3,8 @@
 // Epic 7 - Story 7.2: Comprehensive types for automated marketing campaigns
 // =====================================================================================
 
+import { SegmentCriteria } from './segmentation';
+
 export type CampaignType = 
   | 'email'
   | 'sms'

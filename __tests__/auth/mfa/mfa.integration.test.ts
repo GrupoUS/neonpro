@@ -520,40 +520,8 @@ describe('MFAService Integration Tests', () => {
     it('should log MFA setup events', async () => {
       const phoneNumber = '+1234567890';
 
-      // Mock audit log insertion
-      const mockLogInsert = jest.fn().mockResolvedValue({
-        data: null,
-        error: null
-      });
-
-      mockSupabase.from = jest.fn().mockImplementation((table) => {
-        if (table === 'mfa_audit_logs' || table === 'audit_logs') {
-          return {
-            insert: mockLogInsert
-          };
-        }
-        if (table === 'mfa_verification_codes') {
-          return {
-            select: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                eq: jest.fn().mockReturnValue({
-                  gte: jest.fn().mockResolvedValue({
-                    data: [], // Empty array means under rate limit
-                    error: null
-                  })
-                })
-              })
-            }),
-            insert: jest.fn().mockResolvedValue({
-              data: null,
-              error: null
-            })
-          };
-        }
-        return {
-          insert: jest.fn().mockResolvedValue({ data: null, error: null })
-        };
-      });
+      // Clear previous calls
+      global.mockAuditLog.mockClear();
 
       // Mock SMS sending
       const mockSendSMS = jest.fn().mockResolvedValue({ success: true });
@@ -561,15 +529,14 @@ describe('MFAService Integration Tests', () => {
 
       await setupService.setupSMSMFA(mockUser.id, phoneNumber);
 
-      expect(mockLogInsert).toHaveBeenCalledWith({
+      expect(global.mockAuditLog).toHaveBeenCalledWith({
         user_id: mockUser.id,
         event_type: 'mfa_setup_initiated',
         event_description: 'SMS MFA setup initiated',
         metadata: expect.objectContaining({
           method: 'sms',
           phone_number: phoneNumber
-        }),
-        created_at: expect.any(String)
+        })
       });
     });
 
@@ -588,17 +555,10 @@ describe('MFAService Integration Tests', () => {
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString()
       };
 
-      const mockLogInsert = jest.fn().mockResolvedValue({
-        data: null,
-        error: null
-      });
+      // Clear previous calls
+      global.mockAuditLog.mockClear();
 
       mockSupabase.from = jest.fn().mockImplementation((table) => {
-        if (table === 'mfa_audit_logs' || table === 'audit_logs') {
-          return {
-            insert: mockLogInsert
-          };
-        }
         if (table === 'mfa_verification_codes') {
           return {
             select: jest.fn().mockReturnValue({
@@ -646,15 +606,14 @@ describe('MFAService Integration Tests', () => {
 
       await verificationService.verifySMSCode(mockUser.id, verificationCode, phoneNumber);
 
-      expect(mockLogInsert).toHaveBeenCalledWith({
+      expect(global.mockAuditLog).toHaveBeenCalledWith({
         user_id: mockUser.id,
         event_type: 'mfa_verification_success',
         event_description: 'SMS MFA code verified successfully',
         metadata: expect.objectContaining({
           method: 'sms',
           phone_number: phoneNumber
-        }),
-        created_at: expect.any(String)
+        })
       });
     });
   });

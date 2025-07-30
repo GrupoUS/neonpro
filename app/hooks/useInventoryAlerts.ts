@@ -60,6 +60,7 @@ export function useInventoryAlerts(): UseAlertsResult {
   const [alerts, setAlerts] = useState<InventoryAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(true);
 
   // =====================================================================================
   // COMPUTED VALUES
@@ -238,6 +239,16 @@ export function useInventoryAlerts(): UseAlertsResult {
   // =====================================================================================
   // RETURN HOOK INTERFACE
   // =====================================================================================
+
+  // =====================================================================================
+  // CLEANUP EFFECT
+  // =====================================================================================
+  
+  useEffect(() => {
+    return () => {
+      setMounted(false);
+    };
+  }, []);
 
   return {
     alerts,
