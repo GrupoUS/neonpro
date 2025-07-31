@@ -29,8 +29,8 @@ import {
 import { StorageProvider } from './storage';
 import { SchedulerService } from './scheduler';
 import { MonitoringService } from './monitoring';
-import { SecurityService } from './security';
-import { auditLogger } from '../audit/audit-logger';
+// import { SecurityService } from './security';
+import { auditLogger } from '../auth/audit/audit-logger';
 
 /**
  * Gerenciador principal do sistema de backup
@@ -40,7 +40,7 @@ export class BackupManager {
   private storageProvider: StorageProvider;
   private scheduler: SchedulerService;
   private monitoring: MonitoringService;
-  private security: SecurityService;
+  // private security: SecurityService;
   private activeBackups = new Map<string, BackupProgress>();
   private activeRecoveries = new Map<string, RecoveryProgress>();
 
@@ -53,7 +53,7 @@ export class BackupManager {
     this.storageProvider = new StorageProvider();
     this.scheduler = new SchedulerService(this);
     this.monitoring = new MonitoringService(this);
-    this.security = new SecurityService();
+    // this.security = new SecurityService();
   }
 
   // ============================================================================

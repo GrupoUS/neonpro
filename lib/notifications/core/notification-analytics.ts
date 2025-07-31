@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
+import { AuditLogger } from '../../auth/audit/audit-logger';
 
 export interface NotificationMetrics {
   total_sent: number;

@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
-import { LGPDManager } from '../../lgpd/lgpd-manager';
-import { EncryptionService } from '../security/encryption';
+import { AuditLogger } from '../../auth/audit/audit-logger';
+import { LGPDAutomation } from '../../compliance/lgpd-automation';
+import { EncryptionService } from '../../compliance/encryption';
 import { TemplateEngine } from '../templates/template-engine';
 import { ChannelProvider } from './channel-providers';
-import { NotificationScheduler } from './scheduler';
-import { NotificationAnalytics } from './analytics';
+import { NotificationScheduler } from './notification-scheduler';
+import { NotificationAnalytics } from './notification-analytics';
 
 export interface NotificationConfig {
   id: string;

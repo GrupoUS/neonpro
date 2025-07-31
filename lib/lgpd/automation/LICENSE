@@ -1,0 +1,79 @@
+MIT License
+
+Copyright (c) 2024 NeonPro - Sistema de Automação LGPD
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DISCLAIMER LEGAL - LGPD COMPLIANCE:
+
+Este software foi desenvolvido para auxiliar na conformidade com a Lei Geral 
+de Proteção de Dados (LGPD - Lei nº 13.709/2018) do Brasil. No entanto, o uso 
+deste software não garante automaticamente a conformidade total com a LGPD ou 
+qualquer outra legislação de proteção de dados.
+
+Os usuários são responsáveis por:
+1. Configurar adequadamente o sistema conforme suas necessidades específicas
+2. Realizar auditorias regulares de conformidade
+3. Consultar especialistas jurídicos quando necessário
+4. Manter-se atualizados com mudanças na legislação
+5. Implementar controles adicionais conforme requerido
+
+Os desenvolvedores deste software não assumem responsabilidade legal por:
+- Violações de dados que possam ocorrer
+- Não conformidade com regulamentações específicas
+- Danos decorrentes do uso inadequado do sistema
+- Interpretações incorretas de requisitos legais
+
+Este software é fornecido como uma ferramenta de apoio e deve ser usado em 
+conjunto com orientação jurídica adequada e práticas de segurança robustas.
+
+Para questões específicas de conformidade LGPD, recomenda-se consultar:
+- Autoridade Nacional de Proteção de Dados (ANPD)
+- Advogados especializados em proteção de dados
+- Consultores de privacidade certificados
+
+---
+
+TERMOS DE USO ESPECÍFICOS:
+
+1. RESPONSABILIDADE DO USUÁRIO:
+   - Configuração adequada do sistema
+   - Treinamento da equipe
+   - Monitoramento contínuo
+   - Atualizações regulares
+
+2. LIMITAÇÕES:
+   - Software fornecido "como está"
+   - Sem garantias de conformidade legal
+   - Responsabilidade limitada dos desenvolvedores
+
+3. SUPORTE:
+   - Documentação técnica fornecida
+   - Suporte técnico disponível
+   - Sem consultoria jurídica incluída
+
+4. ATUALIZAÇÕES:
+   - Atualizações de segurança recomendadas
+   - Novas funcionalidades podem ser adicionadas
+   - Compatibilidade com versões anteriores não garantida
+
+Ao usar este software, você concorda com estes termos e assume a responsabilidade
+pela implementação adequada e conformidade legal em sua organização.

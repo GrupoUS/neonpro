@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
+import { AuditLogger } from '../../auth/audit/audit-logger';
 import cron from 'node-cron';
 
 export interface ScheduledNotification {

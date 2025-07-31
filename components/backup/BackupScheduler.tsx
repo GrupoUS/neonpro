@@ -1,0 +1,456 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Clock,
+  Plus,
+  Play,
+  Pause,
+  Trash2,
+  Settings,
+  Calendar,
+  Database,
+  HardDrive,
+  Shield,
+  AlertTriangle,
+  CheckCircle,
+} from 'lucide-react';
+import { formatDate, formatTime } from '@/lib/utils';
+import { toast } from 'sonner';
+
+// Types
+interface BackupConfig {
+  id: string;
+  name: string;
+  description?: string;
+  enabled: boolean;
+  type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
+  schedule_frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
+  schedule_time?: string;
+  schedule_cron?: string;
+  last_backup?: Date;
+  next_backup?: Date;
+  status: 'ACTIVE' | 'PAUSED' | 'ERROR';
+  storage_provider: 'LOCAL' | 'S3' | 'GCS' | 'AZURE';
+  retention_daily: number;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  createdAt: Date;
+}
+
+interface NewBackupConfig {
+  name: string;
+  description?: string;
+  enabled: boolean;
+  type: 'FULL' | 'INCREMENTAL' | 'DIFFERENTIAL' | 'DATABASE' | 'FILES';
+  schedule_frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
+  schedule_time?: string;
+  schedule_cron?: string;
+  storage_provider: 'LOCAL' | 'S3' | 'GCS' | 'AZURE';
+  retention_daily: number;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  notification_email?: string;
+}
+
+const BackupScheduler: React.FC = () => {
+  const [configs, setConfigs] = useState<BackupConfig[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showNewDialog, setShowNewDialog] = useState(false);
+  const [newConfig, setNewConfig] = useState<NewBackupConfig>({
+    name: '',
+    description: '',
+    enabled: true,
+    type: 'FULL',
+    schedule_frequency: 'DAILY',
+    schedule_time: '02:00',
+    storage_provider: 'LOCAL',
+    retention_daily: 30,
+    priority: 'MEDIUM',
+    notification_email: '',
+  });
+
+  useEffect(() => {
+    loadConfigs();
+  }, []);
+
+  const loadConfigs = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/backup/configs');
+      if (response.ok) {
+        const data = await response.json();
+        setConfigs(data.data || []);
+      } else {
+        toast.error('Erro ao carregar configurações de backup');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações:', error);
+      toast.error('Erro ao carregar configurações de backup');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateConfig = async () => {
+    try {
+      const response = await fetch('/api/backup/configs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newConfig),
+      });
+
+      if (response.ok) {
+        toast.success('Configuração de backup criada com sucesso');
+        setShowNewDialog(false);
+        setNewConfig({
+          name: '',
+          description: '',
+          enabled: true,
+          type: 'FULL',
+          schedule_frequency: 'DAILY',
+          schedule_time: '02:00',
+          storage_provider: 'LOCAL',
+          retention_daily: 30,
+          priority: 'MEDIUM',
+          notification_email: '',
+        });
+        loadConfigs();
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.error || 'Erro ao criar configuração');
+      }
+    } catch (error) {
+      console.error('Erro ao criar configuração:', error);
+      toast.error('Erro ao criar configuração de backup');
+    }
+  };
+
+  const handleToggleConfig = async (id: string, enabled: boolean) => {
+    try {
+      const response = await fetch(`/api/backup/configs/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ enabled }),
+      });
+
+      if (response.ok) {
+        toast.success(`Configuração ${enabled ? 'ativada' : 'desativada'} com sucesso`);
+        loadConfigs();
+      } else {
+        toast.error('Erro ao atualizar configuração');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar configuração:', error);
+      toast.error('Erro ao atualizar configuração');
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'PAUSED':
+        return <Pause className="h-4 w-4 text-yellow-500" />;
+      case 'ERROR':
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'DATABASE':
+        return <Database className="h-4 w-4" />;
+      case 'FILES':
+        return <HardDrive className="h-4 w-4" />;
+      default:
+        return <Shield className="h-4 w-4" />;
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'CRITICAL':
+        return 'destructive';
+      case 'HIGH':
+        return 'secondary';
+      case 'MEDIUM':
+        return 'outline';
+      case 'LOW':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold">Agendador de Backup</h2>
+          <p className="text-muted-foreground">
+            Configure e gerencie agendamentos automáticos de backup
+          </p>
+        </div>
+        <Dialog open={showNewDialog} onOpenChange={setShowNewDialog}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Configuração
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Nova Configuração de Backup</DialogTitle>
+              <DialogDescription>
+                Configure um novo agendamento automático de backup
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  value={newConfig.name}
+                  onChange={(e) => setNewConfig({ ...newConfig, name: e.target.value })}
+                  placeholder="Ex: Backup Diário Completo"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="type">Tipo de Backup</Label>
+                <Select
+                  value={newConfig.type}
+                  onValueChange={(value: any) => setNewConfig({ ...newConfig, type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FULL">Completo</SelectItem>
+                    <SelectItem value="INCREMENTAL">Incremental</SelectItem>
+                    <SelectItem value="DIFFERENTIAL">Diferencial</SelectItem>
+                    <SelectItem value="DATABASE">Banco de Dados</SelectItem>
+                    <SelectItem value="FILES">Arquivos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="frequency">Frequência</Label>
+                <Select
+                  value={newConfig.schedule_frequency}
+                  onValueChange={(value: any) => setNewConfig({ ...newConfig, schedule_frequency: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="HOURLY">A cada hora</SelectItem>
+                    <SelectItem value="DAILY">Diário</SelectItem>
+                    <SelectItem value="WEEKLY">Semanal</SelectItem>
+                    <SelectItem value="MONTHLY">Mensal</SelectItem>
+                    <SelectItem value="CUSTOM">Personalizado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="time">Horário</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={newConfig.schedule_time}
+                  onChange={(e) => setNewConfig({ ...newConfig, schedule_time: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="provider">Armazenamento</Label>
+                <Select
+                  value={newConfig.storage_provider}
+                  onValueChange={(value: any) => setNewConfig({ ...newConfig, storage_provider: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="LOCAL">Local</SelectItem>
+                    <SelectItem value="S3">AWS S3</SelectItem>
+                    <SelectItem value="GCS">Google Cloud</SelectItem>
+                    <SelectItem value="AZURE">Azure Blob</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="retention">Retenção (dias)</Label>
+                <Input
+                  id="retention"
+                  type="number"
+                  min="1"
+                  max="365"
+                  value={newConfig.retention_daily}
+                  onChange={(e) => setNewConfig({ ...newConfig, retention_daily: parseInt(e.target.value) })}
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  value={newConfig.description}
+                  onChange={(e) => setNewConfig({ ...newConfig, description: e.target.value })}
+                  placeholder="Descrição opcional da configuração..."
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowNewDialog(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleCreateConfig}>
+                Criar Configuração
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8">
+          <p>Carregando configurações...</p>
+        </div>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Configurações de Backup</CardTitle>
+            <CardDescription>
+              {configs.length} configuração(ões) de backup ativa(s)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {configs.length === 0 ? (
+              <div className="text-center py-8">
+                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">
+                  Nenhuma configuração de backup encontrada
+                </p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Frequência</TableHead>
+                    <TableHead>Próximo Backup</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Prioridade</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {configs.map((config) => (
+                    <TableRow key={config.id}>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getTypeIcon(config.type)}
+                          <div>
+                            <div className="font-medium">{config.name}</div>
+                            {config.description && (
+                              <div className="text-sm text-muted-foreground">
+                                {config.description}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{config.type}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {config.schedule_frequency}
+                        {config.schedule_time && (
+                          <div className="text-sm text-muted-foreground">
+                            às {config.schedule_time}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {config.next_backup ? (
+                          <div className="text-sm">
+                            {formatDate(new Date(config.next_backup))}
+                            <div className="text-muted-foreground">
+                              {formatTime(new Date(config.next_backup))}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(config.status)}
+                          <span className="text-sm">{config.status}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getPriorityColor(config.priority) as any}>
+                          {config.priority}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={config.enabled}
+                            onCheckedChange={(checked) => handleToggleConfig(config.id, checked)}
+                          />
+                          <Button variant="ghost" size="sm">
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+export default BackupScheduler;

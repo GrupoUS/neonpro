@@ -4,7 +4,14 @@
  * Comprehensive patient profile management system for the NeonPro clinic management platform.
  * Handles patient demographics, medical history, care preferences, emergency contacts,
  * and provides 360-degree patient view with profile completeness scoring.
+ * 
+ * Enhanced with LGPD compliance automation and comprehensive audit trail for 
+ * real-time compliance validation and complete traceability.
  */
+
+import { AuditLogger } from '@/lib/auth/audit/audit-logger';
+import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
+import { createClient } from '@/app/utils/supabase/server';
 
 // Enhanced patient profile types with comprehensive data structure
 export interface PatientDemographics {
@@ -115,12 +122,26 @@ export interface ProfileUpdateData {
 
 export class ProfileManager {
   private mockProfiles: Map<string, PatientProfileExtended> = new Map();
+  private auditLogger: AuditLogger;
+  private complianceManager: LGPDComplianceManager;
+
+  constructor() {
+    // Initialize audit and compliance systems
+    const supabase = createClient();
+    this.auditLogger = new AuditLogger(supabase);
+    this.complianceManager = new LGPDComplianceManager();
+  }
 
   /**
    * Create a new comprehensive patient profile
    */
-  async createPatientProfile(profileData: Partial<PatientProfileExtended>): Promise<PatientProfileExtended | null> {
+  async createPatientProfile(profileData: Partial<PatientProfileExtended>, userId?: string): Promise<PatientProfileExtended | null> {
+    const startTime = Date.now();
+    
     try {
+      // LGPD Compliance Validation
+      await this.complianceManager.validateDataConsent(profileData, 'patient_profile_creation');
+      
       // Calculate initial profile completeness
       const completenessScore = await this.calculateProfileCompleteness(profileData);
 
@@ -157,10 +178,40 @@ export class ProfileManager {
       // Store in mock database
       this.mockProfiles.set(profile.patient_id, profile);
 
-      console.log(`Created patient profile for ${profile.patient_id} with completeness: ${completenessScore}`);
+      // Audit Trail - Patient Profile Creation
+      await this.auditLogger.log({
+        user_id: userId || 'system',
+        event_type: 'patient_profile_created',
+        event_description: `Patient profile created for ${profile.demographics.name}`,
+        metadata: {
+          patient_id: profile.patient_id,
+          completeness_score: completenessScore,
+          performance_ms: Date.now() - startTime,
+          compliance_validated: true
+        }
+      });
+
+      // Performance monitoring (PRD requirement: ≤20s create)
+      const executionTime = Date.now() - startTime;
+      if (executionTime > 20000) {
+        console.warn(`Patient profile creation exceeded 20s target: ${executionTime}ms`);
+      }
+
+      console.log(`Created patient profile for ${profile.patient_id} with completeness: ${completenessScore} (${executionTime}ms)`);
       return profile;
 
     } catch (error) {
+      // Audit Trail - Error
+      await this.auditLogger.log({
+        user_id: userId || 'system',
+        event_type: 'patient_profile_creation_error',
+        event_description: `Failed to create patient profile: ${error.message}`,
+        metadata: {
+          error: error.message,
+          performance_ms: Date.now() - startTime
+        }
+      });
+      
       console.error('Error in createPatientProfile:', error);
       return null;
     }
@@ -169,7 +220,9 @@ export class ProfileManager {
   /**
    * Retrieve complete patient profile with all related data
    */
-  async getPatientProfile(patientId: string): Promise<PatientProfileExtended | null> {
+  async getPatientProfile(patientId: string, userId?: string): Promise<PatientProfileExtended | null> {
+    const startTime = Date.now();
+    
     try {
       const profile = this.mockProfiles.get(patientId);
       
@@ -181,10 +234,40 @@ export class ProfileManager {
       profile.last_accessed = new Date().toISOString();
       this.mockProfiles.set(patientId, profile);
 
-      console.log(`Retrieved patient profile for ${patientId}`);
+      // Audit Trail - Patient Profile Access
+      await this.auditLogger.log({
+        user_id: userId || 'system',
+        event_type: 'patient_profile_accessed',
+        event_description: `Patient profile accessed for ${profile.demographics.name}`,
+        metadata: {
+          patient_id: patientId,
+          performance_ms: Date.now() - startTime,
+          access_timestamp: profile.last_accessed
+        }
+      });
+
+      // Performance monitoring (PRD requirement: ≤2s search)
+      const executionTime = Date.now() - startTime;
+      if (executionTime > 2000) {
+        console.warn(`Patient profile retrieval exceeded 2s target: ${executionTime}ms`);
+      }
+
+      console.log(`Retrieved patient profile for ${patientId} (${executionTime}ms)`);
       return profile;
 
     } catch (error) {
+      // Audit Trail - Error
+      await this.auditLogger.log({
+        user_id: userId || 'system',
+        event_type: 'patient_profile_access_error',
+        event_description: `Failed to access patient profile: ${error.message}`,
+        metadata: {
+          patient_id: patientId,
+          error: error.message,
+          performance_ms: Date.now() - startTime
+        }
+      });
+      
       console.error('Error in getPatientProfile:', error);
       return null;
     }
@@ -309,7 +392,7 @@ export class ProfileManager {
       }
     }
 
-    return Math.min(1.0, totalScore);
+    return Math.min(100, Math.round(totalScore * 100)); // Return as percentage (0-100)
   }
 
   /**

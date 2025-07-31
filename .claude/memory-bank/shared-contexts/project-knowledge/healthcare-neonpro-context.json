@@ -1,0 +1,165 @@
+{
+  "project_context_id": "neonpro_healthcare_2025",
+  "project_name": "NeonPro Healthcare Management System",
+  "last_updated": "2025-01-31T13:00:00Z",
+  "context_type": "project_knowledge",
+  "project_overview": {
+    "domain": "healthcare_management",
+    "type": "enterprise_saas_platform",
+    "complexity_level": 9,
+    "team_size": "8-12 developers",
+    "timeline": "ongoing_development",
+    "current_phase": "feature_enhancement_and_optimization"
+  },
+  "technology_stack": {
+    "frontend": {
+      "framework": "Next.js 14",
+      "ui_library": "shadcn/ui",
+      "styling": "TailwindCSS",
+      "state_management": "React Context + Zustand",
+      "forms": "React Hook Form + Zod"
+    },
+    "backend": {
+      "database": "Supabase PostgreSQL",
+      "authentication": "Supabase Auth",
+      "api": "Next.js API Routes + Supabase Edge Functions",
+      "real_time": "Supabase Realtime",
+      "storage": "Supabase Storage"
+    },
+    "infrastructure": {
+      "hosting": "Vercel",
+      "monitoring": "Sentry + Custom Analytics",
+      "ci_cd": "GitHub Actions",
+      "testing": "Vitest + Playwright"
+    }
+  },
+  "architectural_patterns": {
+    "primary_patterns": [
+      "Multi-tenant SaaS architecture",
+      "Row Level Security (RLS) implementation",
+      "Component-based design system",
+      "API-first development approach"
+    ],
+    "quality_standards": {
+      "code_quality_minimum": 9.0,
+      "test_coverage_target": 90,
+      "performance_score_target": 95,
+      "accessibility_compliance": "WCAG 2.1 AA+"
+    }
+  },
+  "business_context": {
+    "primary_users": [
+      "healthcare_professionals",
+      "clinic_administrators", 
+      "patients",
+      "system_administrators"
+    ],
+    "key_features": [
+      "patient_management",
+      "appointment_scheduling",
+      "medical_record_management",
+      "billing_and_invoicing",
+      "inventory_management",
+      "compliance_reporting"
+    ],
+    "compliance_requirements": [
+      "LGPD (Brazilian Data Protection)",
+      "ANVISA medical device regulations",
+      "Healthcare data security standards"
+    ]
+  },
+  "development_insights": {
+    "successful_patterns": [
+      {
+        "pattern": "Multi-tenant data isolation using RLS",
+        "success_rate": 0.98,
+        "key_learnings": "Consistent use of tenant_id filtering prevents data leakage"
+      },
+      {
+        "pattern": "Component-based UI development with shadcn/ui",
+        "success_rate": 0.94,
+        "key_learnings": "Consistent design system accelerates development velocity"
+      },
+      {
+        "pattern": "API-first development approach",
+        "success_rate": 0.91,
+        "key_learnings": "Clear API contracts improve frontend-backend coordination"
+      }
+    ],
+    "challenges_and_solutions": [
+      {
+        "challenge": "Complex permission management across multiple user roles",
+        "solution": "Hierarchical role-based access control with inheritance",
+        "outcome": "Flexible permission system with maintainable complexity"
+      },
+      {
+        "challenge": "Real-time data synchronization for appointment scheduling",
+        "solution": "Supabase Realtime with conflict resolution mechanisms",
+        "outcome": "Reliable real-time updates with <1s latency"
+      }
+    ]
+  },
+  "quality_metrics": {
+    "current_performance": {
+      "lighthouse_score": 94,
+      "core_web_vitals": "all_good",
+      "test_coverage": 92,
+      "code_quality_score": 9.3
+    },
+    "reliability_metrics": {
+      "uptime": 99.8,
+      "mean_time_to_recovery": "8 minutes",
+      "error_rate": 0.02,
+      "user_satisfaction_score": 4.6
+    }
+  },
+  "agent_coordination_history": {
+    "successful_workflows": [
+      {
+        "workflow_type": "complex_development_workflow",
+        "feature": "Advanced appointment scheduling with conflict resolution",
+        "agents_involved": ["apex-researcher", "apex-architect", "apex-developer", "apex-qa-debugger"],
+        "outcome": "Successfully implemented with 9.4/10 quality score",
+        "duration": "4.2 hours",
+        "key_learnings": "Strong research phase led to optimal architectural decisions"
+      },
+      {
+        "workflow_type": "qa_optimization_workflow",
+        "focus": "Performance optimization of patient dashboard",
+        "agents_involved": ["apex-architect", "apex-qa-debugger", "apex-developer", "learning-aggregator"],
+        "outcome": "25% performance improvement achieved",
+        "duration": "3.1 hours",
+        "key_learnings": "Database query optimization had highest impact"
+      }
+    ]
+  },
+  "future_development_priorities": [
+    {
+      "priority": 1,
+      "feature": "AI-powered diagnostic assistance integration",
+      "complexity": 8,
+      "estimated_effort": "6-8 weeks",
+      "recommended_workflow": "complex_development_workflow"
+    },
+    {
+      "priority": 2,
+      "feature": "Mobile application development (React Native)",
+      "complexity": 7,
+      "estimated_effort": "4-6 weeks", 
+      "recommended_workflow": "research_analysis_workflow"
+    },
+    {
+      "priority": 3,
+      "feature": "Advanced analytics and reporting dashboard",
+      "complexity": 6,
+      "estimated_effort": "3-4 weeks",
+      "recommended_workflow": "rapid_development_workflow"
+    }
+  ],
+  "knowledge_base_references": [
+    "healthcare_compliance_patterns",
+    "multi_tenant_saas_architectures",
+    "supabase_optimization_techniques",
+    "nextjs_enterprise_patterns"
+  ]
+}

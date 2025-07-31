@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { AuditLogger } from '../../audit/audit-logger';
+import { AuditLogger } from '../../auth/audit/audit-logger';
 import { LGPDManager } from '../../lgpd/lgpd-manager';
 import { EncryptionService } from '../../security/encryption-service';
 

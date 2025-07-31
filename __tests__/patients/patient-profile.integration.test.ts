@@ -22,8 +22,32 @@ jest.mock('@supabase/auth-helpers-nextjs', () => ({
 // Mock AuditLogger to avoid dependencies
 jest.mock('../../lib/auth/audit/audit-logger', () => ({
   AuditLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn().mockResolvedValue(true),
     logProfileUpdate: jest.fn().mockResolvedValue(true),
     logProfileAccess: jest.fn().mockResolvedValue(true)
+  }))
+}));
+
+// Mock LGPDComplianceManager to avoid dependencies  
+jest.mock('../../lib/lgpd/LGPDComplianceManager', () => ({
+  LGPDComplianceManager: jest.fn().mockImplementation(() => ({
+    validateDataConsent: jest.fn().mockResolvedValue(true),
+    validateDataAccess: jest.fn().mockResolvedValue(true)
+  }))
+}));
+
+// Mock createClient
+jest.mock('../../app/utils/supabase/server', () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({ 
+        data: { session: { user: { id: 'test-user' } } } 
+      })
+    },
+    from: jest.fn(() => ({
+      insert: jest.fn(() => ({ select: jest.fn(() => ({ single: jest.fn() })) })),
+      select: jest.fn(() => ({ eq: jest.fn(() => ({ single: jest.fn() })) }))
+    }))
   }))
 }));
 
@@ -163,8 +187,8 @@ describe('Patient Profile System Integration Tests', () => {
     test('should calculate profile completeness score accurately', async () => {
       const result = await profileManager.createPatientProfile(mockPatientData);
       
-      expect(result?.profile_completeness_score).toBeGreaterThan(0.7);
-      expect(result?.profile_completeness_score).toBeLessThanOrEqual(1.0);
+      expect(result?.profile_completeness_score).toBeGreaterThan(70); // Changed to percentage
+      expect(result?.profile_completeness_score).toBeLessThanOrEqual(100); // Changed to percentage
     });
 
     test('should search patients by various criteria', async () => {
@@ -229,12 +253,12 @@ describe('Patient Profile System Integration Tests', () => {
       
       await profileManager.createPatientProfile(incompleteData);
       
-      const incompleteProfiles = await profileManager.getIncompleteProfiles(0.8);
+      const incompleteProfiles = await profileManager.getIncompleteProfiles(80); // Changed to percentage
       
       expect(incompleteProfiles.length).toBeGreaterThan(0);
       const found = incompleteProfiles.find(p => p.patient_id === 'incomplete-patient');
       expect(found).toBeTruthy();
-      expect(found?.profile_completeness_score).toBeLessThan(0.8);
+      expect(found?.profile_completeness_score).toBeLessThan(80); // Changed to percentage
     });
 
     test('should archive patient profile', async () => {

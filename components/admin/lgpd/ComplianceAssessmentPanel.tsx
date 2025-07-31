@@ -1,469 +1,639 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import {
-  TrendingUp,
-  Shield,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Clock,
+import React, { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Progress } from '@/components/ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { 
+  Search, 
+  Filter, 
+  Play, 
+  Plus, 
+  Eye, 
+  CheckCircle, 
+  XCircle, 
+  AlertTriangle, 
+  Download, 
   RefreshCw,
-  Download,
-  Eye,
-  Activity,
   BarChart3,
-  FileText,
+  TrendingUp,
+  TrendingDown,
+  Calendar,
+  Clock,
   Target,
-  Zap
-} from 'lucide-react';
-import { useComplianceAssessment } from '@/hooks/useLGPD';
-import { ComplianceAssessment, AssessmentStatus, ComplianceArea } from '@/types/lgpd';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  Shield
+} from 'lucide-react'
+import { useComplianceAssessment } from '@/hooks/useLGPD'
+import { ComplianceAssessment } from '@/types/lgpd'
 
-/**
- * Compliance Assessment Panel
- * 
- * Comprehensive panel for LGPD compliance assessments including:
- * - Assessment execution and monitoring
- * - Compliance score tracking
- * - Area-specific compliance analysis
- * - Recommendations and action items
- * - Historical assessment comparison
- */
-export function ComplianceAssessmentPanel() {
+interface ComplianceAssessmentPanelProps {
+  className?: string
+}
+
+export function ComplianceAssessmentPanel({ className }: ComplianceAssessmentPanelProps) {
   const {
     assessments,
-    currentAssessment,
-    loading,
+    isLoading,
     error,
-    loadAssessments,
-    runAssessment,
-    getAssessmentDetails
-  } = useComplianceAssessment();
+    createAssessment,
+    runAutomatedAssessment,
+    exportAssessments,
+    refreshData
+  } = useComplianceAssessment()
 
-  const [selectedAssessment, setSelectedAssessment] = useState<ComplianceAssessment | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [runningAssessment, setRunningAssessment] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<string>('all')
+  const [selectedAssessment, setSelectedAssessment] = useState<ComplianceAssessment | null>(null)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isRunningAutomated, setIsRunningAutomated] = useState(false)
+  const [newAssessment, setNewAssessment] = useState({
+    name: '',
+    description: '',
+    type: 'manual' as 'manual' | 'automated'
+  })
 
-  useEffect(() => {
-    loadAssessments();
-  }, [loadAssessments]);
+  // Filtrar avaliações
+  const filteredAssessments = assessments?.filter(assessment => {
+    const matchesSearch = 
+      assessment.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assessment.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesStatus = statusFilter === 'all' || assessment.status === statusFilter
+    const matchesType = typeFilter === 'all' || assessment.type === typeFilter
+    
+    return matchesSearch && matchesStatus && matchesType
+  }) || []
 
-  const handleRunAssessment = async () => {
-    setRunningAssessment(true);
-    try {
-      await runAssessment();
-      await loadAssessments();
-    } catch (error) {
-      console.error('Error running assessment:', error);
-    } finally {
-      setRunningAssessment(false);
-    }
-  };
-
-  const handleViewDetails = async (assessment: ComplianceAssessment) => {
-    try {
-      const details = await getAssessmentDetails(assessment.id);
-      setSelectedAssessment({ ...assessment, ...details });
-      setShowDetails(true);
-    } catch (error) {
-      console.error('Error loading assessment details:', error);
-    }
-  };
-
-  const getStatusBadge = (status: AssessmentStatus) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'running':
-        return <Badge className="bg-blue-100 text-blue-800"><Activity className="h-3 w-3 mr-1" />Em Execução</Badge>;
+      case 'pending':
+        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>
+      case 'in_progress':
+        return <Badge variant="default"><RefreshCw className="h-3 w-3 mr-1" />Em Execução</Badge>
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Concluída</Badge>;
+        return <Badge variant="outline"><CheckCircle className="h-3 w-3 mr-1" />Concluída</Badge>
       case 'failed':
-        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Falhou</Badge>;
-      case 'scheduled':
-        return <Badge variant="outline"><Clock className="h-3 w-3 mr-1" />Agendada</Badge>;
+        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Falhou</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>
     }
-  };
+  }
 
-  const getComplianceColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-yellow-600';
-    if (score >= 70) return 'text-orange-600';
-    return 'text-red-600';
-  };
+  const getScoreBadge = (score: number) => {
+    if (score >= 90) return <Badge variant="default" className="bg-green-600">Excelente</Badge>
+    if (score >= 70) return <Badge variant="secondary" className="bg-yellow-600">Bom</Badge>
+    if (score >= 50) return <Badge variant="secondary" className="bg-orange-600">Regular</Badge>
+    return <Badge variant="destructive">Crítico</Badge>
+  }
 
-  const getComplianceLevel = (score: number) => {
-    if (score >= 90) return 'Excelente';
-    if (score >= 80) return 'Bom';
-    if (score >= 70) return 'Adequado';
-    if (score >= 60) return 'Atenção';
-    return 'Crítico';
-  };
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-green-600'
+    if (score >= 70) return 'text-yellow-600'
+    if (score >= 50) return 'text-orange-600'
+    return 'text-red-600'
+  }
 
-  const getAreaLabel = (area: ComplianceArea) => {
-    const labels: Record<ComplianceArea, string> = {
-      'consent_management': 'Gestão de Consentimento',
-      'data_subject_rights': 'Direitos dos Titulares',
-      'data_protection': 'Proteção de Dados',
-      'breach_management': 'Gestão de Incidentes',
-      'audit_trail': 'Trilha de Auditoria',
-      'retention_policies': 'Políticas de Retenção',
-      'third_party_sharing': 'Compartilhamento com Terceiros',
-      'documentation': 'Documentação'
-    };
-    return labels[area] || area;
-  };
+  const handleCreateAssessment = async () => {
+    try {
+      await createAssessment(newAssessment)
+      setIsCreateOpen(false)
+      setNewAssessment({ name: '', description: '', type: 'manual' })
+    } catch (error) {
+      console.error('Erro ao criar avaliação:', error)
+    }
+  }
 
-  const getLatestAssessment = () => {
-    return assessments.find(a => a.status === 'completed') || null;
-  };
+  const handleRunAutomatedAssessment = async () => {
+    setIsRunningAutomated(true)
+    try {
+      await runAutomatedAssessment()
+    } catch (error) {
+      console.error('Erro ao executar avaliação automatizada:', error)
+    } finally {
+      setIsRunningAutomated(false)
+    }
+  }
 
-  const getAssessmentTrend = () => {
-    const completed = assessments.filter(a => a.status === 'completed').slice(0, 2);
-    if (completed.length < 2) return null;
-    
-    const latest = completed[0];
-    const previous = completed[1];
-    const trend = latest.overallScore - previous.overallScore;
-    
-    return {
-      trend,
-      isImproving: trend > 0,
-      percentage: Math.abs(trend)
-    };
-  };
+  // Calcular estatísticas
+  const stats = {
+    total: assessments?.length || 0,
+    completed: assessments?.filter(a => a.status === 'completed').length || 0,
+    pending: assessments?.filter(a => a.status === 'pending').length || 0,
+    averageScore: assessments?.length ? 
+      Math.round(assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length) : 0
+  }
 
-  const latestAssessment = getLatestAssessment();
-  const trend = getAssessmentTrend();
+  const latestAssessment = assessments?.find(a => a.status === 'completed')
 
-  if (loading && assessments.length === 0) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-4 w-4 animate-spin" />
-          <span>Carregando avaliações...</span>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Carregando avaliações...</span>
       </div>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Erro ao carregar avaliações: {error}
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className={className}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Avaliações de Conformidade</h2>
+          <h3 className="text-xl font-semibold">Avaliações de Conformidade</h3>
           <p className="text-muted-foreground">
-            Execute e monitore avaliações automáticas de conformidade LGPD
+            Execute e monitore avaliações de conformidade LGPD
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={loadAssessments} disabled={loading} variant="outline">
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleRunAutomatedAssessment}
+            disabled={isRunningAutomated}
+          >
+            {isRunningAutomated ? (
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Play className="h-4 w-4 mr-2" />
+            )}
+            Executar Avaliação Automatizada
+          </Button>
+          <Button variant="outline" onClick={refreshData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
             Atualizar
           </Button>
-          <Button onClick={handleRunAssessment} disabled={runningAssessment || currentAssessment?.status === 'running'}>
-            <Zap className={`h-4 w-4 mr-2 ${runningAssessment ? 'animate-pulse' : ''}`} />
-            {runningAssessment ? 'Executando...' : 'Nova Avaliação'}
+          <Button variant="outline" onClick={exportAssessments}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar
           </Button>
         </div>
       </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Current Assessment Status */}
-      {currentAssessment && currentAssessment.status === 'running' && (
-        <Alert>
-          <Activity className="h-4 w-4" />
-          <AlertTitle>Avaliação em Execução</AlertTitle>
-          <AlertDescription>
-            Uma avaliação de conformidade está sendo executada. Isso pode levar alguns minutos.
-            <div className="mt-2">
-              <Progress value={currentAssessment.progress || 0} className="w-full" />
-              <p className="text-sm text-muted-foreground mt-1">
-                Progresso: {currentAssessment.progress || 0}%
-              </p>
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Avaliações</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <BarChart3 className="h-8 w-8 text-blue-600" />
             </div>
-          </AlertDescription>
-        </Alert>
-      )}
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Concluídas</p>
+                <p className="text-2xl font-bold">{stats.completed}</p>
+              </div>
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Pendentes</p>
+                <p className="text-2xl font-bold">{stats.pending}</p>
+              </div>
+              <Clock className="h-8 w-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Pontuação Média</p>
+                <p className={`text-2xl font-bold ${getScoreColor(stats.averageScore)}`}>
+                  {stats.averageScore}%
+                </p>
+              </div>
+              <Target className="h-8 w-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Latest Assessment Overview */}
+      {/* Última avaliação */}
       {latestAssessment && (
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Score Geral</CardTitle>
-              <Shield className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-3xl font-bold ${getComplianceColor(latestAssessment.overallScore)}`}>
-                {latestAssessment.overallScore}%
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {getComplianceLevel(latestAssessment.overallScore)}
-                {trend && (
-                  <span className={`ml-2 ${trend.isImproving ? 'text-green-600' : 'text-red-600'}`}>
-                    {trend.isImproving ? '↗' : '↘'} {trend.percentage.toFixed(1)}%
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Última Avaliação de Conformidade
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <h4 className="font-semibold mb-2">Pontuação Geral</h4>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`text-3xl font-bold ${getScoreColor(latestAssessment.score || 0)}`}>
+                    {latestAssessment.score}%
                   </span>
-                )}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Última Avaliação</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {format(new Date(latestAssessment.completedAt!), 'dd/MM', { locale: ptBR })}
+                  {getScoreBadge(latestAssessment.score || 0)}
+                </div>
+                <Progress value={latestAssessment.score} className="mb-2" />
+                <p className="text-sm text-muted-foreground">
+                  Executada em {new Date(latestAssessment.completed_at || '').toLocaleDateString('pt-BR')}
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {format(new Date(latestAssessment.completedAt!), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Recomendações</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {latestAssessment.recommendations?.length || 0}
+              
+              <div>
+                <h4 className="font-semibold mb-2">Áreas Avaliadas</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Consentimentos</span>
+                    <Badge variant="outline">95%</Badge>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Direitos dos Titulares</span>
+                    <Badge variant="outline">88%</Badge>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Segurança de Dados</span>
+                    <Badge variant="outline">92%</Badge>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Documentação</span>
+                    <Badge variant="outline">85%</Badge>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Ações sugeridas
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+              
+              <div>
+                <h4 className="font-semibold mb-2">Recomendações</h4>
+                <div className="space-y-2">
+                  {latestAssessment.recommendations?.slice(0, 3).map((rec, index) => (
+                    <div key={index} className="text-sm bg-muted p-2 rounded">
+                      {rec}
+                    </div>
+                  )) || (
+                    <div className="text-sm text-muted-foreground">
+                      Nenhuma recomendação específica
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="assessments" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="history">Histórico</TabsTrigger>
-          <TabsTrigger value="areas">Áreas de Conformidade</TabsTrigger>
+          <TabsTrigger value="assessments">Avaliações</TabsTrigger>
+          <TabsTrigger value="create">Nova Avaliação</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          {latestAssessment ? (
-            <>
-              {/* Compliance Areas */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Conformidade por Área</CardTitle>
-                  <CardDescription>
-                    Pontuação detalhada por área de conformidade LGPD
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {latestAssessment.areaScores && Object.entries(latestAssessment.areaScores).map(([area, score]) => (
-                      <div key={area} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">{getAreaLabel(area as ComplianceArea)}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-32">
-                            <Progress value={score} className="h-2" />
-                          </div>
-                          <span className={`text-sm font-medium ${getComplianceColor(score)}`}>
-                            {score}%
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recommendations */}
-              {latestAssessment.recommendations && latestAssessment.recommendations.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recomendações de Melhoria</CardTitle>
-                    <CardDescription>
-                      Ações sugeridas para melhorar a conformidade LGPD
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {latestAssessment.recommendations.map((recommendation, index) => (
-                        <div key={index} className="flex items-start space-x-3 p-3 border rounded-lg">
-                          <div className="flex-shrink-0">
-                            {recommendation.priority === 'high' ? (
-                              <AlertTriangle className="h-5 w-5 text-red-500" />
-                            ) : recommendation.priority === 'medium' ? (
-                              <Clock className="h-5 w-5 text-yellow-500" />
-                            ) : (
-                              <CheckCircle className="h-5 w-5 text-blue-500" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="text-sm font-medium">{recommendation.title}</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {recommendation.description}
-                            </p>
-                            <div className="flex items-center space-x-2 mt-2">
-                              <Badge variant={recommendation.priority === 'high' ? 'destructive' : 
-                                            recommendation.priority === 'medium' ? 'default' : 'secondary'}>
-                                {recommendation.priority === 'high' ? 'Alta' :
-                                 recommendation.priority === 'medium' ? 'Média' : 'Baixa'}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">
-                                Área: {getAreaLabel(recommendation.area)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nenhuma Avaliação Disponível</h3>
-                <p className="text-muted-foreground text-center mb-4">
-                  Execute sua primeira avaliação de conformidade LGPD para visualizar métricas e recomendações.
-                </p>
-                <Button onClick={handleRunAssessment} disabled={runningAssessment}>
-                  <Zap className="h-4 w-4 mr-2" />
-                  Executar Primeira Avaliação
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4">
+        <TabsContent value="assessments" className="space-y-4">
+          {/* Filtros */}
           <Card>
             <CardHeader>
-              <CardTitle>Histórico de Avaliações</CardTitle>
-              <CardDescription>
-                Todas as avaliações de conformidade executadas
-              </CardDescription>
+              <CardTitle>Filtros</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Score Geral</TableHead>
-                      <TableHead>Duração</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {assessments.map((assessment) => (
-                      <TableRow key={assessment.id}>
-                        <TableCell>
-                          {format(new Date(assessment.createdAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(assessment.status)}</TableCell>
-                        <TableCell>
-                          {assessment.status === 'completed' ? (
-                            <span className={getComplianceColor(assessment.overallScore)}>
-                              {assessment.overallScore}%
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {assessment.completedAt && assessment.createdAt ? (
-                            `${Math.round(
-                              (new Date(assessment.completedAt).getTime() - 
-                               new Date(assessment.createdAt).getTime()) / 1000
-                            )}s`
-                          ) : (
-                            <span className="text-muted-foreground">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {assessment.status === 'completed' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleViewDetails(assessment)}
-                            >
-                              <Eye className="h-3 w-3 mr-1" />
-                              Detalhes
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor="search">Buscar</Label>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search"
+                      placeholder="Nome ou descrição..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="pending">Pendente</SelectItem>
+                      <SelectItem value="in_progress">Em Execução</SelectItem>
+                      <SelectItem value="completed">Concluída</SelectItem>
+                      <SelectItem value="failed">Falhou</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="type">Tipo</Label>
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os tipos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="manual">Manual</SelectItem>
+                      <SelectItem value="automated">Automatizada</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm('')
+                      setStatusFilter('all')
+                      setTypeFilter('all')
+                    }}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Limpar
+                  </Button>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Tabela de avaliações */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Histórico de Avaliações ({filteredAssessments.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Pontuação</TableHead>
+                    <TableHead>Data de Criação</TableHead>
+                    <TableHead>Concluída em</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAssessments.map((assessment) => (
+                    <TableRow key={assessment.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{assessment.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {assessment.description}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={assessment.type === 'automated' ? 'default' : 'outline'}>
+                          {assessment.type === 'automated' ? 'Automatizada' : 'Manual'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(assessment.status)}</TableCell>
+                      <TableCell>
+                        {assessment.score !== null ? (
+                          <div className="flex items-center gap-2">
+                            <span className={`font-semibold ${getScoreColor(assessment.score)}`}>
+                              {assessment.score}%
+                            </span>
+                            {getScoreBadge(assessment.score)}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(assessment.created_at).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        {assessment.completed_at ? (
+                          new Date(assessment.completed_at).toLocaleDateString('pt-BR')
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-3 w-3 mr-1" />
+                              Ver Detalhes
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle>{assessment.name}</DialogTitle>
+                              <DialogDescription>
+                                {assessment.description}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-6">
+                              {/* Informações gerais */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <Label>Tipo</Label>
+                                  <p className="text-sm">
+                                    {assessment.type === 'automated' ? 'Automatizada' : 'Manual'}
+                                  </p>
+                                </div>
+                                <div>
+                                  <Label>Status</Label>
+                                  <div className="mt-1">{getStatusBadge(assessment.status)}</div>
+                                </div>
+                                <div>
+                                  <Label>Criada em</Label>
+                                  <p className="text-sm">
+                                    {new Date(assessment.created_at).toLocaleString('pt-BR')}
+                                  </p>
+                                </div>
+                                {assessment.completed_at && (
+                                  <div>
+                                    <Label>Concluída em</Label>
+                                    <p className="text-sm">
+                                      {new Date(assessment.completed_at).toLocaleString('pt-BR')}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Pontuação */}
+                              {assessment.score !== null && (
+                                <div>
+                                  <Label>Pontuação de Conformidade</Label>
+                                  <div className="mt-2">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span className={`text-2xl font-bold ${getScoreColor(assessment.score)}`}>
+                                        {assessment.score}%
+                                      </span>
+                                      {getScoreBadge(assessment.score)}
+                                    </div>
+                                    <Progress value={assessment.score} className="mb-2" />
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Recomendações */}
+                              {assessment.recommendations && assessment.recommendations.length > 0 && (
+                                <div>
+                                  <Label>Recomendações</Label>
+                                  <div className="mt-2 space-y-2">
+                                    {assessment.recommendations.map((rec, index) => (
+                                      <div key={index} className="text-sm bg-muted p-3 rounded">
+                                        {rec}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Resultados detalhados */}
+                              {assessment.results && (
+                                <div>
+                                  <Label>Resultados Detalhados</Label>
+                                  <div className="mt-2">
+                                    <pre className="text-sm bg-muted p-3 rounded overflow-auto max-h-40">
+                                      {JSON.stringify(assessment.results, null, 2)}
+                                    </pre>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              
+              {filteredAssessments.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhuma avaliação encontrada
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="areas" className="space-y-4">
-          {latestAssessment?.areaScores ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {Object.entries(latestAssessment.areaScores).map(([area, score]) => (
-                <Card key={area}>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{getAreaLabel(area as ComplianceArea)}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Conformidade</span>
-                        <span className={`text-lg font-bold ${getComplianceColor(score)}`}>
-                          {score}%
-                        </span>
-                      </div>
-                      <Progress value={score} className="h-2" />
-                      <p className="text-sm text-muted-foreground">
-                        {getComplianceLevel(score)}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Target className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Dados de Área Não Disponíveis</h3>
-                <p className="text-muted-foreground text-center">
-                  Execute uma avaliação para visualizar a conformidade por área.
+        <TabsContent value="create" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Criar Nova Avaliação</CardTitle>
+              <CardDescription>
+                Configure uma nova avaliação de conformidade LGPD
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nome da Avaliação</Label>
+                <Input
+                  id="name"
+                  value={newAssessment.name}
+                  onChange={(e) => setNewAssessment({ ...newAssessment, name: e.target.value })}
+                  placeholder="Ex: Avaliação Trimestral Q1 2024"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="description">Descrição</Label>
+                <Textarea
+                  id="description"
+                  value={newAssessment.description}
+                  onChange={(e) => setNewAssessment({ ...newAssessment, description: e.target.value })}
+                  placeholder="Descreva o objetivo e escopo desta avaliação..."
+                  rows={3}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="type">Tipo de Avaliação</Label>
+                <Select 
+                  value={newAssessment.type} 
+                  onValueChange={(value: 'manual' | 'automated') => 
+                    setNewAssessment({ ...newAssessment, type: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manual">Manual</SelectItem>
+                    <SelectItem value="automated">Automatizada</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {newAssessment.type === 'automated' 
+                    ? 'Avaliação executada automaticamente pelo sistema'
+                    : 'Avaliação que requer intervenção manual'
+                  }
                 </p>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+              
+              <div className="flex gap-2">
+                <Button onClick={handleCreateAssessment}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Criar Avaliação
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setNewAssessment({ name: '', description: '', type: 'manual' })}
+                >
+                  Limpar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

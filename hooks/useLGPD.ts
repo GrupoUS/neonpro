@@ -1,454 +1,778 @@
-'use client';
+'use client'
 
-import { useState, useEffect, useCallback } from 'react';
-import { useSupabase } from '@/hooks/useSupabase';
-import { LGPDComplianceManager } from '@/lib/lgpd/compliance-manager';
-import {
-  ConsentRecord,
-  ConsentRequest,
-  DataSubjectRequest,
-  CreateDataSubjectRequest,
-  AuditLog,
-  BreachIncident,
-  ComplianceAssessment,
-  LGPDDashboardMetrics,
-  LGPDDataType,
-  LGPDPurpose,
-  DataSubjectRequestType,
-  LGPDConfiguration
-} from '@/types/lgpd';
+import { useState, useEffect, useCallback } from 'react'
+import { useUser } from '@supabase/auth-helpers-react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { toast } from 'sonner'
 
-/**
- * LGPD Compliance Hook
- * 
- * Provides React integration for LGPD compliance management
- */
-export function useLGPDCompliance() {
-  const { supabase } = useSupabase();
-  const [complianceManager, setComplianceManager] = useState<LGPDComplianceManager | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Initialize compliance manager
-  useEffect(() => {
-    if (supabase) {
-      const config: LGPDConfiguration = {
-        auto_consent_renewal: true,
-        consent_expiry_days: 730, // 2 years
-        data_retention_days: 2555, // 7 years
-        breach_notification_hours: 72,
-        assessment_schedule: 'quarterly',
-        auto_data_cleanup: true,
-        require_explicit_consent: true,
-        enable_audit_trail: true,
-        notification_email: process.env.NEXT_PUBLIC_LGPD_NOTIFICATION_EMAIL || 'lgpd@neonpro.com.br'
-      };
-
-      const manager = new LGPDComplianceManager(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        config
-      );
-      
-      setComplianceManager(manager);
-    }
-  }, [supabase]);
-
-  const handleError = useCallback((error: unknown, context: string) => {
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`LGPD ${context} error:`, error);
-    setError(`${context}: ${message}`);
-  }, []);
-
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
-  return {
-    complianceManager,
-    loading,
-    error,
-    clearError
-  };
+// Types
+export interface LGPDMetrics {
+  compliance_percentage: number
+  active_consents: number
+  pending_requests: number
+  active_breaches: number
+  total_users: number
+  consent_rate: number
+  avg_response_time: number
+  last_assessment: string | null
 }
 
-/**
- * Consent Management Hook
- */
-export function useConsentManagement() {
-  const { complianceManager } = useLGPDCompliance();
-  const [consents, setConsents] = useState<ConsentRecord[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const grantConsent = useCallback(async (
-    userId: string,
-    request: ConsentRequest,
-    metadata?: { ip_address?: string; user_agent?: string }
-  ) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const consent = await complianceManager.grantConsent(userId, request, metadata);
-      setConsents(prev => [consent, ...prev]);
-      return consent;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to grant consent';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  const withdrawConsent = useCallback(async (
-    userId: string,
-    consentId: string,
-    reason?: string
-  ) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await complianceManager.withdrawConsent(userId, consentId, reason);
-      setConsents(prev => prev.map(consent => 
-        consent.id === consentId 
-          ? { ...consent, consent_given: false, withdrawn_at: new Date() }
-          : consent
-      ));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to withdraw consent';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  const getUserConsents = useCallback(async (userId: string) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const userConsents = await complianceManager.getUserConsents(userId);
-      setConsents(userConsents);
-      return userConsents;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to get user consents';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  const getActiveConsent = useCallback(async (
-    userId: string,
-    dataType: LGPDDataType,
-    purpose: LGPDPurpose
-  ) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    try {
-      return await complianceManager.getActiveConsent(userId, dataType, purpose);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to get active consent';
-      setError(message);
-      throw err;
-    }
-  }, [complianceManager]);
-
-  return {
-    consents,
-    loading,
-    error,
-    grantConsent,
-    withdrawConsent,
-    getUserConsents,
-    getActiveConsent,
-    clearError: () => setError(null)
-  };
+export interface ConsentRecord {
+  id: string
+  user_id: string
+  purpose_id: string
+  purpose_name: string
+  purpose_description: string
+  granted: boolean
+  granted_at: string | null
+  withdrawn_at: string | null
+  expires_at: string | null
+  version: string
+  ip_address: string | null
+  user_agent: string | null
+  created_at: string
+  updated_at: string
 }
 
-/**
- * Data Subject Rights Hook
- */
-export function useDataSubjectRights() {
-  const { complianceManager } = useLGPDCompliance();
-  const [requests, setRequests] = useState<DataSubjectRequest[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const createRequest = useCallback(async (
-    userId: string,
-    request: CreateDataSubjectRequest
-  ) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const dataSubjectRequest = await complianceManager.createDataSubjectRequest(userId, request);
-      setRequests(prev => [dataSubjectRequest, ...prev]);
-      return dataSubjectRequest;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create data subject request';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  const processRequest = useCallback(async (requestId: string) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      await complianceManager.processDataSubjectRequest(requestId);
-      setRequests(prev => prev.map(req => 
-        req.id === requestId 
-          ? { ...req, status: 'fulfilled', fulfilled_at: new Date() }
-          : req
-      ));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to process data subject request';
-      setError(message);
-      setRequests(prev => prev.map(req => 
-        req.id === requestId 
-          ? { ...req, status: 'rejected', rejection_reason: message }
-          : req
-      ));
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  return {
-    requests,
-    loading,
-    error,
-    createRequest,
-    processRequest,
-    clearError: () => setError(null)
-  };
+export interface DataSubjectRequest {
+  id: string
+  user_id: string
+  request_type: 'access' | 'rectification' | 'erasure' | 'portability' | 'restriction' | 'objection'
+  status: 'pending' | 'in_progress' | 'completed' | 'rejected'
+  description: string | null
+  requested_at: string
+  processed_at: string | null
+  processed_by: string | null
+  response_data: any | null
+  notes: string | null
+  created_at: string
+  updated_at: string
 }
 
-/**
- * Audit Trail Hook
- */
-export function useAuditTrail() {
-  const { complianceManager } = useLGPDCompliance();
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const verifyIntegrity = useCallback(async (startDate?: Date, endDate?: Date) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const result = await complianceManager.verifyAuditTrailIntegrity(startDate, endDate);
-      return result;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to verify audit trail integrity';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  return {
-    auditLogs,
-    loading,
-    error,
-    verifyIntegrity,
-    clearError: () => setError(null)
-  };
+export interface BreachIncident {
+  id: string
+  title: string
+  description: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  status: 'reported' | 'investigating' | 'contained' | 'resolved'
+  affected_users: number
+  data_types: string[]
+  discovered_at: string
+  reported_at: string | null
+  resolved_at: string | null
+  reported_by: string
+  assigned_to: string | null
+  authority_notified: boolean
+  users_notified: boolean
+  mitigation_steps: string | null
+  created_at: string
+  updated_at: string
 }
 
-/**
- * Breach Management Hook
- */
-export function useBreachManagement() {
-  const { complianceManager } = useLGPDCompliance();
-  const [incidents, setIncidents] = useState<BreachIncident[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const reportBreach = useCallback(async (incident: Omit<BreachIncident, 'id' | 'detected_at' | 'reported_to_authority' | 'created_at' | 'updated_at'>) => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const breachIncident = await complianceManager.reportBreach(incident);
-      setIncidents(prev => [breachIncident, ...prev]);
-      return breachIncident;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to report breach';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  return {
-    incidents,
-    loading,
-    error,
-    reportBreach,
-    clearError: () => setError(null)
-  };
+export interface AuditEvent {
+  id: string
+  event_type: string
+  user_id: string | null
+  resource_type: string | null
+  resource_id: string | null
+  action: string
+  details: any | null
+  ip_address: string | null
+  user_agent: string | null
+  timestamp: string
 }
 
-/**
- * Compliance Assessment Hook
- */
-export function useComplianceAssessment() {
-  const { complianceManager } = useLGPDCompliance();
-  const [assessments, setAssessments] = useState<ComplianceAssessment[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const runAssessment = useCallback(async () => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const assessment = await complianceManager.runComplianceAssessment();
-      setAssessments(prev => [assessment, ...prev]);
-      return assessment;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to run compliance assessment';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
-
-  return {
-    assessments,
-    loading,
-    error,
-    runAssessment,
-    clearError: () => setError(null)
-  };
+export interface ComplianceAssessment {
+  id: string
+  assessment_type: 'manual' | 'automated'
+  status: 'pending' | 'in_progress' | 'completed' | 'failed'
+  score: number | null
+  max_score: number
+  findings: any | null
+  recommendations: string[] | null
+  conducted_by: string | null
+  started_at: string
+  completed_at: string | null
+  created_at: string
+  updated_at: string
 }
 
-/**
- * LGPD Dashboard Hook
- */
+// Main LGPD Dashboard Hook
 export function useLGPDDashboard() {
-  const { complianceManager } = useLGPDCompliance();
-  const [metrics, setMetrics] = useState<LGPDDashboardMetrics | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<LGPDMetrics | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const supabase = createClientComponentClient()
 
-  const loadMetrics = useCallback(async () => {
-    if (!complianceManager) throw new Error('Compliance manager not initialized');
-    
-    setLoading(true);
-    setError(null);
-    
+  const fetchMetrics = useCallback(async () => {
     try {
-      const dashboardMetrics = await complianceManager.getDashboardMetrics();
-      setMetrics(dashboardMetrics);
-      return dashboardMetrics;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load dashboard metrics';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [complianceManager]);
+      setIsLoading(true)
+      setError(null)
 
-  // Auto-load metrics when manager is available
-  useEffect(() => {
-    if (complianceManager && !metrics) {
-      loadMetrics();
+      const response = await fetch('/api/lgpd/compliance')
+      if (!response.ok) {
+        throw new Error('Failed to fetch LGPD metrics')
+      }
+
+      const data = await response.json()
+      setMetrics(data.metrics)
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar métricas LGPD')
+    } finally {
+      setIsLoading(false)
     }
-  }, [complianceManager, metrics, loadMetrics]);
+  }, [])
+
+  useEffect(() => {
+    fetchMetrics()
+  }, [fetchMetrics])
 
   return {
     metrics,
-    loading,
+    isLoading,
     error,
-    loadMetrics,
-    clearError: () => setError(null)
-  };
+    refetch: fetchMetrics
+  }
 }
 
-/**
- * Consent Banner Hook
- * 
- * Simplified hook for consent banner implementation
- */
-export function useConsentBanner(userId?: string) {
-  const { grantConsent, getActiveConsent } = useConsentManagement();
-  const [hasConsent, setHasConsent] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(false);
+// Consent Management Hook
+export function useConsentManagement() {
+  const [consents, setConsents] = useState<ConsentRecord[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const user = useUser()
 
-  const checkConsent = useCallback(async (dataType: LGPDDataType, purpose: LGPDPurpose) => {
-    if (!userId) return false;
-    
-    setLoading(true);
+  const fetchConsents = useCallback(async (filters?: {
+    user_id?: string
+    purpose_id?: string
+    granted?: boolean
+    page?: number
+    limit?: number
+  }) => {
     try {
-      const consent = await getActiveConsent(userId, dataType, purpose);
-      const hasActiveConsent = consent?.consent_given && !consent.withdrawn_at;
-      setHasConsent(hasActiveConsent);
-      return hasActiveConsent;
-    } catch (error) {
-      console.error('Error checking consent:', error);
-      setHasConsent(false);
-      return false;
+      setIsLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams()
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/consent?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch consents')
+      }
+
+      const data = await response.json()
+      setConsents(data.consents)
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar consentimentos')
     } finally {
-      setLoading(false);
+      setIsLoading(false)
     }
-  }, [userId, getActiveConsent]);
+  }, [])
 
-  const acceptConsent = useCallback(async (
-    dataType: LGPDDataType,
-    purpose: LGPDPurpose,
-    metadata?: { ip_address?: string; user_agent?: string }
-  ) => {
-    if (!userId) throw new Error('User ID required');
-    
-    const request: ConsentRequest = {
-      data_type: dataType,
-      purpose,
-      consent_given: true,
-      legal_basis: 'consent'
-    };
+  const updateConsent = useCallback(async (consentData: {
+    user_id?: string
+    purpose_id: string
+    granted: boolean
+    ip_address?: string
+    user_agent?: string
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/consent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(consentData)
+      })
 
-    await grantConsent(userId, request, metadata);
-    setHasConsent(true);
-  }, [userId, grantConsent]);
+      if (!response.ok) {
+        throw new Error('Failed to update consent')
+      }
+
+      const data = await response.json()
+      toast.success('Consentimento atualizado com sucesso')
+      
+      // Refresh consents
+      await fetchConsents()
+      
+      return data.consent
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao atualizar consentimento')
+      throw err
+    }
+  }, [fetchConsents])
+
+  const withdrawConsent = useCallback(async (consentId: string) => {
+    try {
+      const response = await fetch('/api/lgpd/consent', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ consent_id: consentId })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to withdraw consent')
+      }
+
+      toast.success('Consentimento retirado com sucesso')
+      
+      // Refresh consents
+      await fetchConsents()
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao retirar consentimento')
+      throw err
+    }
+  }, [fetchConsents])
 
   return {
-    hasConsent,
-    loading,
-    checkConsent,
-    acceptConsent
-  };
+    consents,
+    isLoading,
+    error,
+    fetchConsents,
+    updateConsent,
+    withdrawConsent
+  }
+}
+
+// Data Subject Rights Hook
+export function useDataSubjectRights() {
+  const [requests, setRequests] = useState<DataSubjectRequest[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  const fetchRequests = useCallback(async (filters?: {
+    user_id?: string
+    request_type?: string
+    status?: string
+    page?: number
+    limit?: number
+  }) => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams()
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/data-subject-rights?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch data subject requests')
+      }
+
+      const data = await response.json()
+      setRequests(data.requests)
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar solicitações')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const createRequest = useCallback(async (requestData: {
+    request_type: string
+    description?: string
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/data-subject-rights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create request')
+      }
+
+      const data = await response.json()
+      toast.success('Solicitação criada com sucesso')
+      
+      // Refresh requests
+      await fetchRequests()
+      
+      return data.request
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao criar solicitação')
+      throw err
+    }
+  }, [fetchRequests])
+
+  const updateRequest = useCallback(async (requestId: string, updateData: {
+    status?: string
+    response_data?: any
+    notes?: string
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/data-subject-rights', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ request_id: requestId, ...updateData })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update request')
+      }
+
+      const data = await response.json()
+      toast.success('Solicitação atualizada com sucesso')
+      
+      // Refresh requests
+      await fetchRequests()
+      
+      return data.request
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao atualizar solicitação')
+      throw err
+    }
+  }, [fetchRequests])
+
+  return {
+    requests,
+    isLoading,
+    error,
+    fetchRequests,
+    createRequest,
+    updateRequest
+  }
+}
+
+// Breach Management Hook
+export function useBreachManagement() {
+  const [breaches, setBreaches] = useState<BreachIncident[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  const fetchBreaches = useCallback(async (filters?: {
+    severity?: string
+    status?: string
+    page?: number
+    limit?: number
+  }) => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams()
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/breach?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch breach incidents')
+      }
+
+      const data = await response.json()
+      setBreaches(data.breaches)
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar incidentes')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const reportBreach = useCallback(async (breachData: {
+    title: string
+    description: string
+    severity: string
+    affected_users: number
+    data_types: string[]
+    discovered_at: string
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/breach', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(breachData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to report breach')
+      }
+
+      const data = await response.json()
+      toast.success('Incidente reportado com sucesso')
+      
+      // Refresh breaches
+      await fetchBreaches()
+      
+      return data.breach
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao reportar incidente')
+      throw err
+    }
+  }, [fetchBreaches])
+
+  const updateBreach = useCallback(async (breachId: string, updateData: {
+    status?: string
+    severity?: string
+    assigned_to?: string
+    authority_notified?: boolean
+    users_notified?: boolean
+    mitigation_steps?: string
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/breach', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ breach_id: breachId, ...updateData })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update breach')
+      }
+
+      const data = await response.json()
+      toast.success('Incidente atualizado com sucesso')
+      
+      // Refresh breaches
+      await fetchBreaches()
+      
+      return data.breach
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao atualizar incidente')
+      throw err
+    }
+  }, [fetchBreaches])
+
+  return {
+    breaches,
+    isLoading,
+    error,
+    fetchBreaches,
+    reportBreach,
+    updateBreach
+  }
+}
+
+// Audit Trail Hook
+export function useAuditTrail() {
+  const [events, setEvents] = useState<AuditEvent[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  const fetchEvents = useCallback(async (filters?: {
+    event_type?: string
+    user_id?: string
+    resource_type?: string
+    action?: string
+    start_date?: string
+    end_date?: string
+    page?: number
+    limit?: number
+  }) => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams()
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/audit?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch audit events')
+      }
+
+      const data = await response.json()
+      setEvents(data.events)
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar eventos de auditoria')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const exportEvents = useCallback(async (format: 'json' | 'csv', filters?: any) => {
+    try {
+      const params = new URLSearchParams()
+      params.append('export', format)
+      
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/audit?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to export audit events')
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `audit-trail-${new Date().toISOString().split('T')[0]}.${format}`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      
+      toast.success('Exportação concluída com sucesso')
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao exportar eventos')
+      throw err
+    }
+  }, [])
+
+  return {
+    events,
+    isLoading,
+    error,
+    fetchEvents,
+    exportEvents
+  }
+}
+
+// Compliance Assessment Hook
+export function useComplianceAssessment() {
+  const [assessments, setAssessments] = useState<ComplianceAssessment[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+
+  const fetchAssessments = useCallback(async (filters?: {
+    assessment_type?: string
+    status?: string
+    page?: number
+    limit?: number
+  }) => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams()
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await fetch(`/api/lgpd/compliance?${params}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch assessments')
+      }
+
+      const data = await response.json()
+      setAssessments(data.assessments || [])
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar avaliações')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  const createAssessment = useCallback(async (assessmentData: {
+    assessment_type: 'manual' | 'automated'
+  }) => {
+    try {
+      const response = await fetch('/api/lgpd/compliance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(assessmentData)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create assessment')
+      }
+
+      const data = await response.json()
+      toast.success('Avaliação criada com sucesso')
+      
+      // Refresh assessments
+      await fetchAssessments()
+      
+      return data.assessment
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao criar avaliação')
+      throw err
+    }
+  }, [fetchAssessments])
+
+  const runAutomatedAssessment = useCallback(async () => {
+    try {
+      const response = await fetch('/api/lgpd/compliance', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to run automated assessment')
+      }
+
+      const data = await response.json()
+      toast.success('Avaliação automatizada executada com sucesso')
+      
+      // Refresh assessments
+      await fetchAssessments()
+      
+      return data.assessment
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao executar avaliação automatizada')
+      throw err
+    }
+  }, [fetchAssessments])
+
+  return {
+    assessments,
+    isLoading,
+    error,
+    fetchAssessments,
+    createAssessment,
+    runAutomatedAssessment
+  }
+}
+
+// Consent Banner Hook (for public use)
+export function useConsentBanner() {
+  const [purposes, setPurposes] = useState<any[]>([])
+  const [userConsents, setUserConsents] = useState<ConsentRecord[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Error | null>(null)
+  const user = useUser()
+  const supabase = createClientComponentClient()
+
+  const fetchConsentPurposes = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const { data, error } = await supabase
+        .from('lgpd_consent_purposes')
+        .select('*')
+        .eq('active', true)
+        .order('display_order')
+
+      if (error) throw error
+      setPurposes(data || [])
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao carregar finalidades de consentimento')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [supabase])
+
+  const fetchUserConsents = useCallback(async () => {
+    if (!user?.id) return
+
+    try {
+      const response = await fetch(`/api/lgpd/consent?user_id=${user.id}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch user consents')
+      }
+
+      const data = await response.json()
+      setUserConsents(data.consents || [])
+    } catch (err) {
+      setError(err as Error)
+      console.error('Error fetching user consents:', err)
+    }
+  }, [user?.id])
+
+  const updateUserConsent = useCallback(async (purposeId: string, granted: boolean) => {
+    try {
+      const response = await fetch('/api/lgpd/consent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          purpose_id: purposeId,
+          granted,
+          ip_address: window.location.hostname,
+          user_agent: navigator.userAgent
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update consent')
+      }
+
+      // Refresh user consents
+      await fetchUserConsents()
+      
+      toast.success(granted ? 'Consentimento concedido' : 'Consentimento retirado')
+    } catch (err) {
+      setError(err as Error)
+      toast.error('Erro ao atualizar consentimento')
+      throw err
+    }
+  }, [fetchUserConsents])
+
+  useEffect(() => {
+    fetchConsentPurposes()
+  }, [])
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserConsents()
+    }
+  }, [user?.id, fetchUserConsents])
+
+  return {
+    purposes,
+    userConsents,
+    isLoading,
+    error,
+    updateUserConsent,
+    refetch: () => {
+      fetchConsentPurposes()
+      fetchUserConsents()
+    }
+  }
 }

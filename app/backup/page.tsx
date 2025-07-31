@@ -43,6 +43,11 @@ import {
 } from 'lucide-react';
 import BackupDashboard from '@/components/backup/backup-dashboard';
 import BackupConfigForm from '@/components/backup/backup-config-form';
+import BackupHistory from '@/components/backup/backup-history';
+import RecoveryWizard from '@/components/backup/recovery-wizard';
+import BackupScheduler from '@/components/backup/backup-scheduler';
+import StorageMonitor from '@/components/backup/storage-monitor';
+import ComplianceReports from '@/components/backup/compliance-reports';
 import { useBackupSystem } from '@/hooks/use-backup-system';
 import type { BackupConfig } from '@/lib/backup/types';
 
@@ -347,8 +352,11 @@ const BackupPage: React.FC = () => {
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="configurations">Configurations</TabsTrigger>
+          <TabsTrigger value="scheduler">Scheduler</TabsTrigger>
           <TabsTrigger value="history">Backup History</TabsTrigger>
           <TabsTrigger value="recovery">Recovery</TabsTrigger>
+          <TabsTrigger value="storage">Storage Monitor</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance</TabsTrigger>
         </TabsList>
 
         {/* Dashboard Tab */}
@@ -438,141 +446,29 @@ const BackupPage: React.FC = () => {
           </div>
         </TabsContent>
 
+        {/* Scheduler Tab */}
+        <TabsContent value="scheduler">
+          <BackupScheduler />
+        </TabsContent>
+
         {/* Backup History Tab */}
-        <TabsContent value="history" className="space-y-4">
-          <div className="grid gap-4">
-            {backups.map((backup) => (
-              <Card key={backup.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center space-x-2">
-                        <span>Backup #{backup.id.slice(-6)}</span>
-                        <Badge variant={getStatusVariant(backup.status)}>
-                          {backup.status}
-                        </Badge>
-                        <Badge variant="outline">{backup.type}</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Started: {backup.started_at.toLocaleString()}
-                        {backup.completed_at && (
-                          <> • Completed: {backup.completed_at.toLocaleString()}</>
-                        )}
-                      </CardDescription>
-                    </div>
-                    {backup.status === 'RUNNING' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => cancelBackup(backup.id)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Size</p>
-                      <p className="font-medium">
-                        {backup.size_bytes ? `${(backup.size_bytes / (1024 ** 3)).toFixed(2)} GB` : 'N/A'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Files</p>
-                      <p className="font-medium">{backup.file_count?.toLocaleString() || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Progress</p>
-                      <p className="font-medium">
-                        {backup.progress_percentage !== undefined ? `${backup.progress_percentage}%` : 'N/A'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Duration</p>
-                      <p className="font-medium">
-                        {backup.completed_at && backup.started_at
-                          ? `${Math.round((backup.completed_at.getTime() - backup.started_at.getTime()) / 60000)} min`
-                          : 'N/A'
-                        }
-                      </p>
-                    </div>
-                  </div>
-                  {backup.current_operation && (
-                    <div className="mt-4">
-                      <p className="text-sm text-muted-foreground">Current Operation</p>
-                      <p className="text-sm font-medium">{backup.current_operation}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <TabsContent value="history">
+          <BackupHistory />
         </TabsContent>
 
         {/* Recovery Tab */}
-        <TabsContent value="recovery" className="space-y-4">
-          <div className="grid gap-4">
-            {recoveries.map((recovery) => (
-              <Card key={recovery.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center space-x-2">
-                        <span>Recovery #{recovery.id.slice(-6)}</span>
-                        <Badge variant={getStatusVariant(recovery.status)}>
-                          {recovery.status}
-                        </Badge>
-                        <Badge variant="outline">{recovery.type}</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Target: {recovery.target_location}
-                        {recovery.requested_by && (
-                          <> • Requested by: {recovery.requested_by}</>
-                        )}
-                      </CardDescription>
-                    </div>
-                    {recovery.status === 'RUNNING' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => cancelRecovery(recovery.id)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Progress</p>
-                      <p className="font-medium">
-                        {recovery.progress_percentage !== undefined ? `${recovery.progress_percentage}%` : 'N/A'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Started</p>
-                      <p className="font-medium">
-                        {recovery.started_at?.toLocaleString() || 'Not started'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Completed</p>
-                      <p className="font-medium">
-                        {recovery.completed_at?.toLocaleString() || 'In progress'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Backup ID</p>
-                      <p className="font-medium">#{recovery.backup_id.slice(-6)}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <TabsContent value="recovery">
+          <RecoveryWizard />
+        </TabsContent>
+
+        {/* Storage Monitor Tab */}
+        <TabsContent value="storage">
+          <StorageMonitor />
+        </TabsContent>
+
+        {/* Compliance Tab */}
+        <TabsContent value="compliance">
+          <ComplianceReports />
         </TabsContent>
       </Tabs>
 

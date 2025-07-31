@@ -22,7 +22,7 @@ import {
   ValidationResult
 } from './types';
 import { StorageManager } from './storage';
-import { auditLogger } from '../audit/audit-logger';
+import { auditLogger } from '../auth/audit/audit-logger';
 import { notificationManager } from '../notifications';
 import { MonitoringService } from './monitoring';
 

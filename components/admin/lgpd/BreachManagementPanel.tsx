@@ -1,638 +1,737 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  AlertTriangle,
-  Shield,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Edit,
-  Plus,
+import React, { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { 
+  Search, 
+  Filter, 
+  Plus, 
+  Eye, 
+  Edit, 
+  AlertTriangle, 
+  Shield, 
+  Clock, 
+  CheckCircle, 
+  XCircle, 
+  Download, 
   RefreshCw,
   Bell,
-  FileText,
   Users,
   Calendar,
-  Activity,
-  Zap,
+  FileText,
+  ExternalLink,
   Mail,
   Phone
-} from 'lucide-react';
-import { useBreachManagement } from '@/hooks/useLGPD';
-import { BreachIncident, BreachSeverity, BreachStatus, BreachType } from '@/types/lgpd';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from 'lucide-react'
+import { useBreachManagement } from '@/hooks/useLGPD'
+import { BreachIncident } from '@/types/lgpd'
 
-/**
- * Breach Management Panel
- * 
- * Comprehensive panel for managing data breach incidents including:
- * - Incident reporting and tracking
- * - Severity assessment and classification
- * - Authority notification management
- * - Affected users notification
- * - Incident response workflow
- * - Compliance timeline monitoring
- */
-export function BreachManagementPanel() {
+interface BreachManagementPanelProps {
+  className?: string
+}
+
+export function BreachManagementPanel({ className }: BreachManagementPanelProps) {
   const {
     incidents,
-    loading,
+    isLoading,
     error,
-    loadIncidents,
     reportIncident,
     updateIncident,
-    notifyAuthorities,
-    notifyAffectedUsers
-  } = useBreachManagement();
+    exportIncidents,
+    refreshData
+  } = useBreachManagement()
 
-  const [showReportDialog, setShowReportDialog] = useState(false);
-  const [selectedIncident, setSelectedIncident] = useState<BreachIncident | null>(null);
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [severityFilter, setSeverityFilter] = useState<BreachSeverity | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<BreachStatus | 'all'>('all');
-  const [typeFilter, setTypeFilter] = useState<BreachType | 'all'>('all');
-
-  // New incident form state
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [severityFilter, setSeverityFilter] = useState<string>('all')
+  const [selectedIncident, setSelectedIncident] = useState<BreachIncident | null>(null)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
   const [newIncident, setNewIncident] = useState({
     title: '',
     description: '',
-    type: 'unauthorized_access' as BreachType,
-    severity: 'medium' as BreachSeverity,
-    affectedUsersCount: 0,
-    dataTypes: [] as string[],
-    discoveredAt: new Date().toISOString().slice(0, 16),
-    containedAt: '',
-    rootCause: '',
-    mitigationSteps: ''
-  });
+    severity: 'medium' as 'low' | 'medium' | 'high' | 'critical',
+    affected_data_types: [] as string[],
+    affected_individuals_count: 0,
+    discovery_method: '',
+    containment_actions: '',
+    notification_required: false
+  })
 
-  useEffect(() => {
-    loadIncidents();
-  }, [loadIncidents]);
-
-  const filteredIncidents = incidents.filter(incident => {
-    const matchesSeverity = severityFilter === 'all' || incident.severity === severityFilter;
-    const matchesStatus = statusFilter === 'all' || incident.status === statusFilter;
-    const matchesType = typeFilter === 'all' || incident.type === typeFilter;
+  // Filtrar incidentes
+  const filteredIncidents = incidents?.filter(incident => {
+    const matchesSearch = 
+      incident.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      incident.description?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    return matchesSeverity && matchesStatus && matchesType;
-  });
+    const matchesStatus = statusFilter === 'all' || incident.status === statusFilter
+    const matchesSeverity = severityFilter === 'all' || incident.severity === severityFilter
+    
+    return matchesSearch && matchesStatus && matchesSeverity
+  }) || []
 
-  const getSeverityBadge = (severity: BreachSeverity) => {
+  const getSeverityBadge = (severity: string) => {
     switch (severity) {
-      case 'critical':
-        return <Badge variant="destructive"><AlertTriangle className="h-3 w-3 mr-1" />Crítica</Badge>;
-      case 'high':
-        return <Badge className="bg-orange-100 text-orange-800"><AlertTriangle className="h-3 w-3 mr-1" />Alta</Badge>;
-      case 'medium':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />Média</Badge>;
       case 'low':
-        return <Badge variant="outline"><Shield className="h-3 w-3 mr-1" />Baixa</Badge>;
+        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Baixa</Badge>
+      case 'medium':
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Média</Badge>
+      case 'high':
+        return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">Alta</Badge>
+      case 'critical':
+        return <Badge variant="destructive">Crítica</Badge>
       default:
-        return <Badge variant="outline">{severity}</Badge>;
+        return <Badge variant="secondary">{severity}</Badge>
     }
-  };
+  }
 
-  const getStatusBadge = (status: BreachStatus) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'detected':
-        return <Badge className="bg-red-100 text-red-800"><AlertTriangle className="h-3 w-3 mr-1" />Detectado</Badge>;
+      case 'reported':
+        return <Badge variant="secondary"><Bell className="h-3 w-3 mr-1" />Reportado</Badge>
       case 'investigating':
-        return <Badge className="bg-blue-100 text-blue-800"><Activity className="h-3 w-3 mr-1" />Investigando</Badge>;
+        return <Badge variant="default"><Search className="h-3 w-3 mr-1" />Investigando</Badge>
       case 'contained':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Shield className="h-3 w-3 mr-1" />Contido</Badge>;
+        return <Badge variant="outline"><Shield className="h-3 w-3 mr-1" />Contido</Badge>
       case 'resolved':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Resolvido</Badge>;
+        return <Badge variant="outline" className="bg-green-50 text-green-700"><CheckCircle className="h-3 w-3 mr-1" />Resolvido</Badge>
       case 'closed':
-        return <Badge variant="secondary"><XCircle className="h-3 w-3 mr-1" />Fechado</Badge>;
+        return <Badge variant="outline"><XCircle className="h-3 w-3 mr-1" />Fechado</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>
     }
-  };
+  }
 
-  const getTypeLabel = (type: BreachType) => {
-    const labels: Record<BreachType, string> = {
-      'unauthorized_access': 'Acesso Não Autorizado',
-      'data_theft': 'Roubo de Dados',
-      'system_compromise': 'Comprometimento de Sistema',
-      'human_error': 'Erro Humano',
-      'malware': 'Malware',
-      'phishing': 'Phishing',
-      'insider_threat': 'Ameaça Interna',
-      'third_party': 'Terceiros'
-    };
-    return labels[type] || type;
-  };
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'low': return 'text-green-600'
+      case 'medium': return 'text-yellow-600'
+      case 'high': return 'text-orange-600'
+      case 'critical': return 'text-red-600'
+      default: return 'text-gray-600'
+    }
+  }
 
-  const handleReportIncident = async () => {
+  const handleCreateIncident = async () => {
     try {
-      await reportIncident({
-        ...newIncident,
-        discoveredAt: new Date(newIncident.discoveredAt),
-        containedAt: newIncident.containedAt ? new Date(newIncident.containedAt) : undefined
-      });
-      await loadIncidents();
-      setShowReportDialog(false);
-      // Reset form
+      await reportIncident(newIncident)
+      setIsCreateOpen(false)
       setNewIncident({
         title: '',
         description: '',
-        type: 'unauthorized_access',
         severity: 'medium',
-        affectedUsersCount: 0,
-        dataTypes: [],
-        discoveredAt: new Date().toISOString().slice(0, 16),
-        containedAt: '',
-        rootCause: '',
-        mitigationSteps: ''
-      });
+        affected_data_types: [],
+        affected_individuals_count: 0,
+        discovery_method: '',
+        containment_actions: '',
+        notification_required: false
+      })
     } catch (error) {
-      console.error('Error reporting incident:', error);
+      console.error('Erro ao reportar incidente:', error)
     }
-  };
+  }
 
-  const handleNotifyAuthorities = async (incident: BreachIncident) => {
+  const handleUpdateIncident = async (id: string, updates: Partial<BreachIncident>) => {
     try {
-      await notifyAuthorities(incident.id);
-      await loadIncidents();
+      await updateIncident(id, updates)
+      setIsEditOpen(false)
+      setSelectedIncident(null)
     } catch (error) {
-      console.error('Error notifying authorities:', error);
+      console.error('Erro ao atualizar incidente:', error)
     }
-  };
+  }
 
-  const handleNotifyUsers = async (incident: BreachIncident) => {
-    try {
-      await notifyAffectedUsers(incident.id);
-      await loadIncidents();
-    } catch (error) {
-      console.error('Error notifying users:', error);
-    }
-  };
+  // Calcular estatísticas
+  const stats = {
+    total: incidents?.length || 0,
+    active: incidents?.filter(i => !['resolved', 'closed'].includes(i.status)).length || 0,
+    critical: incidents?.filter(i => i.severity === 'critical').length || 0,
+    thisMonth: incidents?.filter(i => {
+      const incidentDate = new Date(i.created_at)
+      const now = new Date()
+      return incidentDate.getMonth() === now.getMonth() && incidentDate.getFullYear() === now.getFullYear()
+    }).length || 0
+  }
 
-  const getIncidentStats = () => {
-    const total = incidents.length;
-    const critical = incidents.filter(i => i.severity === 'critical').length;
-    const open = incidents.filter(i => !['resolved', 'closed'].includes(i.status)).length;
-    const resolved = incidents.filter(i => i.status === 'resolved').length;
-    const requiresNotification = incidents.filter(i => 
-      (i.severity === 'critical' || i.severity === 'high') && 
-      !i.authoritiesNotifiedAt
-    ).length;
-    
-    return { total, critical, open, resolved, requiresNotification };
-  };
-
-  const getOverdueNotifications = () => {
-    const now = new Date();
-    const seventyTwoHoursAgo = new Date(now.getTime() - 72 * 60 * 60 * 1000);
-    
-    return incidents.filter(incident => 
-      (incident.severity === 'critical' || incident.severity === 'high') &&
-      !incident.authoritiesNotifiedAt &&
-      new Date(incident.discoveredAt) < seventyTwoHoursAgo
-    );
-  };
-
-  const stats = getIncidentStats();
-  const overdueNotifications = getOverdueNotifications();
-
-  if (loading && incidents.length === 0) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-4 w-4 animate-spin" />
-          <span>Carregando incidentes...</span>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Carregando incidentes...</span>
       </div>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Erro ao carregar incidentes: {error}
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className={className}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Gestão de Incidentes de Violação</h2>
+          <h3 className="text-xl font-semibold">Gestão de Incidentes de Violação</h3>
           <p className="text-muted-foreground">
             Monitore e gerencie incidentes de violação de dados pessoais
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={loadIncidents} disabled={loading} variant="outline">
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={refreshData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
             Atualizar
           </Button>
-          <Button onClick={() => setShowReportDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Reportar Incidente
+          <Button variant="outline" onClick={exportIncidents}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar
           </Button>
-        </div>
-      </div>
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Overdue Notifications Alert */}
-      {overdueNotifications.length > 0 && (
-        <Alert variant="destructive">
-          <Bell className="h-4 w-4" />
-          <AlertTitle>Notificações em Atraso</AlertTitle>
-          <AlertDescription>
-            {overdueNotifications.length} incidente(s) crítico(s) ou alto(s) não foram notificados às autoridades dentro de 72 horas. 
-            Notifique imediatamente para manter a conformidade LGPD.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Incidentes</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Críticos</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.critical}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Em Aberto</CardTitle>
-            <Activity className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.open}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Resolvidos</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendente Notificação</CardTitle>
-            <Bell className="h-4 w-4 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{stats.requiresNotification}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Severidade</Label>
-              <Select value={severityFilter} onValueChange={(value) => setSeverityFilter(value as BreachSeverity | 'all')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as severidades</SelectItem>
-                  <SelectItem value="critical">Crítica</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="medium">Média</SelectItem>
-                  <SelectItem value="low">Baixa</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as BreachStatus | 'all')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os status</SelectItem>
-                  <SelectItem value="detected">Detectado</SelectItem>
-                  <SelectItem value="investigating">Investigando</SelectItem>
-                  <SelectItem value="contained">Contido</SelectItem>
-                  <SelectItem value="resolved">Resolvido</SelectItem>
-                  <SelectItem value="closed">Fechado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as BreachType | 'all')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os tipos</SelectItem>
-                  <SelectItem value="unauthorized_access">Acesso Não Autorizado</SelectItem>
-                  <SelectItem value="data_theft">Roubo de Dados</SelectItem>
-                  <SelectItem value="system_compromise">Comprometimento de Sistema</SelectItem>
-                  <SelectItem value="human_error">Erro Humano</SelectItem>
-                  <SelectItem value="malware">Malware</SelectItem>
-                  <SelectItem value="phishing">Phishing</SelectItem>
-                  <SelectItem value="insider_threat">Ameaça Interna</SelectItem>
-                  <SelectItem value="third_party">Terceiros</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Incidents Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Incidentes ({filteredIncidents.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Severidade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Usuários Afetados</TableHead>
-                  <TableHead>Descoberto em</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredIncidents.map((incident) => {
-                  const isOverdue = overdueNotifications.some(o => o.id === incident.id);
-                  
-                  return (
-                    <TableRow key={incident.id} className={isOverdue ? 'bg-red-50' : ''}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{incident.title}</div>
-                          <div className="text-sm text-muted-foreground truncate max-w-xs">
-                            {incident.description}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getTypeLabel(incident.type)}</TableCell>
-                      <TableCell>{getSeverityBadge(incident.severity)}</TableCell>
-                      <TableCell>{getStatusBadge(incident.status)}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-1">
-                          <Users className="h-3 w-3" />
-                          <span>{incident.affectedUsersCount}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {format(new Date(incident.discoveredAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedIncident(incident);
-                              setShowDetailsDialog(true);
-                            }}
-                          >
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          
-                          {(incident.severity === 'critical' || incident.severity === 'high') && 
-                           !incident.authoritiesNotifiedAt && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleNotifyAuthorities(incident)}
-                              className={isOverdue ? 'border-red-500 text-red-600' : ''}
-                            >
-                              <Bell className="h-3 w-3 mr-1" />
-                              ANPD
-                            </Button>
-                          )}
-                          
-                          {!incident.usersNotifiedAt && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleNotifyUsers(incident)}
-                            >
-                              <Mail className="h-3 w-3 mr-1" />
-                              Usuários
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Report Incident Dialog */}
-      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Reportar Novo Incidente</DialogTitle>
-            <DialogDescription>
-              Registre um novo incidente de violação de dados pessoais
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="title">Título do Incidente</Label>
-                <Input
-                  id="title"
-                  value={newIncident.title}
-                  onChange={(e) => setNewIncident({ ...newIncident, title: e.target.value })}
-                  placeholder="Breve descrição do incidente"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="type">Tipo</Label>
-                <Select value={newIncident.type} onValueChange={(value) => setNewIncident({ ...newIncident, type: value as BreachType })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unauthorized_access">Acesso Não Autorizado</SelectItem>
-                    <SelectItem value="data_theft">Roubo de Dados</SelectItem>
-                    <SelectItem value="system_compromise">Comprometimento de Sistema</SelectItem>
-                    <SelectItem value="human_error">Erro Humano</SelectItem>
-                    <SelectItem value="malware">Malware</SelectItem>
-                    <SelectItem value="phishing">Phishing</SelectItem>
-                    <SelectItem value="insider_threat">Ameaça Interna</SelectItem>
-                    <SelectItem value="third_party">Terceiros</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Descrição Detalhada</Label>
-              <Textarea
-                id="description"
-                value={newIncident.description}
-                onChange={(e) => setNewIncident({ ...newIncident, description: e.target.value })}
-                placeholder="Descreva o incidente em detalhes..."
-                rows={3}
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label htmlFor="severity">Severidade</Label>
-                <Select value={newIncident.severity} onValueChange={(value) => setNewIncident({ ...newIncident, severity: value as BreachSeverity })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Baixa</SelectItem>
-                    <SelectItem value="medium">Média</SelectItem>
-                    <SelectItem value="high">Alta</SelectItem>
-                    <SelectItem value="critical">Crítica</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="affectedUsers">Usuários Afetados</Label>
-                <Input
-                  id="affectedUsers"
-                  type="number"
-                  value={newIncident.affectedUsersCount}
-                  onChange={(e) => setNewIncident({ ...newIncident, affectedUsersCount: parseInt(e.target.value) || 0 })}
-                  placeholder="0"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="discoveredAt">Data de Descoberta</Label>
-                <Input
-                  id="discoveredAt"
-                  type="datetime-local"
-                  value={newIncident.discoveredAt}
-                  onChange={(e) => setNewIncident({ ...newIncident, discoveredAt: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowReportDialog(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleReportIncident} disabled={!newIncident.title || !newIncident.description}>
+          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
                 Reportar Incidente
               </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Incident Details Dialog */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>{selectedIncident?.title}</DialogTitle>
-            <DialogDescription>
-              Detalhes completos do incidente de violação
-            </DialogDescription>
-          </DialogHeader>
-          {selectedIncident && (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Reportar Novo Incidente</DialogTitle>
+                <DialogDescription>
+                  Registre um novo incidente de violação de dados pessoais
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">Informações Básicas</h4>
-                  <div className="space-y-2 text-sm">
-                    <div><strong>Tipo:</strong> {getTypeLabel(selectedIncident.type)}</div>
-                    <div><strong>Severidade:</strong> {getSeverityBadge(selectedIncident.severity)}</div>
-                    <div><strong>Status:</strong> {getStatusBadge(selectedIncident.status)}</div>
-                    <div><strong>Usuários Afetados:</strong> {selectedIncident.affectedUsersCount}</div>
+                  <Label htmlFor="title">Título do Incidente</Label>
+                  <Input
+                    id="title"
+                    value={newIncident.title}
+                    onChange={(e) => setNewIncident({ ...newIncident, title: e.target.value })}
+                    placeholder="Ex: Acesso não autorizado ao banco de dados"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="description">Descrição</Label>
+                  <Textarea
+                    id="description"
+                    value={newIncident.description}
+                    onChange={(e) => setNewIncident({ ...newIncident, description: e.target.value })}
+                    placeholder="Descreva detalhadamente o incidente..."
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="severity">Severidade</Label>
+                    <Select 
+                      value={newIncident.severity} 
+                      onValueChange={(value: 'low' | 'medium' | 'high' | 'critical') => 
+                        setNewIncident({ ...newIncident, severity: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a severidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Baixa</SelectItem>
+                        <SelectItem value="medium">Média</SelectItem>
+                        <SelectItem value="high">Alta</SelectItem>
+                        <SelectItem value="critical">Crítica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="count">Indivíduos Afetados</Label>
+                    <Input
+                      id="count"
+                      type="number"
+                      value={newIncident.affected_individuals_count}
+                      onChange={(e) => setNewIncident({ 
+                        ...newIncident, 
+                        affected_individuals_count: parseInt(e.target.value) || 0 
+                      })}
+                      placeholder="0"
+                    />
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-2">Timeline</h4>
-                  <div className="space-y-2 text-sm">
-                    <div><strong>Descoberto:</strong> {format(new Date(selectedIncident.discoveredAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</div>
-                    {selectedIncident.containedAt && (
-                      <div><strong>Contido:</strong> {format(new Date(selectedIncident.containedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</div>
-                    )}
-                    {selectedIncident.authoritiesNotifiedAt && (
-                      <div><strong>ANPD Notificada:</strong> {format(new Date(selectedIncident.authoritiesNotifiedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</div>
-                    )}
-                    {selectedIncident.usersNotifiedAt && (
-                      <div><strong>Usuários Notificados:</strong> {format(new Date(selectedIncident.usersNotifiedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</div>
-                    )}
+                  <Label htmlFor="discovery">Método de Descoberta</Label>
+                  <Input
+                    id="discovery"
+                    value={newIncident.discovery_method}
+                    onChange={(e) => setNewIncident({ ...newIncident, discovery_method: e.target.value })}
+                    placeholder="Ex: Monitoramento de segurança, relatório de usuário"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="containment">Ações de Contenção</Label>
+                  <Textarea
+                    id="containment"
+                    value={newIncident.containment_actions}
+                    onChange={(e) => setNewIncident({ ...newIncident, containment_actions: e.target.value })}
+                    placeholder="Descreva as ações tomadas para conter o incidente..."
+                    rows={2}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreateIncident}>
+                  Reportar Incidente
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Incidentes</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <FileText className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Incidentes Ativos</p>
+                <p className="text-2xl font-bold">{stats.active}</p>
+              </div>
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Incidentes Críticos</p>
+                <p className="text-2xl font-bold text-red-600">{stats.critical}</p>
+              </div>
+              <Shield className="h-8 w-8 text-red-600" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Este Mês</p>
+                <p className="text-2xl font-bold">{stats.thisMonth}</p>
+              </div>
+              <Calendar className="h-8 w-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Alertas para incidentes críticos */}
+      {incidents?.filter(i => i.severity === 'critical' && !['resolved', 'closed'].includes(i.status)).length > 0 && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Atenção:</strong> Existem {incidents.filter(i => i.severity === 'critical' && !['resolved', 'closed'].includes(i.status)).length} incidente(s) crítico(s) que requerem atenção imediata.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <Tabs defaultValue="incidents" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="incidents">Incidentes</TabsTrigger>
+          <TabsTrigger value="timeline">Linha do Tempo</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="incidents" className="space-y-4">
+          {/* Filtros */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Filtros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor="search">Buscar</Label>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search"
+                      placeholder="Título ou descrição..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8"
+                    />
                   </div>
                 </div>
+                
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="reported">Reportado</SelectItem>
+                      <SelectItem value="investigating">Investigando</SelectItem>
+                      <SelectItem value="contained">Contido</SelectItem>
+                      <SelectItem value="resolved">Resolvido</SelectItem>
+                      <SelectItem value="closed">Fechado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="severity">Severidade</Label>
+                  <Select value={severityFilter} onValueChange={setSeverityFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todas as severidades" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      <SelectItem value="low">Baixa</SelectItem>
+                      <SelectItem value="medium">Média</SelectItem>
+                      <SelectItem value="high">Alta</SelectItem>
+                      <SelectItem value="critical">Crítica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm('')
+                      setStatusFilter('all')
+                      setSeverityFilter('all')
+                    }}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Limpar
+                  </Button>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Tabela de incidentes */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Lista de Incidentes ({filteredIncidents.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Incidente</TableHead>
+                    <TableHead>Severidade</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Indivíduos Afetados</TableHead>
+                    <TableHead>Data de Reporte</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredIncidents.map((incident) => (
+                    <TableRow key={incident.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{incident.title}</div>
+                          <div className="text-sm text-muted-foreground line-clamp-2">
+                            {incident.description}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getSeverityBadge(incident.severity)}</TableCell>
+                      <TableCell>{getStatusBadge(incident.status)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span>{incident.affected_individuals_count || 0}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <Eye className="h-3 w-3 mr-1" />
+                                Ver
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl">
+                              <DialogHeader>
+                                <DialogTitle className="flex items-center gap-2">
+                                  {getSeverityBadge(incident.severity)}
+                                  {incident.title}
+                                </DialogTitle>
+                                <DialogDescription>
+                                  Incidente reportado em {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-6">
+                                {/* Informações básicas */}
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label>Status Atual</Label>
+                                    <div className="mt-1">{getStatusBadge(incident.status)}</div>
+                                  </div>
+                                  <div>
+                                    <Label>Severidade</Label>
+                                    <div className="mt-1">{getSeverityBadge(incident.severity)}</div>
+                                  </div>
+                                  <div>
+                                    <Label>Indivíduos Afetados</Label>
+                                    <p className="text-sm font-medium">{incident.affected_individuals_count || 0}</p>
+                                  </div>
+                                  <div>
+                                    <Label>Notificação Requerida</Label>
+                                    <p className="text-sm">
+                                      {incident.notification_required ? 'Sim' : 'Não'}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Descrição */}
+                                <div>
+                                  <Label>Descrição do Incidente</Label>
+                                  <p className="text-sm mt-1 bg-muted p-3 rounded">
+                                    {incident.description}
+                                  </p>
+                                </div>
+                                
+                                {/* Tipos de dados afetados */}
+                                {incident.affected_data_types && incident.affected_data_types.length > 0 && (
+                                  <div>
+                                    <Label>Tipos de Dados Afetados</Label>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                      {incident.affected_data_types.map((type, index) => (
+                                        <Badge key={index} variant="outline">{type}</Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Método de descoberta */}
+                                {incident.discovery_method && (
+                                  <div>
+                                    <Label>Método de Descoberta</Label>
+                                    <p className="text-sm mt-1">{incident.discovery_method}</p>
+                                  </div>
+                                )}
+                                
+                                {/* Ações de contenção */}
+                                {incident.containment_actions && (
+                                  <div>
+                                    <Label>Ações de Contenção</Label>
+                                    <p className="text-sm mt-1 bg-muted p-3 rounded">
+                                      {incident.containment_actions}
+                                    </p>
+                                  </div>
+                                )}
+                                
+                                {/* Notificações */}
+                                {incident.notifications && incident.notifications.length > 0 && (
+                                  <div>
+                                    <Label>Notificações Enviadas</Label>
+                                    <div className="space-y-2 mt-1">
+                                      {incident.notifications.map((notification, index) => (
+                                        <div key={index} className="text-sm bg-muted p-2 rounded flex items-center gap-2">
+                                          {notification.type === 'email' ? <Mail className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+                                          <span>{notification.recipient} - {notification.sent_at ? new Date(notification.sent_at).toLocaleString('pt-BR') : 'Pendente'}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              <DialogFooter>
+                                <Button 
+                                  variant="outline" 
+                                  onClick={() => {
+                                    setSelectedIncident(incident)
+                                    setIsEditOpen(true)
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Editar Status
+                                </Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
               
+              {filteredIncidents.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhum incidente encontrado
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="timeline" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Linha do Tempo dos Incidentes</CardTitle>
+              <CardDescription>
+                Visualização cronológica dos incidentes de violação
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {incidents?.slice(0, 10).map((incident, index) => (
+                  <div key={incident.id} className="flex items-start gap-4 pb-4 border-b last:border-b-0">
+                    <div className="flex-shrink-0">
+                      <div className={`w-3 h-3 rounded-full mt-2 ${
+                        incident.severity === 'critical' ? 'bg-red-500' :
+                        incident.severity === 'high' ? 'bg-orange-500' :
+                        incident.severity === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
+                      }`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-medium">{incident.title}</h4>
+                        {getSeverityBadge(incident.severity)}
+                        {getStatusBadge(incident.status)}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {incident.description}
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(incident.created_at).toLocaleDateString('pt-BR')}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {incident.affected_individuals_count || 0} afetados
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {incidents?.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Nenhum incidente registrado
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Dialog para editar status */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Atualizar Status do Incidente</DialogTitle>
+            <DialogDescription>
+              {selectedIncident?.title}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedIncident && (
+            <div className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Descrição</h4>
-                <p className="text-sm text-muted-foreground">{selectedIncident.description}</p>
+                <Label htmlFor="status">Novo Status</Label>
+                <Select 
+                  value={selectedIncident.status} 
+                  onValueChange={(value) => 
+                    setSelectedIncident({ ...selectedIncident, status: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="reported">Reportado</SelectItem>
+                    <SelectItem value="investigating">Investigando</SelectItem>
+                    <SelectItem value="contained">Contido</SelectItem>
+                    <SelectItem value="resolved">Resolvido</SelectItem>
+                    <SelectItem value="closed">Fechado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              
-              {selectedIncident.rootCause && (
-                <div>
-                  <h4 className="font-medium mb-2">Causa Raiz</h4>
-                  <p className="text-sm text-muted-foreground">{selectedIncident.rootCause}</p>
-                </div>
-              )}
-              
-              {selectedIncident.mitigationSteps && (
-                <div>
-                  <h4 className="font-medium mb-2">Medidas de Mitigação</h4>
-                  <p className="text-sm text-muted-foreground">{selectedIncident.mitigationSteps}</p>
-                </div>
-              )}
             </div>
           )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => selectedIncident && handleUpdateIncident(selectedIncident.id, {
+                status: selectedIncident.status
+              })}
+            >
+              Atualizar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

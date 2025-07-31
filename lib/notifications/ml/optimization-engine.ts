@@ -939,5 +939,18 @@ export class NotificationMLEngine {
 // EXPORT
 // ================================================================================
 
-export const notificationMLEngine = new NotificationMLEngine();
+export const notificationMLEngine = new NotificationMLEngine({
+  features: {
+    contentPersonalization: true,
+    timingOptimization: true,
+    channelSelection: true,
+    segmentation: true,
+    abTesting: false,
+  },
+  models: {
+    engagementModel: 'logistic',
+    timingModel: 'clustering',
+    segmentationModel: 'kmeans',
+  },
+});
 export type { UserProfile, OptimizationResult, SegmentationResult, ABTestResult };

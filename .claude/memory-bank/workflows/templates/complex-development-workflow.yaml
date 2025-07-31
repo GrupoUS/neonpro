@@ -1,0 +1,322 @@
+# Complex Development Workflow Template
+# Sequential multi-agent workflow for comprehensive feature development
+
+workflow_definition:
+  name: "Complex Development Workflow"
+  description: "Comprehensive workflow for researching, architecting, developing, and validating complex features"
+  version: "1.0"
+  complexity_level: 7
+  estimated_duration: "4-6 hours"
+  execution_mode: "sequential"
+  
+workflow_metadata:
+  created_by: "workflow-orchestrator"
+  created_at: "2025-01-31"
+  use_cases:
+    - "New feature development with research requirements"
+    - "Complex system integrations"
+    - "Architecture-critical implementations"
+    - "High-quality enterprise development"
+  
+quality_standards:
+  minimum_quality_score: 9.0
+  required_testing_coverage: 90
+  security_validation: "mandatory"
+  performance_validation: "required"
+  
+# Sequential Agent Execution Definition
+agents:
+  - agent_id: "research_phase"
+    agent_type: "apex-researcher"
+    execution_order: 1
+    estimated_duration: "60-90 minutes"
+    description: "Research phase for gathering requirements, best practices, and technical insights"
+    
+    input_requirements:
+      - "project_requirements"
+      - "stakeholder_constraints"
+      - "technical_scope"
+      - "quality_objectives"
+      
+    output_deliverables:
+      - "research_findings"
+      - "best_practices_analysis"
+      - "technology_recommendations"
+      - "implementation_insights"
+      - "risk_assessment"
+      
+    quality_standards:
+      - name: "Research Completeness"
+        criteria: "All key aspects researched with authoritative sources"
+        minimum_score: 9.0
+      - name: "Source Quality"
+        criteria: "High-quality, current, and authoritative sources used"
+        minimum_score: 8.5
+        
+    context_handoff:
+      memory_persistence: true
+      context_bridge_to: "architecture_phase"
+      critical_outputs:
+        - "technology_stack_recommendations"
+        - "architectural_constraints"
+        - "performance_requirements"
+        - "security_considerations"
+        
+  - agent_id: "architecture_phase"
+    agent_type: "apex-architect"
+    execution_order: 2
+    estimated_duration: "90-120 minutes"
+    description: "Architecture design phase incorporating research findings"
+    
+    dependencies:
+      - agent_id: "research_phase"
+        required_outputs: ["research_findings", "technology_recommendations"]
+        
+    input_requirements:
+      - "research_findings"
+      - "technology_recommendations"
+      - "system_constraints"
+      - "scalability_requirements"
+      
+    output_deliverables:
+      - "architectural_design"
+      - "system_architecture_diagram"
+      - "technology_stack_selection"
+      - "scalability_strategy"
+      - "integration_patterns"
+      
+    quality_standards:
+      - name: "Architecture Quality"
+        criteria: "Scalable, maintainable, and well-documented architecture"
+        minimum_score: 9.5
+      - name: "Technology Alignment"
+        criteria: "Technology choices align with research recommendations"
+        minimum_score: 9.0
+        
+    context_handoff:
+      memory_persistence: true
+      context_bridge_to: "development_phase"
+      critical_outputs:
+        - "implementation_specifications"
+        - "development_guidelines"
+        - "architecture_patterns"
+        - "integration_requirements"
+        
+  - agent_id: "development_phase"
+    agent_type: "apex-developer"
+    execution_order: 3
+    estimated_duration: "120-180 minutes"
+    description: "Implementation phase following architectural specifications"
+    
+    dependencies:
+      - agent_id: "architecture_phase"
+        required_outputs: ["architectural_design", "technology_stack_selection"]
+        
+    input_requirements:
+      - "architectural_design"
+      - "implementation_specifications"
+      - "development_guidelines"
+      - "quality_requirements"
+      
+    output_deliverables:
+      - "implemented_code"
+      - "unit_tests"
+      - "integration_tests"
+      - "documentation"
+      - "deployment_configuration"
+      
+    quality_standards:
+      - name: "Code Quality"
+        criteria: "Clean, maintainable, well-tested code following best practices"
+        minimum_score: 9.5
+      - name: "Architecture Compliance"
+        criteria: "Implementation strictly follows architectural specifications"
+        minimum_score: 9.0
+      - name: "Test Coverage"
+        criteria: "Comprehensive test coverage with quality validation"
+        minimum_score: 90
+        
+    context_handoff:
+      memory_persistence: true
+      context_bridge_to: "qa_validation_phase"
+      critical_outputs:
+        - "implementation_results"
+        - "test_artifacts"
+        - "potential_issues"
+        - "performance_considerations"
+        
+  - agent_id: "qa_validation_phase"
+    agent_type: "apex-qa-debugger"
+    execution_order: 4
+    estimated_duration: "60-90 minutes"
+    description: "Quality assurance and validation phase with comprehensive testing"
+    
+    dependencies:
+      - agent_id: "development_phase"
+        required_outputs: ["implemented_code", "unit_tests", "integration_tests"]
+        
+    input_requirements:
+      - "implemented_code"
+      - "test_artifacts"
+      - "quality_requirements"
+      - "performance_benchmarks"
+      
+    output_deliverables:
+      - "qa_validation_report"
+      - "performance_analysis"
+      - "security_assessment"
+      - "quality_metrics"
+      - "deployment_readiness_report"
+      
+    quality_standards:
+      - name: "Quality Validation"
+        criteria: "Comprehensive quality validation with all standards met"
+        minimum_score: 9.5
+      - name: "Performance Validation"
+        criteria: "Performance meets or exceeds requirements"
+        minimum_score: 9.0
+        
+    context_handoff:
+      memory_persistence: true
+      context_bridge_to: "consensus_building_phase"
+      critical_outputs:
+        - "validation_results"
+        - "quality_confirmation"
+        - "identified_improvements"
+        - "deployment_recommendations"
+
+# Consensus Building Phase        
+consensus_building:
+  agent_id: "consensus_building_phase"
+  agent_type: "consensus-builder"
+  execution_order: 5
+  estimated_duration: "30-45 minutes"
+  description: "Build consensus from all agent perspectives and create unified recommendations"
+  
+  input_sources:
+    - "research_phase"
+    - "architecture_phase" 
+    - "development_phase"
+    - "qa_validation_phase"
+    
+  consensus_criteria:
+    minimum_agent_agreement: 80
+    evidence_quality_threshold: 8.5
+    implementation_feasibility_score: 9.0
+    
+  output_deliverables:
+    - "unified_recommendations"
+    - "consensus_rationale"
+    - "implementation_plan"
+    - "success_criteria"
+    - "monitoring_guidelines"
+
+# Workflow Quality Gates
+quality_gates:
+  - gate_id: "research_quality_gate"
+    trigger_after: "research_phase"
+    validation_criteria:
+      - "Research completeness >= 90%"
+      - "Source authority score >= 8.5"
+      - "Risk assessment completeness = 100%"
+    failure_action: "retry_research_phase"
+    
+  - gate_id: "architecture_quality_gate"
+    trigger_after: "architecture_phase"
+    validation_criteria:
+      - "Architecture quality score >= 9.5"
+      - "Research alignment score >= 9.0"
+      - "Scalability validation = passed"
+    failure_action: "retry_architecture_phase"
+    
+  - gate_id: "development_quality_gate"
+    trigger_after: "development_phase"
+    validation_criteria:
+      - "Code quality score >= 9.5"
+      - "Test coverage >= 90%"
+      - "Architecture compliance = 100%"
+    failure_action: "retry_development_phase"
+    
+  - gate_id: "qa_quality_gate"
+    trigger_after: "qa_validation_phase"
+    validation_criteria:
+      - "Quality validation score >= 9.5"
+      - "Performance validation = passed"
+      - "Security assessment = passed"
+    failure_action: "retry_qa_phase"
+
+# Memory and Learning Integration
+memory_integration:
+  persistent_storage: true
+  cross_session_learning: true
+  pattern_recognition: true
+  
+  memory_points:
+    - after_phase: "research_phase"
+      store_patterns: ["successful_research_strategies", "effective_sources", "insight_extraction_methods"]
+    - after_phase: "architecture_phase"
+      store_patterns: ["effective_architecture_patterns", "technology_selection_criteria", "scalability_strategies"]
+    - after_phase: "development_phase"
+      store_patterns: ["implementation_best_practices", "code_quality_techniques", "testing_strategies"]
+    - after_phase: "qa_validation_phase"
+      store_patterns: ["effective_qa_processes", "quality_validation_methods", "performance_optimization_techniques"]
+
+# Performance and Monitoring
+performance_monitoring:
+  track_execution_time: true
+  measure_quality_scores: true
+  monitor_context_handoff_efficiency: true
+  
+  success_metrics:
+    - name: "Overall Workflow Success"
+      target: ">= 95%"
+      measurement: "Successful completion with quality standards met"
+      
+    - name: "Context Handoff Efficiency" 
+      target: ">= 90%"
+      measurement: "Successful context transfers between agents"
+      
+    - name: "Quality Standard Compliance"
+      target: "100%"
+      measurement: "All quality gates passed successfully"
+      
+    - name: "Execution Time Efficiency"
+      target: "<= 110% of estimated time"
+      measurement: "Actual vs estimated execution time"
+
+# Failure Recovery and Contingency Plans
+contingency_plans:
+  - scenario: "research_phase_failure"
+    trigger: "Research quality gate failure"
+    recovery_actions:
+      - "Retry research with expanded scope"
+      - "Consult additional authoritative sources"
+      - "Escalate to human expert consultation"
+      
+  - scenario: "architecture_phase_failure"
+    trigger: "Architecture quality gate failure"
+    recovery_actions:
+      - "Revisit research findings for missed requirements"
+      - "Explore alternative architectural approaches"
+      - "Conduct stakeholder consultation for requirement clarification"
+      
+  - scenario: "development_phase_failure"
+    trigger: "Development quality gate failure"  
+    recovery_actions:
+      - "Code review and refactoring"
+      - "Expand test coverage and validation"
+      - "Architectural compliance verification"
+      
+  - scenario: "qa_phase_failure"
+    trigger: "QA quality gate failure"
+    recovery_actions:
+      - "Additional testing and validation"
+      - "Performance optimization"
+      - "Security vulnerability remediation"
+      
+  - scenario: "consensus_building_failure"
+    trigger: "Insufficient agent agreement"
+    recovery_actions:
+      - "Conflict mediation through evidence analysis"
+      - "Stakeholder priority re-evaluation"
+      - "Compromise solution synthesis"

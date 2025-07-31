@@ -9,10 +9,45 @@
  */
 
 import { jest } from '@jest/globals';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { POST, PUT, GET } from '@/app/api/notifications/send/route';
 import { GET as StatusGET } from '@/app/api/notifications/status/route';
 import { GET as AnalyticsGET } from '@/app/api/notifications/analytics/route';
+
+// Mock NextRequest for testing
+class MockNextRequest {
+  url: string;
+  method: string;
+  headers: Headers;
+  body?: any;
+  nextUrl: URL;
+  
+  constructor(url: string, init?: RequestInit) {
+    this.url = url;
+    this.method = init?.method || 'GET';
+    this.headers = new Headers(init?.headers);
+    this.body = init?.body;
+    this.nextUrl = new URL(url);
+  }
+  
+  async json() {
+    return this.body ? JSON.parse(this.body) : {};
+  }
+  
+  async text() {
+    return this.body || '';
+  }
+  
+  clone() {
+    return new MockNextRequest(this.url, {
+      method: this.method,
+      headers: this.headers,
+      body: this.body
+    });
+  }
+}
+
+const NextRequest = MockNextRequest as any;
 
 // ================================================================================
 // MOCKS

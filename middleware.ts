@@ -1,165 +1,96 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { SessionSecurityMiddleware } from '@/lib/security/session-security-middleware';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import type { Database } from '@/types/database'
 
-/**
- * Global Middleware for NeonPro
- * Integrates session security, CSRF protection, and threat detection
- */
-
-const sessionSecurityMiddleware = new SessionSecurityMiddleware();
-
-// Routes that require session security
-const PROTECTED_ROUTES = [
-  '/api/patients',
-  '/api/appointments',
-  '/api/medical-records',
-  '/api/prescriptions',
-  '/api/billing',
-  '/api/reports',
-  '/api/admin',
-  '/api/patient-portal',
-  '/dashboard',
-  '/patients',
-  '/appointments',
-  '/medical-records',
-  '/prescriptions',
-  '/billing',
-  '/reports',
+// Protected routes that require authentication
+const protectedRoutes = [
   '/admin',
-  '/portal/dashboard',
-  '/portal/appointments',
-  '/portal/medical-history',
-  '/portal/uploads',
-  '/portal/progress',
-  '/portal/evaluations',
-  '/portal/messages',
-  '/portal/settings'
-];
+  '/api/lgpd'
+]
 
-// Routes that are exempt from session security
-const EXEMPT_ROUTES = [
-  '/api/auth/login',
-  '/api/auth/register',
-  '/api/auth/forgot-password',
-  '/api/auth/reset-password',
-  '/api/health',
-  '/api/public',
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-  '/_next',
-  '/favicon.ico',
-  '/static'
-];
+// Admin-only routes
+const adminRoutes = [
+  '/admin',
+  '/api/lgpd/compliance',
+  '/api/lgpd/audit',
+  '/api/lgpd/breach'
+]
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+// Public LGPD routes (for user consent management)
+const publicLGPDRoutes = [
+  '/api/lgpd/consent'
+]
 
-  // Skip middleware for exempt routes
-  if (EXEMPT_ROUTES.some(route => pathname.startsWith(route))) {
-    return NextResponse.next();
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
+  const supabase = createMiddlewareClient<Database>({ req, res })
+  
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  const { pathname } = req.nextUrl
+
+  // Check if route is protected
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+  const isAdminRoute = adminRoutes.some(route => pathname.startsWith(route))
+  const isPublicLGPDRoute = publicLGPDRoutes.some(route => pathname.startsWith(route))
+
+  // Allow public LGPD routes with authentication (but not admin check)
+  if (isPublicLGPDRoute) {
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+    return res
   }
 
-  // Apply session security for protected routes
-  if (PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
-    try {
-      const securityResult = await sessionSecurityMiddleware.handleRequest(request);
-      
-      if (!securityResult.allowed) {
-        // Handle different security actions
-        switch (securityResult.action) {
-          case 'block':
-            return NextResponse.json(
-              { 
-                error: 'Access denied',
-                reason: securityResult.reason,
-                code: 'SECURITY_BLOCK'
-              },
-              { status: 403 }
-            );
-            
-          case 'challenge':
-            return NextResponse.json(
-              { 
-                error: 'Security challenge required',
-                reason: securityResult.reason,
-                code: 'SECURITY_CHALLENGE',
-                challengeType: 'reauthentication'
-              },
-              { status: 401 }
-            );
-            
-          case 'terminate':
-            const response = NextResponse.json(
-              { 
-                error: 'Session terminated',
-                reason: securityResult.reason,
-                code: 'SESSION_TERMINATED'
-              },
-              { status: 401 }
-            );
-            
-            // Clear session cookies
-            response.cookies.delete('session');
-            response.cookies.delete('auth-token');
-            return response;
-            
-          default:
-            return NextResponse.json(
-              { 
-                error: 'Security validation failed',
-                reason: securityResult.reason,
-                code: 'SECURITY_FAILED'
-              },
-              { status: 403 }
-            );
-        }
+  // Redirect to login if accessing protected route without session
+  if (isProtectedRoute && !session) {
+    const redirectUrl = new URL('/auth/login', req.url)
+    redirectUrl.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  // Check admin access for admin routes
+  if (isAdminRoute && session) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+
+    if (profile?.role !== 'admin') {
+      // For API routes, return JSON error
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json(
+          { error: 'Admin access required' },
+          { status: 403 }
+        )
       }
       
-      // Add security headers to the response
-      const response = NextResponse.next();
-      
-      // Security headers
-      response.headers.set('X-Content-Type-Options', 'nosniff');
-      response.headers.set('X-Frame-Options', 'DENY');
-      response.headers.set('X-XSS-Protection', '1; mode=block');
-      response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-      response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-      
-      // Add CSRF token to response headers if available
-      if (securityResult.csrfToken) {
-        response.headers.set('X-CSRF-Token', securityResult.csrfToken);
-      }
-      
-      // Add session security info to headers
-      if (securityResult.sessionInfo) {
-        response.headers.set('X-Session-Security', JSON.stringify({
-          riskScore: securityResult.sessionInfo.riskScore,
-          lastActivity: securityResult.sessionInfo.lastActivity,
-          timeoutWarning: securityResult.sessionInfo.timeoutWarning
-        }));
-      }
-      
-      return response;
-      
-    } catch (error) {
-      console.error('Middleware security error:', error);
-      
-      // In case of middleware error, allow request but log the issue
-      const response = NextResponse.next();
-      response.headers.set('X-Security-Warning', 'Middleware error occurred');
-      return response;
+      // For page routes, redirect to unauthorized page
+      return NextResponse.redirect(new URL('/unauthorized', req.url))
     }
   }
-  
-  // For non-protected routes, just add basic security headers
-  const response = NextResponse.next();
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
-  return response;
+
+  // LGPD Compliance Logging for sensitive operations
+  if (pathname.startsWith('/api/lgpd/') && session) {
+    // Log API access for audit trail
+    const userAgent = req.headers.get('user-agent') || 'Unknown'
+    const ipAddress = req.ip || req.headers.get('x-forwarded-for') || 'Unknown'
+    
+    // Add headers for audit logging
+    res.headers.set('x-lgpd-user-id', session.user.id)
+    res.headers.set('x-lgpd-ip-address', ipAddress)
+    res.headers.set('x-lgpd-user-agent', userAgent)
+    res.headers.set('x-lgpd-timestamp', new Date().toISOString())
+  }
+
+  return res
 }
 
 export const config = {
@@ -169,7 +100,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
-};
+}

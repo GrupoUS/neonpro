@@ -1,610 +1,669 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  FileText,
-  Search,
-  Download,
-  Eye,
-  Filter,
+import React, { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { 
+  Search, 
+  Filter, 
+  Eye, 
+  Download, 
+  RefreshCw,
   Calendar,
+  Clock,
   User,
   Activity,
   Shield,
-  AlertTriangle,
-  RefreshCw,
-  Clock,
+  FileText,
   Database,
   Settings,
-  Lock,
-  Unlock,
-  UserCheck,
-  UserX,
-  Mail,
-  Phone,
-  Globe,
-  Trash2
-} from 'lucide-react';
-import { useAuditTrail } from '@/hooks/useLGPD';
-import { AuditEvent, AuditEventType } from '@/types/lgpd';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  XCircle,
+  BarChart3,
+  TrendingUp
+} from 'lucide-react'
+import { useAuditTrail } from '@/hooks/useLGPD'
+import { AuditEvent } from '@/types/lgpd'
 
-/**
- * Audit Trail Panel
- * 
- * Comprehensive audit trail management for LGPD compliance including:
- * - Event logging and tracking
- * - User activity monitoring
- * - Data access auditing
- * - Consent change tracking
- * - System security events
- * - Export and reporting capabilities
- */
-export function AuditTrailPanel() {
+interface AuditTrailPanelProps {
+  className?: string
+}
+
+export function AuditTrailPanel({ className }: AuditTrailPanelProps) {
   const {
     events,
-    loading,
+    isLoading,
     error,
-    loadEvents,
     exportAuditTrail,
-    searchEvents
-  } = useAuditTrail();
+    refreshData
+  } = useAuditTrail()
 
-  const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null);
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
-  const [filters, setFilters] = useState({
-    eventType: 'all' as AuditEventType | 'all',
-    userId: '',
-    dateFrom: '',
-    dateTo: '',
-    searchTerm: ''
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(50);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [actionFilter, setActionFilter] = useState<string>('all')
+  const [entityFilter, setEntityFilter] = useState<string>('all')
+  const [userFilter, setUserFilter] = useState<string>('all')
+  const [dateRange, setDateRange] = useState<string>('7d')
+  const [selectedEvent, setSelectedEvent] = useState<AuditEvent | null>(null)
 
-  useEffect(() => {
-    loadEvents({
-      page: currentPage,
-      limit: pageSize,
-      filters: filters.eventType !== 'all' ? { eventType: filters.eventType } : undefined
-    });
-  }, [loadEvents, currentPage, pageSize, filters.eventType]);
-
-  const filteredEvents = events.filter(event => {
-    const matchesType = filters.eventType === 'all' || event.eventType === filters.eventType;
-    const matchesUser = !filters.userId || event.userId?.includes(filters.userId);
-    const matchesDateFrom = !filters.dateFrom || new Date(event.timestamp) >= new Date(filters.dateFrom);
-    const matchesDateTo = !filters.dateTo || new Date(event.timestamp) <= new Date(filters.dateTo);
-    const matchesSearch = !filters.searchTerm || 
-      event.description.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-      event.details?.toLowerCase().includes(filters.searchTerm.toLowerCase());
+  // Filtrar eventos
+  const filteredEvents = events?.filter(event => {
+    const matchesSearch = 
+      event.action?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.entity_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.user_id?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    return matchesType && matchesUser && matchesDateFrom && matchesDateTo && matchesSearch;
-  });
-
-  const getEventTypeIcon = (eventType: AuditEventType) => {
-    switch (eventType) {
-      case 'user_login':
-        return <UserCheck className="h-4 w-4 text-green-600" />;
-      case 'user_logout':
-        return <UserX className="h-4 w-4 text-gray-600" />;
-      case 'data_access':
-        return <Eye className="h-4 w-4 text-blue-600" />;
-      case 'data_export':
-        return <Download className="h-4 w-4 text-purple-600" />;
-      case 'data_deletion':
-        return <Trash2 className="h-4 w-4 text-red-600" />;
-      case 'consent_given':
-        return <UserCheck className="h-4 w-4 text-green-600" />;
-      case 'consent_withdrawn':
-        return <UserX className="h-4 w-4 text-orange-600" />;
-      case 'consent_updated':
-        return <Settings className="h-4 w-4 text-blue-600" />;
-      case 'security_event':
-        return <Shield className="h-4 w-4 text-red-600" />;
-      case 'system_access':
-        return <Database className="h-4 w-4 text-gray-600" />;
-      case 'admin_action':
-        return <Settings className="h-4 w-4 text-purple-600" />;
-      case 'breach_detected':
-        return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      case 'policy_change':
-        return <FileText className="h-4 w-4 text-blue-600" />;
-      default:
-        return <Activity className="h-4 w-4 text-gray-600" />;
-    }
-  };
-
-  const getEventTypeLabel = (eventType: AuditEventType) => {
-    const labels: Record<AuditEventType, string> = {
-      'user_login': 'Login de Usuário',
-      'user_logout': 'Logout de Usuário',
-      'data_access': 'Acesso a Dados',
-      'data_export': 'Exportação de Dados',
-      'data_deletion': 'Exclusão de Dados',
-      'consent_given': 'Consentimento Concedido',
-      'consent_withdrawn': 'Consentimento Retirado',
-      'consent_updated': 'Consentimento Atualizado',
-      'security_event': 'Evento de Segurança',
-      'system_access': 'Acesso ao Sistema',
-      'admin_action': 'Ação Administrativa',
-      'breach_detected': 'Violação Detectada',
-      'policy_change': 'Mudança de Política'
-    };
-    return labels[eventType] || eventType;
-  };
-
-  const getEventTypeBadge = (eventType: AuditEventType) => {
-    switch (eventType) {
-      case 'security_event':
-      case 'breach_detected':
-        return <Badge variant="destructive">{getEventTypeLabel(eventType)}</Badge>;
-      case 'consent_withdrawn':
-      case 'data_deletion':
-        return <Badge className="bg-orange-100 text-orange-800">{getEventTypeLabel(eventType)}</Badge>;
-      case 'consent_given':
-      case 'user_login':
-        return <Badge className="bg-green-100 text-green-800">{getEventTypeLabel(eventType)}</Badge>;
-      case 'admin_action':
-      case 'policy_change':
-        return <Badge className="bg-purple-100 text-purple-800">{getEventTypeLabel(eventType)}</Badge>;
-      default:
-        return <Badge variant="outline">{getEventTypeLabel(eventType)}</Badge>;
-    }
-  };
-
-  const getRiskLevel = (eventType: AuditEventType) => {
-    switch (eventType) {
-      case 'security_event':
-      case 'breach_detected':
-        return 'high';
-      case 'data_deletion':
-      case 'consent_withdrawn':
-      case 'admin_action':
-        return 'medium';
-      default:
-        return 'low';
-    }
-  };
-
-  const handleSearch = async () => {
-    if (filters.searchTerm) {
-      await searchEvents(filters.searchTerm, {
-        eventType: filters.eventType !== 'all' ? filters.eventType : undefined,
-        userId: filters.userId || undefined,
-        dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
-        dateTo: filters.dateTo ? new Date(filters.dateTo) : undefined
-      });
-    } else {
-      await loadEvents({
-        page: 1,
-        limit: pageSize,
-        filters: filters.eventType !== 'all' ? { eventType: filters.eventType } : undefined
-      });
-    }
-  };
-
-  const handleExport = async () => {
-    try {
-      await exportAuditTrail({
-        eventType: filters.eventType !== 'all' ? filters.eventType : undefined,
-        userId: filters.userId || undefined,
-        dateFrom: filters.dateFrom ? new Date(filters.dateFrom) : undefined,
-        dateTo: filters.dateTo ? new Date(filters.dateTo) : undefined
-      });
-    } catch (error) {
-      console.error('Error exporting audit trail:', error);
-    }
-  };
-
-  const getEventStats = () => {
-    const total = events.length;
-    const securityEvents = events.filter(e => e.eventType === 'security_event' || e.eventType === 'breach_detected').length;
-    const dataAccess = events.filter(e => e.eventType === 'data_access').length;
-    const consentChanges = events.filter(e => 
-      e.eventType === 'consent_given' || 
-      e.eventType === 'consent_withdrawn' || 
-      e.eventType === 'consent_updated'
-    ).length;
-    const adminActions = events.filter(e => e.eventType === 'admin_action').length;
+    const matchesAction = actionFilter === 'all' || event.action === actionFilter
+    const matchesEntity = entityFilter === 'all' || event.entity_type === entityFilter
+    const matchesUser = userFilter === 'all' || event.user_id === userFilter
     
-    return { total, securityEvents, dataAccess, consentChanges, adminActions };
-  };
+    // Filtro de data
+    const eventDate = new Date(event.timestamp)
+    const now = new Date()
+    let matchesDate = true
+    
+    switch (dateRange) {
+      case '1d':
+        matchesDate = (now.getTime() - eventDate.getTime()) <= 24 * 60 * 60 * 1000
+        break
+      case '7d':
+        matchesDate = (now.getTime() - eventDate.getTime()) <= 7 * 24 * 60 * 60 * 1000
+        break
+      case '30d':
+        matchesDate = (now.getTime() - eventDate.getTime()) <= 30 * 24 * 60 * 60 * 1000
+        break
+      case '90d':
+        matchesDate = (now.getTime() - eventDate.getTime()) <= 90 * 24 * 60 * 60 * 1000
+        break
+    }
+    
+    return matchesSearch && matchesAction && matchesEntity && matchesUser && matchesDate
+  }) || []
 
-  const getRecentHighRiskEvents = () => {
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    return events.filter(event => 
-      new Date(event.timestamp) > twentyFourHoursAgo &&
-      getRiskLevel(event.eventType) === 'high'
-    );
-  };
+  const getActionBadge = (action: string) => {
+    switch (action) {
+      case 'create':
+        return <Badge variant="default" className="bg-green-600"><CheckCircle className="h-3 w-3 mr-1" />Criar</Badge>
+      case 'read':
+      case 'view':
+        return <Badge variant="outline"><Eye className="h-3 w-3 mr-1" />Visualizar</Badge>
+      case 'update':
+      case 'edit':
+        return <Badge variant="secondary"><Settings className="h-3 w-3 mr-1" />Atualizar</Badge>
+      case 'delete':
+        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Excluir</Badge>
+      case 'export':
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700"><Download className="h-3 w-3 mr-1" />Exportar</Badge>
+      case 'login':
+        return <Badge variant="outline" className="bg-green-50 text-green-700"><User className="h-3 w-3 mr-1" />Login</Badge>
+      case 'logout':
+        return <Badge variant="outline" className="bg-gray-50 text-gray-700"><User className="h-3 w-3 mr-1" />Logout</Badge>
+      case 'consent_given':
+        return <Badge variant="default" className="bg-green-600"><CheckCircle className="h-3 w-3 mr-1" />Consentimento</Badge>
+      case 'consent_withdrawn':
+        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Retirada</Badge>
+      case 'data_request':
+        return <Badge variant="outline" className="bg-purple-50 text-purple-700"><FileText className="h-3 w-3 mr-1" />Solicitação</Badge>
+      case 'breach_reported':
+        return <Badge variant="destructive"><AlertTriangle className="h-3 w-3 mr-1" />Violação</Badge>
+      default:
+        return <Badge variant="secondary"><Activity className="h-3 w-3 mr-1" />{action}</Badge>
+    }
+  }
 
-  const stats = getEventStats();
-  const recentHighRiskEvents = getRecentHighRiskEvents();
+  const getEntityIcon = (entityType: string) => {
+    switch (entityType) {
+      case 'user':
+        return <User className="h-4 w-4" />
+      case 'consent':
+        return <Shield className="h-4 w-4" />
+      case 'data_request':
+        return <FileText className="h-4 w-4" />
+      case 'breach_incident':
+        return <AlertTriangle className="h-4 w-4" />
+      case 'assessment':
+        return <BarChart3 className="h-4 w-4" />
+      case 'system':
+        return <Database className="h-4 w-4" />
+      default:
+        return <Activity className="h-4 w-4" />
+    }
+  }
 
-  if (loading && events.length === 0) {
+  const getSeverityColor = (severity?: string) => {
+    switch (severity) {
+      case 'low': return 'text-green-600'
+      case 'medium': return 'text-yellow-600'
+      case 'high': return 'text-orange-600'
+      case 'critical': return 'text-red-600'
+      default: return 'text-gray-600'
+    }
+  }
+
+  // Calcular estatísticas
+  const stats = {
+    total: events?.length || 0,
+    today: events?.filter(e => {
+      const eventDate = new Date(e.timestamp)
+      const today = new Date()
+      return eventDate.toDateString() === today.toDateString()
+    }).length || 0,
+    thisWeek: events?.filter(e => {
+      const eventDate = new Date(e.timestamp)
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      return eventDate >= weekAgo
+    }).length || 0,
+    uniqueUsers: new Set(events?.map(e => e.user_id).filter(Boolean)).size || 0
+  }
+
+  // Obter listas únicas para filtros
+  const uniqueActions = [...new Set(events?.map(e => e.action).filter(Boolean))] || []
+  const uniqueEntities = [...new Set(events?.map(e => e.entity_type).filter(Boolean))] || []
+  const uniqueUsers = [...new Set(events?.map(e => e.user_id).filter(Boolean))] || []
+
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-4 w-4 animate-spin" />
-          <span>Carregando trilha de auditoria...</span>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Carregando trilha de auditoria...</span>
       </div>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Erro ao carregar trilha de auditoria: {error}
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className={className}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Trilha de Auditoria LGPD</h2>
+          <h3 className="text-xl font-semibold">Trilha de Auditoria LGPD</h3>
           <p className="text-muted-foreground">
-            Monitore e audite todas as atividades relacionadas a dados pessoais
+            Monitore todas as atividades relacionadas à conformidade LGPD
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button onClick={() => loadEvents({ page: 1, limit: pageSize })} disabled={loading} variant="outline">
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={refreshData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
             Atualizar
           </Button>
-          <Button onClick={handleExport} variant="outline">
+          <Button variant="outline" onClick={exportAuditTrail}>
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>
         </div>
       </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* High Risk Events Alert */}
-      {recentHighRiskEvents.length > 0 && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            {recentHighRiskEvents.length} evento(s) de alto risco detectado(s) nas últimas 24 horas. 
-            Revise imediatamente para garantir a segurança dos dados.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-5">
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Eventos</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Eventos</p>
+                <p className="text-2xl font-bold">{stats.total}</p>
+              </div>
+              <Activity className="h-8 w-8 text-blue-600" />
+            </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Eventos de Segurança</CardTitle>
-            <Shield className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.securityEvents}</div>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Hoje</p>
+                <p className="text-2xl font-bold">{stats.today}</p>
+              </div>
+              <Calendar className="h-8 w-8 text-green-600" />
+            </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Acessos a Dados</CardTitle>
-            <Eye className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.dataAccess}</div>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Esta Semana</p>
+                <p className="text-2xl font-bold">{stats.thisWeek}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-purple-600" />
+            </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mudanças de Consentimento</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.consentChanges}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ações Administrativas</CardTitle>
-            <Settings className="h-4 w-4 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{stats.adminActions}</div>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Usuários Únicos</p>
+                <p className="text-2xl font-bold">{stats.uniqueUsers}</p>
+              </div>
+              <User className="h-8 w-8 text-orange-600" />
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="h-4 w-4" />
-            <span>Filtros e Busca</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label>Buscar eventos</Label>
-                <div className="flex space-x-2">
-                  <Input
-                    placeholder="Buscar por descrição ou detalhes..."
-                    value={filters.searchTerm}
-                    onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })}
-                  />
-                  <Button onClick={handleSearch} disabled={loading}>
-                    <Search className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label>ID do Usuário</Label>
-                <Input
-                  placeholder="Filtrar por usuário..."
-                  value={filters.userId}
-                  onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
-                />
-              </div>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="space-y-2">
-                <Label>Tipo de Evento</Label>
-                <Select value={filters.eventType} onValueChange={(value) => setFilters({ ...filters, eventType: value as AuditEventType | 'all' })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos os tipos</SelectItem>
-                    <SelectItem value="user_login">Login de Usuário</SelectItem>
-                    <SelectItem value="user_logout">Logout de Usuário</SelectItem>
-                    <SelectItem value="data_access">Acesso a Dados</SelectItem>
-                    <SelectItem value="data_export">Exportação de Dados</SelectItem>
-                    <SelectItem value="data_deletion">Exclusão de Dados</SelectItem>
-                    <SelectItem value="consent_given">Consentimento Concedido</SelectItem>
-                    <SelectItem value="consent_withdrawn">Consentimento Retirado</SelectItem>
-                    <SelectItem value="consent_updated">Consentimento Atualizado</SelectItem>
-                    <SelectItem value="security_event">Evento de Segurança</SelectItem>
-                    <SelectItem value="system_access">Acesso ao Sistema</SelectItem>
-                    <SelectItem value="admin_action">Ação Administrativa</SelectItem>
-                    <SelectItem value="breach_detected">Violação Detectada</SelectItem>
-                    <SelectItem value="policy_change">Mudança de Política</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Data Inicial</Label>
-                <Input
-                  type="datetime-local"
-                  value={filters.dateFrom}
-                  onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Data Final</Label>
-                <Input
-                  type="datetime-local"
-                  value={filters.dateTo}
-                  onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="events" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="events">Eventos</TabsTrigger>
+          <TabsTrigger value="analytics">Análises</TabsTrigger>
+        </TabsList>
 
-      {/* Events Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Eventos de Auditoria ({filteredEvents.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Timestamp</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Usuário</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>IP</TableHead>
-                  <TableHead>Risco</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredEvents.map((event) => {
-                  const riskLevel = getRiskLevel(event.eventType);
-                  
-                  return (
-                    <TableRow 
-                      key={event.id} 
-                      className={riskLevel === 'high' ? 'bg-red-50' : riskLevel === 'medium' ? 'bg-yellow-50' : ''}
-                    >
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-sm">
-                            {format(new Date(event.timestamp), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          {getEventTypeIcon(event.eventType)}
-                          {getEventTypeBadge(event.eventType)}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <User className="h-3 w-3" />
-                          <span className="text-sm">{event.userId || 'Sistema'}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="max-w-xs">
-                          <div className="text-sm font-medium truncate">{event.description}</div>
-                          {event.details && (
-                            <div className="text-xs text-muted-foreground truncate">{event.details}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-1">
-                          <Globe className="h-3 w-3" />
-                          <span className="text-sm">{event.ipAddress || 'N/A'}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {riskLevel === 'high' && (
-                          <Badge variant="destructive">Alto</Badge>
-                        )}
-                        {riskLevel === 'medium' && (
-                          <Badge className="bg-yellow-100 text-yellow-800">Médio</Badge>
-                        )}
-                        {riskLevel === 'low' && (
-                          <Badge variant="outline">Baixo</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedEvent(event);
-                            setShowDetailsDialog(true);
-                          }}
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-          
-          {/* Pagination */}
-          <div className="flex items-center justify-between space-x-2 py-4">
-            <div className="text-sm text-muted-foreground">
-              Mostrando {Math.min((currentPage - 1) * pageSize + 1, filteredEvents.length)} a {Math.min(currentPage * pageSize, filteredEvents.length)} de {filteredEvents.length} eventos
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                Anterior
-              </Button>
-              <div className="text-sm">
-                Página {currentPage} de {Math.ceil(filteredEvents.length / pageSize)}
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.min(Math.ceil(filteredEvents.length / pageSize), currentPage + 1))}
-                disabled={currentPage >= Math.ceil(filteredEvents.length / pageSize)}
-              >
-                Próxima
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Event Details Dialog */}
-      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Detalhes do Evento de Auditoria</DialogTitle>
-            <DialogDescription>
-              Informações completas sobre o evento selecionado
-            </DialogDescription>
-          </DialogHeader>
-          {selectedEvent && (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+        <TabsContent value="events" className="space-y-4">
+          {/* Filtros */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Filtros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div>
-                  <h4 className="font-medium mb-2">Informações Básicas</h4>
-                  <div className="space-y-2 text-sm">
-                    <div><strong>ID:</strong> {selectedEvent.id}</div>
-                    <div><strong>Tipo:</strong> {getEventTypeLabel(selectedEvent.eventType)}</div>
-                    <div><strong>Timestamp:</strong> {format(new Date(selectedEvent.timestamp), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}</div>
-                    <div><strong>Usuário:</strong> {selectedEvent.userId || 'Sistema'}</div>
+                  <Label htmlFor="search">Buscar</Label>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search"
+                      placeholder="Ação, entidade, usuário..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8"
+                    />
                   </div>
                 </div>
                 
                 <div>
-                  <h4 className="font-medium mb-2">Contexto Técnico</h4>
-                  <div className="space-y-2 text-sm">
-                    <div><strong>IP:</strong> {selectedEvent.ipAddress || 'N/A'}</div>
-                    <div><strong>User Agent:</strong> {selectedEvent.userAgent || 'N/A'}</div>
-                    <div><strong>Sessão:</strong> {selectedEvent.sessionId || 'N/A'}</div>
-                    <div><strong>Risco:</strong> 
-                      {getRiskLevel(selectedEvent.eventType) === 'high' && <Badge variant="destructive" className="ml-2">Alto</Badge>}
-                      {getRiskLevel(selectedEvent.eventType) === 'medium' && <Badge className="bg-yellow-100 text-yellow-800 ml-2">Médio</Badge>}
-                      {getRiskLevel(selectedEvent.eventType) === 'low' && <Badge variant="outline" className="ml-2">Baixo</Badge>}
-                    </div>
+                  <Label htmlFor="action">Ação</Label>
+                  <Select value={actionFilter} onValueChange={setActionFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todas as ações" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {uniqueActions.map(action => (
+                        <SelectItem key={action} value={action}>{action}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="entity">Entidade</Label>
+                  <Select value={entityFilter} onValueChange={setEntityFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todas as entidades" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {uniqueEntities.map(entity => (
+                        <SelectItem key={entity} value={entity}>{entity}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="user">Usuário</Label>
+                  <Select value={userFilter} onValueChange={setUserFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os usuários" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {uniqueUsers.map(user => (
+                        <SelectItem key={user} value={user}>{user}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="date">Período</Label>
+                  <Select value={dateRange} onValueChange={setDateRange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Período" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1d">Último dia</SelectItem>
+                      <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                      <SelectItem value="30d">Últimos 30 dias</SelectItem>
+                      <SelectItem value="90d">Últimos 90 dias</SelectItem>
+                      <SelectItem value="all">Todos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm('')
+                      setActionFilter('all')
+                      setEntityFilter('all')
+                      setUserFilter('all')
+                      setDateRange('7d')
+                    }}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Limpar
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tabela de eventos */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Eventos de Auditoria ({filteredEvents.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Timestamp</TableHead>
+                    <TableHead>Ação</TableHead>
+                    <TableHead>Entidade</TableHead>
+                    <TableHead>Usuário</TableHead>
+                    <TableHead>Detalhes</TableHead>
+                    <TableHead>IP</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <div className="text-sm font-medium">
+                              {new Date(event.timestamp).toLocaleDateString('pt-BR')}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(event.timestamp).toLocaleTimeString('pt-BR')}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getActionBadge(event.action)}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {getEntityIcon(event.entity_type)}
+                          <span className="text-sm">{event.entity_type}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{event.user_id || 'Sistema'}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="max-w-xs">
+                          <p className="text-sm truncate" title={event.details}>
+                            {event.details}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {event.ip_address || '-'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline">
+                              <Eye className="h-3 w-3 mr-1" />
+                              Ver
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                {getActionBadge(event.action)}
+                                Detalhes do Evento
+                              </DialogTitle>
+                              <DialogDescription>
+                                {new Date(event.timestamp).toLocaleString('pt-BR')}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <Label>Ação</Label>
+                                  <p className="text-sm font-medium">{event.action}</p>
+                                </div>
+                                <div>
+                                  <Label>Tipo de Entidade</Label>
+                                  <p className="text-sm">{event.entity_type}</p>
+                                </div>
+                                <div>
+                                  <Label>ID da Entidade</Label>
+                                  <p className="text-sm font-mono">{event.entity_id || '-'}</p>
+                                </div>
+                                <div>
+                                  <Label>Usuário</Label>
+                                  <p className="text-sm">{event.user_id || 'Sistema'}</p>
+                                </div>
+                                <div>
+                                  <Label>Endereço IP</Label>
+                                  <p className="text-sm font-mono">{event.ip_address || '-'}</p>
+                                </div>
+                                <div>
+                                  <Label>User Agent</Label>
+                                  <p className="text-sm truncate" title={event.user_agent}>
+                                    {event.user_agent || '-'}
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <Label>Detalhes</Label>
+                                <p className="text-sm bg-muted p-3 rounded mt-1">
+                                  {event.details}
+                                </p>
+                              </div>
+                              
+                              {event.metadata && (
+                                <div>
+                                  <Label>Metadados</Label>
+                                  <pre className="text-xs bg-muted p-3 rounded mt-1 overflow-auto max-h-40">
+                                    {JSON.stringify(event.metadata, null, 2)}
+                                  </pre>
+                                </div>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              
+              {filteredEvents.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhum evento encontrado
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Ações mais frequentes */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Ações Mais Frequentes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {Object.entries(
+                    events?.reduce((acc, event) => {
+                      acc[event.action] = (acc[event.action] || 0) + 1
+                      return acc
+                    }, {} as Record<string, number>) || {}
+                  )
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5)
+                    .map(([action, count]) => (
+                      <div key={action} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getActionBadge(action)}
+                        </div>
+                        <Badge variant="outline">{count}</Badge>
+                      </div>
+                    ))
+                  }
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Entidades mais acessadas */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Entidades Mais Acessadas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {Object.entries(
+                    events?.reduce((acc, event) => {
+                      acc[event.entity_type] = (acc[event.entity_type] || 0) + 1
+                      return acc
+                    }, {} as Record<string, number>) || {}
+                  )
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5)
+                    .map(([entity, count]) => (
+                      <div key={entity} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {getEntityIcon(entity)}
+                          <span className="text-sm">{entity}</span>
+                        </div>
+                        <Badge variant="outline">{count}</Badge>
+                      </div>
+                    ))
+                  }
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Usuários mais ativos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Usuários Mais Ativos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {Object.entries(
+                    events?.reduce((acc, event) => {
+                      const user = event.user_id || 'Sistema'
+                      acc[user] = (acc[user] || 0) + 1
+                      return acc
+                    }, {} as Record<string, number>) || {}
+                  )
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 5)
+                    .map(([user, count]) => (
+                      <div key={user} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{user}</span>
+                        </div>
+                        <Badge variant="outline">{count}</Badge>
+                      </div>
+                    ))
+                  }
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Atividade por período */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Atividade por Período</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Últimas 24h</span>
+                    <Badge variant="outline">
+                      {events?.filter(e => {
+                        const eventDate = new Date(e.timestamp)
+                        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+                        return eventDate >= dayAgo
+                      }).length || 0}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Últimos 7 dias</span>
+                    <Badge variant="outline">
+                      {events?.filter(e => {
+                        const eventDate = new Date(e.timestamp)
+                        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                        return eventDate >= weekAgo
+                      }).length || 0}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Últimos 30 dias</span>
+                    <Badge variant="outline">
+                      {events?.filter(e => {
+                        const eventDate = new Date(e.timestamp)
+                        const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                        return eventDate >= monthAgo
+                      }).length || 0}
+                    </Badge>
                   </div>
                 </div>
-              </div>
-              
-              <div>
-                <h4 className="font-medium mb-2">Descrição</h4>
-                <p className="text-sm text-muted-foreground">{selectedEvent.description}</p>
-              </div>
-              
-              {selectedEvent.details && (
-                <div>
-                  <h4 className="font-medium mb-2">Detalhes Adicionais</h4>
-                  <pre className="text-sm text-muted-foreground bg-gray-50 p-3 rounded overflow-auto max-h-40">
-                    {selectedEvent.details}
-                  </pre>
-                </div>
-              )}
-              
-              {selectedEvent.metadata && Object.keys(selectedEvent.metadata).length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-2">Metadados</h4>
-                  <pre className="text-sm text-muted-foreground bg-gray-50 p-3 rounded overflow-auto max-h-40">
-                    {JSON.stringify(selectedEvent.metadata, null, 2)}
-                  </pre>
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
-  );
+  )
 }

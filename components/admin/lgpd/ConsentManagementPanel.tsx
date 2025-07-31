@@ -1,398 +1,539 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Search,
-  Filter,
-  Download,
+import React, { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
+import { 
+  Search, 
+  Filter, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Download, 
   RefreshCw,
-  UserCheck,
-  UserX,
-  Clock,
   CheckCircle,
   XCircle,
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
+  Clock,
   AlertTriangle
-} from 'lucide-react';
-import { useConsentManagement } from '@/hooks/useLGPD';
-import { ConsentRecord, ConsentStatus, ConsentPurpose } from '@/types/lgpd';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+} from 'lucide-react'
+import { useConsentManagement } from '@/hooks/useLGPD'
+import { ConsentPurpose, UserConsent } from '@/types/lgpd'
 
-/**
- * Consent Management Panel
- * 
- * Comprehensive panel for managing user consents including:
- * - Consent records listing and filtering
- * - Consent status management
- * - Purpose-based consent tracking
- * - Consent withdrawal handling
- * - Consent analytics and reporting
- */
-export function ConsentManagementPanel() {
+interface ConsentManagementPanelProps {
+  className?: string
+}
+
+export function ConsentManagementPanel({ className }: ConsentManagementPanelProps) {
   const {
     consents,
-    loading,
+    purposes,
+    isLoading,
     error,
-    loadConsents,
+    createPurpose,
+    updatePurpose,
+    deletePurpose,
     updateConsent,
     withdrawConsent,
-    getConsentHistory
-  } = useConsentManagement();
+    exportConsents,
+    refreshData
+  } = useConsentManagement()
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<ConsentStatus | 'all'>('all');
-  const [purposeFilter, setPurposeFilter] = useState<ConsentPurpose | 'all'>('all');
-  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null);
-  const [showHistory, setShowHistory] = useState(false);
-  const [consentHistory, setConsentHistory] = useState<ConsentRecord[]>([]);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [purposeFilter, setPurposeFilter] = useState<string>('all')
+  const [isCreatePurposeOpen, setIsCreatePurposeOpen] = useState(false)
+  const [editingPurpose, setEditingPurpose] = useState<ConsentPurpose | null>(null)
+  const [newPurpose, setNewPurpose] = useState({
+    name: '',
+    description: '',
+    required: false,
+    retention_period: 365
+  })
 
-  useEffect(() => {
-    loadConsents();
-  }, [loadConsents]);
-
-  const filteredConsents = consents.filter(consent => {
-    const matchesSearch = consent.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         consent.userEmail?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || consent.status === statusFilter;
-    const matchesPurpose = purposeFilter === 'all' || consent.purpose === purposeFilter;
+  // Filtrar consentimentos
+  const filteredConsents = consents?.filter(consent => {
+    const matchesSearch = 
+      consent.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consent.purpose_name?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    return matchesSearch && matchesStatus && matchesPurpose;
-  });
+    const matchesStatus = statusFilter === 'all' || consent.status === statusFilter
+    const matchesPurpose = purposeFilter === 'all' || consent.purpose_id === purposeFilter
+    
+    return matchesSearch && matchesStatus && matchesPurpose
+  }) || []
 
-  const getStatusBadge = (status: ConsentStatus) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'granted':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Concedido</Badge>;
-      case 'withdrawn':
-        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Retirado</Badge>;
+      case 'active':
+        return <Badge variant="default"><CheckCircle className="h-3 w-3 mr-1" />Ativo</Badge>
       case 'expired':
-        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Expirado</Badge>;
-      case 'pending':
-        return <Badge variant="outline"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
+        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Expirado</Badge>
+      case 'withdrawn':
+        return <Badge variant="outline"><XCircle className="h-3 w-3 mr-1" />Retirado</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status}</Badge>
     }
-  };
+  }
 
-  const getPurposeLabel = (purpose: ConsentPurpose) => {
-    const labels: Record<ConsentPurpose, string> = {
-      'marketing': 'Marketing',
-      'analytics': 'Analytics',
-      'personalization': 'Personalização',
-      'third_party_sharing': 'Compartilhamento com Terceiros',
-      'data_processing': 'Processamento de Dados',
-      'communication': 'Comunicação'
-    };
-    return labels[purpose] || purpose;
-  };
-
-  const handleViewHistory = async (consent: ConsentRecord) => {
+  const handleCreatePurpose = async () => {
     try {
-      const history = await getConsentHistory(consent.userId, consent.purpose);
-      setConsentHistory(history);
-      setSelectedConsent(consent);
-      setShowHistory(true);
+      await createPurpose(newPurpose)
+      setIsCreatePurposeOpen(false)
+      setNewPurpose({ name: '', description: '', required: false, retention_period: 365 })
     } catch (error) {
-      console.error('Error loading consent history:', error);
+      console.error('Erro ao criar finalidade:', error)
     }
-  };
+  }
+
+  const handleUpdatePurpose = async () => {
+    if (!editingPurpose) return
+    
+    try {
+      await updatePurpose(editingPurpose.id, editingPurpose)
+      setEditingPurpose(null)
+    } catch (error) {
+      console.error('Erro ao atualizar finalidade:', error)
+    }
+  }
 
   const handleWithdrawConsent = async (consentId: string) => {
     try {
-      await withdrawConsent(consentId, 'User request via admin panel');
-      await loadConsents(); // Refresh the list
+      await withdrawConsent(consentId)
     } catch (error) {
-      console.error('Error withdrawing consent:', error);
+      console.error('Erro ao retirar consentimento:', error)
     }
-  };
+  }
 
-  const getConsentStats = () => {
-    const total = consents.length;
-    const granted = consents.filter(c => c.status === 'granted').length;
-    const withdrawn = consents.filter(c => c.status === 'withdrawn').length;
-    const expired = consents.filter(c => c.status === 'expired').length;
-    const pending = consents.filter(c => c.status === 'pending').length;
-
-    return { total, granted, withdrawn, expired, pending };
-  };
-
-  const stats = getConsentStats();
-
-  if (loading && consents.length === 0) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-4 w-4 animate-spin" />
-          <span>Carregando consentimentos...</span>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Carregando consentimentos...</span>
       </div>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Erro ao carregar consentimentos: {error}
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   return (
-    <div className="space-y-6">
+    <div className={className}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Gerenciamento de Consentimentos</h2>
+          <h3 className="text-xl font-semibold">Gerenciamento de Consentimentos</h3>
           <p className="text-muted-foreground">
-            Visualize e gerencie todos os consentimentos de usuários
+            Gerencie finalidades e consentimentos dos usuários
           </p>
         </div>
-        <Button onClick={loadConsents} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Atualizar
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={refreshData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Atualizar
+          </Button>
+          <Button variant="outline" onClick={exportConsents}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar
+          </Button>
+        </div>
       </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+      <Tabs defaultValue="consents" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="consents">Consentimentos</TabsTrigger>
+          <TabsTrigger value="purposes">Finalidades</TabsTrigger>
+        </TabsList>
 
-      {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Concedidos</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.granted}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Retirados</CardTitle>
-            <XCircle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.withdrawn}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expirados</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.expired}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
-            <Clock className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.pending}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="search">Buscar por usuário</Label>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="search"
-                  placeholder="ID do usuário ou email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
-                />
+        <TabsContent value="consents" className="space-y-4">
+          {/* Filtros */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Filtros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor="search">Buscar</Label>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="search"
+                      placeholder="Email ou finalidade..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todos os status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="active">Ativo</SelectItem>
+                      <SelectItem value="expired">Expirado</SelectItem>
+                      <SelectItem value="withdrawn">Retirado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="purpose">Finalidade</Label>
+                  <Select value={purposeFilter} onValueChange={setPurposeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todas as finalidades" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {purposes?.map((purpose) => (
+                        <SelectItem key={purpose.id} value={purpose.id}>
+                          {purpose.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchTerm('')
+                      setStatusFilter('all')
+                      setPurposeFilter('all')
+                    }}
+                  >
+                    <Filter className="h-4 w-4 mr-2" />
+                    Limpar
+                  </Button>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as ConsentStatus | 'all')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos os status</SelectItem>
-                  <SelectItem value="granted">Concedido</SelectItem>
-                  <SelectItem value="withdrawn">Retirado</SelectItem>
-                  <SelectItem value="expired">Expirado</SelectItem>
-                  <SelectItem value="pending">Pendente</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Finalidade</Label>
-              <Select value={purposeFilter} onValueChange={(value) => setPurposeFilter(value as ConsentPurpose | 'all')}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas as finalidades</SelectItem>
-                  <SelectItem value="marketing">Marketing</SelectItem>
-                  <SelectItem value="analytics">Analytics</SelectItem>
-                  <SelectItem value="personalization">Personalização</SelectItem>
-                  <SelectItem value="third_party_sharing">Compartilhamento com Terceiros</SelectItem>
-                  <SelectItem value="data_processing">Processamento de Dados</SelectItem>
-                  <SelectItem value="communication">Comunicação</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Consents Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Registros de Consentimento ({filteredConsents.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Usuário</TableHead>
-                  <TableHead>Finalidade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Data de Concessão</TableHead>
-                  <TableHead>Expiração</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredConsents.map((consent) => (
-                  <TableRow key={consent.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{consent.userId}</div>
-                        {consent.userEmail && (
-                          <div className="text-sm text-muted-foreground">{consent.userEmail}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{getPurposeLabel(consent.purpose)}</TableCell>
-                    <TableCell>{getStatusBadge(consent.status)}</TableCell>
-                    <TableCell>
-                      {format(new Date(consent.grantedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                    </TableCell>
-                    <TableCell>
-                      {consent.expiresAt ? (
-                        format(new Date(consent.expiresAt), 'dd/MM/yyyy', { locale: ptBR })
-                      ) : (
-                        <span className="text-muted-foreground">Sem expiração</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleViewHistory(consent)}
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                        {consent.status === 'granted' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleWithdrawConsent(consent.id)}
-                          >
-                            <UserX className="h-3 w-3" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Consent History Dialog */}
-      <Dialog open={showHistory} onOpenChange={setShowHistory}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Histórico de Consentimento</DialogTitle>
-            <DialogDescription>
-              Histórico completo de consentimento para {selectedConsent?.userEmail || selectedConsent?.userId}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {consentHistory.length > 0 ? (
+          {/* Tabela de consentimentos */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Consentimentos ({filteredConsents.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Data</TableHead>
-                    <TableHead>Ação</TableHead>
+                    <TableHead>Usuário</TableHead>
+                    <TableHead>Finalidade</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Motivo</TableHead>
+                    <TableHead>Data de Consentimento</TableHead>
+                    <TableHead>Expiração</TableHead>
+                    <TableHead>Versão</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {consentHistory.map((record, index) => (
-                    <TableRow key={index}>
+                  {filteredConsents.map((consent) => (
+                    <TableRow key={consent.id}>
                       <TableCell>
-                        {format(new Date(record.grantedAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        <div>
+                          <div className="font-medium">{consent.user_email}</div>
+                          <div className="text-sm text-muted-foreground">
+                            IP: {consent.ip_address}
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell>
-                        {record.status === 'granted' ? 'Consentimento concedido' : 
-                         record.status === 'withdrawn' ? 'Consentimento retirado' :
-                         record.status === 'expired' ? 'Consentimento expirado' : 'Ação desconhecida'}
+                        <div>
+                          <div className="font-medium">{consent.purpose_name}</div>
+                          {consent.purpose_required && (
+                            <Badge variant="outline" className="text-xs">
+                              Obrigatório
+                            </Badge>
+                          )}
+                        </div>
                       </TableCell>
-                      <TableCell>{getStatusBadge(record.status)}</TableCell>
+                      <TableCell>{getStatusBadge(consent.status)}</TableCell>
                       <TableCell>
-                        {record.withdrawalReason || 'N/A'}
+                        {new Date(consent.granted_at).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        {consent.expires_at ? (
+                          <div className={`${
+                            new Date(consent.expires_at) < new Date() 
+                              ? 'text-red-600' 
+                              : new Date(consent.expires_at) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                              ? 'text-yellow-600'
+                              : 'text-green-600'
+                          }`}>
+                            {new Date(consent.expires_at).toLocaleDateString('pt-BR')}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">Sem expiração</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          v{consent.version}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          {consent.status === 'active' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleWithdrawConsent(consent.id)}
+                            >
+                              <XCircle className="h-3 w-3 mr-1" />
+                              Retirar
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                Nenhum histórico encontrado
-              </div>
-            )}
+              
+              {filteredConsents.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhum consentimento encontrado
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="purposes" className="space-y-4">
+          {/* Header das finalidades */}
+          <div className="flex justify-between items-center">
+            <h4 className="text-lg font-medium">Finalidades de Consentimento</h4>
+            <Dialog open={isCreatePurposeOpen} onOpenChange={setIsCreatePurposeOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova Finalidade
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Criar Nova Finalidade</DialogTitle>
+                  <DialogDescription>
+                    Defina uma nova finalidade para coleta de consentimentos
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Nome</Label>
+                    <Input
+                      id="name"
+                      value={newPurpose.name}
+                      onChange={(e) => setNewPurpose({ ...newPurpose, name: e.target.value })}
+                      placeholder="Ex: Marketing por email"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      value={newPurpose.description}
+                      onChange={(e) => setNewPurpose({ ...newPurpose, description: e.target.value })}
+                      placeholder="Descreva como os dados serão utilizados..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="retention">Período de Retenção (dias)</Label>
+                    <Input
+                      id="retention"
+                      type="number"
+                      value={newPurpose.retention_period}
+                      onChange={(e) => setNewPurpose({ ...newPurpose, retention_period: parseInt(e.target.value) })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="required"
+                      checked={newPurpose.required}
+                      onCheckedChange={(checked) => setNewPurpose({ ...newPurpose, required: !!checked })}
+                    />
+                    <Label htmlFor="required">Consentimento obrigatório</Label>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCreatePurposeOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleCreatePurpose}>
+                    Criar Finalidade
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Lista de finalidades */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {purposes?.map((purpose) => (
+              <Card key={purpose.id}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-base">{purpose.name}</CardTitle>
+                      <CardDescription>{purpose.description}</CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingPurpose(purpose)}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => deletePurpose(purpose.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Status:</span>
+                      <Badge variant={purpose.active ? "default" : "secondary"}>
+                        {purpose.active ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Obrigatório:</span>
+                      <Badge variant={purpose.required ? "default" : "outline"}>
+                        {purpose.required ? 'Sim' : 'Não'}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Retenção:</span>
+                      <span>{purpose.retention_period} dias</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Versão:</span>
+                      <Badge variant="outline">v{purpose.version}</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Dialog de edição */}
+          <Dialog open={!!editingPurpose} onOpenChange={() => setEditingPurpose(null)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar Finalidade</DialogTitle>
+                <DialogDescription>
+                  Modifique os detalhes da finalidade
+                </DialogDescription>
+              </DialogHeader>
+              {editingPurpose && (
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="edit-name">Nome</Label>
+                    <Input
+                      id="edit-name"
+                      value={editingPurpose.name}
+                      onChange={(e) => setEditingPurpose({ ...editingPurpose, name: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-description">Descrição</Label>
+                    <Textarea
+                      id="edit-description"
+                      value={editingPurpose.description}
+                      onChange={(e) => setEditingPurpose({ ...editingPurpose, description: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-retention">Período de Retenção (dias)</Label>
+                    <Input
+                      id="edit-retention"
+                      type="number"
+                      value={editingPurpose.retention_period}
+                      onChange={(e) => setEditingPurpose({ ...editingPurpose, retention_period: parseInt(e.target.value) })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="edit-required"
+                      checked={editingPurpose.required}
+                      onCheckedChange={(checked) => setEditingPurpose({ ...editingPurpose, required: !!checked })}
+                    />
+                    <Label htmlFor="edit-required">Consentimento obrigatório</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="edit-active"
+                      checked={editingPurpose.active}
+                      onCheckedChange={(checked) => setEditingPurpose({ ...editingPurpose, active: !!checked })}
+                    />
+                    <Label htmlFor="edit-active">Finalidade ativa</Label>
+                  </div>
+                </div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setEditingPurpose(null)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleUpdatePurpose}>
+                  Salvar Alterações
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </TabsContent>
+      </Tabs>
     </div>
-  );
+  )
 }

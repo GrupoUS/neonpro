@@ -21,7 +21,7 @@ import {
   ApiResponse,
   NotificationChannel
 } from './types';
-import { auditLogger } from '../audit/audit-logger';
+import { auditLogger } from '../auth/audit/audit-logger';
 import { notificationManager } from '../notifications';
 
 /**

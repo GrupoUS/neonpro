@@ -189,8 +189,32 @@ HTMLCanvasElement.prototype.getContext = jest.fn();
 
 // Mock Next.js Request/Response for server tests
 global.Request = class MockRequest {
+  public url: string;
+  public method: string;
+  public headers: Headers;
+  public body?: any;
+  
   constructor(input: any, init?: RequestInit) {
-    Object.assign(this, { url: input, method: 'GET', headers: new Headers(), ...init });
+    this.url = input;
+    this.method = init?.method || 'GET';
+    this.headers = new Headers(init?.headers);
+    this.body = init?.body;
+  }
+  
+  json() {
+    return Promise.resolve(this.body ? JSON.parse(this.body) : {});
+  }
+  
+  text() {
+    return Promise.resolve(this.body || '');
+  }
+  
+  clone() {
+    return new MockRequest(this.url, {
+      method: this.method,
+      headers: this.headers,
+      body: this.body
+    });
   }
 } as any;
 

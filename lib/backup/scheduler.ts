@@ -18,7 +18,7 @@ import {
   ScheduledTask,
   TaskStatus
 } from './types';
-import { auditLogger } from '../audit/audit-logger';
+import { auditLogger } from '../auth/audit/audit-logger';
 
 /**
  * Interface para tarefas agendadas

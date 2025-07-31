@@ -3,7 +3,7 @@ import { EmailProvider } from '../channels/email-provider';
 import { SMSProvider } from '../channels/sms-provider';
 import { PushProvider } from '../channels/push-provider';
 import { WhatsAppProvider } from '../channels/whatsapp-provider';
-import { AuditLogger } from '../../audit/audit-logger';
+import { AuditLogger } from '../../auth/audit/audit-logger';
 
 export interface ChannelConfig {
   enabled: boolean;

@@ -2,7 +2,7 @@ import { BackupManager } from './core/backup-manager';
 import { RecoveryManager } from './recovery/recovery-manager';
 import { StorageManager } from './storage/storage-providers';
 import { BackupStrategyManager } from './strategies/backup-strategies';
-import { AuditLogger } from '../audit/audit-logger';
+import { AuditLogger } from '../auth/audit/audit-logger';
 import { EncryptionService } from '../security/encryption-service';
 import { LGPDManager } from '../lgpd/lgpd-manager';
 

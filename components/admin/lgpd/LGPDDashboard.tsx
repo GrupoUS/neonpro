@@ -1,340 +1,445 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import {
-  Shield,
-  Users,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
+import React from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Shield, 
+  Users, 
+  FileText, 
+  AlertTriangle, 
+  CheckCircle, 
+  XCircle,
   TrendingUp,
+  TrendingDown,
+  Clock,
   Download,
-  RefreshCw,
-  Eye,
-  UserCheck,
-  Database,
-  Lock,
-  Activity
-} from 'lucide-react';
-import {
-  useLGPDDashboard,
-  useConsentManagement,
-  useDataSubjectRights,
-  useComplianceAssessment,
-  useBreachManagement
-} from '@/hooks/useLGPD';
-import { ConsentManagementPanel } from './ConsentManagementPanel';
-import { DataSubjectRightsPanel } from './DataSubjectRightsPanel';
-import { ComplianceAssessmentPanel } from './ComplianceAssessmentPanel';
-import { BreachManagementPanel } from './BreachManagementPanel';
-import { AuditTrailPanel } from './AuditTrailPanel';
+  RefreshCw
+} from 'lucide-react'
+import { useLGPDDashboard } from '@/hooks/useLGPD'
+import { LGPDMetrics } from '@/types/lgpd'
 
-/**
- * LGPD Compliance Dashboard
- * 
- * Comprehensive dashboard for LGPD compliance management including:
- * - Real-time compliance metrics
- * - Consent management overview
- * - Data subject rights tracking
- * - Breach incident monitoring
- * - Audit trail visualization
- * - Compliance assessment results
- */
-export function LGPDDashboard() {
-  const { metrics, loading: metricsLoading, error: metricsError, loadMetrics } = useLGPDDashboard();
-  const { runAssessment, loading: assessmentLoading } = useComplianceAssessment();
-  const [activeTab, setActiveTab] = useState('overview');
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+interface LGPDDashboardProps {
+  className?: string
+}
 
-  // Auto-refresh metrics every 5 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      loadMetrics();
-      setLastUpdated(new Date());
-    }, 5 * 60 * 1000);
+export function LGPDDashboard({ className }: LGPDDashboardProps) {
+  const { 
+    metrics, 
+    isLoading, 
+    error, 
+    refreshMetrics,
+    exportReport 
+  } = useLGPDDashboard()
 
-    return () => clearInterval(interval);
-  }, [loadMetrics]);
-
-  const handleRunAssessment = async () => {
-    try {
-      await runAssessment();
-      await loadMetrics(); // Refresh metrics after assessment
-    } catch (error) {
-      console.error('Error running compliance assessment:', error);
-    }
-  };
-
-  const getComplianceStatusColor = (score: number) => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getComplianceStatusBadge = (score: number) => {
-    if (score >= 90) return <Badge variant="default" className="bg-green-100 text-green-800">Excelente</Badge>;
-    if (score >= 80) return <Badge variant="default" className="bg-yellow-100 text-yellow-800">Bom</Badge>;
-    if (score >= 70) return <Badge variant="default" className="bg-orange-100 text-orange-800">Atenção</Badge>;
-    return <Badge variant="destructive">Crítico</Badge>;
-  };
-
-  if (metricsLoading && !metrics) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="flex items-center space-x-2">
-          <RefreshCw className="h-4 w-4 animate-spin" />
-          <span>Carregando métricas LGPD...</span>
-        </div>
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Carregando métricas...</span>
       </div>
-    );
+    )
   }
 
-  if (metricsError) {
+  if (error) {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Erro ao carregar dashboard LGPD</AlertTitle>
-        <AlertDescription>{metricsError}</AlertDescription>
+        <AlertDescription>
+          Erro ao carregar métricas: {error}
+        </AlertDescription>
       </Alert>
-    );
+    )
+  }
+
+  if (!metrics) {
+    return (
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          Nenhuma métrica disponível
+        </AlertDescription>
+      </Alert>
+    )
+  }
+
+  const getComplianceColor = (score: number) => {
+    if (score >= 90) return 'text-green-600'
+    if (score >= 70) return 'text-yellow-600'
+    return 'text-red-600'
+  }
+
+  const getComplianceVariant = (score: number) => {
+    if (score >= 90) return 'default'
+    if (score >= 70) return 'secondary'
+    return 'destructive'
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className={className}>
+      {/* Header com ações */}
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard LGPD</h1>
+          <h2 className="text-2xl font-bold">Dashboard LGPD</h2>
           <p className="text-muted-foreground">
-            Monitoramento e gestão de conformidade com a Lei Geral de Proteção de Dados
+            Visão geral da conformidade com a Lei Geral de Proteção de Dados
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadMetrics}
-            disabled={metricsLoading}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${metricsLoading ? 'animate-spin' : ''}`} />
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={refreshMetrics}>
+            <RefreshCw className="h-4 w-4 mr-2" />
             Atualizar
           </Button>
-          <Button
-            onClick={handleRunAssessment}
-            disabled={assessmentLoading}
-          >
-            <Activity className={`h-4 w-4 mr-2 ${assessmentLoading ? 'animate-spin' : ''}`} />
-            {assessmentLoading ? 'Executando...' : 'Executar Avaliação'}
+          <Button onClick={exportReport}>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar Relatório
           </Button>
         </div>
       </div>
 
-      {/* Last Updated */}
-      <div className="text-sm text-muted-foreground">
-        Última atualização: {lastUpdated.toLocaleString('pt-BR')}
+      {/* Métricas principais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Conformidade Geral
+            </CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold mb-2">
+              {metrics.overallCompliance}%
+            </div>
+            <Progress 
+              value={metrics.overallCompliance} 
+              className="mb-2" 
+            />
+            <Badge variant={getComplianceVariant(metrics.overallCompliance)}>
+              {metrics.overallCompliance >= 90 ? 'Excelente' : 
+               metrics.overallCompliance >= 70 ? 'Bom' : 'Crítico'}
+            </Badge>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Consentimentos Ativos
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {metrics.activeConsents.toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {metrics.totalUsers > 0 && (
+                `${((metrics.activeConsents / metrics.totalUsers) * 100).toFixed(1)}% dos usuários`
+              )}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Solicitações Pendentes
+            </CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {metrics.pendingRequests}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {metrics.pendingRequests > 5 ? (
+                <span className="text-red-600">Atenção necessária</span>
+              ) : (
+                'Dentro do prazo'
+              )}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Incidentes Ativos
+            </CardTitle>
+            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {metrics.activeIncidents}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {metrics.activeIncidents === 0 ? (
+                <span className="text-green-600">Nenhum incidente</span>
+              ) : (
+                <span className="text-red-600">Requer atenção</span>
+              )}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-          <TabsTrigger value="consent">Consentimentos</TabsTrigger>
-          <TabsTrigger value="rights">Direitos dos Titulares</TabsTrigger>
-          <TabsTrigger value="assessment">Avaliações</TabsTrigger>
+      {/* Alertas e notificações */}
+      {(metrics.pendingRequests > 5 || metrics.activeIncidents > 0) && (
+        <Alert className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Atenção:</strong> 
+            {metrics.pendingRequests > 5 && (
+              <span> Há {metrics.pendingRequests} solicitações pendentes que precisam de atenção.</span>
+            )}
+            {metrics.activeIncidents > 0 && (
+              <span> Há {metrics.activeIncidents} incidente(s) ativo(s) que requer(em) resolução.</span>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Detalhes por categoria */}
+      <Tabs defaultValue="consents" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="consents">Consentimentos</TabsTrigger>
+          <TabsTrigger value="requests">Solicitações</TabsTrigger>
           <TabsTrigger value="incidents">Incidentes</TabsTrigger>
-          <TabsTrigger value="audit">Auditoria</TabsTrigger>
+          <TabsTrigger value="assessments">Avaliações</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          {/* Compliance Score Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Shield className="h-5 w-5" />
-                <span>Score de Conformidade LGPD</span>
-              </CardTitle>
-              <CardDescription>
-                Pontuação geral de conformidade baseada na última avaliação
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
+        <TabsContent value="consents" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Status dos Consentimentos</CardTitle>
+                <CardDescription>
+                  Distribuição dos consentimentos por status
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span>Ativos</span>
+                  <Badge variant="default">{metrics.activeConsents}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Expirados</span>
+                  <Badge variant="secondary">{metrics.expiredConsents || 0}</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Retirados</span>
+                  <Badge variant="outline">{metrics.withdrawnConsents || 0}</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tendências</CardTitle>
+                <CardDescription>
+                  Evolução dos consentimentos
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <div className="space-y-2">
-                  <div className={`text-4xl font-bold ${getComplianceStatusColor(metrics?.complianceScore || 0)}`}>
-                    {metrics?.complianceScore || 0}%
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Esta semana</span>
+                    <div className="flex items-center">
+                      <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                      <span className="text-sm text-green-600">+12%</span>
+                    </div>
                   </div>
-                  {getComplianceStatusBadge(metrics?.complianceScore || 0)}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Este mês</span>
+                    <div className="flex items-center">
+                      <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
+                      <span className="text-sm text-green-600">+8%</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-32">
-                  <Progress value={metrics?.complianceScore || 0} className="h-2" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Key Metrics Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Consentimentos Ativos</CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metrics?.activeConsents || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Total: {metrics?.totalConsents || 0}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Solicitações Pendentes</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metrics?.pendingDataSubjectRequests || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Atendidas: {metrics?.fulfilledDataSubjectRequests || 0}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Incidentes de Segurança</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metrics?.breachIncidents || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Violações recentes: {metrics?.recentViolations || 0}
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Conformidade de Retenção</CardTitle>
-                <Database className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metrics?.retentionPolicyCompliance || 0}%</div>
-                <p className="text-xs text-muted-foreground">
-                  Logs de auditoria: {metrics?.auditLogEntries || 0}
-                </p>
               </CardContent>
             </Card>
           </div>
-
-          {/* Compliance Alerts */}
-          {metrics && (
-            <div className="space-y-2">
-              {metrics.complianceScore < 80 && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Score de Conformidade Baixo</AlertTitle>
-                  <AlertDescription>
-                    Seu score de conformidade está abaixo do recomendado (80%). Execute uma avaliação completa para identificar áreas de melhoria.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              {metrics.pendingDataSubjectRequests > 5 && (
-                <Alert>
-                  <Clock className="h-4 w-4" />
-                  <AlertTitle>Muitas Solicitações Pendentes</AlertTitle>
-                  <AlertDescription>
-                    Você tem {metrics.pendingDataSubjectRequests} solicitações de titulares de dados pendentes. Processe-as dentro do prazo legal de 30 dias.
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              {metrics.breachIncidents > 0 && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertTitle>Incidentes de Segurança Detectados</AlertTitle>
-                  <AlertDescription>
-                    {metrics.breachIncidents} incidente(s) de segurança foram reportados. Verifique se as autoridades foram notificadas conforme exigido.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-          )}
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Ações Rápidas</CardTitle>
-              <CardDescription>
-                Acesso rápido às principais funcionalidades LGPD
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => setActiveTab('consent')}
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  Gerenciar Consentimentos
-                </Button>
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => setActiveTab('rights')}
-                >
-                  <FileText className="h-4 w-4 mr-2" />
-                  Direitos dos Titulares
-                </Button>
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => setActiveTab('assessment')}
-                >
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Executar Avaliação
-                </Button>
-                <Button
-                  variant="outline"
-                  className="justify-start"
-                  onClick={() => setActiveTab('audit')}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  Trilha de Auditoria
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
-        <TabsContent value="consent">
-          <ConsentManagementPanel />
+        <TabsContent value="requests" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Por Tipo</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Acesso</span>
+                  <Badge variant="outline">15</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Exclusão</span>
+                  <Badge variant="outline">8</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Retificação</span>
+                  <Badge variant="outline">5</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Portabilidade</span>
+                  <Badge variant="outline">3</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tempo de Resposta</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Média</span>
+                    <div className="flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span className="text-sm">2.3 dias</span>
+                    </div>
+                  </div>
+                  <Progress value={77} className="mb-2" />
+                  <p className="text-xs text-muted-foreground">
+                    Meta: 3 dias (LGPD)
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Status</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Pendentes</span>
+                  <Badge variant="secondary">{metrics.pendingRequests}</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Em Processamento</span>
+                  <Badge variant="default">12</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Concluídas</span>
+                  <Badge variant="outline">156</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        <TabsContent value="rights">
-          <DataSubjectRightsPanel />
+        <TabsContent value="incidents" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Incidentes por Severidade</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm">Crítica</span>
+                  <Badge variant="destructive">0</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Alta</span>
+                  <Badge variant="secondary">1</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Média</span>
+                  <Badge variant="outline">2</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Baixa</span>
+                  <Badge variant="outline">0</Badge>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tempo de Resolução</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Média</span>
+                    <div className="flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span className="text-sm">4.2 horas</span>
+                    </div>
+                  </div>
+                  <Progress value={85} className="mb-2" />
+                  <p className="text-xs text-muted-foreground">
+                    Meta: 6 horas
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        <TabsContent value="assessment">
-          <ComplianceAssessmentPanel />
-        </TabsContent>
+        <TabsContent value="assessments" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Última Avaliação</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Pontuação</span>
+                    <Badge variant={getComplianceVariant(metrics.overallCompliance)}>
+                      {metrics.overallCompliance}%
+                    </Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Data</span>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date().toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Status</span>
+                    <div className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
+                      <span className="text-sm text-green-600">Aprovada</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <TabsContent value="incidents">
-          <BreachManagementPanel />
-        </TabsContent>
-
-        <TabsContent value="audit">
-          <AuditTrailPanel />
+            <Card>
+              <CardHeader>
+                <CardTitle>Próxima Avaliação</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Agendada para</span>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Tipo</span>
+                    <Badge variant="outline">Automatizada</Badge>
+                  </div>
+                  <Button size="sm" className="w-full mt-2">
+                    Executar Agora
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

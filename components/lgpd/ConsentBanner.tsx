@@ -1,461 +1,441 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import {
-  Shield,
-  Info,
-  Settings,
-  Eye,
-  X,
+import React, { useState, useEffect } from 'react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { 
+  Shield, 
+  Cookie, 
+  Eye, 
+  Settings, 
+  X, 
   Check,
-  AlertCircle,
-  Cookie,
-  Database,
-  Share,
-  Bell,
+  Info,
+  ExternalLink,
+  FileText,
+  Lock,
+  Users,
   BarChart3,
   Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Lock
-} from 'lucide-react';
-import { useConsentBanner } from '@/hooks/useLGPD';
-import { ConsentPurpose, ConsentStatus } from '@/types/lgpd';
+  Globe
+} from 'lucide-react'
+import { useConsentBanner } from '@/hooks/useLGPD'
+import { ConsentPurpose } from '@/types/lgpd'
 
-/**
- * Consent Banner Component
- * 
- * LGPD-compliant consent banner for collecting and managing user consent including:
- * - Initial consent collection
- * - Granular purpose selection
- * - Consent withdrawal options
- * - Privacy policy integration
- * - Cookie consent management
- * - Data processing transparency
- */
-export function ConsentBanner() {
+interface ConsentBannerProps {
+  position?: 'top' | 'bottom'
+  theme?: 'light' | 'dark'
+  showLogo?: boolean
+  companyName?: string
+  privacyPolicyUrl?: string
+  termsOfServiceUrl?: string
+}
+
+export function ConsentBanner({ 
+  position = 'bottom',
+  theme = 'light',
+  showLogo = true,
+  companyName = 'NeonPro',
+  privacyPolicyUrl = '/privacy-policy',
+  termsOfServiceUrl = '/terms-of-service'
+}: ConsentBannerProps) {
   const {
-    showBanner,
-    consents,
     purposes,
-    loading,
+    userConsents,
+    isVisible,
+    isLoading,
     giveConsent,
     withdrawConsent,
-    updateConsent,
-    dismissBanner
-  } = useConsentBanner();
+    acceptAll,
+    rejectAll,
+    hideConsentBanner
+  } = useConsentBanner()
 
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedPurposes, setSelectedPurposes] = useState<Record<string, boolean>>({});
-  const [showCustomization, setShowCustomization] = useState(false);
+  const [selectedPurposes, setSelectedPurposes] = useState<Record<string, boolean>>({})
+  const [showDetails, setShowDetails] = useState(false)
 
   useEffect(() => {
-    // Initialize selected purposes based on current consents
-    const initialPurposes: Record<string, boolean> = {};
-    purposes.forEach(purpose => {
-      const existingConsent = consents.find(c => c.purpose === purpose.id);
-      initialPurposes[purpose.id] = existingConsent?.status === 'given' || purpose.required;
-    });
-    setSelectedPurposes(initialPurposes);
-  }, [purposes, consents]);
+    // Inicializar com consentimentos existentes
+    const initialConsents: Record<string, boolean> = {}
+    purposes?.forEach(purpose => {
+      const existingConsent = userConsents?.find(c => c.purpose_id === purpose.id)
+      initialConsents[purpose.id] = existingConsent?.status === 'given'
+    })
+    setSelectedPurposes(initialConsents)
+  }, [purposes, userConsents])
+
+  const handlePurposeToggle = (purposeId: string, checked: boolean) => {
+    setSelectedPurposes(prev => ({
+      ...prev,
+      [purposeId]: checked
+    }))
+  }
+
+  const handleSavePreferences = async () => {
+    try {
+      for (const [purposeId, granted] of Object.entries(selectedPurposes)) {
+        if (granted) {
+          await giveConsent(purposeId)
+        } else {
+          await withdrawConsent(purposeId)
+        }
+      }
+      hideConsentBanner()
+    } catch (error) {
+      console.error('Erro ao salvar preferências:', error)
+    }
+  }
 
   const handleAcceptAll = async () => {
     try {
-      const allPurposes = purposes.map(p => p.id);
-      await giveConsent(allPurposes);
-      await dismissBanner();
+      await acceptAll()
+      hideConsentBanner()
     } catch (error) {
-      console.error('Error accepting all consents:', error);
+      console.error('Erro ao aceitar todos:', error)
     }
-  };
-
-  const handleAcceptSelected = async () => {
-    try {
-      const acceptedPurposes = Object.entries(selectedPurposes)
-        .filter(([_, accepted]) => accepted)
-        .map(([purposeId]) => purposeId);
-      
-      await giveConsent(acceptedPurposes);
-      
-      // Withdraw consent for unselected optional purposes
-      const rejectedPurposes = Object.entries(selectedPurposes)
-        .filter(([purposeId, accepted]) => {
-          const purpose = purposes.find(p => p.id === purposeId);
-          return !accepted && !purpose?.required;
-        })
-        .map(([purposeId]) => purposeId);
-      
-      if (rejectedPurposes.length > 0) {
-        await withdrawConsent(rejectedPurposes);
-      }
-      
-      await dismissBanner();
-      setShowCustomization(false);
-    } catch (error) {
-      console.error('Error updating consents:', error);
-    }
-  };
-
-  const handleRejectOptional = async () => {
-    try {
-      // Only accept required purposes
-      const requiredPurposes = purposes
-        .filter(p => p.required)
-        .map(p => p.id);
-      
-      await giveConsent(requiredPurposes);
-      
-      // Withdraw consent for all optional purposes
-      const optionalPurposes = purposes
-        .filter(p => !p.required)
-        .map(p => p.id);
-      
-      if (optionalPurposes.length > 0) {
-        await withdrawConsent(optionalPurposes);
-      }
-      
-      await dismissBanner();
-    } catch (error) {
-      console.error('Error rejecting optional consents:', error);
-    }
-  };
-
-  const getPurposeIcon = (purposeId: string) => {
-    switch (purposeId) {
-      case 'essential':
-        return <Lock className="h-4 w-4" />;
-      case 'analytics':
-        return <BarChart3 className="h-4 w-4" />;
-      case 'marketing':
-        return <Mail className="h-4 w-4" />;
-      case 'personalization':
-        return <Settings className="h-4 w-4" />;
-      case 'communication':
-        return <Bell className="h-4 w-4" />;
-      case 'location':
-        return <MapPin className="h-4 w-4" />;
-      case 'sharing':
-        return <Share className="h-4 w-4" />;
-      default:
-        return <Database className="h-4 w-4" />;
-    }
-  };
-
-  const getPurposeDescription = (purpose: ConsentPurpose) => {
-    const descriptions: Record<string, string> = {
-      'essential': 'Necessário para o funcionamento básico da plataforma, incluindo autenticação e segurança.',
-      'analytics': 'Coleta de dados de uso para melhorar a experiência e performance da plataforma.',
-      'marketing': 'Envio de comunicações promocionais e ofertas personalizadas por email.',
-      'personalization': 'Personalização de conteúdo e funcionalidades baseada no seu perfil.',
-      'communication': 'Notificações sobre atualizações, mudanças e informações importantes.',
-      'location': 'Uso de dados de localização para funcionalidades baseadas em geografia.',
-      'sharing': 'Compartilhamento de dados com parceiros para melhorar nossos serviços.'
-    };
-    return descriptions[purpose.id] || purpose.description;
-  };
-
-  const getDataTypes = (purpose: ConsentPurpose) => {
-    const dataTypes: Record<string, string[]> = {
-      'essential': ['Email', 'Nome', 'Dados de autenticação'],
-      'analytics': ['Páginas visitadas', 'Tempo de sessão', 'Dispositivo usado'],
-      'marketing': ['Email', 'Preferências', 'Histórico de compras'],
-      'personalization': ['Preferências', 'Comportamento', 'Configurações'],
-      'communication': ['Email', 'Telefone', 'Preferências de notificação'],
-      'location': ['Localização aproximada', 'Fuso horário'],
-      'sharing': ['Dados agregados', 'Métricas de uso']
-    };
-    return dataTypes[purpose.id] || ['Dados relacionados ao propósito'];
-  };
-
-  if (!showBanner) {
-    return null;
   }
+
+  const handleRejectAll = async () => {
+    try {
+      await rejectAll()
+      hideConsentBanner()
+    } catch (error) {
+      console.error('Erro ao rejeitar todos:', error)
+    }
+  }
+
+  const getPurposeIcon = (category: string) => {
+    switch (category) {
+      case 'essential':
+        return <Shield className="h-4 w-4" />
+      case 'analytics':
+        return <BarChart3 className="h-4 w-4" />
+      case 'marketing':
+        return <Mail className="h-4 w-4" />
+      case 'personalization':
+        return <Users className="h-4 w-4" />
+      case 'advertising':
+        return <Globe className="h-4 w-4" />
+      default:
+        return <Cookie className="h-4 w-4" />
+    }
+  }
+
+  const getPurposeColor = (category: string) => {
+    switch (category) {
+      case 'essential':
+        return 'bg-green-100 text-green-800'
+      case 'analytics':
+        return 'bg-blue-100 text-blue-800'
+      case 'marketing':
+        return 'bg-purple-100 text-purple-800'
+      case 'personalization':
+        return 'bg-orange-100 text-orange-800'
+      case 'advertising':
+        return 'bg-red-100 text-red-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  if (!isVisible || isLoading) {
+    return null
+  }
+
+  const essentialPurposes = purposes?.filter(p => p.category === 'essential') || []
+  const optionalPurposes = purposes?.filter(p => p.category !== 'essential') || []
 
   return (
     <>
-      {/* Main Consent Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t shadow-lg">
-        <div className="max-w-7xl mx-auto p-4">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <Shield className="h-6 w-6 text-blue-600" />
-            </div>
-            
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Proteção de Dados Pessoais - LGPD
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                Respeitamos sua privacidade. Utilizamos cookies e coletamos dados pessoais para melhorar sua experiência, 
-                personalizar conteúdo e analisar o uso da plataforma. Você pode gerenciar suas preferências a qualquer momento.
-              </p>
-              
-              <div className="flex items-center space-x-2 mt-3">
-                <Button
-                  onClick={() => setShowDetails(true)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Info className="h-4 w-4 mr-2" />
-                  Política de Privacidade
-                </Button>
-                
-                <Button
-                  onClick={() => setShowCustomization(true)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Personalizar
-                </Button>
+      {/* Overlay */}
+      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40" />
+      
+      {/* Banner */}
+      <div className={`fixed left-0 right-0 z-50 ${
+        position === 'top' ? 'top-0' : 'bottom-0'
+      }`}>
+        <Card className={`mx-4 mb-4 shadow-lg border-2 ${
+          theme === 'dark' 
+            ? 'bg-gray-900 border-gray-700 text-white' 
+            : 'bg-white border-gray-200'
+        }`}>
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                {showLogo && (
+                  <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Cookie className="h-5 w-5" />
+                    Suas Preferências de Privacidade
+                  </h3>
+                  <p className={`text-sm ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
+                    Respeitamos sua privacidade e seguimos a LGPD
+                  </p>
+                </div>
               </div>
-            </div>
-            
-            <div className="flex-shrink-0 space-x-2">
-              <Button
-                onClick={handleRejectOptional}
-                variant="outline"
-                disabled={loading}
-              >
-                Apenas Essenciais
-              </Button>
               
               <Button
-                onClick={handleAcceptAll}
-                disabled={loading}
+                variant="ghost"
+                size="sm"
+                onClick={() => hideConsentBanner()}
+                className="text-gray-500 hover:text-gray-700"
               >
-                <Check className="h-4 w-4 mr-2" />
-                Aceitar Todos
+                <X className="h-4 w-4" />
               </Button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Privacy Policy Dialog */}
-      <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Shield className="h-5 w-5" />
-              <span>Política de Privacidade e Proteção de Dados</span>
-            </DialogTitle>
-            <DialogDescription>
-              Informações detalhadas sobre como coletamos, usamos e protegemos seus dados pessoais
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Finalidades do Tratamento de Dados</h3>
-              <div className="space-y-4">
-                {purposes.map((purpose) => (
-                  <Card key={purpose.id}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center space-x-2 text-base">
-                        {getPurposeIcon(purpose.id)}
-                        <span>{purpose.name}</span>
-                        {purpose.required && (
-                          <Badge variant="secondary">Obrigatório</Badge>
-                        )}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {getPurposeDescription(purpose)}
-                      </p>
-                      
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div>
-                          <h5 className="font-medium text-sm mb-2">Tipos de Dados:</h5>
-                          <ul className="text-xs text-gray-600 space-y-1">
-                            {getDataTypes(purpose).map((dataType, index) => (
-                              <li key={index} className="flex items-center space-x-1">
-                                <Database className="h-3 w-3" />
-                                <span>{dataType}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div>
-                          <h5 className="font-medium text-sm mb-2">Base Legal:</h5>
-                          <p className="text-xs text-gray-600">
-                            {purpose.legalBasis || 'Consentimento do titular'}
-                          </p>
-                          
-                          <h5 className="font-medium text-sm mb-2 mt-3">Retenção:</h5>
-                          <p className="text-xs text-gray-600">
-                            {purpose.retentionPeriod || 'Até a retirada do consentimento'}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+            <div className="space-y-4">
+              {/* Resumo */}
+              <div className={`p-4 rounded-lg border ${
+                theme === 'dark' 
+                  ? 'bg-gray-800 border-gray-600' 
+                  : 'bg-gray-50 border-gray-200'
+              }`}>
+                <p className="text-sm leading-relaxed">
+                  Utilizamos cookies e tecnologias similares para melhorar sua experiência, 
+                  personalizar conteúdo e analisar nosso tráfego. Você pode escolher quais 
+                  tipos de dados deseja compartilhar conosco.
+                </p>
               </div>
-            </div>
-            
-            <Separator />
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Seus Direitos</h3>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Eye className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium">Acesso aos Dados</span>
-                  </div>
-                  <p className="text-xs text-gray-600 ml-6">
-                    Solicitar informações sobre quais dados pessoais possuímos sobre você.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Settings className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">Correção</span>
-                  </div>
-                  <p className="text-xs text-gray-600 ml-6">
-                    Corrigir dados pessoais incompletos, inexatos ou desatualizados.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <X className="h-4 w-4 text-red-600" />
-                    <span className="text-sm font-medium">Exclusão</span>
-                  </div>
-                  <p className="text-xs text-gray-600 ml-6">
-                    Solicitar a exclusão de dados pessoais desnecessários ou tratados em desconformidade.
-                  </p>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Share className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-medium">Portabilidade</span>
-                  </div>
-                  <p className="text-xs text-gray-600 ml-6">
-                    Solicitar a portabilidade dos dados para outro fornecedor de serviço.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Contato</h3>
-              <p className="text-sm text-gray-600">
-                Para exercer seus direitos ou esclarecer dúvidas sobre o tratamento de dados pessoais, 
-                entre em contato conosco através do email: <strong>privacidade@neonpro.com.br</strong>
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Consent Customization Dialog */}
-      <Dialog open={showCustomization} onOpenChange={setShowCustomization}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <Settings className="h-5 w-5" />
-              <span>Personalizar Consentimentos</span>
-            </DialogTitle>
-            <DialogDescription>
-              Escolha quais finalidades você autoriza para o tratamento dos seus dados pessoais
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {purposes.map((purpose) => {
-              const isSelected = selectedPurposes[purpose.id];
-              const isRequired = purpose.required;
-              
-              return (
-                <Card key={purpose.id} className={isRequired ? 'border-blue-200 bg-blue-50' : ''}>
-                  <CardContent className="pt-4">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox
-                        id={purpose.id}
-                        checked={isSelected}
-                        disabled={isRequired}
-                        onCheckedChange={(checked) => {
-                          if (!isRequired) {
-                            setSelectedPurposes({
-                              ...selectedPurposes,
-                              [purpose.id]: checked as boolean
-                            });
+              {/* Cookies essenciais */}
+              {essentialPurposes.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium">Cookies Essenciais</span>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      Sempre Ativo
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-gray-600 ml-6">
+                    Necessários para o funcionamento básico do site. Não podem ser desabilitados.
+                  </p>
+                </div>
+              )}
+
+              {/* Cookies opcionais */}
+              {optionalPurposes.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Settings className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium">Cookies Opcionais</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-6">
+                    {optionalPurposes.map((purpose) => (
+                      <div key={purpose.id} className="flex items-center space-x-3">
+                        <Checkbox
+                          id={purpose.id}
+                          checked={selectedPurposes[purpose.id] || false}
+                          onCheckedChange={(checked) => 
+                            handlePurposeToggle(purpose.id, checked as boolean)
                           }
-                        }}
-                        className="mt-1"
-                      />
-                      
-                      <div className="flex-1">
-                        <label 
-                          htmlFor={purpose.id} 
-                          className="flex items-center space-x-2 cursor-pointer"
-                        >
-                          {getPurposeIcon(purpose.id)}
-                          <span className="font-medium">{purpose.name}</span>
-                          {isRequired && (
-                            <Badge variant="secondary" className="text-xs">
-                              Obrigatório
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            {getPurposeIcon(purpose.category)}
+                            <label 
+                              htmlFor={purpose.id} 
+                              className="text-sm font-medium cursor-pointer"
+                            >
+                              {purpose.name}
+                            </label>
+                            <Badge 
+                              variant="outline" 
+                              className={getPurposeColor(purpose.category)}
+                            >
+                              {purpose.category}
                             </Badge>
-                          )}
-                        </label>
-                        
-                        <p className="text-sm text-gray-600 mt-1">
-                          {getPurposeDescription(purpose)}
-                        </p>
-                        
-                        <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                          <span>Dados: {getDataTypes(purpose).join(', ')}</span>
-                        </div>
-                        
-                        {isRequired && (
-                          <div className="flex items-center space-x-1 mt-2">
-                            <AlertCircle className="h-3 w-3 text-blue-600" />
-                            <span className="text-xs text-blue-600">
-                              Este consentimento é necessário para o funcionamento da plataforma
-                            </span>
                           </div>
-                        )}
+                          <p className="text-xs text-gray-600 mt-1">
+                            {purpose.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-            
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowCustomization(false)}
-              >
-                Cancelar
-              </Button>
-              
-              <Button
-                onClick={handleAcceptSelected}
-                disabled={loading}
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Salvar Preferências
-              </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Links legais */}
+              <div className="flex items-center gap-4 text-xs text-gray-600">
+                <a 
+                  href={privacyPolicyUrl} 
+                  className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <FileText className="h-3 w-3" />
+                  Política de Privacidade
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a 
+                  href={termsOfServiceUrl} 
+                  className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Lock className="h-3 w-3" />
+                  Termos de Uso
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+
+              {/* Botões de ação */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+                <div className="flex gap-2 flex-1">
+                  <Button 
+                    onClick={handleAcceptAll}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                    disabled={isLoading}
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Aceitar Todos
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={handleRejectAll}
+                    disabled={isLoading}
+                  >
+                    Rejeitar Opcionais
+                  </Button>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleSavePreferences}
+                    disabled={isLoading}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Salvar Preferências
+                  </Button>
+                  
+                  <Dialog open={showDetails} onOpenChange={setShowDetails}>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <Info className="h-4 w-4 mr-2" />
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <Shield className="h-5 w-5" />
+                          Detalhes sobre Cookies e Privacidade
+                        </DialogTitle>
+                        <DialogDescription>
+                          Informações detalhadas sobre como utilizamos seus dados
+                        </DialogDescription>
+                      </DialogHeader>
+                      
+                      <div className="space-y-6">
+                        <Accordion type="single" collapsible className="w-full">
+                          {purposes?.map((purpose) => (
+                            <AccordionItem key={purpose.id} value={purpose.id}>
+                              <AccordionTrigger className="text-left">
+                                <div className="flex items-center gap-3">
+                                  {getPurposeIcon(purpose.category)}
+                                  <div>
+                                    <div className="font-medium">{purpose.name}</div>
+                                    <Badge 
+                                      variant="outline" 
+                                      className={`${getPurposeColor(purpose.category)} text-xs`}
+                                    >
+                                      {purpose.category}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="space-y-3">
+                                <p className="text-sm text-gray-600">
+                                  {purpose.description}
+                                </p>
+                                
+                                {purpose.legal_basis && (
+                                  <div>
+                                    <h5 className="text-sm font-medium mb-1">Base Legal:</h5>
+                                    <p className="text-sm text-gray-600">{purpose.legal_basis}</p>
+                                  </div>
+                                )}
+                                
+                                {purpose.data_retention_days && (
+                                  <div>
+                                    <h5 className="text-sm font-medium mb-1">Retenção de Dados:</h5>
+                                    <p className="text-sm text-gray-600">
+                                      {purpose.data_retention_days} dias
+                                    </p>
+                                  </div>
+                                )}
+                                
+                                <div className="flex items-center gap-2 pt-2">
+                                  <span className="text-sm font-medium">Status:</span>
+                                  {purpose.category === 'essential' ? (
+                                    <Badge className="bg-green-100 text-green-800">
+                                      <Shield className="h-3 w-3 mr-1" />
+                                      Sempre Ativo
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant={selectedPurposes[purpose.id] ? "default" : "outline"}>
+                                      {selectedPurposes[purpose.id] ? 'Ativo' : 'Inativo'}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                        
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                            <Info className="h-4 w-4" />
+                            Seus Direitos LGPD
+                          </h4>
+                          <ul className="text-sm text-blue-800 space-y-1">
+                            <li>• Acessar seus dados pessoais</li>
+                            <li>• Corrigir dados incompletos ou incorretos</li>
+                            <li>• Solicitar a exclusão de seus dados</li>
+                            <li>• Revogar consentimento a qualquer momento</li>
+                            <li>• Portabilidade de dados</li>
+                            <li>• Informações sobre compartilhamento</li>
+                          </ul>
+                          <p className="text-xs text-blue-700 mt-2">
+                            Para exercer seus direitos, entre em contato conosco através da página de privacidade.
+                          </p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      </div>
     </>
-  );
+  )
 }
