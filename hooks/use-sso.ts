@@ -10,7 +10,7 @@ import {
   SSOError,
   SSOErrorCode 
 } from '@/types/sso';
-import { useUser } from '@/hooks/use-user';
+import { useUser } from '@supabase/auth-helpers-nextjs';
 import { logger } from '@/lib/logger';
 import { toast } from 'sonner';
 

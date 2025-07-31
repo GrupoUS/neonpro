@@ -5,6 +5,27 @@
 
 import '@testing-library/jest-dom';
 
+// Mock Next.js headers (cookies, headers)
+const mockCookies = jest.fn(() => ({
+  get: jest.fn(),
+  set: jest.fn(),
+  delete: jest.fn(),
+  has: jest.fn(),
+  getAll: jest.fn(() => []),
+  toString: jest.fn(() => ''),
+}));
+
+jest.mock('next/headers', () => ({
+  cookies: mockCookies,
+  headers: jest.fn(() => ({
+    get: jest.fn(),
+    has: jest.fn(),
+    entries: jest.fn(),
+    forEach: jest.fn(),
+    values: jest.fn(),
+  })),
+}));
+
 // Mock Next.js router
 const mockRouter = {
   push: jest.fn(),
@@ -30,7 +51,7 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// Mock Supabase client with correct structure
+// Mock Supabase client with correct structure and all necessary methods
 const mockSupabaseClient = {
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
@@ -46,18 +67,25 @@ const mockSupabaseClient = {
     order: jest.fn().mockReturnThis(),
     limit: jest.fn().mockReturnThis(),
     range: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
   })),
   auth: {
     getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
     getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
   },
   rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
+  raw: jest.fn(() => Promise.resolve({ data: null, error: null })),
 };
 
 jest.mock('../app/utils/supabase/client', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
   createLegacyClient: jest.fn(() => mockSupabaseClient),
   createOptimizedClient: jest.fn(() => mockSupabaseClient),
+}));
+
+// Mock server-side Supabase client
+jest.mock('../app/utils/supabase/server', () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
 // Mock @supabase/supabase-js directly
@@ -158,3 +186,16 @@ Element.prototype.scrollIntoView = jest.fn();
 
 // Mock HTMLCanvasElement.getContext
 HTMLCanvasElement.prototype.getContext = jest.fn();
+
+// Mock Next.js Request/Response for server tests
+global.Request = class MockRequest {
+  constructor(input: any, init?: RequestInit) {
+    Object.assign(this, { url: input, method: 'GET', headers: new Headers(), ...init });
+  }
+} as any;
+
+global.Response = class MockResponse {
+  constructor(body?: any, init?: ResponseInit) {
+    Object.assign(this, { body, status: 200, headers: new Headers(), ...init });
+  }
+} as any;

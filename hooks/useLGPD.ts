@@ -1,401 +1,454 @@
-/**
- * LGPD Compliance Framework - React Hook
- * Hook para gerenciamento de conformidade LGPD no frontend
- * 
- * @author APEX Master Developer
- * @version 1.0.0
- * @compliance LGPD Art. 7º, 8º, 9º, 18º
- */
+'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useUser } from '@supabase/auth-helpers-react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSupabase } from '@/hooks/useSupabase';
+import { LGPDComplianceManager } from '@/lib/lgpd/compliance-manager';
 import {
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
   ConsentRecord,
-  DataSubjectRight,
+  ConsentRequest,
   DataSubjectRequest,
-  ConsentCheckResult,
-  LGPDContext,
-  LGPDApiResponse
-} from '../types/lgpd';
+  CreateDataSubjectRequest,
+  AuditLog,
+  BreachIncident,
+  ComplianceAssessment,
+  LGPDDashboardMetrics,
+  LGPDDataType,
+  LGPDPurpose,
+  DataSubjectRequestType,
+  LGPDConfiguration
+} from '@/types/lgpd';
 
-// ============================================================================
-// TYPES
-// ============================================================================
+/**
+ * LGPD Compliance Hook
+ * 
+ * Provides React integration for LGPD compliance management
+ */
+export function useLGPDCompliance() {
+  const { supabase } = useSupabase();
+  const [complianceManager, setComplianceManager] = useState<LGPDComplianceManager | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-interface UseLGPDOptions {
-  clinicId: string;
-  autoCheck?: boolean;
-  onConsentChange?: (consent: ConsentRecord) => void;
-  onError?: (error: string) => void;
-}
-
-interface LGPDState {
-  consents: ConsentRecord[];
-  requests: DataSubjectRequest[];
-  loading: boolean;
-  error: string | null;
-  initialized: boolean;
-}
-
-interface ConsentOptions {
-  purpose: string;
-  description: string;
-  legalBasis?: LegalBasis;
-  expiresAt?: Date;
-}
-
-// ============================================================================
-// MAIN HOOK
-// ============================================================================
-
-export function useLGPD(options: UseLGPDOptions) {
-  const user = useUser();
-  const [state, setState] = useState<LGPDState>({
-    consents: [],
-    requests: [],
-    loading: false,
-    error: null,
-    initialized: false
-  });
-
-  // ============================================================================
-  // CONTEXT CREATION
-  // ============================================================================
-
-  const createContext = useCallback((): LGPDContext => {
-    if (!user?.id) {
-      throw new Error('User not authenticated');
-    }
-
-    return {
-      userId: user.id,
-      clinicId: options.clinicId,
-      ipAddress: 'client-side', // Will be set server-side
-      userAgent: navigator.userAgent,
-      timestamp: new Date()
-    };
-  }, [user?.id, options.clinicId]);
-
-  // ============================================================================
-  // API CALLS
-  // ============================================================================
-
-  const apiCall = useCallback(async <T>(
-    endpoint: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-    body?: any
-  ): Promise<LGPDApiResponse<T>> => {
-    try {
-      const response = await fetch(`/api/compliance/${endpoint}`, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body ? JSON.stringify(body) : undefined
-      });
-
-      if (!response.ok) {
-        throw new Error(`API call failed: ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      options.onError?.(errorMessage);
-      throw error;
-    }
-  }, [options]);
-
-  // ============================================================================
-  // CONSENT MANAGEMENT
-  // ============================================================================
-
-  const grantConsent = useCallback(async (
-    consentType: ConsentType,
-    consentOptions: ConsentOptions
-  ): Promise<ConsentRecord> => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-
-    try {
-      const context = createContext();
-      const response = await apiCall<ConsentRecord>('consent/grant', 'POST', {
-        context,
-        consentType,
-        ...consentOptions
-      });
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to grant consent');
-      }
-
-      const newConsent = response.data;
-      setState(prev => ({
-        ...prev,
-        consents: [newConsent, ...prev.consents],
-        loading: false
-      }));
-
-      options.onConsentChange?.(newConsent);
-      return newConsent;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to grant consent';
-      setState(prev => ({ ...prev, error: errorMessage, loading: false }));
-      throw error;
-    }
-  }, [createContext, apiCall, options]);
-
-  const withdrawConsent = useCallback(async (
-    consentId: string
-  ): Promise<ConsentRecord> => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-
-    try {
-      const context = createContext();
-      const response = await apiCall<ConsentRecord>('consent/withdraw', 'POST', {
-        context,
-        consentId
-      });
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to withdraw consent');
-      }
-
-      const updatedConsent = response.data;
-      setState(prev => ({
-        ...prev,
-        consents: prev.consents.map(c => 
-          c.id === consentId ? updatedConsent : c
-        ),
-        loading: false
-      }));
-
-      options.onConsentChange?.(updatedConsent);
-      return updatedConsent;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to withdraw consent';
-      setState(prev => ({ ...prev, error: errorMessage, loading: false }));
-      throw error;
-    }
-  }, [createContext, apiCall, options]);
-
-  const checkConsent = useCallback(async (
-    consentType: ConsentType
-  ): Promise<ConsentCheckResult> => {
-    try {
-      const response = await apiCall<ConsentCheckResult>(
-        `consent/check?type=${consentType}&userId=${user?.id}&clinicId=${options.clinicId}`
-      );
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to check consent');
-      }
-
-      return response.data;
-    } catch (error) {
-      console.error('Failed to check consent:', error);
-      return {
-        hasConsent: false,
-        consentType,
-        legalBasis: LegalBasis.CONSENT,
-        canProcess: false,
-        warnings: ['Failed to verify consent']
-      };
-    }
-  }, [user?.id, options.clinicId, apiCall]);
-
-  // ============================================================================
-  // DATA SUBJECT RIGHTS
-  // ============================================================================
-
-  const submitDataRequest = useCallback(async (
-    requestType: DataSubjectRight,
-    description: string
-  ): Promise<DataSubjectRequest> => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-
-    try {
-      const context = createContext();
-      const response = await apiCall<DataSubjectRequest>('data-subject/request', 'POST', {
-        context,
-        requestType,
-        description
-      });
-
-      if (!response.success || !response.data) {
-        throw new Error(response.error || 'Failed to submit request');
-      }
-
-      const newRequest = response.data;
-      setState(prev => ({
-        ...prev,
-        requests: [newRequest, ...prev.requests],
-        loading: false
-      }));
-
-      return newRequest;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit request';
-      setState(prev => ({ ...prev, error: errorMessage, loading: false }));
-      throw error;
-    }
-  }, [createContext, apiCall]);
-
-  const requestDataExport = useCallback(async (): Promise<DataSubjectRequest> => {
-    return submitDataRequest(
-      DataSubjectRight.PORTABILITY,
-      'Solicitação de exportação de dados pessoais conforme Art. 18º V da LGPD'
-    );
-  }, [submitDataRequest]);
-
-  const requestDataDeletion = useCallback(async (): Promise<DataSubjectRequest> => {
-    return submitDataRequest(
-      DataSubjectRight.ELIMINATION,
-      'Solicitação de eliminação de dados pessoais conforme Art. 18º III da LGPD'
-    );
-  }, [submitDataRequest]);
-
-  const requestDataCorrection = useCallback(async (
-    description: string
-  ): Promise<DataSubjectRequest> => {
-    return submitDataRequest(
-      DataSubjectRight.RECTIFICATION,
-      `Solicitação de correção de dados: ${description}`
-    );
-  }, [submitDataRequest]);
-
-  // ============================================================================
-  // DATA LOADING
-  // ============================================================================
-
-  const loadUserConsents = useCallback(async () => {
-    if (!user?.id) return;
-
-    try {
-      const response = await apiCall<ConsentRecord[]>(
-        `consent/user?userId=${user.id}&clinicId=${options.clinicId}`
-      );
-
-      if (response.success && response.data) {
-        setState(prev => ({ ...prev, consents: response.data! }));
-      }
-    } catch (error) {
-      console.error('Failed to load user consents:', error);
-    }
-  }, [user?.id, options.clinicId, apiCall]);
-
-  const loadUserRequests = useCallback(async () => {
-    if (!user?.id) return;
-
-    try {
-      const response = await apiCall<DataSubjectRequest[]>(
-        `data-subject/requests?userId=${user.id}&clinicId=${options.clinicId}`
-      );
-
-      if (response.success && response.data) {
-        setState(prev => ({ ...prev, requests: response.data! }));
-      }
-    } catch (error) {
-      console.error('Failed to load user requests:', error);
-    }
-  }, [user?.id, options.clinicId, apiCall]);
-
-  const initialize = useCallback(async () => {
-    if (!user?.id || state.initialized) return;
-
-    setState(prev => ({ ...prev, loading: true }));
-
-    try {
-      await Promise.all([
-        loadUserConsents(),
-        loadUserRequests()
-      ]);
-
-      setState(prev => ({ 
-        ...prev, 
-        loading: false, 
-        initialized: true,
-        error: null 
-      }));
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Initialization failed';
-      setState(prev => ({ 
-        ...prev, 
-        loading: false, 
-        error: errorMessage 
-      }));
-    }
-  }, [user?.id, state.initialized, loadUserConsents, loadUserRequests]);
-
-  // ============================================================================
-  // COMPUTED VALUES
-  // ============================================================================
-
-  const activeConsents = useMemo(() => {
-    const now = new Date();
-    return state.consents.filter(consent => 
-      consent.status === ConsentStatus.GRANTED &&
-      (!consent.expiresAt || new Date(consent.expiresAt) > now)
-    );
-  }, [state.consents]);
-
-  const hasValidConsent = useCallback((consentType: ConsentType): boolean => {
-    return activeConsents.some(consent => consent.consentType === consentType);
-  }, [activeConsents]);
-
-  const getConsentByType = useCallback((consentType: ConsentType): ConsentRecord | undefined => {
-    return activeConsents.find(consent => consent.consentType === consentType);
-  }, [activeConsents]);
-
-  const pendingRequests = useMemo(() => {
-    return state.requests.filter(request => 
-      request.status === 'pending' || request.status === 'in_progress'
-    );
-  }, [state.requests]);
-
-  // ============================================================================
-  // EFFECTS
-  // ============================================================================
-
+  // Initialize compliance manager
   useEffect(() => {
-    if (options.autoCheck !== false && user?.id) {
-      initialize();
-    }
-  }, [user?.id, options.autoCheck, initialize]);
+    if (supabase) {
+      const config: LGPDConfiguration = {
+        auto_consent_renewal: true,
+        consent_expiry_days: 730, // 2 years
+        data_retention_days: 2555, // 7 years
+        breach_notification_hours: 72,
+        assessment_schedule: 'quarterly',
+        auto_data_cleanup: true,
+        require_explicit_consent: true,
+        enable_audit_trail: true,
+        notification_email: process.env.NEXT_PUBLIC_LGPD_NOTIFICATION_EMAIL || 'lgpd@neonpro.com.br'
+      };
 
-  // ============================================================================
-  // RETURN
-  // ============================================================================
+      const manager = new LGPDComplianceManager(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        config
+      );
+      
+      setComplianceManager(manager);
+    }
+  }, [supabase]);
+
+  const handleError = useCallback((error: unknown, context: string) => {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`LGPD ${context} error:`, error);
+    setError(`${context}: ${message}`);
+  }, []);
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
 
   return {
-    // State
-    ...state,
-    activeConsents,
-    pendingRequests,
-
-    // Consent Management
-    grantConsent,
-    withdrawConsent,
-    checkConsent,
-    hasValidConsent,
-    getConsentByType,
-
-    // Data Subject Rights
-    submitDataRequest,
-    requestDataExport,
-    requestDataDeletion,
-    requestDataCorrection,
-
-    // Utilities
-    initialize,
-    refresh: () => {
-      setState(prev => ({ ...prev, initialized: false }));
-      initialize();
-    },
-    clearError: () => setState(prev => ({ ...prev, error: null }))
+    complianceManager,
+    loading,
+    error,
+    clearError
   };
 }
 
-export default useLGPD;
+/**
+ * Consent Management Hook
+ */
+export function useConsentManagement() {
+  const { complianceManager } = useLGPDCompliance();
+  const [consents, setConsents] = useState<ConsentRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const grantConsent = useCallback(async (
+    userId: string,
+    request: ConsentRequest,
+    metadata?: { ip_address?: string; user_agent?: string }
+  ) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const consent = await complianceManager.grantConsent(userId, request, metadata);
+      setConsents(prev => [consent, ...prev]);
+      return consent;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to grant consent';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  const withdrawConsent = useCallback(async (
+    userId: string,
+    consentId: string,
+    reason?: string
+  ) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await complianceManager.withdrawConsent(userId, consentId, reason);
+      setConsents(prev => prev.map(consent => 
+        consent.id === consentId 
+          ? { ...consent, consent_given: false, withdrawn_at: new Date() }
+          : consent
+      ));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to withdraw consent';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  const getUserConsents = useCallback(async (userId: string) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const userConsents = await complianceManager.getUserConsents(userId);
+      setConsents(userConsents);
+      return userConsents;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to get user consents';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  const getActiveConsent = useCallback(async (
+    userId: string,
+    dataType: LGPDDataType,
+    purpose: LGPDPurpose
+  ) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    try {
+      return await complianceManager.getActiveConsent(userId, dataType, purpose);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to get active consent';
+      setError(message);
+      throw err;
+    }
+  }, [complianceManager]);
+
+  return {
+    consents,
+    loading,
+    error,
+    grantConsent,
+    withdrawConsent,
+    getUserConsents,
+    getActiveConsent,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * Data Subject Rights Hook
+ */
+export function useDataSubjectRights() {
+  const { complianceManager } = useLGPDCompliance();
+  const [requests, setRequests] = useState<DataSubjectRequest[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createRequest = useCallback(async (
+    userId: string,
+    request: CreateDataSubjectRequest
+  ) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const dataSubjectRequest = await complianceManager.createDataSubjectRequest(userId, request);
+      setRequests(prev => [dataSubjectRequest, ...prev]);
+      return dataSubjectRequest;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create data subject request';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  const processRequest = useCallback(async (requestId: string) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      await complianceManager.processDataSubjectRequest(requestId);
+      setRequests(prev => prev.map(req => 
+        req.id === requestId 
+          ? { ...req, status: 'fulfilled', fulfilled_at: new Date() }
+          : req
+      ));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to process data subject request';
+      setError(message);
+      setRequests(prev => prev.map(req => 
+        req.id === requestId 
+          ? { ...req, status: 'rejected', rejection_reason: message }
+          : req
+      ));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  return {
+    requests,
+    loading,
+    error,
+    createRequest,
+    processRequest,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * Audit Trail Hook
+ */
+export function useAuditTrail() {
+  const { complianceManager } = useLGPDCompliance();
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const verifyIntegrity = useCallback(async (startDate?: Date, endDate?: Date) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const result = await complianceManager.verifyAuditTrailIntegrity(startDate, endDate);
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to verify audit trail integrity';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  return {
+    auditLogs,
+    loading,
+    error,
+    verifyIntegrity,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * Breach Management Hook
+ */
+export function useBreachManagement() {
+  const { complianceManager } = useLGPDCompliance();
+  const [incidents, setIncidents] = useState<BreachIncident[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const reportBreach = useCallback(async (incident: Omit<BreachIncident, 'id' | 'detected_at' | 'reported_to_authority' | 'created_at' | 'updated_at'>) => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const breachIncident = await complianceManager.reportBreach(incident);
+      setIncidents(prev => [breachIncident, ...prev]);
+      return breachIncident;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to report breach';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  return {
+    incidents,
+    loading,
+    error,
+    reportBreach,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * Compliance Assessment Hook
+ */
+export function useComplianceAssessment() {
+  const { complianceManager } = useLGPDCompliance();
+  const [assessments, setAssessments] = useState<ComplianceAssessment[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const runAssessment = useCallback(async () => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const assessment = await complianceManager.runComplianceAssessment();
+      setAssessments(prev => [assessment, ...prev]);
+      return assessment;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to run compliance assessment';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  return {
+    assessments,
+    loading,
+    error,
+    runAssessment,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * LGPD Dashboard Hook
+ */
+export function useLGPDDashboard() {
+  const { complianceManager } = useLGPDCompliance();
+  const [metrics, setMetrics] = useState<LGPDDashboardMetrics | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadMetrics = useCallback(async () => {
+    if (!complianceManager) throw new Error('Compliance manager not initialized');
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const dashboardMetrics = await complianceManager.getDashboardMetrics();
+      setMetrics(dashboardMetrics);
+      return dashboardMetrics;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load dashboard metrics';
+      setError(message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [complianceManager]);
+
+  // Auto-load metrics when manager is available
+  useEffect(() => {
+    if (complianceManager && !metrics) {
+      loadMetrics();
+    }
+  }, [complianceManager, metrics, loadMetrics]);
+
+  return {
+    metrics,
+    loading,
+    error,
+    loadMetrics,
+    clearError: () => setError(null)
+  };
+}
+
+/**
+ * Consent Banner Hook
+ * 
+ * Simplified hook for consent banner implementation
+ */
+export function useConsentBanner(userId?: string) {
+  const { grantConsent, getActiveConsent } = useConsentManagement();
+  const [hasConsent, setHasConsent] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const checkConsent = useCallback(async (dataType: LGPDDataType, purpose: LGPDPurpose) => {
+    if (!userId) return false;
+    
+    setLoading(true);
+    try {
+      const consent = await getActiveConsent(userId, dataType, purpose);
+      const hasActiveConsent = consent?.consent_given && !consent.withdrawn_at;
+      setHasConsent(hasActiveConsent);
+      return hasActiveConsent;
+    } catch (error) {
+      console.error('Error checking consent:', error);
+      setHasConsent(false);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, getActiveConsent]);
+
+  const acceptConsent = useCallback(async (
+    dataType: LGPDDataType,
+    purpose: LGPDPurpose,
+    metadata?: { ip_address?: string; user_agent?: string }
+  ) => {
+    if (!userId) throw new Error('User ID required');
+    
+    const request: ConsentRequest = {
+      data_type: dataType,
+      purpose,
+      consent_given: true,
+      legal_basis: 'consent'
+    };
+
+    await grantConsent(userId, request, metadata);
+    setHasConsent(true);
+  }, [userId, grantConsent]);
+
+  return {
+    hasConsent,
+    loading,
+    checkConsent,
+    acceptConsent
+  };
+}

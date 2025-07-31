@@ -19,7 +19,7 @@ const customJestConfig = {
     '<rootDir>/__tests__/setup.ts'
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(isows|@supabase|ws)/)',
+    'node_modules/(?!(isows|@supabase|ws|jose|@supabase/auth-helpers-.*)/)',
   ],
   // Critical fix: Add moduleNameMapper to handle @/ imports
   moduleNameMapper: {

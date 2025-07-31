@@ -10,6 +10,9 @@ import { UserRole, Permission, PermissionCheck, PermissionResult, DEFAULT_ROLES 
 import { AuthUser } from '@/lib/middleware/auth';
 import { createClient } from '@/app/utils/supabase/client';
 
+// Export the class-based manager interface
+export { RBACPermissionManager } from './rbac-manager';
+
 /**
  * Permission validation cache for performance optimization
  */

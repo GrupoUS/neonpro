@@ -1,7 +1,7 @@
 // useRBAC Hook Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from '@jest/globals';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useRBAC, usePermissionCheck, useRoleGuard, usePermissionGuard } from '@/hooks/use-rbac';
 import { RBACPermissionManager } from '@/lib/auth/rbac/permissions';
@@ -9,18 +9,18 @@ import { useUser } from '@/hooks/use-user';
 import { UserRole, Permission } from '@/types/rbac';
 
 // Mock dependencies
-vi.mock('@/lib/auth/rbac/permissions', () => ({
-  RBACPermissionManager: vi.fn(() => ({
-    getUserRole: vi.fn(),
-    getUserPermissions: vi.fn(),
-    checkPermission: vi.fn(),
-    canManageUser: vi.fn(),
-    getRoleHierarchyLevel: vi.fn()
+jest.mock('@/lib/auth/rbac/permissions', () => ({
+  RBACPermissionManager: jest.fn(() => ({
+    getUserRole: jest.fn(),
+    getUserPermissions: jest.fn(),
+    checkPermission: jest.fn(),
+    canManageUser: jest.fn(),
+    getRoleHierarchyLevel: jest.fn()
   }))
 }));
 
-vi.mock('@/hooks/use-user', () => ({
-  useUser: vi.fn()
+jest.mock('@/hooks/use-user', () => ({
+  useUser: jest.fn()
 }));
 
 const mockUser = {
@@ -60,14 +60,14 @@ describe('useRBAC Hook', () => {
   let mockRBACManager: any;
   
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     mockRBACManager = {
-      getUserRole: vi.fn(),
-      getUserPermissions: vi.fn(),
-      checkPermission: vi.fn(),
-      canManageUser: vi.fn(),
-      getRoleHierarchyLevel: vi.fn()
+      getUserRole: jest.fn(),
+      getUserPermissions: jest.fn(),
+      checkPermission: jest.fn(),
+      canManageUser: jest.fn(),
+      getRoleHierarchyLevel: jest.fn()
     };
     
     (RBACPermissionManager as any).mockReturnValue(mockRBACManager);
@@ -75,7 +75,7 @@ describe('useRBAC Hook', () => {
   });
   
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
   
   describe('Basic Hook Functionality', () => {
@@ -107,7 +107,7 @@ describe('useRBAC Hook', () => {
     });
     
     it('should handle errors gracefully', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       
       mockRBACManager.getUserRole.mockRejectedValue(new Error('Failed to load role'));
       mockRBACManager.getUserPermissions.mockRejectedValue(new Error('Failed to load permissions'));
@@ -320,10 +320,10 @@ describe('usePermissionCheck Hook', () => {
   let mockRBACManager: any;
   
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     mockRBACManager = {
-      checkPermission: vi.fn()
+      checkPermission: jest.fn()
     };
     
     (RBACPermissionManager as any).mockReturnValue(mockRBACManager);
@@ -386,7 +386,7 @@ describe('usePermissionCheck Hook', () => {
 
 describe('useRoleGuard Hook', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     (useUser as any).mockReturnValue({ user: mockUser });
   });
   
@@ -394,10 +394,10 @@ describe('useRoleGuard Hook', () => {
     const mockUseRBAC = {
       loading: false,
       role: mockOwnerRole,
-      isInRole: vi.fn().mockReturnValue(true)
+      isInRole: jest.fn().mockReturnValue(true)
     };
     
-    vi.doMock('@/hooks/use-rbac', () => ({
+    jest.doMock('@/hooks/use-rbac', () => ({
       useRBAC: () => mockUseRBAC
     }));
     
@@ -421,10 +421,10 @@ describe('usePermissionGuard Hook', () => {
   let mockRBACManager: any;
   
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     mockRBACManager = {
-      checkPermission: vi.fn()
+      checkPermission: jest.fn()
     };
     
     (RBACPermissionManager as any).mockReturnValue(mockRBACManager);

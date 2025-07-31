@@ -1,5 +1,6 @@
 import { createClient } from '@/app/utils/supabase/client';
 import { createClient as createBrowserClient } from '@/app/utils/supabase/client';
+import { createClient as createServerClient } from '@/app/utils/supabase/server';
 import { performanceTracker } from './performance-tracker';
 
 export interface SecurityEvent {

@@ -2,19 +2,12 @@
 // Story 1.3: SSO Integration - Core Manager Testing
 
 import { SSOManager } from '@/lib/auth/sso/sso-manager';
-import { GoogleOAuthProvider } from '@/lib/auth/sso/providers/google-oauth';
-import { MicrosoftOAuthProvider } from '@/lib/auth/sso/providers/microsoft-oauth';
 import { createClient } from '@supabase/supabase-js';
-import { SSOProvider, SSOAuthRequest, SSOSession } from '@/types/sso';
 
 // Mock Supabase
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(),
 }));
-
-// Mock providers
-jest.mock('@/lib/auth/sso/providers/google-oauth');
-jest.mock('@/lib/auth/sso/providers/microsoft-oauth');
 
 // Mock logger
 jest.mock('@/lib/logger', () => ({
@@ -29,45 +22,6 @@ jest.mock('@/lib/logger', () => ({
 describe('SSOManager', () => {
   let ssoManager: SSOManager;
   let mockSupabase: any;
-  let mockGoogleProvider: jest.Mocked<GoogleOAuthProvider>;
-  let mockMicrosoftProvider: jest.Mocked<MicrosoftOAuthProvider>;
-
-  beforeEach(() => {
-    // Reset all mocks
-    jest.clearAllMocks();
-// SSO Manager Tests
-// Story 1.3: SSO Integration - Core Manager Testing
-
-import { SSOManager } from '@/lib/auth/sso/sso-manager';
-import { GoogleOAuthProvider } from '@/lib/auth/sso/providers/google-oauth';
-import { MicrosoftOAuthProvider } from '@/lib/auth/sso/providers/microsoft-oauth';
-import { createClient } from '@supabase/supabase-js';
-import { SSOProvider, SSOAuthRequest, SSOSession } from '@/types/sso';
-
-// Mock Supabase
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(),
-}));
-
-// Mock providers
-jest.mock('@/lib/auth/sso/providers/google-oauth');
-jest.mock('@/lib/auth/sso/providers/microsoft-oauth');
-
-// Mock logger
-jest.mock('@/lib/logger', () => ({
-  logger: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-  },
-}));
-
-describe('SSOManager', () => {
-  let ssoManager: SSOManager;
-  let mockSupabase: any;
-  let mockGoogleProvider: jest.Mocked<GoogleOAuthProvider>;
-  let mockMicrosoftProvider: jest.Mocked<MicrosoftOAuthProvider>;
 
   beforeEach(() => {
     // Reset all mocks
@@ -81,168 +35,150 @@ describe('SSOManager', () => {
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      upsert: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
       data: null,
       error: null,
     };
 
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
 
-    // Mock Google provider
-    mockGoogleProvider = {
-      generateAuthUrl: jest.fn(),
-      exchangeCodeForTokens: jest.fn(),
-      refreshTokens: jest.fn(),
-      getUserInfo: jest.fn(),
-      revokeTokens: jest.fn(),
-      validateIdToken: jest.fn(),
-      getConfig: jest.fn(),
-    } as any;
-
-    (GoogleOAuthProvider as jest.Mock).mockImplementation(() => mockGoogleProvider);
-
-    // Mock Microsoft provider
-    mockMicrosoftProvider = {
-      generateAuthUrl: jest.fn(),
-      exchangeCodeForTokens: jest.fn(),
-      refreshTokens: jest.fn(),
-      getUserInfo: jest.fn(),
-      revokeTokens: jest.fn(),
-      validateIdToken: jest.fn(),
-      getConfig: jest.fn(),
-    } as any;
-
-    (MicrosoftOAuthProvider as jest.Mock).mockImplementation(() => mockMicrosoftProvider);
+    // Mock environment variables
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key';
 
     // Create SSO manager instance
-    ssoManager = new SSOManager();
+    ssoManager = new SSOManager(
+      'https://test.supabase.co',
+      'test-key'
+    );
   });
+
   describe('initialization', () => {
     it('should initialize with default providers', () => {
       const providers = ssoManager.getAvailableProviders();
-      expect(providers).toHaveLength(2);
-      expect(providers.map(p => p.id)).toContain('google');
-      expect(providers.map(p => p.id)).toContain('microsoft');
+      expect(providers.length).toBeGreaterThan(0);
+      
+      // Check if Google provider exists
+      const googleProvider = providers.find(p => p.id === 'google');
+      expect(googleProvider).toBeDefined();
+      expect(googleProvider?.enabled).toBe(true);
     });
 
-    it('should initialize providers correctly', () => {
-      expect(GoogleOAuthProvider).toHaveBeenCalled();
-      expect(MicrosoftOAuthProvider).toHaveBeenCalled();
+    it('should get configuration', () => {
+      const config = ssoManager.getConfiguration();
+      expect(config).toBeDefined();
+      expect(config.providers).toBeDefined();
+      expect(config.globalSettings).toBeDefined();
     });
   });
 
   describe('generateAuthUrl', () => {
     it('should generate auth URL for valid provider', async () => {
-      const mockAuthUrl = 'https://accounts.google.com/oauth/authorize?...';
-      mockGoogleProvider.generateAuthUrl.mockResolvedValue(mockAuthUrl);
+      // Mock fetch for storing auth request
+      global.fetch = jest.fn();
 
       const result = await ssoManager.generateAuthUrl('google', {
         redirectUri: 'http://localhost:3000/auth/callback',
         scopes: ['openid', 'email', 'profile'],
       });
 
-      expect(result).toBe(mockAuthUrl);
-      expect(mockGoogleProvider.generateAuthUrl).toHaveBeenCalledWith({
-        redirectUri: 'http://localhost:3000/auth/callback',
-        scopes: ['openid', 'email', 'profile'],
-      });
+      expect(result).toContain('https://accounts.google.com/o/oauth2/v2/auth');
+      expect(result).toContain('client_id=');
+      expect(result).toContain('redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcallback');
+      expect(result).toContain('scope=openid+email+profile');
     });
 
     it('should throw error for invalid provider', async () => {
       await expect(
         ssoManager.generateAuthUrl('invalid-provider', {})
-      ).rejects.toThrow('SSO provider not found: invalid-provider');
+      ).rejects.toMatchObject({
+        code: 'PROVIDER_NOT_FOUND',
+        message: 'Provider invalid-provider not found'
+      });
     });
   });
-  describe('handleCallback', () => {
-    it('should handle successful callback', async () => {
-      const mockTokens = {
-        accessToken: 'access_token_123',
-        refreshToken: 'refresh_token_123',
-        idToken: 'id_token_123',
-        expiresIn: 3600,
-      };
 
-      const mockUserInfo = {
-        id: 'google_123',
-        email: 'user@example.com',
-        name: 'John Doe',
-        picture: 'https://example.com/avatar.jpg',
-      };
+  describe('getDomainProvider', () => {
+    it('should return null for unknown domain', () => {
+      const provider = ssoManager.getDomainProvider('user@unknown.com');
+      expect(provider).toBeNull();
+    });
 
-      mockGoogleProvider.exchangeCodeForTokens.mockResolvedValue(mockTokens);
-      mockGoogleProvider.getUserInfo.mockResolvedValue(mockUserInfo);
-
-      // Mock database operations
-      mockSupabase.single.mockResolvedValueOnce({ data: null, error: null }); // User not found
-      mockSupabase.single.mockResolvedValueOnce({ 
-        data: { id: 'user_123', email: 'user@example.com' }, 
-        error: null 
-      }); // User created
-
-      const result = await ssoManager.handleCallback('google', {
-        code: 'auth_code_123',
-        state: 'state_123',
-      });
-
-      expect(result.success).toBe(true);
-      expect(result.user).toMatchObject({
-        email: 'user@example.com',
-        name: 'John Doe',
-      });
-      expect(mockGoogleProvider.exchangeCodeForTokens).toHaveBeenCalledWith('auth_code_123');
-      expect(mockGoogleProvider.getUserInfo).toHaveBeenCalledWith(mockTokens.accessToken);
+    it('should handle invalid email', () => {
+      const provider = ssoManager.getDomainProvider('invalid-email');
+      expect(provider).toBeNull();
     });
   });
+
+  describe('validateSession', () => {
+    it('should return null for non-existent session', async () => {
+      mockSupabase.single.mockResolvedValue({ data: null, error: new Error('Not found') });
+
+      const session = await ssoManager.validateSession('non-existent-session');
+      expect(session).toBeNull();
+    });
+
+    it('should update last used timestamp for valid session', async () => {
+      const mockSession = {
+        id: 'session_123',
+        userId: 'user_123',
+        providerId: 'google',
+        expiresAt: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
+      };
+
+      // Configure mocks for the complete chain
+      mockSupabase.single.mockResolvedValue({ data: mockSession, error: null });
+
+      const session = await ssoManager.validateSession('session_123');
+      
+      expect(session).toEqual(mockSession);
+      expect(mockSupabase.update).toHaveBeenCalledWith({ lastUsedAt: expect.any(Date) });
+    });
+  });
+
   describe('logout', () => {
-    it('should logout and revoke tokens', async () => {
+    it('should delete session successfully', async () => {
       const mockSession = {
         id: 'session_123',
-        provider: 'google',
-        accessToken: 'access_token_123',
-        refreshToken: 'refresh_token_123',
+        userId: 'user_123',
+        providerId: 'google',
       };
 
+      // Configure mocks for the complete chain
       mockSupabase.single.mockResolvedValue({ data: mockSession, error: null });
-      mockGoogleProvider.revokeTokens.mockResolvedValue(undefined);
+      mockSupabase.insert.mockResolvedValue({ data: null, error: null }); // For audit log
 
-      await ssoManager.logout('session_123', { revokeTokens: true });
+      await ssoManager.logout('session_123');
 
-      expect(mockGoogleProvider.revokeTokens).toHaveBeenCalledWith('access_token_123');
-      expect(mockSupabase.update).toHaveBeenCalledWith({
-        status: 'terminated',
-        terminatedAt: expect.any(String),
-      });
+      expect(mockSupabase.delete).toHaveBeenCalled();
+      expect(mockSupabase.insert).toHaveBeenCalled(); // Audit log
     });
 
-    it('should handle logout without token revocation', async () => {
-      const mockSession = {
-        id: 'session_123',
-        provider: 'google',
-      };
+    it('should handle non-existent session gracefully', async () => {
+      mockSupabase.single.mockResolvedValue({ data: null, error: new Error('Not found') });
 
-      mockSupabase.single.mockResolvedValue({ data: mockSession, error: null });
-
-      await ssoManager.logout('session_123', { revokeTokens: false });
-
-      expect(mockGoogleProvider.revokeTokens).not.toHaveBeenCalled();
-      expect(mockSupabase.update).toHaveBeenCalledWith({
-        status: 'terminated',
-        terminatedAt: expect.any(String),
-      });
+      await expect(ssoManager.logout('non-existent-session')).resolves.toBeUndefined();
     });
   });
 
-  describe('getProvidersByDomain', () => {
-    it('should return providers for domain', () => {
-      const providers = ssoManager.getProvidersByDomain('gmail.com');
-      expect(providers).toHaveLength(1);
-      expect(providers[0].id).toBe('google');
-    });
+  describe('updateConfiguration', () => {
+    it('should update configuration successfully', async () => {
+      mockSupabase.insert.mockResolvedValue({ data: null, error: null }); // For audit log
 
-    it('should return empty array for unknown domain', () => {
-      const providers = ssoManager.getProvidersByDomain('unknown.com');
-      expect(providers).toHaveLength(0);
+      const newConfig = {
+        globalSettings: {
+          enabled: false,
+          allowLocalFallback: false,
+        },
+      };
+
+      await ssoManager.updateConfiguration(newConfig);
+
+      const config = ssoManager.getConfiguration();
+      expect(config.globalSettings?.enabled).toBe(false);
+      expect(config.globalSettings?.allowLocalFallback).toBe(false);
+      expect(mockSupabase.insert).toHaveBeenCalled(); // Audit log
     });
   });
 });

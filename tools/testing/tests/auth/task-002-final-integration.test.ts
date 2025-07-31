@@ -4,7 +4,7 @@ import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
 
 // Mock Supabase client
 jest.mock('@/app/utils/supabase/server', () => ({
-  createServerClient: jest.fn(() => ({
+  createClient: jest.fn(() => ({
     auth: {
       getSession: jest.fn(() => ({
         data: {
@@ -21,8 +21,42 @@ jest.mock('@/app/utils/supabase/server', () => ({
         eq: jest.fn(() => ({
           eq: jest.fn(() => ({
             gte: jest.fn(() => ({
+              lte: jest.fn(() => ({
+                order: jest.fn(() => ({
+                  data: [],
+                  error: null
+                }))
+              })),
               data: [],
               error: null
+            }))
+          })),
+          single: jest.fn(() => ({
+            data: {
+              session_id: 'test-session-id',
+              user_id: 'test-user-id',
+              device_info: {
+                userAgent: 'test-agent',
+                ip: '127.0.0.1',
+                deviceType: 'desktop',
+                browser: 'chrome'
+              },
+              created_at: new Date().toISOString(),
+              last_activity: new Date().toISOString(),
+              expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+              is_active: true,
+              risk_score: 0,
+            },
+            error: null
+          }))
+        })),
+        in: jest.fn(() => ({
+          gte: jest.fn(() => ({
+            lte: jest.fn(() => ({
+              order: jest.fn(() => ({
+                data: [],
+                error: null
+              }))
             }))
           }))
         }))
@@ -34,25 +68,11 @@ jest.mock('@/app/utils/supabase/server', () => ({
         eq: jest.fn(() => ({
           error: null
         }))
-      })),
-      single: jest.fn(() => ({
-        data: {
-          session_id: 'test-session-id',
-          user_id: 'test-user-id',
-          device_info: {
-            userAgent: 'test-agent',
-            ip: '127.0.0.1',
-            deviceType: 'desktop',
-            browser: 'chrome'
-          },
-          created_at: new Date().toISOString(),
-          last_activity: new Date().toISOString(),
-          expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-          is_active: true,
-          risk_score: 0,
-        },
-        error: null
       }))
+    })),
+    raw: jest.fn(() => ({
+      data: null,
+      error: null
     }))
   }))
 }));

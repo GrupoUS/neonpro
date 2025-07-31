@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { UserRole, Permission, PermissionResult } from '@/types/rbac';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/auth-context';
 import { createClient } from '@/app/utils/supabase/client';
 
 /**

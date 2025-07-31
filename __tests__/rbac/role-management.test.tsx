@@ -1,7 +1,7 @@
 // Role Management Component Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RoleManagement } from '@/components/admin/role-management';
@@ -10,22 +10,22 @@ import { RBACPermissionManager } from '@/lib/auth/rbac/permissions';
 import { UserRole, Permission } from '@/types/rbac';
 
 // Mock dependencies
-vi.mock('@/hooks/use-rbac', () => ({
-  useRBAC: vi.fn()
+jest.mock('@/hooks/use-rbac', () => ({
+  useRBAC: jest.fn()
 }));
 
-vi.mock('@/lib/auth/rbac/permissions', () => ({
-  RBACPermissionManager: vi.fn(() => ({
-    assignRole: vi.fn(),
-    removeRole: vi.fn(),
-    getUserRole: vi.fn(),
-    getAllUsers: vi.fn(),
-    getAllRoles: vi.fn()
+jest.mock('@/lib/auth/rbac/permissions', () => ({
+  RBACPermissionManager: jest.fn(() => ({
+    assignRole: jest.fn(),
+    removeRole: jest.fn(),
+    getUserRole: jest.fn(),
+    getAllUsers: jest.fn(),
+    getAllRoles: jest.fn()
   }))
 }));
 
 // Mock UI components
-vi.mock('@/components/ui/card', () => ({
+jest.mock('@/components/ui/card', () => ({
   Card: ({ children, className }: any) => <div className={className}>{children}</div>,
   CardContent: ({ children }: any) => <div>{children}</div>,
   CardDescription: ({ children }: any) => <p>{children}</p>,
@@ -33,7 +33,7 @@ vi.mock('@/components/ui/card', () => ({
   CardTitle: ({ children }: any) => <h3>{children}</h3>
 }));
 
-vi.mock('@/components/ui/button', () => ({
+jest.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled, variant }: any) => (
     <button onClick={onClick} disabled={disabled} data-variant={variant}>
       {children}
@@ -41,7 +41,7 @@ vi.mock('@/components/ui/button', () => ({
   )
 }));
 
-vi.mock('@/components/ui/select', () => ({
+jest.mock('@/components/ui/select', () => ({
   Select: ({ children, onValueChange }: any) => (
     <div data-testid="select" onClick={() => onValueChange?.('test-value')}>
       {children}
@@ -53,7 +53,7 @@ vi.mock('@/components/ui/select', () => ({
   SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>
 }));
 
-vi.mock('@/components/ui/table', () => ({
+jest.mock('@/components/ui/table', () => ({
   Table: ({ children }: any) => <table>{children}</table>,
   TableBody: ({ children }: any) => <tbody>{children}</tbody>,
   TableCell: ({ children }: any) => <td>{children}</td>,
@@ -62,18 +62,18 @@ vi.mock('@/components/ui/table', () => ({
   TableRow: ({ children }: any) => <tr>{children}</tr>
 }));
 
-vi.mock('@/components/ui/badge', () => ({
+jest.mock('@/components/ui/badge', () => ({
   Badge: ({ children, variant }: any) => (
     <span data-variant={variant}>{children}</span>
   )
 }));
 
-vi.mock('@/components/ui/alert', () => ({
+jest.mock('@/components/ui/alert', () => ({
   Alert: ({ children }: any) => <div role="alert">{children}</div>,
   AlertDescription: ({ children }: any) => <p>{children}</p>
 }));
 
-vi.mock('lucide-react', () => ({
+jest.mock('lucide-react', () => ({
   Users: () => <span data-testid="users-icon">Users</span>,
   Shield: () => <span data-testid="shield-icon">Shield</span>,
   UserCheck: () => <span data-testid="user-check-icon">UserCheck</span>,
@@ -150,24 +150,24 @@ describe('RoleManagement Component', () => {
   let mockUseRBAC: any;
   
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
     
     mockRBACManager = {
-      assignRole: vi.fn(),
-      removeRole: vi.fn(),
-      getUserRole: vi.fn(),
-      getAllUsers: vi.fn(),
-      getAllRoles: vi.fn()
+      assignRole: jest.fn(),
+      removeRole: jest.fn(),
+      getUserRole: jest.fn(),
+      getAllUsers: jest.fn(),
+      getAllRoles: jest.fn()
     };
     
     mockUseRBAC = {
       loading: false,
       role: mockOwnerRole,
       permissions: mockOwnerRole.permissions,
-      checkPermission: vi.fn().mockResolvedValue(true),
-      canManageUser: vi.fn().mockResolvedValue(true),
-      isInRole: vi.fn().mockReturnValue(true),
-      isAtLeastRole: vi.fn().mockReturnValue(true)
+      checkPermission: jest.fn().mockResolvedValue(true),
+      canManageUser: jest.fn().mockResolvedValue(true),
+      isInRole: jest.fn().mockReturnValue(true),
+      isAtLeastRole: jest.fn().mockReturnValue(true)
     };
     
     (RBACPermissionManager as any).mockReturnValue(mockRBACManager);
@@ -179,7 +179,7 @@ describe('RoleManagement Component', () => {
   });
   
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
   
   describe('Component Rendering', () => {

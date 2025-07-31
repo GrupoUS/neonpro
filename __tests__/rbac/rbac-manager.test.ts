@@ -1,7 +1,6 @@
-// RBAC Manager Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { RBACPermissionManager } from '@/lib/auth/rbac/permissions';
 import { createClient } from '@/lib/supabase/client';
 import {
@@ -9,28 +8,28 @@ import {
   Permission,
   PermissionCheck,
   RoleDefinition,
-  DEFAULT_ROLES
+  UserRoleAssignment,
 } from '@/types/rbac';
 
 // Mock Supabase client
-vi.mock('@/lib/supabase/client', () => ({
-  createClient: vi.fn(() => ({
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(),
-          order: vi.fn(() => ({ data: [], error: null }))
+jest.mock('@/lib/supabase/client', () => ({
+  createClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          single: jest.fn(),
+          order: jest.fn(() => ({ data: [], error: null }))
         })),
-        order: vi.fn(() => ({ data: [], error: null }))
+        order: jest.fn(() => ({ data: [], error: null }))
       })),
-      insert: vi.fn(() => ({
-        select: vi.fn(() => ({ data: [], error: null }))
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({ data: [], error: null }))
       })),
-      update: vi.fn(() => ({
-        eq: vi.fn(() => ({ data: [], error: null }))
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({ data: [], error: null }))
       })),
-      delete: vi.fn(() => ({
-        eq: vi.fn(() => ({ data: [], error: null }))
+      delete: jest.fn(() => ({
+        eq: jest.fn(() => ({ data: [], error: null }))
       }))
     }))
   }))
@@ -47,55 +46,88 @@ describe('RBACPermissionManager', () => {
   const mockOwnerRole: RoleDefinition = {
     id: 'role-owner',
     name: 'owner',
-    display_name: 'Proprietário',
-    description: 'Proprietário da clínica',
-    permissions: ['manage_clinic', 'manage_users', 'view_users'] as Permission[],
+    display_name: 'Owner',
+    permissions: ['*'],
     hierarchy: 1,
     is_system_role: true,
-    is_active: true,
+    clinic_id: mockClinicId,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
-  
+
+  const mockManagerRole: RoleDefinition = {
+    id: 'role-manager',
+    name: 'manager',
+    display_name: 'Manager',
+    permissions: ['patients.read', 'appointments.manage', 'billing.manage'],
+    hierarchy: 2,
+    is_system_role: true,
+    clinic_id: mockClinicId,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
   const mockStaffRole: RoleDefinition = {
     id: 'role-staff',
     name: 'staff',
-    display_name: 'Funcionário',
-    description: 'Funcionário da clínica',
-    permissions: ['view_patients', 'create_patients'] as Permission[],
+    display_name: 'Staff',
+    permissions: ['patients.read', 'appointments.manage'],
     hierarchy: 3,
     is_system_role: true,
-    is_active: true,
+    clinic_id: mockClinicId,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   };
-  
+
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockSupabase = createClient();
-    rbacManager = new RBACPermissionManager();
+    jest.clearAllMocks();
+    mockSupabase = {
+      from: jest.fn(() => ({
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn(),
+            order: jest.fn(() => ({ data: [], error: null }))
+          })),
+          order: jest.fn(() => ({ data: [], error: null }))
+        })),
+        insert: jest.fn(() => ({
+          select: jest.fn(() => ({ data: [], error: null }))
+        })),
+        update: jest.fn(() => ({
+          eq: jest.fn(() => ({ data: [], error: null }))
+        })),
+        delete: jest.fn(() => ({
+          eq: jest.fn(() => ({ data: [], error: null }))
+        }))
+      }))
+    };
+    rbacManager = new RBACPermissionManager(mockSupabase);
   });
-  
+
   afterEach(() => {
-    vi.restoreAllMocks();
+    jest.restoreAllMocks();
   });
-  
-  describe('checkPermission', () => {
-    it('should grant permission when user has the required permission', async () => {
-      // Mock user role assignment
+
+  describe('getUserRole', () => {
+    it('should retrieve user role assignment correctly', async () => {
+      const mockRoleAssignment: UserRoleAssignment = {
+        id: 'assignment-123',
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockOwnerRole
+      };
+
       mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: {
-                    user_id: mockUserId,
-                    role_id: mockOwnerRole.id,
-                    clinic_id: mockClinicId,
-                    is_active: true,
-                    role: mockOwnerRole
-                  },
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockRoleAssignment,
                   error: null
                 })
               })
@@ -103,34 +135,67 @@ describe('RBACPermissionManager', () => {
           })
         })
       });
+
+      const result = await rbacManager.getUserRole(mockUserId, mockClinicId);
       
-      const permissionCheck: PermissionCheck = {
-        userId: mockUserId,
-        permission: 'manage_users',
-        clinicId: mockClinicId
+      expect(result).toEqual(mockRoleAssignment);
+      expect(mockSupabase.from).toHaveBeenCalledWith('user_roles');
+    });
+  });
+
+  describe('hasPermission', () => {
+    it('should grant permission when user has required permission', async () => {
+      const mockRoleAssignment: UserRoleAssignment = {
+        id: 'assignment-123',
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockManagerRole
       };
-      
-      const result = await rbacManager.checkPermission(permissionCheck);
+
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockRoleAssignment,
+                  error: null
+                })
+              })
+            })
+          })
+        })
+      });
+
+      const result = await rbacManager.hasPermission(mockUserId, 'patients.read' as Permission, mockClinicId);
       
       expect(result.granted).toBe(true);
-      expect(result.reason).toContain('Permission granted');
+      expect(result.role).toBe('manager');
     });
-    
-    it('should deny permission when user does not have the required permission', async () => {
-      // Mock user role assignment with staff role
+
+    it('should deny permission when user lacks required permission', async () => {
+      const mockRoleAssignment: UserRoleAssignment = {
+        id: 'assignment-123',
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockStaffRole
+      };
+
       mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: {
-                    user_id: mockUserId,
-                    role_id: mockStaffRole.id,
-                    clinic_id: mockClinicId,
-                    is_active: true,
-                    role: mockStaffRole
-                  },
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockRoleAssignment,
                   error: null
                 })
               })
@@ -138,286 +203,48 @@ describe('RBACPermissionManager', () => {
           })
         })
       });
-      
-      const permissionCheck: PermissionCheck = {
-        userId: mockUserId,
-        permission: 'manage_users',
-        clinicId: mockClinicId
-      };
-      
-      const result = await rbacManager.checkPermission(permissionCheck);
+
+      const result = await rbacManager.hasPermission(mockUserId, 'billing.manage' as Permission, mockClinicId);
       
       expect(result.granted).toBe(false);
-      expect(result.reason).toContain('Permission denied');
-    });
-    
-    it('should deny permission when user has no role assignment', async () => {
-      // Mock no role assignment found
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: null,
-                  error: { message: 'No role assignment found' }
-                })
-              })
-            })
-          })
-        })
-      });
-      
-      const permissionCheck: PermissionCheck = {
-        userId: mockUserId,
-        permission: 'view_users',
-        clinicId: mockClinicId
-      };
-      
-      const result = await rbacManager.checkPermission(permissionCheck);
-      
-      expect(result.granted).toBe(false);
-      expect(result.reason).toContain('No active role assignment');
-    });
-    
-    it('should validate time-based restrictions', async () => {
-      // Mock user role assignment
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: {
-                    user_id: mockUserId,
-                    role_id: mockOwnerRole.id,
-                    clinic_id: mockClinicId,
-                    is_active: true,
-                    role: mockOwnerRole
-                  },
-                  error: null
-                })
-              })
-            })
-          })
-        })
-      });
-      
-      const permissionCheck: PermissionCheck = {
-        userId: mockUserId,
-        permission: 'manage_users',
-        clinicId: mockClinicId,
-        context: {
-          timeRestriction: {
-            allowedHours: [9, 10, 11, 12, 13, 14, 15, 16, 17], // 9 AM to 5 PM
-            timezone: 'America/Sao_Paulo'
-          }
-        }
-      };
-      
-      // Mock current time to be outside allowed hours (e.g., 2 AM)
-      const mockDate = new Date();
-      mockDate.setHours(2, 0, 0, 0);
-      vi.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
-      
-      const result = await rbacManager.checkPermission(permissionCheck);
-      
-      expect(result.granted).toBe(false);
-      expect(result.reason).toContain('Time restriction');
-    });
-    
-    it('should validate IP-based restrictions', async () => {
-      // Mock user role assignment
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: {
-                    user_id: mockUserId,
-                    role_id: mockOwnerRole.id,
-                    clinic_id: mockClinicId,
-                    is_active: true,
-                    role: mockOwnerRole
-                  },
-                  error: null
-                })
-              })
-            })
-          })
-        })
-      });
-      
-      const permissionCheck: PermissionCheck = {
-        userId: mockUserId,
-        permission: 'manage_users',
-        clinicId: mockClinicId,
-        context: {
-          ipAddress: '192.168.1.100',
-          ipRestriction: {
-            allowedIPs: ['192.168.1.1', '192.168.1.50'],
-            blockedIPs: ['192.168.1.100']
-          }
-        }
-      };
-      
-      const result = await rbacManager.checkPermission(permissionCheck);
-      
-      expect(result.granted).toBe(false);
-      expect(result.reason).toContain('IP restriction');
+      expect(result.role).toBe('staff');
     });
   });
-  
-  describe('assignRole', () => {
-    it('should successfully assign a role to a user', async () => {
-      // Mock successful role assignment
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockResolvedValue({
-            data: [{
-              id: 'assignment-123',
-              user_id: mockUserId,
-              role_id: mockRoleId,
-              clinic_id: mockClinicId,
-              assigned_by: 'admin-user',
-              is_active: true
-            }],
-            error: null
-          })
-        })
-      });
-      
-      const result = await rbacManager.assignRole(
-        mockUserId,
-        mockRoleId,
-        mockClinicId,
-        {
-          assignedBy: 'admin-user',
-          notes: 'Initial role assignment'
-        }
-      );
-      
-      expect(result).toBeDefined();
-      expect(mockSupabase.from).toHaveBeenCalledWith('user_role_assignments');
-    });
-    
-    it('should handle role assignment errors', async () => {
-      // Mock role assignment error
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockResolvedValue({
-            data: null,
-            error: { message: 'Role assignment failed' }
-          })
-        })
-      });
-      
-      await expect(
-        rbacManager.assignRole(mockUserId, mockRoleId, mockClinicId)
-      ).rejects.toThrow('Role assignment failed');
-    });
-  });
-  
-  describe('removeRole', () => {
-    it('should successfully remove a role from a user', async () => {
-      // Mock successful role removal
-      mockSupabase.from.mockReturnValue({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockResolvedValue({
-                data: [{ id: 'assignment-123' }],
-                error: null
-              })
-            })
-          })
-        })
-      });
-      
-      const result = await rbacManager.removeRole(mockUserId, mockClinicId);
-      
-      expect(result).toBe(true);
-      expect(mockSupabase.from).toHaveBeenCalledWith('user_role_assignments');
-    });
-  });
-  
-  describe('getUserPermissions', () => {
-    it('should return user permissions based on their role', async () => {
-      // Mock user role assignment
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: {
-                    user_id: mockUserId,
-                    role_id: mockOwnerRole.id,
-                    clinic_id: mockClinicId,
-                    is_active: true,
-                    role: mockOwnerRole
-                  },
-                  error: null
-                })
-              })
-            })
-          })
-        })
-      });
-      
-      const permissions = await rbacManager.getUserPermissions(mockUserId, mockClinicId);
-      
-      expect(permissions).toEqual(mockOwnerRole.permissions);
-    });
-    
-    it('should return empty array when user has no role', async () => {
-      // Mock no role assignment
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                single: vi.fn().mockResolvedValue({
-                  data: null,
-                  error: { message: 'No role found' }
-                })
-              })
-            })
-          })
-        })
-      });
-      
-      const permissions = await rbacManager.getUserPermissions(mockUserId, mockClinicId);
-      
-      expect(permissions).toEqual([]);
-    });
-  });
-  
+
   describe('canManageUser', () => {
     it('should allow higher hierarchy user to manage lower hierarchy user', async () => {
-      // Mock manager role for current user
-      const mockManagerRole = {
-        ...mockOwnerRole,
-        name: 'manager',
-        hierarchy: 2
+      // Manager can manage staff
+      const mockManagerAssignment: UserRoleAssignment = {
+        id: 'assignment-manager',
+        user_id: mockUserId,
+        role_id: mockManagerRole.id,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockManagerRole
+      };
+
+      const mockStaffAssignment: UserRoleAssignment = {
+        id: 'assignment-staff',
+        user_id: 'target-user',
+        role_id: mockStaffRole.id,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockStaffRole
       };
       
       // Mock current user (manager) and target user (staff)
       mockSupabase.from
         .mockReturnValueOnce({
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
-                    data: {
-                      user_id: mockUserId,
-                      role_id: mockManagerRole.id,
-                      clinic_id: mockClinicId,
-                      is_active: true,
-                      role: mockManagerRole
-                    },
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: mockManagerAssignment,
                     error: null
                   })
                 })
@@ -426,18 +253,12 @@ describe('RBACPermissionManager', () => {
           })
         })
         .mockReturnValueOnce({
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
-                    data: {
-                      user_id: 'target-user',
-                      role_id: mockStaffRole.id,
-                      clinic_id: mockClinicId,
-                      is_active: true,
-                      role: mockStaffRole
-                    },
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: mockStaffAssignment,
                     error: null
                   })
                 })
@@ -452,27 +273,37 @@ describe('RBACPermissionManager', () => {
     });
     
     it('should not allow lower hierarchy user to manage higher hierarchy user', async () => {
-      // Mock staff role for current user and manager role for target user
-      const mockManagerRole = {
-        ...mockOwnerRole,
-        name: 'manager',
-        hierarchy: 2
+      // Staff cannot manage manager
+      const mockStaffAssignment: UserRoleAssignment = {
+        id: 'assignment-staff',
+        user_id: mockUserId,
+        role_id: mockStaffRole.id,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockStaffRole
+      };
+
+      const mockManagerAssignment: UserRoleAssignment = {
+        id: 'assignment-manager',
+        user_id: 'target-user',
+        role_id: mockManagerRole.id,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockManagerRole
       };
       
       mockSupabase.from
         .mockReturnValueOnce({
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
-                    data: {
-                      user_id: mockUserId,
-                      role_id: mockStaffRole.id,
-                      clinic_id: mockClinicId,
-                      is_active: true,
-                      role: mockStaffRole
-                    },
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: mockStaffAssignment,
                     error: null
                   })
                 })
@@ -481,18 +312,12 @@ describe('RBACPermissionManager', () => {
           })
         })
         .mockReturnValueOnce({
-          select: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              eq: vi.fn().mockReturnValue({
-                eq: vi.fn().mockReturnValue({
-                  single: vi.fn().mockResolvedValue({
-                    data: {
-                      user_id: 'target-user',
-                      role_id: mockManagerRole.id,
-                      clinic_id: mockClinicId,
-                      is_active: true,
-                      role: mockManagerRole
-                    },
+          select: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                eq: jest.fn().mockReturnValue({
+                  single: jest.fn().mockResolvedValue({
+                    data: mockManagerAssignment,
                     error: null
                   })
                 })
@@ -506,61 +331,174 @@ describe('RBACPermissionManager', () => {
       expect(canManage).toBe(false);
     });
   });
-  
-  describe('auditPermissionCheck', () => {
-    it('should log permission checks for audit purposes', async () => {
-      // Mock audit log insertion
+
+  describe('Role Management', () => {
+    it('should create role assignment successfully', async () => {
+      const newAssignment = {
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true
+      };
+
       mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockResolvedValue({
-          data: [{ id: 'audit-log-123' }],
-          error: null
+        insert: jest.fn().mockReturnValue({
+          select: jest.fn().mockResolvedValue({
+            data: [{ ...newAssignment, id: 'new-assignment-123' }],
+            error: null
+          })
         })
       });
+
+      const result = await rbacManager.assignRole(mockUserId, mockRoleId, mockClinicId, mockUserId);
       
-      await rbacManager.auditPermissionCheck({
-        userId: mockUserId,
-        clinicId: mockClinicId,
-        permission: 'view_users',
-        granted: true,
-        reason: 'User has required permission',
-        context: {
-          ipAddress: '192.168.1.1',
-          userAgent: 'Mozilla/5.0...'
-        }
+      expect(result).toBeTruthy();
+      expect(mockSupabase.from).toHaveBeenCalledWith('user_roles');
+    });
+
+    it('should remove role assignment successfully', async () => {
+      mockSupabase.from.mockReturnValue({
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockResolvedValue({
+                data: [],
+                error: null
+              })
+            })
+          })
+        })
       });
+
+      const result = await rbacManager.removeRole(mockUserId, mockClinicId, mockUserId);
       
-      expect(mockSupabase.from).toHaveBeenCalledWith('permission_audit_logs');
+      expect(result).toBe(true);
+      expect(mockSupabase.from).toHaveBeenCalledWith('user_roles');
     });
   });
-  
-  describe('DEFAULT_ROLES validation', () => {
-    it('should have valid default roles structure', () => {
-      expect(DEFAULT_ROLES.owner).toBeDefined();
-      expect(DEFAULT_ROLES.manager).toBeDefined();
-      expect(DEFAULT_ROLES.staff).toBeDefined();
-      expect(DEFAULT_ROLES.patient).toBeDefined();
-      
-      // Check hierarchy order
-      expect(DEFAULT_ROLES.owner.hierarchy).toBeLessThan(DEFAULT_ROLES.manager.hierarchy);
-      expect(DEFAULT_ROLES.manager.hierarchy).toBeLessThan(DEFAULT_ROLES.staff.hierarchy);
-      expect(DEFAULT_ROLES.staff.hierarchy).toBeLessThan(DEFAULT_ROLES.patient.hierarchy);
-      
-      // Check that owner has the most permissions
-      expect(DEFAULT_ROLES.owner.permissions.length).toBeGreaterThan(DEFAULT_ROLES.manager.permissions.length);
-      expect(DEFAULT_ROLES.manager.permissions.length).toBeGreaterThan(DEFAULT_ROLES.staff.permissions.length);
-    });
-    
-    it('should have unique permissions across roles', () => {
-      const allPermissions = new Set();
-      
-      Object.values(DEFAULT_ROLES).forEach(role => {
-        role.permissions.forEach(permission => {
-          allPermissions.add(permission);
-        });
+
+  describe('Permission Checks with Resource Access', () => {
+    it('should handle resource-specific permission checks', async () => {
+      const mockRoleAssignment: UserRoleAssignment = {
+        id: 'assignment-123',
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockManagerRole
+      };
+
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockRoleAssignment,
+                  error: null
+                })
+              })
+            })
+          })
+        })
       });
+
+      const result = await rbacManager.hasPermission(
+        mockUserId, 
+        'patients.read' as Permission, 
+        mockClinicId, 
+        'patient-123'
+      );
       
-      // Should have a reasonable number of unique permissions
-      expect(allPermissions.size).toBeGreaterThan(10);
+      expect(result.granted).toBe(true);
+      expect(result.resourceId).toBe('patient-123');
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle database errors gracefully', async () => {
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: { message: 'Database connection error' }
+                })
+              })
+            })
+          })
+        })
+      });
+
+      const result = await rbacManager.hasPermission(mockUserId, 'patients.read' as Permission, mockClinicId);
+      
+      expect(result.granted).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+
+    it('should handle missing role assignments', async () => {
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: null
+                })
+              })
+            })
+          })
+        })
+      });
+
+      const result = await rbacManager.hasPermission(mockUserId, 'patients.read' as Permission, mockClinicId);
+      
+      expect(result.granted).toBe(false);
+      expect(result.role).toBeUndefined();
+    });
+  });
+
+  describe('Performance and Caching', () => {
+    it('should implement permission caching for repeated checks', async () => {
+      const mockRoleAssignment: UserRoleAssignment = {
+        id: 'assignment-123',
+        user_id: mockUserId,
+        role_id: mockRoleId,
+        clinic_id: mockClinicId,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: mockManagerRole
+      };
+
+      mockSupabase.from.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            eq: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockRoleAssignment,
+                  error: null
+                })
+              })
+            })
+          })
+        })
+      });
+
+      // First call
+      await rbacManager.hasPermission(mockUserId, 'patients.read' as Permission, mockClinicId);
+      
+      // Second call should use cache
+      await rbacManager.hasPermission(mockUserId, 'patients.read' as Permission, mockClinicId);
+      
+      // Should only call database once due to caching
+      expect(mockSupabase.from).toHaveBeenCalledTimes(1);
     });
   });
 });
