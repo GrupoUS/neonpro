@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp:*)",
+      "Bash(find:*)",
+      "Bash(pnpm test:*)",
+      "mcp__ide__getDiagnostics",
+      "mcp__ide__executeCode",
+      "Bash(get-command:*)",
+      "Bash(powershell:*)",
+      "Bash(rm:*)",
+      "Bash(del \"C:\\Users\\Mauri\\OneDrive\\GRUPOUS\\VSCODE\\neonpro\\package-MAURICIO.json\")",
+      "Bash(bash:*)",
+      "Bash(echo:*)",
+      "Bash(set OTEL_EXPORTER_OTLP_PROTOCOL=http/json)",
+      "Bash(set CLAUDE_CODE_ENABLE_TELEMETRY=0)",
+      "Bash(claude)",
+      "Bash(setx:*)",
+      "Bash(cmd:*)",
+      "Bash($env:OTEL_EXPORTER_OTLP_PROTOCOL=\"http/json\")",
+      "Bash($env:CLAUDE_CODE_ENABLE_TELEMETRY=\"0\")",
+      "Bash(claude --version)",
+      "Bash(./start-claude.bat --version)"
+    ],
+    "deny": []
+  }
+}

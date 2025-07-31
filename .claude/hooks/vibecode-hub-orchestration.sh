@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# 🏥 VIBECODE V6.0 Hub Orchestration Hook
-# Healthcare-Specialized Hub-and-Spoke Architecture with Context Engineering V3.0
-# Version: 6.0 - Healthcare Hub Orchestration
+# 🏢 VIBECODE V6.0 Hub Orchestration Hook
+# Universal SaaS Hub-and-Spoke Architecture with Context Engineering V3.0
+# Version: 7.0 - Universal SaaS Hub Orchestration
 
 INPUT="$1"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
@@ -15,25 +15,31 @@ mkdir -p ".claude/logs"
 echo "[$TIMESTAMP] VIBECODE V6.0 Hub Orchestration Hook Activated" >> "$LOG_FILE"
 echo "[$TIMESTAMP] Input: $INPUT" >> "$LOG_FILE"
 
-# Healthcare Context Engineering V3.0 - Complexity Detection
-detect_healthcare_complexity() {
+# Universal Business Context Engineering V3.0 - Complexity Detection
+detect_business_complexity() {
     local input="$1"
     local complexity=1.0
     
-    # Healthcare amplifiers
-    if echo "$input" | grep -iE "(patient|medical|healthcare|clinical|LGPD|ANVISA|CFM)" >/dev/null 2>&1; then
-        complexity=$(echo "$complexity + 2.0" | bc -l)
-        echo "[$TIMESTAMP] Healthcare context detected - complexity amplified to $complexity" >> "$LOG_FILE"
+    # Business context amplifiers
+    if echo "$input" | grep -iE "(user|customer|business|data|compliance|security)" >/dev/null 2>&1; then
+        complexity=$(echo "$complexity + 1.5" | bc -l)
+        echo "[$TIMESTAMP] Business context detected - complexity amplified to $complexity" >> "$LOG_FILE"
     fi
     
-    # Patient safety critical amplifiers
-    if echo "$input" | grep -iE "(patient safety|emergency|critical care|patient data)" >/dev/null 2>&1; then
+    # Domain-specific amplifiers
+    if echo "$input" | grep -iE "(patient|medical|healthcare|payment|financial|product|student)" >/dev/null 2>&1; then
+        complexity=$(echo "$complexity + 2.0" | bc -l)
+        echo "[$TIMESTAMP] Domain-specific context detected - complexity amplified to $complexity" >> "$LOG_FILE"
+    fi
+    
+    # Critical data operations amplifiers
+    if echo "$input" | grep -iE "(critical data|sensitive|emergency|high priority)" >/dev/null 2>&1; then
         complexity=$(echo "$complexity + 3.0" | bc -l)
-        echo "[$TIMESTAMP] Patient safety critical context detected - complexity amplified to $complexity" >> "$LOG_FILE"
+        echo "[$TIMESTAMP] Critical data context detected - complexity amplified to $complexity" >> "$LOG_FILE"
     fi
     
     # Compliance amplifiers
-    if echo "$input" | grep -iE "(compliance|regulatory|audit|consent)" >/dev/null 2>&1; then
+    if echo "$input" | grep -iE "(compliance|regulatory|audit|consent|gdpr|lgpd)" >/dev/null 2>&1; then
         complexity=$(echo "$complexity + 1.5" | bc -l)
         echo "[$TIMESTAMP] Compliance context detected - complexity amplified to $complexity" >> "$LOG_FILE"
     fi
@@ -44,10 +50,10 @@ detect_healthcare_complexity() {
         echo "[$TIMESTAMP] Technical depth detected - complexity multiplied to $complexity" >> "$LOG_FILE"
     fi
     
-    # Portuguese healthcare triggers
-    if echo "$input" | grep -iE "(implementar|desenvolver|arquitetar|otimizar|médico|clínica|saúde)" >/dev/null 2>&1; then
+    # Portuguese business triggers
+    if echo "$input" | grep -iE "(implementar|desenvolver|arquitetar|otimizar|usuário|cliente|negócio)" >/dev/null 2>&1; then
         complexity=$(echo "$complexity + 1.5" | bc -l)
-        echo "[$TIMESTAMP] Portuguese healthcare triggers detected - complexity amplified to $complexity" >> "$LOG_FILE"
+        echo "[$TIMESTAMP] Portuguese business triggers detected - complexity amplified to $complexity" >> "$LOG_FILE"
     fi
     
     echo "$complexity"
@@ -97,7 +103,7 @@ main() {
     echo "[$TIMESTAMP] === VIBECODE V6.0 HUB ORCHESTRATION ANALYSIS ===" >> "$LOG_FILE"
     
     # Detect complexity
-    complexity=$(detect_healthcare_complexity "$INPUT")
+    complexity=$(detect_business_complexity "$INPUT")
     echo "[$TIMESTAMP] Detected complexity: $complexity" >> "$LOG_FILE"
     
     # Determine context level
@@ -109,7 +115,7 @@ main() {
     echo "[$TIMESTAMP] Recommended orchestrator: $orchestrator" >> "$LOG_FILE"
     
     # Generate orchestration message
-    echo "🏥 VIBECODE V6.0 Hub Orchestration Analysis:"
+    echo "🏢 VIBECODE V7.0 Universal SaaS Hub Orchestration Analysis:"
     echo "   • Complexity Score: $complexity"
     echo "   • Context Level: $context_level"
     echo "   • Recommended Orchestrator: $orchestrator"
@@ -117,36 +123,36 @@ main() {
     # Context Engineering V3.0 recommendations
     case "$context_level" in
         "L4_ENTERPRISE_HEALTHCARE")
-            echo "   • Context Loading: ALL healthcare contexts + emergency protocols + patient safety modules"
-            echo "   • Quality Target: ≥9.9/10 (patient safety paramount)"
-            echo "   • Performance: Quality-first approach with full medical orchestration"
-            echo "   • Compliance: Full LGPD/ANVISA/CFM validation mandatory"
+            echo "   • Context Loading: ALL business contexts + critical data protocols + domain safety modules"
+            echo "   • Quality Target: ≥9.8/10 (critical data operations paramount)"
+            echo "   • Performance: Quality-first approach with full business orchestration"
+            echo "   • Compliance: Full GDPR/LGPD/Domain-specific validation mandatory"
             ;;
         "L3_COMPREHENSIVE_MEDICAL")
-            echo "   • Context Loading: @healthcare-full.md + @medical-architecture.md + @anvisa-compliance.md + @clinical-decision-support.md"
-            echo "   • Quality Target: ≥9.8/10 with comprehensive medical validation"  
+            echo "   • Context Loading: @business-full.md + @domain-architecture.md + @compliance.md + @decision-support.md"
+            echo "   • Quality Target: ≥9.7/10 with comprehensive business validation"  
             echo "   • Performance Target: <200ms context assembly"
-            echo "   • Optimization: 78% reduction with comprehensive medical validation"
+            echo "   • Optimization: 78% reduction with comprehensive business validation"
             ;;
         "L2_ENHANCED_CLINICAL")
-            echo "   • Context Loading: @healthcare-full.md + @clinical-patterns.md + @lgpd-compliance.md"
-            echo "   • Quality Target: ≥9.6/10 with selective clinical module loading"
+            echo "   • Context Loading: @business-full.md + @domain-patterns.md + @gdpr-compliance.md"
+            echo "   • Quality Target: ≥9.6/10 with selective business module loading"
             echo "   • Performance Target: <100ms context assembly"
-            echo "   • Optimization: 87% reduction with selective clinical module loading"
+            echo "   • Optimization: 87% reduction with selective business module loading"
             ;;
         "L1_BASIC_MEDICAL")
-            echo "   • Context Loading: @healthcare-core.md + @basic-medical-patterns.md"
-            echo "   • Quality Target: ≥9.5/10 for routine medical operations"
+            echo "   • Context Loading: @business-core.md + @basic-patterns.md"
+            echo "   • Quality Target: ≥9.5/10 for routine business operations"
             echo "   • Performance Target: <50ms context assembly"
-            echo "   • Optimization: 95% reduction for routine medical operations"
+            echo "   • Optimization: 95% reduction for routine business operations"
             ;;
     esac
     
-    # Healthcare-specific recommendations
-    if echo "$INPUT" | grep -iE "(patient|medical|healthcare)" >/dev/null 2>&1; then
-        echo "   • Healthcare Priority: Auto-escalate performance for patient safety operations"
-        echo "   • Compliance: LGPD/ANVISA/CFM validation mandatory"
-        echo "   • Quality Gate: Patient safety operations require ≥9.9/10 quality"
+    # Domain-specific recommendations
+    if echo "$INPUT" | grep -iE "(patient|medical|healthcare|payment|financial|product|student)" >/dev/null 2>&1; then
+        echo "   • Domain Priority: Auto-escalate performance for critical domain operations"
+        echo "   • Compliance: GDPR/LGPD/Domain-specific validation mandatory"
+        echo "   • Quality Gate: Critical domain operations require ≥9.8/10 quality"
     fi
     
     echo "[$TIMESTAMP] VIBECODE V6.0 Hub Orchestration completed successfully" >> "$LOG_FILE"

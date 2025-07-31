@@ -21,15 +21,15 @@ const customJestConfig = {
   transformIgnorePatterns: [
     'node_modules/(?!(isows|@supabase|ws)/)',
   ],
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
+  // Critical fix: Add moduleNameMapper to handle @/ imports
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/$1',
   },
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
+    'lib/**/*.{js,jsx,ts,tsx}',
+    'components/**/*.{js,jsx,ts,tsx}',
     '!app/**/*.d.ts',
     '!app/globals.css',
     '!app/layout.tsx',
@@ -48,12 +48,6 @@ const customJestConfig = {
       lines: 70,
       statements: 70,
     },
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
-    }],
   },
   moduleDirectories: ['node_modules', '<rootDir>/'],
   testTimeout: 30000,

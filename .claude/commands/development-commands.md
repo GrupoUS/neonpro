@@ -1,53 +1,53 @@
-# DEVELOPMENT COMMANDS & HEALTHCARE WORKFLOWS
+# DEVELOPMENT COMMANDS & UNIVERSAL SAAS WORKFLOWS
 
-## Core Healthcare Development Commands
+## Core Universal SaaS Development Commands
 
 ```bash
-# Development server with healthcare monitoring
+# Development server with business monitoring
 pnpm dev
 
-# Build with healthcare compliance validation
+# Build with business compliance validation
 pnpm build
 
-# Healthcare-specific linting with medical code standards
-pnpm lint:healthcare
+# Universal business linting with industry standards
+pnpm lint:business
 
-# LGPD compliance check
-pnpm compliance:lgpd
+# GDPR/LGPD compliance check
+pnpm compliance:check
 
-# Patient data security audit
-pnpm audit:patient-data
+# User data security audit
+pnpm audit:user-data
 
-# Medical API performance test
-pnpm test:api:healthcare
+# Business API performance test
+pnpm test:api:business
 
-# Start production server with medical environment
-pnpm start:medical
+# Start production server with business environment
+pnpm start:production
 ```
 
-## Healthcare Testing Commands
+## Universal Business Testing Commands
 
 ```bash
-# Run all healthcare tests
-npm run test:healthcare
+# Run all business tests
+npm run test:business
 
-# Run LGPD compliance tests
-npm run test:lgpd
+# Run GDPR/LGPD compliance tests
+npm run test:compliance
 
-# Run patient data security tests
+# Run user data security tests
 npm run test:security
 
-# Run appointment booking E2E tests
-npm run test:e2e:appointments
+# Run user workflow E2E tests
+npm run test:e2e:workflows
 
-# Run medical workflow tests
-npm run test:e2e:medical
+# Run domain-specific workflow tests
+npm run test:e2e:domain
 
-# Performance testing for clinic operations
-npm run test:performance:clinic
+# Performance testing for business operations
+npm run test:performance:business
 ```
 
-## Healthcare Database Commands
+## Universal Database Commands
 
 ```bash
 # Run healthcare-specific Supabase migrations

@@ -1,105 +1,224 @@
-# 🚀 NEONPRO VIBECODE V6.0 - SUPREME HEALTHCARE ORCHESTRATION HUB
+# 🚀 NEONPRO VIBECODE V6.0 - SUPREME SAAS ORCHESTRATION HUB
 
-## 🚨 SUPREME SYSTEM AUTHORITY & HEALTHCARE MISSION
+ACTIVATION-NOTICE: Sempre leia o arquivo "C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\CLAUDE.md" de forma obrigatória para que a coordenação dos agentes e mcps seja sempre ativada corretamente
 
-**VIBECODE V6.0 Enhanced NeonPro Healthcare AI Master Orchestrator** - Hub-and-Spoke Architecture com Context Engineering V3.0, specialized healthcare compliance, intelligent delegation, e performance optimization 85%+.
+## @IMPORT SYSTEM INTEGRATION V1.0
+
+**Core Modules Integration**: `@import('./.claude/core/import-loader.md')`
+
+### Hierarchical Integration Architecture
+```yaml
+HIERARCHICAL_AUTHORITY_MODEL:
+  level_1_global: "C:/Users/Mauri/OneDrive/GRUPOUS/VSCODE/CLAUDE.md (Universal standards)"
+  level_2_supreme: "neonpro/CLAUDE.md (VIBECODE V6.0 SaaS Authority - THIS FILE)"
+  level_3_specialized: ".claude/core/ modules (Conditional intelligent loading)"
+  
+AUTHORITY_PRESERVATION:
+  vibecode_supremacy: "VIBECODE V6.0 remains SUPREME orchestrator for all business operations"
+  core_delegation: "Core modules provide specialized capabilities under VIBECODE authority"
+  intelligent_routing: "import-loader.md manages L1-L10 complexity routing and triggers"
+  performance_optimization: "85%+ efficiency maintained through conditional module loading"
+  
+INTEGRATION_BENEFITS:
+  consolidated_power: "4 specialized modules (8→4, 50% reduction) under VIBECODE authority"
+  bilingual_triggers: "Portuguese/English trigger detection for business operations"
+  conditional_loading: "Modules loaded only when needed based on complexity and triggers"
+  backward_compatibility: "All existing VIBECODE enforcement and orchestration preserved"
+```
+
+### Core Modules Available Under VIBECODE Authority
+- **import-loader.md**: Universal orchestration system (L1-L10 complexity routing)
+- **mcp-authority.md**: MCP orchestration & intelligent routing (L3-L10)
+- **system-control.md**: VIBECODE universal control framework (L5-L10)
+- **performance-engine.md**: Research-first optimization (L4-L10)
+- **domain-specialization.md**: Business domain specialization (L3-L8, conditional)
+
+## 🚨 SUPREME SYSTEM AUTHORITY & BUSINESS MISSION
+
+**VIBECODE V6.0 Enhanced NeonPro SaaS AI Master Orchestrator** - Hub-and-Spoke Architecture com Context Engineering V3.0, specialized business compliance, intelligent delegation, e performance optimization 85%+.
 
 ```yaml
 SUPREME_ORCHESTRATION_AUTHORITY:
-  system_identity: "NeonPro VIBECODE V6.0 Hub - Healthcare Master Orchestrator"
+  system_identity: "NeonPro VIBECODE V6.0 Hub - SaaS Master Orchestrator"
   enforcement_level: "ABSOLUTE - NO EXCEPTIONS EVER"
-  integration_scope: "Context Engineering V3.0 + Healthcare Specialization + APEX Intelligence"
-  orchestration_power: "Supreme control over all AI operations and healthcare decisions"
-  quality_mandate: "≥9.5/10 healthcare | ≥9.8/10 clinical | ≥9.9/10 patient safety"
-  performance_targets: "<200ms context assembly | <100ms patient data | <30s MCP execution"
-  compliance_guarantee: "100% LGPD/ANVISA/CFM adherence with real-time monitoring"
+  integration_scope: "Context Engineering V3.0 + Business Specialization + APEX Intelligence"
+  orchestration_power: "Supreme control over all AI operations and business decisions"
+  quality_mandate: "≥9.5/10 business | ≥9.8/10 operational | ≥9.9/10 data safety"
+  performance_targets: "<200ms context assembly | <100ms user data | <30s MCP execution"
+  compliance_guarantee: "100% regulatory compliance adherence with real-time monitoring"
   
 HUB_AND_SPOKE_ARCHITECTURE:
   central_hub: "CLAUDE.md (THIS FILE) - Master orchestration authority"
   specialized_spokes: "apex-developer.md + specialized contexts + orchestration modules"
   delegation_intelligence: "Complexity-based orchestrator selection L1-L4"
   context_optimization: "85%+ reduction through intelligent trigger routing"
-  healthcare_priority: "Medical contexts auto-escalate to enhanced quality thresholds"
+  domain_priority: "Business-critical contexts auto-escalate to enhanced quality thresholds"
 ```
 
 ## ESSENTIAL DEVELOPMENT COMMANDS
 ```bash
 # Core Commands  
 pnpm dev                   # Start development server
-pnpm build                 # Build with healthcare compliance validation
+pnpm build                 # Build with compliance validation
 pnpm typecheck             # TypeScript type checker
 pnpm test                  # Run test suite
-pnpm lint                  # ESLint with healthcare rules
+pnpm lint                  # ESLint with business rules
 
-# Healthcare Commands
-pnpm compliance:lgpd       # LGPD compliance validation
-pnpm audit:patient-data    # Patient data security audit
-pnpm test:healthcare       # Healthcare test suite
+# Business Commands
+pnpm compliance:check      # Compliance validation
+pnpm audit:data            # Data security audit
+pnpm test:business         # Business logic test suite
 
 # Git Workflow
 git status && git add . && git commit -m "message" && git push
 ```
 
-## 🧠 INTELLIGENT TRIGGER DETECTION & ORCHESTRATOR DELEGATION
+## 🧠 ZERO-TOLERANCE ORCHESTRATION ENFORCEMENT V7.0
 
+### **ABSOLUTE ENFORCEMENT SYSTEM - NO BYPASS PERMITTED**
 ```yaml
-TRIGGER_DETECTION_SYSTEM_V6:
-  algorithm: "APEX V6.0 Enhanced Scoring with Healthcare Priority Escalation"
-  delegation_protocol: "Hub → Specialized Orchestrator based on complexity + domain"
-  performance_optimization: "85%+ context reduction through intelligent routing"
+ZERO_TOLERANCE_ENFORCEMENT_V7:
+  enforcement_level: "ABSOLUTE - Zero exceptions, zero bypasses permitted"
+  master_coordinator_mandatory: "ALL complexity levels ≥1.0 MUST use master-coordinator"
+  bypass_prevention: "Automatic detection and prevention of direct agent calls"
+  violation_response: "Immediate halt + mandatory redirect to master-coordinator"
+  healthcare_priority: "Patient safety operations enforce ≥9.9/10 quality"
   
-ORCHESTRATOR_DELEGATION_MATRIX:
-  L1_simple:
+MANDATORY_DELEGATION_MATRIX_V7:
+  ALL_TASKS_UNIVERSAL:
+    range: "≥1.0 (ALL complexity levels without exception)"
+    flow: "CLAUDE.md Hub → master-coordinator (MANDATORY FIRST STEP)"
+    bypass_tolerance: "ZERO - No direct agent access permitted" 
+    enforcement: "Automatic redirect + violation logging"
+    healthcare_amplification: "Medical contexts auto-escalate quality thresholds"
+    
+  L1_simple_coordinated:
     range: "1.0-3.0"
-    orchestrator: "CLAUDE.md Hub (direct handling)"
+    flow: "CLAUDE.md → master-coordinator → internal/apex-agent → RETURN to coordinator"
     context_loading: "minimal (core healthcare only)"
-    target_time: "<5s"
-    healthcare_enhancement: "Basic LGPD compliance validation"
+    target_time: "<8s (includes coordination overhead)"
+    return_requirement: "Mandatory status update to master-coordinator"
+    business_enhancement: "Basic LGPD compliance + coordinator oversight"
     
-  L2_moderate:
-    range: "3.1-5.5"
-    orchestrator: "Task delegation to apex-developer.md"
+  L2_moderate_coordinated:
+    range: "3.1-5.5" 
+    flow: "CLAUDE.md → master-coordinator → apex-agent → RETURN to coordinator"
     context_loading: "selective (targeted healthcare modules)"
-    target_time: "<15s"
-    healthcare_enhancement: "Enhanced medical workflow validation"
+    target_time: "<20s (includes handoff protocols)"
+    return_requirement: "Complete context handoff + results back to coordinator"
+    business_enhancement: "Enhanced medical validation + coordinator synthesis"
     
-  L3_complex:
+  L3_complex_coordinated:
     range: "5.6-7.5"
-    orchestrator: "apex-developer.md with full orchestration"
+    flow: "CLAUDE.md → master-coordinator → multi-agent → RETURN to coordinator"
     context_loading: "comprehensive (multiple healthcare modules)"
-    target_time: "<30s"
-    healthcare_enhancement: "Full LGPD/ANVISA compliance validation"
+    target_time: "<45s (includes coordination chain)"
+    return_requirement: "Full orchestration results + next steps to coordinator"
+    business_enhancement: "Full LGPD/ANVISA compliance + coordinator validation"
     
-  L4_enterprise:
+  L4_enterprise_coordinated:
     range: "7.6-10.0"
-    orchestrator: "Full APEX Coordination with healthcare specialists"
+    flow: "CLAUDE.md → master-coordinator → full ecosystem → RETURN to coordinator"
     context_loading: "complete healthcare orchestration"
-    target_time: "<60s"
-    healthcare_enhancement: "Patient safety critical operations ≥9.9/10"
+    target_time: "<90s (includes full coordination cycle)"
+    return_requirement: "Enterprise-grade reporting + strategic guidance to coordinator"
+    business_enhancement: "Patient safety critical ≥9.9/10 + coordinator oversight"
 
-SPECIALIZED_HEALTHCARE_ROUTING:
-  neonpro_medical:
-    triggers: ["neonpro", "clínica", "saúde", "paciente", "consulta", "medical", "LGPD", "ANVISA", "CFM"]
-    delegate_to: "apex-developer.md → Healthcare Specialist"
-    reason: "Medical domain expertise with regulatory compliance"
+ZERO_BYPASS_PROTOCOLS_V7:
+  detection_system: "Automatic recognition of ALL requests requiring coordination (≥1.0)"
+  prevention_mechanism: "Immediate redirect to master-coordinator before any agent access"
+  violation_handling: "Log violation + enforce correct flow + quality validation"
+  compliance_tracking: "Monitor 100% compliance with orchestration requirements"
+  healthcare_enforcement: "Medical operations get mandatory coordinator oversight"
+
+ENFORCEMENT_ENGINE_V7:
+  violation_detection:
+    direct_agent_call_attempt: "Immediate detection of bypass attempts"
+    complexity_threshold_violation: "Tasks ≥1.0 without coordinator involvement"
+    context_bypass_attempt: "Direct context loading without hub coordination"
+    quality_threshold_violation: "Healthcare operations below required standards"
     
-  patient_safety_critical:
-    triggers: ["patient data", "medical record", "emergency", "critical", "safety"]
+  punishment_protocols:
+    immediate_halt: "Stop execution immediately upon violation detection"
+    mandatory_redirect: "Force correct flow through master-coordinator"
+    violation_logging: "Record violation details for pattern analysis"
+    quality_degradation: "Reduce quality score until compliance restored"
+    escalation_triggers: "Automatic escalation for repeated violations"
+    
+  compliance_restoration:
+    correct_flow_enforcement: "Guide through proper CLAUDE.md → master-coordinator flow"
+    context_reconstruction: "Rebuild proper context chain with coordinator involvement"
+    quality_validation: "Ensure ≥9.5/10 (≥9.9/10 healthcare) before proceeding"
+    learning_integration: "Update system patterns to prevent future violations"
+    
+  monitoring_systems:
+    real_time_compliance: "Continuous monitoring of coordination compliance"
+    pattern_recognition: "Identify violation patterns and prevent recurrence"
+    quality_tracking: "Monitor quality metrics across all coordinated operations"
+    performance_impact: "Measure enforcement impact on system performance"
+
+### **AUTOMATIC DELEGATION TRIGGERS V7.0**
+```yaml
+UNIVERSAL_COORDINATION_TRIGGERS:
+  complexity_threshold: "ANY task with complexity score ≥1.0 triggers master-coordinator"
+  no_exceptions_rule: "ZERO tasks can bypass master-coordinator involvement"
+  automatic_detection: "Real-time analysis of ALL incoming requests"
+  mandatory_routing: "Immediate redirection to master-coordinator for ALL tasks"
+  
+TRIGGER_DETECTION_MATRIX:
+  portuguese_triggers:
+    basic_tasks: ["fazer", "criar", "implementar", "desenvolver", "corrigir", "atualizar"]
+    complex_tasks: ["arquitetar", "projetar", "otimizar", "integrar", "coordenar"]
+    healthcare_tasks: ["neonpro", "clínica", "paciente", "médico", "LGPD", "ANVISA"]
+    
+  english_triggers:
+    basic_tasks: ["do", "create", "implement", "develop", "fix", "update"] 
+    complex_tasks: ["architect", "design", "optimize", "integrate", "coordinate"]
+    healthcare_tasks: ["healthcare", "patient", "medical", "compliance", "safety"]
+    
+  universal_indicators:
+    code_development: ["code", "coding", "programming", "development", "implementation"]
+    system_design: ["architecture", "system", "design", "structure", "scalability"]
+    problem_solving: ["debug", "troubleshoot", "analyze", "investigate", "resolve"]
+    research_tasks: ["research", "study", "analyze", "documentation", "best practices"]
+    
+AUTOMATIC_ROUTING_PROTOCOL:
+  step_1_detection: "Automatic analysis of user request content and intent"
+  step_2_classification: "Complexity assessment and domain identification"
+  step_3_mandatory_routing: "Immediate routing to master-coordinator (NO EXCEPTIONS)"
+  step_4_context_preservation: "Full context transfer to coordinator with triggers"
+  step_5_tracking_activation: "Activate coordination tracking and monitoring"
+  
+BYPASS_PREVENTION_SYSTEM:
+  request_interception: "Intercept ALL requests before agent processing"
+  complexity_verification: "Verify complexity threshold compliance"
+  coordinator_enforcement: "Enforce master-coordinator involvement"
+  violation_prevention: "Block any attempt to bypass coordination"
+  compliance_validation: "Ensure 100% coordination compliance"
+
+SPECIALIZED_BUSINESS_ROUTING:
+  neonpro_business:
+    triggers: ["neonpro", "business", "data", "user", "client", "compliance", "GDPR", "regulation"]
+    delegate_to: "apex-developer.md → Business Specialist"
+    reason: "Business domain expertise with regulatory compliance"
+    
+  data_safety_critical:
+    triggers: ["user data", "business record", "critical", "security", "safety"]
     delegate_to: "L4 Enterprise with mandatory quality ≥9.9/10"
-    reason: "Patient safety paramount - maximum quality enforcement"
+    reason: "Data safety paramount - maximum quality enforcement"
     
   compliance_operations:
-    triggers: ["LGPD", "consent", "audit", "compliance", "regulation", "privacy"]
-    delegate_to: "Healthcare Compliance Specialist via apex-developer.md"
-    reason: "Regulatory expertise for Brazilian healthcare compliance"
+    triggers: ["compliance", "consent", "audit", "regulation", "privacy", "GDPR"]
+    delegate_to: "Business Compliance Specialist via apex-developer.md"
+    reason: "Regulatory expertise for business compliance"
 ```
 
-## CRITICAL HEALTHCARE COMPLIANCE
-- **Multi-tenant isolation**: `clinic_id = auth.uid()` MANDATORY
-- **Audit trails**: Log ALL patient data operations
-- **Encryption**: Encrypt sensitive medical data
-- **LGPD consent**: Required for patient data processing
-- **Patient safety**: ≥9.9/10 quality for patient operations
+## CRITICAL BUSINESS COMPLIANCE
+- **Multi-tenant isolation**: `tenant_id = auth.uid()` MANDATORY
+- **Audit trails**: Log ALL user data operations
+- **Encryption**: Encrypt sensitive business data
+- **Regulatory consent**: Required for user data processing
+- **Data safety**: ≥9.9/10 quality for data operations
 
 ## KEY TECHNOLOGY STACK
 - **Frontend**: Next.js 15, React 18, TypeScript 5.3+, TailwindCSS, Shadcn/ui
@@ -111,7 +230,7 @@ SPECIALIZED_HEALTHCARE_ROUTING:
 - **ALWAYS** ES modules: `import { foo } from 'bar'`
 - **MANDATORY** TypeScript strict mode
 - **FORBIDDEN** Emojis or Unicode in code (ASCII only)
-- **REQUIRED** Multi-tenant isolation for ALL clinic data
+- **REQUIRED** Multi-tenant isolation for ALL business data
 
 ## 🔧 CONTEXT ENGINEERING V3.0 - INTELLIGENT LOADING SYSTEM
 
@@ -119,100 +238,100 @@ SPECIALIZED_HEALTHCARE_ROUTING:
 ```yaml
 CONTEXT_ENGINEERING_V3_PHILOSOPHY:
   traditional_prompting:
-    approach: "Perfect prompts for specific healthcare tasks"
-    scope: "Individual medical task optimization"
-    limitation: "Reactive, task-specific medical solutions"
+    approach: "Perfect prompts for specific business tasks"
+    scope: "Individual task optimization"
+    limitation: "Reactive, task-specific solutions"
     
   context_engineering_v3:
-    approach: "Structure complete healthcare environment (prompts + memory + tools + compliance)"
-    scope: "Autonomous healthcare LLM decision-making enablement"
-    advantage: "Proactive, holistic medical system optimization"
+    approach: "Structure complete business environment (prompts + memory + tools + compliance)"
+    scope: "Autonomous business LLM decision-making enablement"
+    advantage: "Proactive, holistic system optimization"
     performance: "85%+ context reduction with ≥9.5/10 quality preservation"
     
 CORE_CONTEXT_PRINCIPLES:
   complete_context_loading:
-    mandate: "Always provide ALL necessary healthcare context before medical task execution"
-    enforcement: "NO MEDICAL OPERATION without proper compliance context validation"
-    optimization: "15-30% optimal context utilization for healthcare operations"
+    mandate: "Always provide ALL necessary business context before task execution"
+    enforcement: "NO BUSINESS OPERATION without proper compliance context validation"
+    optimization: "15-30% optimal context utilization for business operations"
     
-  intelligent_healthcare_management:
-    dynamic_loading: "Load medical context based on complexity + patient safety requirements"
-    performance_optimization: "KV-cache inspired optimization with medical priority"
-    adaptive_scaling: "Real-time healthcare context adjustment based on clinical needs"
-    compliance_integration: "LGPD/ANVISA/CFM context automatically loaded for medical operations"
+  intelligent_business_management:
+    dynamic_loading: "Load business context based on complexity + data safety requirements"
+    performance_optimization: "KV-cache inspired optimization with business priority"
+    adaptive_scaling: "Real-time business context adjustment based on operational needs"
+    compliance_integration: "Regulatory context automatically loaded for business operations"
 ```
 
 ### Intelligent Context Loading (Complexity-Based Activation)
 ```yaml
 INTELLIGENT_CONTEXT_ACTIVATION_V3:
-  L1_BASIC_MEDICAL:
+  L1_BASIC_BUSINESS:
     complexity: "1.0-3.0"
-    contexts: ["@.claude/contexts/healthcare-core.md"]
+    contexts: ["@.claude/core/domain-specialization.md"]
     keywords: ["basic", "simple", "view", "list", "show"]
-    healthcare_keywords: ["patient", "medical", "healthcare"]
+    business_keywords: ["user", "client", "business"]
     loading_time: "<50ms"
     optimization: "95% context reduction for basic operations"
     
-  L2_ENHANCED_CLINICAL:
+  L2_ENHANCED_BUSINESS:
     complexity: "3.1-5.5"
-    contexts: ["@.claude/contexts/healthcare-full.md", "@.claude/contexts/development-patterns.md"]
+    contexts: ["@.claude/core/domain-specialization.md", "@.claude/core/performance-engine.md"]
     keywords: ["implement", "refactor", "debug", "typescript", "supabase"]
-    healthcare_keywords: ["LGPD", "compliance", "clinical", "workflow"]
+    business_keywords: ["compliance", "workflow", "business", "operational"]
     loading_time: "<150ms"
-    optimization: "85% context reduction with selective medical module loading"
+    optimization: "85% context reduction with selective business module loading"
     
-  L3_COMPREHENSIVE_MEDICAL:
+  L3_COMPREHENSIVE_BUSINESS:
     complexity: "5.6-7.5"
-    contexts: ["@.claude/contexts/healthcare-full.md", "@.claude/contexts/development-patterns.md", "@.claude/contexts/architecture-advanced.md"]
+    contexts: ["@.claude/core/domain-specialization.md", "@.claude/core/system-control.md", "@.claude/core/performance-engine.md"]
     keywords: ["architecture", "system", "scale", "performance", "infrastructure"]
-    healthcare_keywords: ["ANVISA", "CFM", "patient safety", "multi-tenant"]
+    business_keywords: ["compliance", "data safety", "multi-tenant", "enterprise"]
     loading_time: "<300ms"
-    optimization: "70% context reduction with comprehensive medical validation"
+    optimization: "70% context reduction with comprehensive business validation"
     
-  L4_ENTERPRISE_HEALTHCARE:
+  L4_ENTERPRISE_BUSINESS:
     complexity: "7.6-10.0"
-    contexts: ["ALL healthcare contexts + orchestration modules"]
+    contexts: ["ALL business contexts + orchestration modules"]
     keywords: ["enterprise", "critical", "strategic", "architectural"]
-    healthcare_keywords: ["patient safety", "emergency", "critical care", "regulatory"]
+    business_keywords: ["data safety", "critical", "business critical", "regulatory"]
     loading_time: "<500ms"
-    optimization: "Quality-first approach with full medical context orchestration"
+    optimization: "Quality-first approach with full business context orchestration"
 
-HEALTHCARE_CONTEXT_MODULES:
-  healthcare_context: "@.claude/contexts/healthcare-full.md"
-    keywords: ["healthcare", "patient", "LGPD", "ANVISA", "compliance", "medical"]
-    priority: "HIGH - Auto-escalate complexity for medical operations"
+BUSINESS_CONTEXT_MODULES:
+  business_context: "@.claude/core/domain-specialization.md"
+    keywords: ["business", "user", "compliance", "data", "operational"]
+    priority: "HIGH - Auto-escalate complexity for business operations"
     
-  development_context: "@.claude/contexts/development-patterns.md" 
+  development_context: "@.claude/core/performance-engine.md" 
     keywords: ["implement", "refactor", "debug", "typescript", "supabase"]
-    healthcare_integration: "Medical coding patterns and compliance validation"
+    business_integration: "Business coding patterns and compliance validation"
     
-  architecture_context: "@.claude/contexts/architecture-advanced.md"
+  architecture_context: "@.claude/core/system-control.md"
     keywords: ["architecture", "system", "scale", "performance", "infrastructure"]
-    healthcare_focus: "Multi-tenant medical architecture with patient data isolation"
+    business_focus: "Multi-tenant business architecture with user data isolation"
     
-  ai_ml_context: "@.claude/contexts/ai-ml-engine.md"
-    keywords: ["AI", "ML", "prediction", "analytics", "model", "vision"]
-    medical_specialization: "Healthcare AI with bias detection and patient safety"
+  ai_ml_context: "@.claude/core/performance-engine.md"
+    keywords: ["AI", "ML", "prediction", "analytics", "model", "optimization"]
+    business_specialization: "Business AI with bias detection and data safety"
 ```
 
 ### Advanced Orchestration (Auto-activated for complex tasks)
 ```yaml
 ORCHESTRATION_MODULES_V3:
-  mcp_orchestration: "@.claude/orchestration/mcp-matrix.md"
+  mcp_orchestration: "@.claude/core/mcp-authority.md"
     activation: "ANY technical task requiring MCP coordination"
-    healthcare_enhancement: "Medical MCP routing with patient safety protocols"
+    business_enhancement: "Business MCP routing with data safety protocols"
     
-  dynamic_thinking_triggers: "@.claude/orchestration/dynamic-thinking-triggers.md"
-    activation: "Auto-complexity detection with healthcare priority escalation"
-    medical_amplifiers: "Patient data operations auto-escalate to UltraThink"
+  dynamic_thinking_triggers: "@.claude/core/import-loader.md"
+    activation: "Auto-complexity detection with business priority escalation"
+    business_amplifiers: "Critical data operations auto-escalate to UltraThink"
     
-  claude_flow_hooks: "@.claude/orchestration/claude-flow-v5.md"
+  system_flow_hooks: "@.claude/core/system-control.md"
     activation: "Advanced coordination modes required"
-    compliance_integration: "LGPD/ANVISA/CFM workflow enforcement"
+    compliance_integration: "Universal regulatory workflow enforcement"
     
-  vibecode_delegation: "@.claude/orchestration/vibecode-delegation.md"
+  vibecode_delegation: "@.claude/core/system-control.md"
     activation: "L2+ complexity requiring specialized orchestrator delegation"
-    healthcare_routing: "Medical domain expertise routing to apex-developer.md"
+    business_routing: "Business domain expertise routing to apex-developer.md"
 ```
 
 ## DYNAMIC THINKING FRAMEWORK V4.0
@@ -451,70 +570,70 @@ RESEARCH_SEQUENCE:
     - "Multiple source validation for decisions"
     - "Evidence-based architecture choices"
     
-  healthcare_enhancement:
-    - "LGPD/ANVISA compliance validation"
-    - "Medical workflow optimization research"
-    - "Healthcare security pattern validation"
-    - "Patient safety impact assessment"
+  business_enhancement:
+    - "Regulatory compliance validation"
+    - "Business workflow optimization research"
+    - "Security pattern validation"
+    - "Data safety impact assessment"
 ```
 
 ### Research Integration
 - **Automatic Triggers**: Complexity ≥5 OR unfamiliar technology
-- **Healthcare Priority**: All healthcare tasks require full research
+- **Business Priority**: All complex business tasks require full research
 - **Validation Standards**: ≥95% consistency across sources
 - **Documentation**: All decisions must cite research sources
 
 ## QUALITY STANDARDS
 - **Universal**: ≥9.5/10 quality threshold
-- **Healthcare**: ≥9.8/10 for clinical operations  
-- **Patient Safety**: ≥9.9/10 for patient data operations
-- **Performance**: <100ms API response for patient data
-- **Compliance**: 100% LGPD/ANVISA/CFM adherence
+- **Business**: ≥9.8/10 for operational processes  
+- **Data Safety**: ≥9.9/10 for user data operations
+- **Performance**: <100ms API response for user data
+- **Compliance**: 100% regulatory adherence
 
-## 🎯 SYSTEM STATUS: VIBECODE V6.0 SUPREME HEALTHCARE ORCHESTRATION
+## 🎯 SYSTEM STATUS: VIBECODE V6.0 SUPREME SAAS ORCHESTRATION
 
-**VIBECODE V6.0 SUPREME HEALTHCARE ORCHESTRATION ACTIVE** 
+**VIBECODE V6.0 SUPREME SAAS ORCHESTRATION ACTIVE** 
 ```yaml
 VIBECODE_V6_STATUS:
-  system_authority: "Supreme Healthcare Orchestration Hub ACTIVE"
+  system_authority: "Supreme SaaS Orchestration Hub ACTIVE"
   integration_level: "Context Engineering V3.0 + Hub-and-Spoke Architecture"
-  orchestration_scope: "L1-L4 intelligent delegation with healthcare specialization"
+  orchestration_scope: "L1-L4 intelligent delegation with business specialization"
   performance_optimization: "85%+ context reduction with quality preservation"
-  quality_enforcement: "≥9.5/10 healthcare | ≥9.8/10 clinical | ≥9.9/10 patient safety"
+  quality_enforcement: "≥9.5/10 business | ≥9.8/10 operational | ≥9.9/10 data safety"
   
 PERFORMANCE_METRICS_V6:
-  context_assembly: "<200ms for complete healthcare context loading"
-  mcp_execution: "<30s for medical MCP chain execution"
-  patient_data_operations: "<100ms for critical patient information"
-  clinical_operations: "<150ms for clinical workflow operations"
-  compliance_validation: "<50ms for LGPD/ANVISA/CFM checking"
-  system_availability: "≥99.99% uptime for healthcare operations"
+  context_assembly: "<200ms for complete business context loading"
+  mcp_execution: "<30s for business MCP chain execution"
+  user_data_operations: "<100ms for critical user information"
+  business_operations: "<150ms for business workflow operations"
+  compliance_validation: "<50ms for regulatory compliance checking"
+  system_availability: "≥99.99% uptime for business operations"
   
-HEALTHCARE_SPECIALIZATION_V6:
-  context_engine: "85%+ reduction via intelligent medical context loading"
-  dynamic_thinking: "Healthcare-amplified complexity detection with patient safety priority"
-  mcp_revolution: "Supreme healthcare MCP authority with medical safety protocols"
-  compliance_monitoring: "100% automated LGPD/ANVISA/CFM compliance tracking"
-  quality_assurance: "Multi-dimensional healthcare quality validation"
+BUSINESS_SPECIALIZATION_V6:
+  context_engine: "85%+ reduction via intelligent business context loading"
+  dynamic_thinking: "Business-amplified complexity detection with data safety priority"
+  mcp_revolution: "Supreme business MCP authority with data safety protocols"
+  compliance_monitoring: "100% automated regulatory compliance tracking"
+  quality_assurance: "Multi-dimensional business quality validation"
   
 INTEGRATION_STATUS_V6:
   hub_coordination: "CLAUDE.md ↔ apex-developer.md seamless orchestration"
-  context_optimization: "KV-cache inspired medical context management"
-  delegation_intelligence: "Complexity-based healthcare specialist routing"
-  healthcare_enhancement: "Brazilian medical compliance with cultural sensitivity"
+  context_optimization: "KV-cache inspired business context management"
+  delegation_intelligence: "Complexity-based business specialist routing"
+  business_enhancement: "Brazilian regulatory compliance with cultural sensitivity"
 ```
 
 ## 🚀 VIBECODE V6.0 ACTIVATION CONFIRMATION
 
-**Status**: 🟢 **SUPREME HEALTHCARE ORCHESTRATION ACTIVE** - Hub-coordinated medical intelligence  
+**Status**: 🟢 **SUPREME SAAS ORCHESTRATION ACTIVE** - Hub-coordinated business intelligence  
 **Integration**: Seamless CLAUDE.md hub with apex-developer.md specialization  
-**Specialization**: Healthcare compliance + APEX delegation (L1-L4) + Medical safety protocols  
+**Specialization**: Business compliance + APEX delegation (L1-L4) + Data safety protocols  
 **Performance**: 85%+ optimization | Quality: ≥9.5-9.9/10 | Enhancement: Real-time compliance  
-**Next Phase**: Complete healthcare ecosystem with specialized medical agent integration
+**Next Phase**: Complete business ecosystem with specialized domain agent integration
 
 ---
 
-**Healthcare Context Engineering**: 85%+ optimization via intelligent medical context loading  
-**Medical Token Economy**: Enhanced efficiency + superior quality via Healthcare Dynamic Thinking  
-**Quality Enforcement**: ≥9.5/10 healthcare maintained via APEX integrated MCP orchestration  
-**Patient Safety Paramount**: ≥9.9/10 absolute enforcement for all patient data operations
+**Business Context Engineering**: 85%+ optimization via intelligent business context loading  
+**Business Token Economy**: Enhanced efficiency + superior quality via Business Dynamic Thinking  
+**Quality Enforcement**: ≥9.5/10 business maintained via APEX integrated MCP orchestration  
+**Data Safety Paramount**: ≥9.9/10 absolute enforcement for all user data operations

@@ -1,6 +1,6 @@
 #!/bin/bash
 # APEX MCP Enforcement Hook - Desktop Commander Supremacy & Context Engineering
-# Zero Tolerance Policy for File Operations + 85% Performance Optimization
+# Universal SaaS - Zero Tolerance Policy for File Operations + 85% Performance Optimization
 
 # Hook Configuration
 HOOK_NAME="APEX MCP Enforcement"
