@@ -286,5 +286,56 @@ HEALTHCARE_QUALITY_GATES:
     scalability: "Support for ≥10,000 concurrent patient records per clinic"
 ```
 
+## DETAILED REGULATORY COMPLIANCE REQUIREMENTS
+
+### LGPD Healthcare Specific Implementation
+```yaml
+LGPD_HEALTHCARE_DETAILED:
+  patient_data_protection:
+    sensitive_health_data: "Dados de saúde requerem proteção especial sob LGPD"
+    consent_management: "Consentimento por escrito para finalidade específica - autorizações gerais são nulas"
+    data_subject_rights: "Direitos dos titulares: confirmação, acesso, correção, anonimização, exclusão, portabilidade"
+    
+  clinic_compliance_obligations:
+    dpo_requirement: "Encarregado de Dados obrigatório para processamento de dados sensíveis de saúde"
+    legal_basis_documentation: "Documentar base legal para cada processamento de dados médicos"
+    audit_trail: "Manter trilha de auditoria para todas as operações com dados de pacientes"
+```
+
+### ANVISA SaMD Detailed Requirements
+```yaml
+ANVISA_SAMD_DETAILED:
+  regulatory_framework:
+    rdc_657_2022: "Regulamentação para software como dispositivo médico (SaMD)"
+    cybersecurity_requirements: "Requisitos específicos de cibersegurança para dispositivos médicos"
+    electronic_ifu: "Instruções de uso em formato eletrônico para dispositivos médicos"
+    
+  compliance_obligations:
+    good_manufacturing_practices: "Boas Práticas de Fabricação (B-GMP) obrigatórias"
+    brazil_registration_holder: "Detentor de Registro no Brasil (BRH) obrigatório para fabricantes estrangeiros"
+    vigilance_reporting: "Relatórios de vigilância obrigatórios para dispositivos médicos"
+    
+  software_classification:
+    risk_assessment: "Classificação baseada em risco do software médico"
+    clinical_evaluation: "Avaliação clínica para softwares de alto risco"
+    post_market_surveillance: "Vigilância pós-comercialização obrigatória"
+```
+
+### CFM Digital Health Detailed Requirements
+```yaml
+CFM_DIGITAL_HEALTH_DETAILED:
+  telemedicine_regulations:
+    resolution_2314_2022: "Define telemedicina como prática médica mediada por TDICs"
+    technological_infrastructure: "Infraestrutura tecnológica adequada obrigatória"
+    data_security: "Armazenamento, manuseio, integridade, precisão, confidencialidade obrigatórios"
+    patient_identification: "Identificação do paciente obrigatória através de dados pessoais"
+    
+  medical_practice_requirements:
+    crm_registration: "Médico regularmente inscrito no CRM obrigatório"
+    medical_responsibility: "Responsabilidade médica em telemedicina"
+    remote_consultation_standards: "Padrões para consultas médicas remotas"
+    medical_record_requirements: "Requisitos para prontuários médicos digitais"
+```
+
 ## ACTIVATION KEYWORDS
 **Auto-load when detected**: "healthcare", "patient", "LGPD", "ANVISA", "CFM", "compliance", "medical", "clinic", "treatment", "diagnosis", "consent", "audit", "encryption"

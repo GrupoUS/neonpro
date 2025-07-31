@@ -401,5 +401,42 @@ const handleHealthcareOperation = async (operation: () => Promise<any>) => {
 }
 ```
 
+## NEONPRO TECHNOLOGY STACK (Consolidated from Technical)
+
+### Frontend Framework
+- **Next.js 15**: Latest stable version with App Router
+- **React 18**: Server Components and Concurrent Features
+- **TypeScript 5.3+**: Strict mode with advanced type safety
+- **TailwindCSS 3.4**: Utility-first CSS framework
+- **Shadcn/ui**: High-quality component library
+- **Framer Motion**: Advanced animations and transitions
+
+### Backend & Database
+- **Supabase**: PostgreSQL database with real-time capabilities
+- **Row Level Security (RLS)**: Database-level security policies
+- **Supabase Auth**: Authentication with Google OAuth integration
+- **Supabase Storage**: File storage and management
+- **Edge Functions**: Serverless functions for custom logic
+
+### Development Tools
+- **Package Manager**: pnpm (preferred) / npm fallback
+- **Code Quality**: ESLint + Prettier + TypeScript strict mode
+- **Testing**: Jest + React Testing Library + Playwright
+- **Version Control**: Git with conventional commits
+- **CI/CD**: GitHub Actions with automated testing and deployment
+
+### NeonPro Healthcare Platform Core Features
+```yaml
+NEONPRO_CORE_FEATURES:
+  intelligent_patient_portal: "PWA para instalação mobile em ambiente clínico"
+  smart_scheduling: "Agendamento inteligente com detecção de conflitos"
+  patient_management: "Prontuários eletrônicos e histórico médico completo"
+  financial_management: "Gestão financeira especializada (contas a pagar/receber)"
+  crm_campaigns: "CRM e campanhas para retenção de pacientes"
+  bi_dashboards: "Analytics em tempo real para performance clínica"
+  whatsapp_integration: "WhatsApp Business para notificações médicas"
+  compliance_lgpd_anvisa_cfm: "Conformidade integrada em todos os processos"
+```
+
 ## ACTIVATION KEYWORDS
-**Auto-load when detected**: "implement", "refactor", "debug", "typescript", "supabase", "nextjs", "development", "code", "pattern", "test", "performance", "error", "api", "database", "query"
+**Auto-load when detected**: "implement", "refactor", "debug", "typescript", "supabase", "nextjs", "development", "code", "pattern", "test", "performance", "error", "api", "database", "query", "stack", "technology"

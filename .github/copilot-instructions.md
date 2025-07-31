@@ -97,7 +97,7 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 
 ### BMad Agent Delegation Protocol (VIBECODE V4.0 Enhanced)
 **SMART DELEGATION TRIGGERS**: For complex multi-domain tasks or specialized expertise:
-- **Architecture & System Design**: Consider `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\chatmodes\voidbeast-modular.chatmode.md` for complex system architecture
+- **Architecture & System Design**: Consider `#C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\chatmodes\voidbeast-modular.chatmode.md` for complex system architecture
 - **Multi-Agent Coordination**: Use BMad Orchestrator for coordinating multiple specialized agents
 - **Quality Assurance**: @qa for comprehensive code review and refactoring
 - **User Experience**: @ux-expert for interface design and user journey optimization
@@ -157,7 +157,7 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 - **BMad-First**: Follow BMad Method workflows for all development activities
 
 ### VIBECODE V4.0 Hub Integration
-- **Central Hub**: `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` (VIBECODE master hub)
+- **Central Hub**: `#C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` (VIBECODE master hub)
 - **Active Chatmodes**: Integration with `neonpro-development.chatmode.md` and `voidbeast-modular.chatmode.md`
 - **Smart Agent Delegation**: Auto-delegate complex tasks to specialized VIBECODE agents
 - **Modular Architecture**: Hub-and-spoke system with 85%+ context reduction
@@ -187,7 +187,7 @@ Per `core-config.yaml` devLoadAlwaysFiles:
 - **Auto-activation triggers**: pesquisar, buscar, documentação, tutorial, API, etc.
 - **Quality requirements**: ≥9.5/10 synthesis from all 3 sources (enhanced from 8/10)
 - **Documentation**: Document all sources and synthesis process in story records
-- **Hub Integration**: Reference `#file:C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` for VIBECODE orchestration
+- **Hub Integration**: Reference `#C:\Users\Mauri\OneDrive\GRUPOUS\VSCODE\.github\copilot-instructions.md` for VIBECODE orchestration
 
 ## 🏗️ Architecture & Core Patterns
 
