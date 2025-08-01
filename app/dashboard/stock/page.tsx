@@ -1,6 +1,7 @@
 import { createClient } from "@/app/utils/supabase/server";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { StockAlertsManagement } from "@/components/dashboard/stock-alerts-management";
+import { StockPerformanceDashboard } from "@/components/dashboard/stock-performance-dashboard";
 import { StockReports } from "@/components/dashboard/stock-reports";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Metadata } from "next";
@@ -39,11 +40,16 @@ export default async function StockManagementPage() {
           </p>
         </div>
 
-        <Tabs defaultValue="alerts" className="space-y-4">
+        <Tabs defaultValue="performance" className="space-y-4">
           <TabsList>
+            <TabsTrigger value="performance">Performance e KPIs</TabsTrigger>
             <TabsTrigger value="alerts">Alertas e Configurações</TabsTrigger>
             <TabsTrigger value="reports">Relatórios e Analytics</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="performance" className="space-y-4">
+            <StockPerformanceDashboard />
+          </TabsContent>
 
           <TabsContent value="alerts" className="space-y-4">
             <StockAlertsManagement />

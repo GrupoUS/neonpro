@@ -19,6 +19,7 @@ export { AppointmentManagementDashboard } from './appointment-management-dashboa
 // Stock Management Components (Story 11.4)
 export { StockAlertsManagement } from './stock-alerts-management'
 export { StockReports } from './stock-reports'
+export { default as StockPerformanceDashboard } from './stock-performance-dashboard'
 
 // Default export for main dashboard
 export { Dashboard as default } from './dashboard'
