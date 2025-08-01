@@ -1,0 +1,283 @@
+{
+  "$schema": "./lgpd-automation.schema.json",
+  "version": "1.0.0",
+  "description": "Configuração de exemplo para automação LGPD - NeonPro",
+  
+  "automation": {
+    "enabled": true,
+    "environment": "production",
+    "debug": false,
+    "timezone": "America/Sao_Paulo"
+  },
+  
+  "schedules": {
+    "full_automation": {
+      "enabled": true,
+      "cron_expression": "0 2 * * *",
+      "description": "Execução completa diária às 2h",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 3600,
+      "retry_on_failure": true,
+      "max_retries": 3
+    },
+    "consent_management": {
+      "enabled": true,
+      "cron_expression": "0 */6 * * *",
+      "description": "Gestão de consentimentos a cada 6 horas",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 1800,
+      "retry_on_failure": true,
+      "max_retries": 2
+    },
+    "data_subject_rights": {
+      "enabled": true,
+      "cron_expression": "0 */4 * * *",
+      "description": "Processamento de direitos dos titulares a cada 4 horas",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 1200,
+      "retry_on_failure": true,
+      "max_retries": 2
+    },
+    "audit_reporting": {
+      "enabled": true,
+      "cron_expression": "0 1 * * 1",
+      "description": "Relatórios de auditoria semanais (segunda-feira 1h)",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 7200,
+      "retry_on_failure": true,
+      "max_retries": 1
+    },
+    "data_anonymization": {
+      "enabled": false,
+      "cron_expression": "0 3 1 * *",
+      "description": "Anonimização mensal (dia 1 às 3h)",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 10800,
+      "retry_on_failure": true,
+      "max_retries": 1
+    },
+    "monitoring": {
+      "enabled": true,
+      "cron_expression": "*/15 * * * *",
+      "description": "Monitoramento contínuo a cada 15 minutos",
+      "timezone": "America/Sao_Paulo",
+      "max_execution_time": 300,
+      "retry_on_failure": false,
+      "max_retries": 0
+    }
+  },
+  
+  "features": {
+    "consent_management": {
+      "enabled": true,
+      "auto_renewal": true,
+      "expiration_warning_days": 30,
+      "batch_size": 100,
+      "parallel_processing": true
+    },
+    "data_subject_rights_processing": {
+      "enabled": true,
+      "auto_processing": true,
+      "response_deadline_days": 15,
+      "batch_size": 50,
+      "priority_queue": true
+    },
+    "audit_reporting": {
+      "enabled": true,
+      "auto_generation": true,
+      "retention_days": 2555,
+      "include_metrics": true,
+      "detailed_logs": true
+    },
+    "data_anonymization": {
+      "enabled": false,
+      "auto_anonymization": false,
+      "retention_days": 2555,
+      "anonymization_method": "k_anonymity",
+      "k_value": 5
+    },
+    "real_time_monitoring": {
+      "enabled": true,
+      "alert_threshold": 0.8,
+      "monitoring_interval": 900,
+      "performance_tracking": true,
+      "anomaly_detection": true
+    },
+    "intelligent_alerts": {
+      "enabled": true,
+      "ai_powered": true,
+      "severity_auto_assignment": true,
+      "auto_resolution": true,
+      "escalation_rules": true
+    }
+  },
+  
+  "notifications": {
+    "email": {
+      "enabled": true,
+      "smtp_host": "smtp.gmail.com",
+      "smtp_port": 587,
+      "smtp_secure": true,
+      "smtp_user": "neonpro@example.com",
+      "smtp_password": "${SMTP_PASSWORD}",
+      "from_address": "neonpro@example.com",
+      "from_name": "NeonPro LGPD",
+      "recipients": {
+        "admins": [
+          "admin@clinica.com",
+          "compliance@clinica.com"
+        ],
+        "managers": [
+          "manager@clinica.com"
+        ],
+        "alerts": [
+          "alerts@clinica.com"
+        ]
+      },
+      "templates": {
+        "job_success": "job_success_template.html",
+        "job_failure": "job_failure_template.html",
+        "compliance_alert": "compliance_alert_template.html",
+        "weekly_report": "weekly_report_template.html"
+      }
+    },
+    "webhook": {
+      "enabled": false,
+      "url": "https://api.clinica.com/webhooks/lgpd",
+      "secret": "${WEBHOOK_SECRET}",
+      "timeout": 30,
+      "retry_attempts": 3,
+      "events": [
+        "job.completed",
+        "job.failed",
+        "alert.created",
+        "alert.resolved",
+        "compliance.score_changed"
+      ],
+      "headers": {
+        "Authorization": "Bearer ${WEBHOOK_TOKEN}",
+        "Content-Type": "application/json"
+      }
+    },
+    "slack": {
+      "enabled": false,
+      "webhook_url": "${SLACK_WEBHOOK_URL}",
+      "channel": "#lgpd-alerts",
+      "username": "NeonPro LGPD",
+      "icon_emoji": ":shield:",
+      "mention_on_critical": true,
+      "mention_users": ["@admin", "@compliance"]
+    }
+  },
+  
+  "limits": {
+    "performance": {
+      "max_concurrent_jobs": 3,
+      "job_timeout_minutes": 30,
+      "max_retry_attempts": 3,
+      "batch_size": 100,
+      "memory_limit_mb": 512,
+      "cpu_limit_percent": 80
+    },
+    "rate_limiting": {
+      "api_requests_per_minute": 1000,
+      "database_queries_per_minute": 5000,
+      "email_notifications_per_hour": 100,
+      "webhook_calls_per_minute": 60
+    },
+    "storage": {
+      "max_log_size_mb": 100,
+      "max_audit_records": 1000000,
+      "log_retention_days": 90,
+      "temp_file_cleanup_hours": 24
+    }
+  },
+  
+  "security": {
+    "encryption": {
+      "algorithm": "AES-256-GCM",
+      "key_rotation_days": 90,
+      "encrypt_logs": true,
+      "encrypt_temp_files": true
+    },
+    "access_control": {
+      "require_2fa": true,
+      "session_timeout_minutes": 480,
+      "max_failed_attempts": 5,
+      "lockout_duration_minutes": 30
+    },
+    "audit": {
+      "log_all_actions": true,
+      "include_ip_address": true,
+      "include_user_agent": true,
+      "hash_sensitive_data": true
+    }
+  },
+  
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "collection_interval": 300,
+      "retention_days": 365,
+      "aggregation_levels": ["hourly", "daily", "weekly", "monthly"]
+    },
+    "health_checks": {
+      "enabled": true,
+      "interval_seconds": 60,
+      "timeout_seconds": 10,
+      "failure_threshold": 3
+    },
+    "alerting": {
+      "compliance_score_threshold": 85,
+      "job_failure_threshold": 3,
+      "response_time_threshold_ms": 5000,
+      "error_rate_threshold_percent": 5
+    }
+  },
+  
+  "compliance": {
+    "lgpd": {
+      "consent_expiration_days": 365,
+      "data_retention_days": 2555,
+      "anonymization_delay_days": 30,
+      "audit_trail_retention_days": 2555,
+      "incident_response_hours": 72
+    },
+    "scoring": {
+      "weights": {
+        "consent_compliance": 30,
+        "audit_coverage": 25,
+        "alert_resolution": 25,
+        "request_processing": 20
+      },
+      "thresholds": {
+        "excellent": 95,
+        "good": 85,
+        "acceptable": 70,
+        "poor": 50
+      }
+    }
+  },
+  
+  "integration": {
+    "supabase": {
+      "connection_pool_size": 10,
+      "query_timeout_seconds": 30,
+      "retry_attempts": 3,
+      "batch_insert_size": 1000
+    },
+    "external_apis": {
+      "timeout_seconds": 30,
+      "retry_attempts": 3,
+      "rate_limit_per_minute": 100
+    }
+  },
+  
+  "development": {
+    "debug_mode": false,
+    "verbose_logging": false,
+    "mock_external_services": false,
+    "test_data_generation": false,
+    "performance_profiling": false
+  }
+}

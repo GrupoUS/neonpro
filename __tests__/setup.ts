@@ -52,23 +52,25 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock Supabase client with correct structure and all necessary methods
+const createMockQueryBuilder = () => ({
+  select: jest.fn().mockReturnThis(),
+  insert: jest.fn().mockResolvedValue({ data: [], error: null }),
+  update: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
+  upsert: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  neq: jest.fn().mockReturnThis(),
+  gte: jest.fn().mockReturnThis(),
+  lte: jest.fn().mockReturnThis(),
+  in: jest.fn().mockReturnThis(),
+  order: jest.fn().mockReturnThis(),
+  limit: jest.fn().mockReturnThis(),
+  range: jest.fn().mockReturnThis(),
+  single: jest.fn().mockResolvedValue({ data: null, error: null }),
+});
+
 const mockSupabaseClient = {
-  from: jest.fn(() => ({
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockResolvedValue({ data: [], error: null }),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    upsert: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    gte: jest.fn().mockReturnThis(),
-    lte: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
-  })),
+  from: jest.fn(() => createMockQueryBuilder()),
   auth: {
     getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
     getSession: jest.fn(() => Promise.resolve({ data: { session: null }, error: null })),
@@ -189,16 +191,20 @@ HTMLCanvasElement.prototype.getContext = jest.fn();
 
 // Mock Next.js Request/Response for server tests
 global.Request = class MockRequest {
-  public url: string;
+  private _url: string;
   public method: string;
   public headers: Headers;
   public body?: any;
   
   constructor(input: any, init?: RequestInit) {
-    this.url = input;
+    this._url = input;
     this.method = init?.method || 'GET';
     this.headers = new Headers(init?.headers);
     this.body = init?.body;
+  }
+
+  get url() {
+    return this._url;
   }
   
   json() {
@@ -222,4 +228,24 @@ global.Response = class MockResponse {
   constructor(body?: any, init?: ResponseInit) {
     Object.assign(this, { body, status: 200, headers: new Headers(), ...init });
   }
+  
+  static json(object: any, init?: ResponseInit) {
+    return new MockResponse(JSON.stringify(object), {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(init?.headers || {})
+      }
+    });
+  }
+} as any;
+
+// Mock NextResponse more completely
+global.NextResponse = {
+  json: jest.fn((object: any, init?: ResponseInit) => ({
+    json: () => Promise.resolve(object),
+    status: init?.status || 200,
+    headers: new Headers(init?.headers || {}),
+    ok: (init?.status || 200) >= 200 && (init?.status || 200) < 300
+  }))
 } as any;

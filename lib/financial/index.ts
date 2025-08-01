@@ -974,3 +974,39 @@ export {
   type InvoiceGenerationConfig,
   type PaymentTrackerConfig
 }
+
+// Story 4.2: Financial Analytics & Business Intelligence - Export new engines
+export { CashFlowEngine } from './cash-flow-engine'
+export { AutomatedAlertsEngine } from './automated-alerts-engine'
+export { PredictiveAnalyticsEngine } from './predictive-analytics-engine'
+export { FinancialDashboardEngine } from './financial-dashboard-engine'
+
+// Export types from new engines
+export type {
+  CashFlowData,
+  CashFlowSummary,
+  CashFlowMetrics,
+  CashFlowProjection
+} from './cash-flow-engine'
+
+export type {
+  FinancialAlert as NewFinancialAlert,
+  AlertRule,
+  AlertChannel,
+  AlertRecipient
+} from './automated-alerts-engine'
+
+export type {
+  FinancialForecast,
+  PredictionModel,
+  RiskAssessment,
+  SeasonalPattern
+} from './predictive-analytics-engine'
+
+export type {
+  FinancialDashboardData,
+  FinancialMetrics,
+  DashboardForecast,
+  PerformanceIndicators,
+  Recommendation
+} from './financial-dashboard-engine'

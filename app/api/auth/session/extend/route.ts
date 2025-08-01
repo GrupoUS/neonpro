@@ -1,54 +1,135 @@
+/**
+ * Session Extend API Route
+ * Extends session timeout with custom duration
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/app/utils/supabase/server';
-import { sessionManager } from '@/lib/auth/session-manager';
-import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
+import { cookies } from 'next/headers';
+import { SessionManager } from '@/lib/auth/session-manager';
+import { createClient } from '@/lib/supabase/server';
+import {
+  SecurityEventType,
+  SecuritySeverity
+} from '@/types/session';
+
+// Initialize session manager
+let sessionManager: SessionManager | null = null;
+
+async function getSessionManager() {
+  if (!sessionManager) {
+    const supabase = createClient();
+    sessionManager = new SessionManager(supabase, {
+      defaultTimeout: 30,
+      maxConcurrentSessions: 5,
+      enableDeviceTracking: true,
+      enableSecurityMonitoring: true,
+      enableSuspiciousActivityDetection: true,
+      sessionCleanupInterval: 300000,
+      securityEventRetention: 30 * 24 * 60 * 60 * 1000,
+      encryptionKey: process.env.SESSION_ENCRYPTION_KEY || 'default-key-change-in-production'
+    });
+  }
+  return sessionManager;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServerClient();
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
+    const { extendMinutes, reason } = await request.json();
+    const cookieStore = cookies();
+    const sessionToken = cookieStore.get('session-token')?.value;
+    
+    if (!sessionToken) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'No session token found' },
         { status: 401 }
       );
     }
 
-    const { sessionId } = await request.json();
-    const userAgent = request.headers.get('user-agent') || '';
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
-               'unknown';
+    if (!extendMinutes || extendMinutes <= 0 || extendMinutes > 480) { // Max 8 hours
+      return NextResponse.json(
+        { error: 'Invalid extension duration. Must be between 1 and 480 minutes.' },
+        { status: 400 }
+      );
+    }
 
-    // Extend session if needed
-    const extended = await sessionManager.extendSessionIfNeeded(sessionId);
+    const manager = await getSessionManager();
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                    request.headers.get('x-real-ip') || 
+                    '127.0.0.1';
+    const userAgent = request.headers.get('user-agent') || 'Unknown';
 
-    // Log security event
-    await securityAuditFramework.logSecurityEvent({
-      eventType: 'authentication',
-      severity: 'low',
-      userId: session.user.id,
-      sessionId,
-      resource: 'session',
-      action: 'extend_attempt',
-      outcome: extended ? 'success' : 'failure',
-      metadata: { extended, userAgent },
-      ipAddress: ip,
-      userAgent,
+    // Validate current session first
+    const validation = await manager.validateSession(sessionToken, {
+      ip_address: clientIP,
+      user_agent: userAgent
+    });
+
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: 'Invalid session' },
+        { status: 401 }
+      );
+    }
+
+    // Get current session
+    const currentSession = await manager.getSession(sessionToken);
+    if (!currentSession) {
+      return NextResponse.json(
+        { error: 'Session not found' },
+        { status: 404 }
+      );
+    }
+
+    // Extend the session
+    const extendedSession = await manager.extendSession(sessionToken, extendMinutes);
+    
+    if (!extendedSession) {
+      return NextResponse.json(
+        { error: 'Failed to extend session' },
+        { status: 500 }
+      );
+    }
+
+    // Log session extension event
+    await manager.logSecurityEvent({
+      session_id: sessionToken,
+      event_type: SecurityEventType.SESSION_EXTENDED,
+      severity: SecuritySeverity.LOW,
+      description: `Session extended by ${extendMinutes} minutes`,
+      ip_address: clientIP,
+      user_agent: userAgent,
+      metadata: {
+        extension_minutes: extendMinutes,
+        reason: reason || 'User request',
+        old_expires_at: currentSession.expires_at,
+        new_expires_at: extendedSession.expires_at,
+        timestamp: new Date().toISOString()
+      }
     });
 
     return NextResponse.json({
       success: true,
-      extended,
-      message: extended ? 'Session extended successfully' : 'Session extension not needed',
+      session: extendedSession,
+      message: `Session extended by ${extendMinutes} minutes`
     });
 
   } catch (error) {
-    console.error('Session extend error:', error);
+    console.error('Session extension error:', error);
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error during session extension' },
       { status: 500 }
     );
   }
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
 }
