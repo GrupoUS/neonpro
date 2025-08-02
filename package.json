@@ -68,6 +68,7 @@
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "papaparse": "^5.5.3",
+    "@prisma/client": "^6.13.0",
     "pdfkit": "^0.17.1",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
@@ -90,6 +91,7 @@
     "@testing-library/user-event": "^14.6.1",
     "eslint": "^8.51.0",
     "eslint-config-next": "14.0.0",
-    "jest-environment-jsdom": "^30.0.5"
+    "jest-environment-jsdom": "^30.0.5",
+    "prisma": "^6.13.0"
   }
 }
