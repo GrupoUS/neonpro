@@ -2,6 +2,11 @@
   "name": "neonprov1-healthcare",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
