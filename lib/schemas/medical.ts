@@ -91,7 +91,7 @@ export const consentSchema = z.object({
   marketingCommunication: z.boolean().default(false),
   dataSharing: z.boolean().default(false),
   consentDate: z.date().default(() => new Date()),
-  ipAddress: z.string().ip().optional(),
+  ipAddress: z.string().regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, 'IP inválido').optional(),
   userAgent: z.string().optional()
 })
 
@@ -102,7 +102,7 @@ export const medicalAuditSchema = z.object({
   resourceType: z.enum(['patient', 'appointment', 'treatment', 'medical_record']),
   resourceId: z.string(),
   timestamp: z.date().default(() => new Date()),
-  ipAddress: z.string().ip(),
+  ipAddress: z.string().regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, 'IP inválido'),
   userAgent: z.string(),
   details: z.record(z.any()).optional()
 })
