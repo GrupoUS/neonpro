@@ -1,19 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    // appDir is now stable in Next.js 14+ and should be removed
-  },
+  // Removed experimental.appDir as it's stable in Next.js 14+
   images: {
     domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
   typescript: {
-    // Permite builds mesmo com erros de TypeScript durante desenvolvimento
+    // Allow builds even with TypeScript errors during development
     ignoreBuildErrors: false,
   },
   eslint: {
-    // Permite builds mesmo com warnings do ESLint durante desenvolvimento
+    // Allow builds even with ESLint warnings during development
     ignoreDuringBuilds: false,
   },
+  // Optimize for Vercel deployment
+  output: 'standalone',
 }
 
 module.exports = nextConfig
