@@ -17,8 +17,7 @@
     },
     "app/api/trigger/route.ts": {
       "maxDuration": 300,
-      "memory": 1024,
-      "runtime": "nodejs"
+      "memory": 1024
     },
     "app/api/appointments/enhanced/route.ts": {
       "maxDuration": 30,
