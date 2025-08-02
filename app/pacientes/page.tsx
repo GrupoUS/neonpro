@@ -1,554 +1,364 @@
-"use client"
+'use client'
 
 import { useState } from 'react'
-import { 
-  Users, 
-  UserPlus, 
-  Calendar, 
-  TrendingUp, 
-  Search, 
-  Filter, 
-  Edit, 
-  FileText, 
-  Phone, 
-  Mail, 
-  MapPin,
-  Star,
-  Activity,
-  Clock,
-  Zap
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Plus, Search, UserPlus, Users, Calendar, Stethoscope, Star } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
-// NeonGradientCard Component
-const NeonGradientCard = ({ children, className = "" }) => (
-  <div className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 border border-blue-500/20 backdrop-blur-sm ${className}`}>
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-emerald-500/10 animate-background-position-spin" />
-    <div className="relative z-10 p-6">
+// NeonGradientCard com todas as animações do Dashboard
+const NeonGradientCard = ({ children, className = "", ...props }: { children: React.ReactNode, className?: string, [key: string]: any }) => (
+  <motion.div
+    className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-900/90 via-blue-900/20 to-slate-800/90 backdrop-blur-xl border border-blue-500/20 p-6 ${className}`}
+    whileHover={{ 
+      scale: 1.02,
+      borderColor: "rgb(59 130 246 / 0.5)",
+      boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04), 0 0 0 1px rgb(59 130 246 / 0.1)"
+    }}
+    transition={{ duration: 0.2 }}
+    {...props}
+  >
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-400/5 to-purple-600/0"
+      animate={{
+        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+      }}
+      transition={{
+        duration: 8,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    />
+    <div className="relative z-10">
       {children}
     </div>
-  </div>
+  </motion.div>
 )
 
-// CosmicGlowButton Component
-const CosmicGlowButton = ({ children, variant = "primary", size = "md", className = "", onClick, disabled = false }) => {
-  const variants = {
-    primary: "bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 shadow-lg shadow-blue-500/25 hover:shadow-blue-400/40",
-    secondary: "bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-400/40",
-    warning: "bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 shadow-lg shadow-amber-500/25 hover:shadow-amber-400/40",
-    danger: "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 shadow-lg shadow-red-500/25 hover:shadow-red-400/40"
-  }
-  
-  const sizes = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-sm",
-    lg: "px-6 py-3 text-base"
-  }
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`
-        relative inline-flex items-center justify-center
-        ${variants[variant]}
-        ${sizes[size]}
-        text-white font-medium rounded-lg
-        transform transition-all duration-200
-        hover:scale-105 hover:animate-glow-scale
-        focus:outline-none focus:ring-2 focus:ring-blue-500/50
-        disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-        animate-glow-slide
-        ${className}
-      `}
-    >
-      <div className="relative z-10 flex items-center gap-2">
-        {children}
-      </div>
-    </button>
-  )
-}
-
-// Patient Card Component
-const PatientCard = ({ patient }) => (
-  <NeonGradientCard className="hover:border-blue-400/40 transition-all duration-300 group">
-    <div className="flex items-start gap-4">
-      <div className="relative">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-          {patient.name.split(' ').map(n => n[0]).join('')}
-        </div>
-        <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-gray-800 ${
-          patient.status === 'Ativo' ? 'bg-emerald-500' :
-          patient.status === 'VIP' ? 'bg-amber-500' : 'bg-gray-500'
-        }`} />
-      </div>
-      
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
-            {patient.name}
-          </h3>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-            patient.status === 'Ativo' ? 'bg-emerald-500/20 text-emerald-400' :
-            patient.status === 'VIP' ? 'bg-amber-500/20 text-amber-400' : 
-            'bg-gray-500/20 text-gray-400'
-          }`}>
-            {patient.status}
-          </span>
-        </div>
-        
-        <div className="space-y-2 text-sm text-gray-300">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-blue-400" />
-            <span>{patient.phone}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-400" />
-            <span>Último: {patient.lastVisit}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-amber-400" />
-            <span>{patient.treatments.join(', ')}</span>
-          </div>
-        </div>
-        
-        <div className="flex gap-2 mt-4">
-          <CosmicGlowButton size="sm" variant="primary">
-            <Edit className="w-4 h-4" />
-            Editar
-          </CosmicGlowButton>
-          <CosmicGlowButton size="sm" variant="secondary">
-            <FileText className="w-4 h-4" />
-            Prontuário
-          </CosmicGlowButton>
-        </div>
-      </div>
-    </div>
-  </NeonGradientCard>
+// CosmicGlowButton com todos os efeitos do Dashboard
+const CosmicGlowButton = ({ children, variant = "default", size = "default", className = "", ...props }: { 
+  children: React.ReactNode, 
+  variant?: string, 
+  size?: string, 
+  className?: string,
+  [key: string]: any 
+}) => (
+  <motion.button
+    className={`relative overflow-hidden rounded-lg px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 ${className}`}
+    whileHover={{ 
+      scale: 1.05,
+      boxShadow: "0 20px 25px -5px rgb(59 130 246 / 0.3), 0 10px 10px -5px rgb(59 130 246 / 0.2)"
+    }}
+    whileTap={{ scale: 0.95 }}
+    {...props}
+  >
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+      initial={{ x: "-100%" }}
+      whileHover={{ x: "100%" }}
+      transition={{ duration: 0.6 }}
+    />
+    <span className="relative z-10 flex items-center gap-2">
+      {children}
+    </span>
+  </motion.button>
 )
 
 export default function PacientesPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('todos')
-
-  // Sample patient data with Brazilian aesthetic treatments
+  
   const patients = [
     {
       id: 1,
-      name: "Maria Silva",
+      name: "Ana Silva",
+      email: "ana.silva@email.com",
       phone: "(11) 99999-1234",
-      email: "maria.silva@email.com",
-      cpf: "123.456.789-01",
+      lastVisit: "2024-07-28",
+      nextAppointment: "2024-08-05",
+      treatments: ["Botox", "Preenchimento"],
       status: "Ativo",
-      lastVisit: "15/01/2024",
-      treatments: ["Harmonização Facial", "Botox"],
-      totalVisits: 12,
-      address: "São Paulo, SP"
+      rating: 5
     },
     {
       id: 2,
-      name: "Ana Costa",
-      phone: "(11) 98888-5678",
-      email: "ana.costa@email.com",
-      cpf: "234.567.890-12",
-      status: "VIP",
-      lastVisit: "20/01/2024",
-      treatments: ["Preenchimento Labial", "Limpeza de Pele"],
-      totalVisits: 25,
-      address: "Rio de Janeiro, RJ"
+      name: "Carlos Santos",
+      email: "carlos.santos@email.com", 
+      phone: "(11) 99999-5678",
+      lastVisit: "2024-07-25",
+      nextAppointment: "2024-08-10",
+      treatments: ["Harmonização Facial"],
+      status: "Ativo",
+      rating: 4
     },
     {
       id: 3,
-      name: "Julia Santos",
-      phone: "(11) 97777-9012",
-      email: "julia.santos@email.com",
-      cpf: "345.678.901-23",
-      status: "Ativo",
-      lastVisit: "18/01/2024",
-      treatments: ["Microagulhamento", "Peeling"],
-      totalVisits: 8,
-      address: "Belo Horizonte, MG"
-    },
-    {
-      id: 4,
-      name: "Carla Mendes",
-      phone: "(11) 96666-3456",
-      email: "carla.mendes@email.com",
-      cpf: "456.789.012-34",
-      status: "Ativo",
-      lastVisit: "12/01/2024",
-      treatments: ["Radiofrequência", "Drenagem"],
-      totalVisits: 15,
-      address: "Brasília, DF"
-    },
-    {
-      id: 5,
-      name: "Fernanda Lima",
-      phone: "(11) 95555-7890",
-      email: "fernanda.lima@email.com",
-      cpf: "567.890.123-45",
+      name: "Mariana Costa",
+      email: "mariana.costa@email.com",
+      phone: "(11) 99999-9012",
+      lastVisit: "2024-07-20",
+      nextAppointment: null,
+      treatments: ["Limpeza de Pele", "Peeling"],
       status: "Inativo",
-      lastVisit: "28/12/2023",
-      treatments: ["Laser", "Hidratação"],
-      totalVisits: 6,
-      address: "Salvador, BA"
-    },
-    {
-      id: 6,
-      name: "Patricia Oliveira",
-      phone: "(11) 94444-2345",
-      email: "patricia.oliveira@email.com",
-      cpf: "678.901.234-56",
-      status: "VIP",
-      lastVisit: "22/01/2024",
-      treatments: ["Lifting", "Toxina Botulínica"],
-      totalVisits: 32,
-      address: "Curitiba, PR"
+      rating: 5
     }
   ]
 
-  // KPIs data
-  const kpis = [
-    {
-      title: "Total Pacientes",
-      value: "156",
-      change: "+12%",
-      icon: Users,
-      color: "from-blue-600 to-blue-500",
-      bgColor: "bg-blue-500/10",
-      textColor: "text-blue-400"
-    },
-    {
-      title: "Pacientes Ativos",
-      value: "134",
-      change: "+8%",
-      icon: Activity,
-      color: "from-emerald-600 to-emerald-500",
-      bgColor: "bg-emerald-500/10",
-      textColor: "text-emerald-400"
-    },
-    {
-      title: "Novos no Mês",
-      value: "23",
-      change: "+15%",
-      icon: UserPlus,
-      color: "from-amber-600 to-amber-500",
-      bgColor: "bg-amber-500/10",
-      textColor: "text-amber-400"
-    },
-    {
-      title: "Taxa Retorno",
-      value: "87%",
-      change: "+5%",
-      icon: TrendingUp,
-      color: "from-purple-600 to-purple-500",
-      bgColor: "bg-purple-500/10",
-      textColor: "text-purple-400"
-    }
-  ]
-
-  const filteredPatients = patients.filter(patient => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         patient.treatments.some(treatment => 
-                           treatment.toLowerCase().includes(searchTerm.toLowerCase())
-                         )
-    const matchesStatus = statusFilter === 'todos' || 
-                         patient.status.toLowerCase() === statusFilter.toLowerCase()
-    
-    return matchesSearch && matchesStatus
-  })
+  const filteredPatients = patients.filter(patient =>
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    patient.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-600/20 rounded-full blur-3xl animate-glow-scale" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-600/20 rounded-full blur-3xl animate-glow-slide" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-background-position-spin" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
+      {/* Background Animation - Exato como no Dashboard */}
+      <motion.div
+        className="absolute inset-0 opacity-30"
+        animate={{
+          background: [
+            "radial-gradient(circle at 20% 80%, rgb(120, 119, 198, 0.3) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 20%, rgb(255, 119, 198, 0.3) 0%, transparent 50%)",
+            "radial-gradient(circle at 40% 40%, rgb(120, 219, 255, 0.3) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 10, repeat: Infinity }}
+      />
+      
+      <motion.div
+        className="absolute inset-0 opacity-20"
+        animate={{
+          background: [
+            "radial-gradient(circle at 80% 80%, rgb(59, 130, 246, 0.4) 0%, transparent 50%)",
+            "radial-gradient(circle at 20% 20%, rgb(147, 51, 234, 0.4) 0%, transparent 50%)",
+            "radial-gradient(circle at 60% 60%, rgb(16, 185, 129, 0.4) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 15, repeat: Infinity, delay: 2 }}
+      />
 
-      {/* Content */}
-      <div className="relative z-10 p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="relative z-10 p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
-                Gestão de Pacientes
-              </h1>
-              <p className="text-gray-400 mt-2">
-                Gerencie informações e histórico dos seus pacientes
-              </p>
+              <motion.h1 
+                className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-300 bg-clip-text text-transparent"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Gerenciamento de Pacientes
+              </motion.h1>
+              <motion.p 
+                className="text-slate-400 mt-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Gerencie perfis, histórico e tratamentos dos seus pacientes
+              </motion.p>
             </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <CosmicGlowButton variant="primary" className="flex items-center gap-2">
-                <UserPlus className="w-5 h-5" />
-                Novo Paciente
-              </CosmicGlowButton>
-              <CosmicGlowButton variant="secondary" className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Relatórios
-              </CosmicGlowButton>
-            </div>
+            <CosmicGlowButton>
+              <UserPlus className="w-4 h-4" />
+              Novo Paciente
+            </CosmicGlowButton>
           </div>
-        </div>
 
-        {/* KPIs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {kpis.map((kpi, index) => {
-            const Icon = kpi.icon
-            return (
-              <NeonGradientCard key={index} className="group hover:border-blue-400/40 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-400 text-sm mb-1">{kpi.title}</p>
-                    <p className="text-2xl lg:text-3xl font-bold text-white group-hover:scale-105 transition-transform">
-                      {kpi.value}
-                    </p>
-                    <p className={`text-sm ${kpi.textColor} font-medium`}>
-                      {kpi.change} vs mês anterior
-                    </p>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-blue-500/20">
+                    <Users className="w-6 h-6 text-blue-400" />
                   </div>
-                  <div className={`p-3 rounded-lg ${kpi.bgColor} group-hover:scale-110 transition-transform`}>
-                    <Icon className={`w-6 h-6 ${kpi.textColor}`} />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Total de Pacientes</p>
+                    <p className="text-2xl font-bold text-white">1,234</p>
                   </div>
                 </div>
               </NeonGradientCard>
-            )
-          })}
-        </div>
+            </motion.div>
 
-        {/* Search and Filters */}
-        <NeonGradientCard className="mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Buscar por nome ou tratamento..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
-              />
-            </div>
-            
-            <div className="flex gap-3">
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="pl-10 pr-8 py-3 bg-gray-800/50 border border-gray-600/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200 appearance-none cursor-pointer"
-                >
-                  <option value="todos">Todos Status</option>
-                  <option value="ativo">Ativo</option>
-                  <option value="vip">VIP</option>
-                  <option value="inativo">Inativo</option>
-                </select>
-              </div>
-              
-              <CosmicGlowButton variant="secondary">
-                <Calendar className="w-5 h-5" />
-                Filtrar Data
-              </CosmicGlowButton>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-green-500/20">
+                    <UserPlus className="w-6 h-6 text-green-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Novos (Este Mês)</p>
+                    <p className="text-2xl font-bold text-white">156</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-purple-500/20">
+                    <Calendar className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Consultas Hoje</p>
+                    <p className="text-2xl font-bold text-white">28</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-yellow-500/20">
+                    <Star className="w-6 h-6 text-yellow-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Satisfação Média</p>
+                    <p className="text-2xl font-bold text-white">4.8</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
           </div>
-        </NeonGradientCard>        {/* Patient Statistics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <NeonGradientCard className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-white">Lista de Pacientes</h3>
-              <span className="text-gray-400 text-sm">
-                {filteredPatients.length} de {patients.length} pacientes
-              </span>
-            </div>
-            
-            <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
-              {filteredPatients.map((patient) => (
-                <PatientCard key={patient.id} patient={patient} />
-              ))}
-              
-              {filteredPatients.length === 0 && (
-                <div className="text-center py-8">
-                  <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400">Nenhum paciente encontrado</p>
-                </div>
-              )}
-            </div>
-          </NeonGradientCard>
 
-          {/* Quick Actions */}
-          <NeonGradientCard>
-            <h3 className="text-xl font-semibold text-white mb-4">Ações Rápidas</h3>
-            <div className="space-y-3">
-              <CosmicGlowButton variant="primary" className="w-full justify-start">
-                <UserPlus className="w-5 h-5" />
-                Cadastrar Novo Paciente
-              </CosmicGlowButton>
-              
-              <CosmicGlowButton variant="secondary" className="w-full justify-start">
-                <Calendar className="w-5 h-5" />
-                Agendar Consulta
-              </CosmicGlowButton>
-              
-              <CosmicGlowButton variant="warning" className="w-full justify-start">
-                <FileText className="w-5 h-5" />
-                Relatório Mensal
-              </CosmicGlowButton>
-              
-              <CosmicGlowButton variant="danger" className="w-full justify-start">
-                <Clock className="w-5 h-5" />
-                Pacientes Inativos
-              </CosmicGlowButton>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <h4 className="text-lg font-medium text-white mb-3">Atividade Recente</h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-                  <div className="text-sm">
-                    <p className="text-white">Maria Silva agendou consulta</p>
-                    <p className="text-gray-400">Há 2 horas</p>
-                  </div>
+          {/* Search and Filters */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <NeonGradientCard className="mb-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                  <Input
+                    placeholder="Buscar pacientes por nome ou email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400"
+                  />
                 </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                  <div className="text-sm">
-                    <p className="text-white">Ana Costa finalizou tratamento</p>
-                    <p className="text-gray-400">Há 4 horas</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-amber-500 rounded-full" />
-                  <div className="text-sm">
-                    <p className="text-white">Julia Santos cancelou agendamento</p>
-                    <p className="text-gray-400">Há 6 horas</p>
-                  </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                    Todos
+                  </Button>
+                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                    Ativos
+                  </Button>
+                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                    Inativos
+                  </Button>
                 </div>
               </div>
-            </div>
-          </NeonGradientCard>
-        </div>
+            </NeonGradientCard>
+          </motion.div>
 
-        {/* Treatment Statistics */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <NeonGradientCard>
-            <h3 className="text-xl font-semibold text-white mb-4">Tratamentos Mais Populares</h3>
-            <div className="space-y-4">
-              {[
-                { name: "Harmonização Facial", count: 45, percentage: 85 },
-                { name: "Botox", count: 38, percentage: 72 },
-                { name: "Preenchimento Labial", count: 32, percentage: 60 },
-                { name: "Limpeza de Pele", count: 28, percentage: 53 },
-                { name: "Microagulhamento", count: 24, percentage: 45 }
-              ].map((treatment, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-white">{treatment.name}</span>
-                    <span className="text-gray-400">{treatment.count} pacientes</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full bg-gradient-to-r ${
-                        index === 0 ? 'from-blue-500 to-blue-400' :
-                        index === 1 ? 'from-emerald-500 to-emerald-400' :
-                        index === 2 ? 'from-amber-500 to-amber-400' :
-                        index === 3 ? 'from-purple-500 to-purple-400' :
-                        'from-pink-500 to-pink-400'
-                      }`}
-                      style={{ width: `${treatment.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </NeonGradientCard>
-
-          <NeonGradientCard>
-            <h3 className="text-xl font-semibold text-white mb-4">Próximos Agendamentos</h3>
-            <div className="space-y-4">
-              {[
-                { patient: "Maria Silva", treatment: "Botox", time: "09:00", date: "Hoje" },
-                { patient: "Ana Costa", treatment: "Preenchimento", time: "14:30", date: "Hoje" },
-                { patient: "Julia Santos", treatment: "Peeling", time: "10:00", date: "Amanhã" },
-                { patient: "Carla Mendes", treatment: "Radiofrequência", time: "16:00", date: "Amanhã" }
-              ].map((appointment, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg border border-gray-700/50">
-                  <div>
-                    <p className="text-white font-medium">{appointment.patient}</p>
-                    <p className="text-gray-400 text-sm">{appointment.treatment}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-blue-400 font-medium">{appointment.time}</p>
-                    <p className="text-gray-400 text-sm">{appointment.date}</p>
-                  </div>
-                </div>
-              ))}
-              
-              <CosmicGlowButton variant="primary" className="w-full">
-                <Calendar className="w-5 h-5" />
-                Ver Agenda Completa
-              </CosmicGlowButton>
-            </div>
-          </NeonGradientCard>
-        </div>
+          {/* Patients List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
+            <NeonGradientCard>
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-white mb-4">Lista de Pacientes</h3>
+                
+                {filteredPatients.map((patient, index) => (
+                  <motion.div
+                    key={patient.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                        {patient.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-white">{patient.name}</h4>
+                        <p className="text-sm text-slate-400">{patient.email}</p>
+                        <p className="text-sm text-slate-400">{patient.phone}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-white">Última consulta:</p>
+                        <p className="text-sm text-slate-400">{patient.lastVisit}</p>
+                      </div>
+                      
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-white">Próxima consulta:</p>
+                        <p className="text-sm text-slate-400">
+                          {patient.nextAppointment || 'Não agendado'}
+                        </p>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-1">
+                        {patient.treatments.map((treatment, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs bg-blue-500/20 text-blue-300">
+                            {treatment}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < patient.rating ? 'text-yellow-400 fill-current' : 'text-slate-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      
+                      <Badge 
+                        variant={patient.status === 'Ativo' ? 'default' : 'secondary'}
+                        className={patient.status === 'Ativo' ? 'bg-green-500/20 text-green-300' : 'bg-slate-500/20 text-slate-300'}
+                      >
+                        {patient.status}
+                      </Badge>
+                      
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                          Ver Perfil
+                        </Button>
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                          Agendar
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </NeonGradientCard>
+          </motion.div>
+        </motion.div>
       </div>
-
-      {/* Custom Scrollbar Styles */}
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(75, 85, 99, 0.3);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(59, 130, 246, 0.5);
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(59, 130, 246, 0.7);
-        }
-      `}</style>
-
-      {/* Animation Keyframes */}
-      <style jsx global>{`
-        @keyframes background-position-spin {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes glow-scale {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
-          50% { transform: scale(1.05); opacity: 1; }
-        }
-        
-        @keyframes glow-slide {
-          0%, 100% { transform: translateX(0px) translateY(0px); }
-          25% { transform: translateX(10px) translateY(-10px); }
-          50% { transform: translateX(-5px) translateY(10px); }
-          75% { transform: translateX(-10px) translateY(-5px); }
-        }
-        
-        .animate-background-position-spin {
-          animation: background-position-spin 8s ease-in-out infinite;
-          background-size: 200% 200%;
-        }
-        
-        .animate-glow-scale {
-          animation: glow-scale 3s ease-in-out infinite;
-        }
-        
-        .animate-glow-slide {
-          animation: glow-slide 6s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   )
 }

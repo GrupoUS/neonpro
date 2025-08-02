@@ -1,784 +1,415 @@
-/**
- * NEONPROV1 - Módulo Financeiro
- * Gestão financeira completa para clínica estética
- */
-import React from 'react';
-import { Metadata } from 'next';
-import { 
-  AppLayout, 
-  NeonGradientCard, 
-  CosmicGlowButton,
-  MetricCard,
-  StatusBadge, 
-  ActionButton 
-} from '@/components/neonpro';
-import { 
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Plus,
-  Download,
-  Filter,
-  CreditCard,
-  Receipt,
-  Calendar,
-  AlertCircle,
-  BarChart3,
-  Users,
-  Clock,
-  Target,
-  Search,
-  Eye,
-  Edit,
-  CheckCircle,
-  PieChart,
-  ArrowUpRight,
-  ArrowDownRight
-} from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Financeiro - NEONPROV1',
-  description: 'Gestão financeira completa para clínica estética',
-};
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { DollarSign, TrendingUp, TrendingDown, CreditCard, Calendar, Receipt, PieChart, BarChart3 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
-// Mock data para clínica estética brasileira
-const procedures = [
-  {
-    id: 1,
-    name: 'Harmonização Facial',
-    price: 2500.00,
-    count: 45,
-    revenue: 112500.00,
-    profitMargin: 68,
-    trend: 'up',
-    trendValue: '+15%'
-  },
-  {
-    id: 2,
-    name: 'Botox',
-    price: 800.00,
-    count: 120,
-    revenue: 96000.00,
-    profitMargin: 75,
-    trend: 'up',
-    trendValue: '+8%'
-  },
-  {
-    id: 3,
-    name: 'Preenchimento Labial',
-    price: 1200.00,
-    count: 80,
-    revenue: 96000.00,
-    profitMargin: 65,
-    trend: 'up',
-    trendValue: '+22%'
-  },
-  {
-    id: 4,
-    name: 'Limpeza de Pele',
-    price: 150.00,
-    count: 200,
-    revenue: 30000.00,
-    profitMargin: 45,
-    trend: 'down',
-    trendValue: '-5%'
-  },
-  {
-    id: 5,
-    name: 'Microagulhamento',
-    price: 300.00,
-    count: 90,
-    revenue: 27000.00,
-    profitMargin: 60,
-    trend: 'up',
-    trendValue: '+12%'
-  }
-];
+// NeonGradientCard com todas as animações do Dashboard
+const NeonGradientCard = ({ children, className = "", ...props }: { children: React.ReactNode, className?: string, [key: string]: any }) => (
+  <motion.div
+    className={`relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-900/90 via-blue-900/20 to-slate-800/90 backdrop-blur-xl border border-blue-500/20 p-6 ${className}`}
+    whileHover={{ 
+      scale: 1.02,
+      borderColor: "rgb(59 130 246 / 0.5)",
+      boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04), 0 0 0 1px rgb(59 130 246 / 0.1)"
+    }}
+    transition={{ duration: 0.2 }}
+    {...props}
+  >
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-400/5 to-purple-600/0"
+      animate={{
+        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+      }}
+      transition={{
+        duration: 8,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    />
+    <div className="relative z-10">
+      {children}
+    </div>
+  </motion.div>
+)
 
-const transactions = [
-  {
-    id: 1,
-    patient: 'Maria Silva',
-    procedure: 'Harmonização Facial',
-    amount: 2500.00,
-    date: '2024-01-15',
-    status: 'completed' as const,
-    method: 'Cartão de Crédito',
-    installments: '3x'
-  },
-  {
-    id: 2,
-    patient: 'Ana Costa',
-    procedure: 'Botox + Preenchimento',
-    amount: 2000.00,
-    date: '2024-01-14',
-    status: 'pending' as const,
-    method: 'PIX',
-    installments: 'À vista'
-  },
-  {
-    id: 3,
-    patient: 'Carla Santos',
-    procedure: 'Limpeza de Pele',
-    amount: 150.00,
-    date: '2024-01-13',
-    status: 'urgent' as const,
-    method: 'Dinheiro',
-    installments: 'À vista'
-  },
-  {
-    id: 4,
-    patient: 'Juliana Lima',
-    procedure: 'Microagulhamento',
-    amount: 300.00,
-    date: '2024-01-12',
-    status: 'completed' as const,
-    method: 'Cartão de Débito',
-    installments: 'À vista'
-  },
-  {
-    id: 5,
-    patient: 'Patricia Oliveira',
-    procedure: 'Harmonização Facial',
-    amount: 2500.00,
-    date: '2024-01-11',
-    status: 'scheduled' as const,
-    method: 'Cartão de Crédito',
-    installments: '5x'
-  }
-];
-
-const monthlyData = [
-  { month: 'Jan', revenue: 45000, procedures: 85, avgTicket: 529 },
-  { month: 'Fev', revenue: 52000, procedures: 92, avgTicket: 565 },
-  { month: 'Mar', revenue: 48000, procedures: 88, avgTicket: 545 },
-  { month: 'Abr', revenue: 58000, procedures: 105, avgTicket: 552 },
-  { month: 'Mai', revenue: 65000, procedures: 118, avgTicket: 551 },
-  { month: 'Jun', revenue: 72000, procedures: 135, avgTicket: 533 }
-];
-
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value);
-};
-
-const formatPercentage = (value: number) => {
-  return `${value.toFixed(1)}%`;
-};
+// CosmicGlowButton com todos os efeitos do Dashboard
+const CosmicGlowButton = ({ children, variant = "default", size = "default", className = "", ...props }: { 
+  children: React.ReactNode, 
+  variant?: string, 
+  size?: string, 
+  className?: string,
+  [key: string]: any 
+}) => (
+  <motion.button
+    className={`relative overflow-hidden rounded-lg px-6 py-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white font-medium transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/25 ${className}`}
+    whileHover={{ 
+      scale: 1.05,
+      boxShadow: "0 20px 25px -5px rgb(59 130 246 / 0.3), 0 10px 10px -5px rgb(59 130 246 / 0.2)"
+    }}
+    whileTap={{ scale: 0.95 }}
+    {...props}
+  >
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+      initial={{ x: "-100%" }}
+      whileHover={{ x: "100%" }}
+      transition={{ duration: 0.6 }}
+    />
+    <span className="relative z-10 flex items-center gap-2">
+      {children}
+    </span>
+  </motion.button>
+)
 
 export default function FinanceiroPage() {
-  const totalRevenue = procedures.reduce((sum, p) => sum + p.revenue, 0);
-  const totalProcedures = procedures.reduce((sum, p) => sum + p.count, 0);
-  const avgTicket = totalRevenue / totalProcedures;
-  const avgProfitMargin = procedures.reduce((sum, p) => sum + p.profitMargin, 0) / procedures.length;
+  const [selectedPeriod, setSelectedPeriod] = useState('mes')
   
-  const pendingAmount = transactions
-    .filter(t => t.status === 'pending' || t.status === 'urgent')
-    .reduce((sum, t) => sum + t.amount, 0);
+  const transactions = [
+    {
+      id: 1,
+      date: "2024-08-01",
+      description: "Consulta - Ana Silva",
+      category: "Receita",
+      amount: 450.00,
+      type: "income",
+      method: "Cartão de Crédito"
+    },
+    {
+      id: 2,
+      date: "2024-08-01",
+      description: "Botox - Carlos Santos",
+      category: "Receita",
+      amount: 800.00,
+      type: "income",
+      method: "PIX"
+    },
+    {
+      id: 3,
+      date: "2024-08-01",
+      description: "Fornecedor - Materiais",
+      category: "Despesa",
+      amount: -320.00,
+      type: "expense",
+      method: "Transferência"
+    },
+    {
+      id: 4,
+      date: "2024-08-01",
+      description: "Harmonização - Mariana Costa",
+      category: "Receita",
+      amount: 1200.00,
+      type: "income",
+      method: "Dinheiro"
+    }
+  ]
+
+  const totalRevenue = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const totalExpenses = Math.abs(
+    transactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0)
+  )
+
+  const netProfit = totalRevenue - totalExpenses
 
   return (
-    <AppLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-              Financeiro
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              Gestão financeira completa da clínica estética
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
+      {/* Background Animation - Exato como no Dashboard */}
+      <motion.div
+        className="absolute inset-0 opacity-30"
+        animate={{
+          background: [
+            "radial-gradient(circle at 20% 80%, rgb(120, 119, 198, 0.3) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 20%, rgb(255, 119, 198, 0.3) 0%, transparent 50%)",
+            "radial-gradient(circle at 40% 40%, rgb(120, 219, 255, 0.3) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 10, repeat: Infinity }}
+      />
+      
+      <motion.div
+        className="absolute inset-0 opacity-20"
+        animate={{
+          background: [
+            "radial-gradient(circle at 80% 80%, rgb(59, 130, 246, 0.4) 0%, transparent 50%)",
+            "radial-gradient(circle at 20% 20%, rgb(147, 51, 234, 0.4) 0%, transparent 50%)",
+            "radial-gradient(circle at 60% 60%, rgb(16, 185, 129, 0.4) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 15, repeat: Infinity, delay: 2 }}
+      />
+
+      <div className="relative z-10 p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <motion.h1 
+                className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-blue-300 bg-clip-text text-transparent"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Gestão Financeira
+              </motion.h1>
+              <motion.p 
+                className="text-slate-400 mt-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                Controle completo das finanças da sua clínica estética
+              </motion.p>
+            </div>
+            <div className="flex gap-3">
+              <CosmicGlowButton>
+                <Receipt className="w-4 h-4" />
+                Nova Transação
+              </CosmicGlowButton>
+              <CosmicGlowButton className="bg-gradient-to-r from-green-600 via-green-500 to-green-700">
+                <BarChart3 className="w-4 h-4" />
+                Relatório
+              </CosmicGlowButton>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <CosmicGlowButton
-              variant="outline"
-              icon={Download}
-              glowEffect={false}
+
+          {/* Financial Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
-              Relatório
-            </CosmicGlowButton>
-            <CosmicGlowButton
-              variant="secondary"
-              icon={Filter}
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-green-500/20">
+                    <TrendingUp className="w-6 h-6 text-green-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Receita Total</p>
+                    <p className="text-2xl font-bold text-white">R$ {totalRevenue.toLocaleString('pt-BR')}</p>
+                    <p className="text-xs text-green-400">+12.5% vs mês anterior</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Filtros
-            </CosmicGlowButton>
-            <CosmicGlowButton
-              variant="primary"
-              icon={Plus}
-              cosmicAnimation={true}
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-red-500/20">
+                    <TrendingDown className="w-6 h-6 text-red-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Despesas</p>
+                    <p className="text-2xl font-bold text-white">R$ {totalExpenses.toLocaleString('pt-BR')}</p>
+                    <p className="text-xs text-red-400">+3.2% vs mês anterior</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
-              Nova Transação
-            </CosmicGlowButton>
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-blue-500/20">
+                    <DollarSign className="w-6 h-6 text-blue-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Lucro Líquido</p>
+                    <p className="text-2xl font-bold text-white">R$ {netProfit.toLocaleString('pt-BR')}</p>
+                    <p className="text-xs text-blue-400">+18.7% vs mês anterior</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <NeonGradientCard>
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-purple-500/20">
+                    <PieChart className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-slate-400">Margem de Lucro</p>
+                    <p className="text-2xl font-bold text-white">87.2%</p>
+                    <p className="text-xs text-purple-400">+2.1% vs mês anterior</p>
+                  </div>
+                </div>
+              </NeonGradientCard>
+            </motion.div>
           </div>
-        </div>
 
-        {/* Financial KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <NeonGradientCard
-            variant="primary"
-            glowEffect={true}
-            backgroundAnimation={false}
-            className="hover:scale-105 transition-transform duration-300 motion-reduce:hover:scale-100"
+          {/* Period Filter */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                  Receita Total
-                </p>
-                <p className="text-3xl font-bold text-neon-primary mb-2">
-                  {formatCurrency(totalRevenue)}
-                </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <ArrowUpRight className="w-4 h-4 text-neon-success" />
-                  <span className="text-neon-success font-medium">+18%</span>
-                  <span className="text-slate-500">vs. mês anterior</span>
+            <NeonGradientCard className="mb-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Período de Análise</h3>
+                <div className="flex gap-2">
+                  {[
+                    { key: 'hoje', label: 'Hoje' },
+                    { key: 'semana', label: 'Esta Semana' },
+                    { key: 'mes', label: 'Este Mês' },
+                    { key: 'ano', label: 'Este Ano' }
+                  ].map((period) => (
+                    <Button
+                      key={period.key}
+                      variant={selectedPeriod === period.key ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedPeriod(period.key)}
+                      className={selectedPeriod === period.key 
+                        ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                        : "border-slate-600 text-slate-300 hover:bg-slate-800"
+                      }
+                    >
+                      {period.label}
+                    </Button>
+                  ))}
                 </div>
               </div>
-              <div className="w-12 h-12 bg-neon-primary/10 rounded-full flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-neon-primary" />
-              </div>
-            </div>
-          </NeonGradientCard>
+            </NeonGradientCard>
+          </motion.div>
 
-          <NeonGradientCard
-            variant="success"
-            glowEffect={true}
+          {/* Transactions List */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                  Procedimentos
-                </p>
-                <p className="text-3xl font-bold text-neon-success mb-2">
-                  {totalProcedures.toLocaleString('pt-BR')}
-                </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <ArrowUpRight className="w-4 h-4 text-neon-success" />
-                  <span className="text-neon-success font-medium">+12%</span>
-                  <span className="text-slate-500">este mês</span>
+            <NeonGradientCard>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-white">Transações Recentes</h3>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Filtrar por Data
+                    </Button>
+                    <Button variant="outline" size="sm" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                      Exportar
+                    </Button>
+                  </div>
                 </div>
-              </div>
-              <div className="w-12 h-12 bg-neon-success/10 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-neon-success" />
-              </div>
-            </div>
-          </NeonGradientCard>
-
-          <NeonGradientCard
-            variant="cosmic"
-            glowEffect={true}
-            backgroundAnimation={true}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                  Ticket Médio
-                </p>
-                <p className="text-3xl font-bold text-neon-primary mb-2">
-                  {formatCurrency(avgTicket)}
-                </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <ArrowUpRight className="w-4 h-4 text-neon-success" />
-                  <span className="text-neon-success font-medium">+5%</span>
-                  <span className="text-slate-500">vs. média</span>
-                </div>
-              </div>
-              <div className="w-12 h-12 bg-gradient-to-br from-neon-primary/20 to-neon-accent/20 rounded-full flex items-center justify-center">
-                <Target className="w-6 h-6 text-neon-primary" />
-              </div>
-            </div>
-          </NeonGradientCard>
-
-          <NeonGradientCard
-            variant="warning"
-            glowEffect={true}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                  Contas Pendentes
-                </p>
-                <p className="text-3xl font-bold text-neon-warning mb-2">
-                  {formatCurrency(pendingAmount)}
-                </p>
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-neon-warning" />
-                  <span className="text-neon-warning font-medium">
-                    {transactions.filter(t => t.status === 'pending' || t.status === 'urgent').length} pendentes
-                  </span>
-                </div>
-              </div>
-              <div className="w-12 h-12 bg-neon-warning/10 rounded-full flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-neon-warning" />
-              </div>
-            </div>
-          </NeonGradientCard>
-        </div>
-
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <PieChart className="w-4 h-4" />
-              Visão Geral
-            </TabsTrigger>
-            <TabsTrigger value="procedures" className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" />
-              Procedimentos
-            </TabsTrigger>
-            <TabsTrigger value="cashflow" className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              Fluxo de Caixa
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
-              <Receipt className="w-4 h-4" />
-              Relatórios
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Recent Transactions */}
-              <div className="xl:col-span-2">
-                <NeonGradientCard
-                  variant="default"
-                  title="Transações Recentes"
-                  description="Últimas movimentações financeiras"
-                  className="h-fit"
-                >
-                  <div className="space-y-4">
-                    {transactions.slice(0, 5).map((transaction) => (
-                      <div
-                        key={transaction.id}
-                        className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all duration-200 group"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-br from-neon-primary to-neon-secondary rounded-full flex items-center justify-center">
-                            <DollarSign className="w-6 h-6 text-white" />
-                          </div>
-                          
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-1">
-                              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
-                                {transaction.patient}
-                              </h3>
-                              <StatusBadge 
-                                status={transaction.status} 
-                                size="sm"
-                                pulse={transaction.status === 'urgent'}
-                              />
-                            </div>
-                            
-                            <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                              {transaction.procedure}
-                            </p>
-                            
-                            <div className="flex items-center gap-4 text-xs text-slate-500">
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
-                                <span>{new Date(transaction.date).toLocaleDateString('pt-BR')}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <CreditCard className="w-3 h-3" />
-                                <span>{transaction.method}</span>
-                              </div>
-                              <Badge variant="outline" className="text-xs">
-                                {transaction.installments}
-                              </Badge>
-                            </div>
-                          </div>
+                
+                <div className="space-y-3">
+                  {transactions.map((transaction, index) => (
+                    <motion.div
+                      key={transaction.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className={`p-3 rounded-full ${
+                          transaction.type === 'income' 
+                            ? 'bg-green-500/20' 
+                            : 'bg-red-500/20'
+                        }`}>
+                          {transaction.type === 'income' ? (
+                            <TrendingUp className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <TrendingDown className="w-5 h-5 text-red-400" />
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-white">{transaction.description}</h4>
+                          <p className="text-sm text-slate-400">{transaction.category}</p>
+                          <p className="text-xs text-slate-500">{transaction.date}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-4">
+                        <div className="text-center">
+                          <Badge variant="outline" className="border-slate-600 text-slate-300 mb-1">
+                            {transaction.method}
+                          </Badge>
                         </div>
                         
                         <div className="text-right">
-                          <div className="text-xl font-bold text-neon-primary mb-2">
-                            {formatCurrency(transaction.amount)}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CosmicGlowButton 
-                              variant="ghost" 
-                              size="sm"
-                              icon={Eye}
-                              glowEffect={false}
-                              cosmicAnimation={false}
-                            >
-                              Ver
-                            </CosmicGlowButton>
-                            {(transaction.status === 'pending' || transaction.status === 'urgent') && (
-                              <CosmicGlowButton 
-                                variant="success" 
-                                size="sm"
-                                icon={CheckCircle}
-                                glowEffect={true}
-                              >
-                                Confirmar
-                              </CosmicGlowButton>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </NeonGradientCard>
-              </div>
-
-              {/* Sidebar Cards */}
-              <div className="space-y-6">
-                {/* Monthly Performance */}
-                <NeonGradientCard
-                  variant="primary"
-                  title="Performance Mensal"
-                  glowEffect={true}
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Meta de Receita
-                      </span>
-                      <span className="text-sm font-bold text-neon-primary">
-                        78% atingida
-                      </span>
-                    </div>
-                    <Progress value={78} className="h-2" />
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Procedimentos Realizados
-                      </span>
-                      <span className="text-sm font-bold text-neon-success">
-                        92% da meta
-                      </span>
-                    </div>
-                    <Progress value={92} className="h-2" />
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                        Margem de Lucro
-                      </span>
-                      <span className="text-sm font-bold text-neon-primary">
-                        {formatPercentage(avgProfitMargin)}
-                      </span>
-                    </div>
-                  </div>
-                </NeonGradientCard>
-
-                {/* Payment Methods */}
-                <NeonGradientCard
-                  variant="cosmic"
-                  title="Métodos de Pagamento"
-                  backgroundAnimation={true}
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-neon-primary to-neon-secondary rounded-full flex items-center justify-center">
-                          <CreditCard className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Cartão</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold">65%</span>
-                        <div className="w-16 h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-1">
-                          <div className="w-3/5 h-full bg-gradient-to-r from-neon-primary to-neon-secondary rounded-full" />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-neon-success to-emerald-400 rounded-full flex items-center justify-center">
-                          <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-neon-success rounded-full" />
-                          </div>
-                        </div>
-                        <span className="text-sm font-medium">PIX</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold">25%</span>
-                        <div className="w-16 h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-1">
-                          <div className="w-1/4 h-full bg-gradient-to-r from-neon-success to-emerald-400 rounded-full" />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-400 rounded-full flex items-center justify-center">
-                          <DollarSign className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-sm font-medium">Dinheiro</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-bold">10%</span>
-                        <div className="w-16 h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-1">
-                          <div className="w-1/12 h-full bg-slate-400 rounded-full" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </NeonGradientCard>
-
-                {/* Quick Actions */}
-                <NeonGradientCard 
-                  title="Ações Rápidas"
-                  variant="default"
-                >
-                  <div className="space-y-3">
-                    <CosmicGlowButton 
-                      variant="primary" 
-                      fullWidth 
-                      icon={Plus}
-                      cosmicAnimation={true}
-                    >
-                      Nova Transação
-                    </CosmicGlowButton>
-                    <CosmicGlowButton 
-                      variant="outline" 
-                      fullWidth 
-                      icon={Receipt}
-                      glowEffect={false}
-                    >
-                      Gerar Relatório
-                    </CosmicGlowButton>
-                    <CosmicGlowButton 
-                      variant="ghost" 
-                      fullWidth 
-                      icon={Download}
-                      glowEffect={false}
-                      cosmicAnimation={false}
-                    >
-                      Exportar Dados
-                    </CosmicGlowButton>
-                  </div>
-                </NeonGradientCard>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Procedures Tab */}
-          <TabsContent value="procedures" className="space-y-6">
-            <NeonGradientCard
-              variant="cosmic"
-              title="Análise de Rentabilidade por Procedimento"
-              description="Performance financeira detalhada de cada procedimento"
-              backgroundAnimation={true}
-            >
-              <div className="space-y-6">
-                {procedures.map((procedure) => (
-                  <div
-                    key={procedure.id}
-                    className="p-6 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 group"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-1">
-                          {procedure.name}
-                        </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {procedure.count} procedimentos realizados
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-neon-primary mb-1">
-                          {formatCurrency(procedure.revenue)}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {procedure.trend === 'up' ? (
-                            <ArrowUpRight className="w-4 h-4 text-neon-success" />
-                          ) : (
-                            <ArrowDownRight className="w-4 h-4 text-neon-danger" />
-                          )}
-                          <span className={`text-sm font-medium ${
-                            procedure.trend === 'up' ? 'text-neon-success' : 'text-neon-danger'
+                          <p className={`text-lg font-bold ${
+                            transaction.type === 'income' 
+                              ? 'text-green-400' 
+                              : 'text-red-400'
                           }`}>
-                            {procedure.trendValue}
-                          </span>
+                            {transaction.type === 'income' ? '+' : ''}R$ {Math.abs(transaction.amount).toLocaleString('pt-BR')}
+                          </p>
+                        </div>
+                        
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800">
+                            Editar
+                          </Button>
+                          <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/20">
+                            Remover
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-white dark:bg-slate-900 rounded-lg p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                          Preço Médio
-                        </div>
-                        <div className="text-lg font-bold text-neon-primary">
-                          {formatCurrency(procedure.price)}
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-slate-900 rounded-lg p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                          Margem de Lucro
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-lg font-bold text-neon-success">
-                            {formatPercentage(procedure.profitMargin)}
-                          </div>
-                          <Progress value={procedure.profitMargin} className="flex-1 h-2" />
-                        </div>
-                      </div>
-                      
-                      <div className="bg-white dark:bg-slate-900 rounded-lg p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
-                          Ticket Médio
-                        </div>
-                        <div className="text-lg font-bold text-neon-primary">
-                          {formatCurrency(procedure.revenue / procedure.count)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </NeonGradientCard>
-          </TabsContent>
-
-          {/* Cash Flow Tab */}
-          <TabsContent value="cashflow" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <NeonGradientCard
-                variant="primary"
-                title="Evolução Mensal"
-                description="Acompanhe o crescimento da receita"
-                glowEffect={true}
-              >
-                <div className="space-y-4">
-                  {monthlyData.map((month, index) => (
-                    <div key={month.month} className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-neon-primary to-neon-secondary rounded-full flex items-center justify-center text-white text-sm font-bold">
-                          {month.month}
-                        </div>
-                        <div>
-                          <div className="font-semibold text-slate-900 dark:text-slate-100">
-                            {formatCurrency(month.revenue)}
-                          </div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400">
-                            {month.procedures} procedimentos
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold text-neon-primary">
-                          {formatCurrency(month.avgTicket)}
-                        </div>
-                        <div className="text-sm text-slate-500">
-                          ticket médio
-                        </div>
-                      </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </NeonGradientCard>
+              </div>
+            </NeonGradientCard>
+          </motion.div>
 
-              <NeonGradientCard
-                variant="success"
-                title="Projeções"
-                description="Estimativas para os próximos meses"
-                glowEffect={true}
-              >
-                <div className="space-y-6">
-                  <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                      Meta Julho 2024
-                    </div>
-                    <div className="text-2xl font-bold text-neon-success mb-2">
-                      {formatCurrency(85000)}
-                    </div>
-                    <Progress value={65} className="h-3" />
-                    <div className="text-sm text-slate-500 mt-2">
-                      65% da meta projetada
-                    </div>
+          {/* Charts Placeholder */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            className="mt-8"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <NeonGradientCard>
+                <div className="h-64 flex items-center justify-center">
+                  <div className="text-center">
+                    <BarChart3 className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                    <p className="text-slate-400">Gráfico de Receita por Mês</p>
+                    <p className="text-xs text-slate-500 mt-2">Em desenvolvimento</p>
                   </div>
-                  
-                  <div className="p-4 bg-white dark:bg-slate-900 rounded-lg">
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                      Crescimento Esperado
-                    </div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <ArrowUpRight className="w-5 h-5 text-neon-success" />
-                      <span className="text-2xl font-bold text-neon-success">+25%</span>
-                    </div>
-                    <div className="text-sm text-slate-500">
-                      Baseado na tendência atual
-                    </div>
+                </div>
+              </NeonGradientCard>
+              
+              <NeonGradientCard>
+                <div className="h-64 flex items-center justify-center">
+                  <div className="text-center">
+                    <PieChart className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+                    <p className="text-slate-400">Distribuição por Categoria</p>
+                    <p className="text-xs text-slate-500 mt-2">Em desenvolvimento</p>
                   </div>
                 </div>
               </NeonGradientCard>
             </div>
-          </TabsContent>
-
-          {/* Reports Tab */}
-          <TabsContent value="reports" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <NeonGradientCard
-                variant="primary"
-                title="Relatório Mensal"
-                description="Análise completa do mês"
-                glowEffect={true}
-                onClick={() => console.log('Generate monthly report')}
-                className="cursor-pointer hover:scale-105 transition-transform duration-300 motion-reduce:hover:scale-100"
-              >
-                <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    Último: Janeiro 2024
-                  </div>
-                  <CosmicGlowButton variant="primary" size="sm" icon={Download}>
-                    Baixar
-                  </CosmicGlowButton>
-                </div>
-              </NeonGradientCard>
-
-              <NeonGradientCard
-                variant="success"
-                title="Relatório de Procedimentos"
-                description="Performance por tratamento"
-                glowEffect={true}
-                onClick={() => console.log('Generate procedures report')}
-                className="cursor-pointer hover:scale-105 transition-transform duration-300 motion-reduce:hover:scale-100"
-              >
-                <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    Sempre atualizado
-                  </div>
-                  <CosmicGlowButton variant="success" size="sm" icon={BarChart3}>
-                    Gerar
-                  </CosmicGlowButton>
-                </div>
-              </NeonGradientCard>
-
-              <NeonGradientCard
-                variant="cosmic"
-                title="Relatório Fiscal"
-                description="Documentos para contabilidade"
-                glowEffect={true}
-                backgroundAnimation={true}
-                onClick={() => console.log('Generate fiscal report')}
-                className="cursor-pointer hover:scale-105 transition-transform duration-300 motion-reduce:hover:scale-100"
-              >
-                <div className="flex items-center justify-between mt-4">
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    Trimestral
-                  </div>
-                  <CosmicGlowButton variant="primary" size="sm" icon={Receipt}>
-                    Exportar
-                  </CosmicGlowButton>
-                </div>
-              </NeonGradientCard>
-            </div>
-          </TabsContent>
-        </Tabs>
+          </motion.div>
+        </motion.div>
       </div>
-    </AppLayout>
-  );
+    </div>
+  )
 }
