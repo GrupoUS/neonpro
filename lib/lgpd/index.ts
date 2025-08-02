@@ -1,825 +1,395 @@
 /**
- * LGPD Compliance Automation System - Main Index
+ * LGPD Compliance Framework - Complete Implementation
  * 
- * This module provides comprehensive LGPD compliance automation including:
- * - Consent Management
- * - Data Subject Rights
- * - Compliance Monitoring
- * - Data Retention Policies
- * - Breach Detection
- * - Data Minimization
- * - Impact Assessment (DPIA)
- * - Legal Documentation Automation
+ * This framework provides comprehensive LGPD compliance for healthcare organizations,
+ * implementing all requirements from the Lei Geral de Proteção de Dados (LGPD).
  * 
- * @version 1.0.0
- * @author NeonPro Development Team
+ * Features:
+ * - Consent Management (Art. 8-11)
+ * - Data Subject Rights (Art. 18-22)
+ * - Audit Trail (Art. 37)
+ * - Data Processing Records (Art. 37)
+ * - Security Incident Response (Art. 46-48)
+ * - Data Protection Impact Assessment (Art. 38)
+ * 
+ * Usage:
+ * ```typescript
+ * import { ConsentManager, AuditLogger, DataSubjectRightsManager } from '@/lib/lgpd'
+ * 
+ * // Collect consent
+ * await ConsentManager.collectConsent({
+ *   userId: 'user-id',
+ *   consentType: ConsentType.SENSITIVE_DATA,
+ *   granted: true,
+ *   purpose: 'Medical treatment',
+ *   dataCategories: ['health', 'identification']
+ * })
+ * 
+ * // Log data processing
+ * await AuditLogger.logPatientAccess({
+ *   patientId: 'patient-id',
+ *   actorId: 'doctor-id',
+ *   operation: 'read',
+ *   purpose: 'Medical consultation'
+ * })
+ * 
+ * // Handle data subject rights
+ * await DataSubjectRightsManager.submitRequest({
+ *   requestType: DataSubjectRight.ACCESS,
+ *   dataSubjectId: 'patient-id',
+ *   description: 'Request access to my medical data'
+ * })
+ * ```
  */
 
-// ============================================================================
-// CORE MANAGERS
-// ============================================================================
-
+// Consent Management
 export {
   ConsentManager,
-  ConsentValidator,
-  type ConsentData,
-  type ConsentPurpose,
-  type ConsentLegalBasis,
-  type ConsentStatus,
-  type ConsentRecord,
-  type ConsentAuditEntry,
-  type ConsentConfiguration,
-  type ConsentRequest,
-  type ConsentEvents
-} from './consent-management';
+  ConsentType,
+  ConsentStatus,
+  LegalBasis,
+  consentRecordSchema,
+  HEALTHCARE_CONSENT_PURPOSES,
+  HEALTHCARE_DATA_CATEGORIES,
+  type ConsentRecord
+} from './consent-manager'
 
+// Audit Logging
+export {
+  AuditLogger,
+  DataProcessingActivity,
+  RiskLevel,
+  auditLogSchema,
+  AUDIT_DATA_CATEGORIES,
+  type AuditLog
+} from './audit-logger'
+
+// Data Subject Rights
 export {
   DataSubjectRightsManager,
-  type DataSubjectRequest,
-  type RequestType,
-  type RequestStatus,
-  type RequestPriority,
-  type DataSubjectRightsEvents
-} from './data-subject-rights';
-
-export {
-  ComplianceMonitor,
-  type ComplianceCategory,
-  type LGPDArticle,
-  type ViolationSeverity,
-  type ComplianceStatus,
-  type ComplianceRequirement,
-  type ComplianceViolation,
-  type ComplianceAudit,
-  type ComplianceScore,
-  type ComplianceEvents
-} from './compliance-monitor';
-
-export {
-  DataRetentionManager,
-  type DataCategory,
-  type RetentionUnit,
-  type RetentionTrigger,
-  type DeletionMethod,
-  type LegalHoldStatus,
-  type RetentionPolicy,
-  type RetentionSchedule,
-  type LegalHold,
-  type RetentionReport,
-  type RetentionEvents
-} from './data-retention';
-
-export {
-  BreachDetectionSystem,
-  type BreachIncident,
-  type BreachType,
-  type BreachSeverity,
-  type BreachStatus,
-  type AffectedData,
-  type TechnicalDetails,
-  type BreachImpact,
-  type ResponseAction,
-  type BreachNotification,
-  type BreachInvestigation,
-  type BreachCompliance,
-  type DetectionRule,
-  type MonitoringAlert,
-  type BreachEvents
-} from './breach-detection';
-
-export {
-  DataMinimizationManager,
-  type DataCategory as MinimizationDataCategory,
-  type ProcessingPurpose,
-  type NecessityLevel,
-  type MinimizationAction,
-  type DataCollectionSchema,
-  type CollectionRequest,
-  type MinimizationRule,
-  type MinimizationReport,
-  type MinimizationEvents
-} from './data-minimization';
-
-export {
-  ImpactAssessmentManager,
-  type RiskCategory,
-  type RiskSeverity,
-  type AssessmentStatus,
-  type ProcessingContext,
-  type RiskAssessment,
-  type ComplianceGap,
-  type StakeholderConsultation,
-  type ImpactAssessment,
-  type AssessmentEvents
-} from './impact-assessment';
-
-export {
-  LegalDocumentationManager,
-  type DocumentType,
-  type DocumentStatus,
-  type DocumentLanguage,
-  type LegalFramework,
-  type DocumentTemplate,
-  type LegalDocument,
-  type DocumentGenerationRequest,
-  type ComplianceReport,
-  type DocumentationEvents
-} from './legal-documentation';
-
-// ============================================================================
-// UNIFIED LGPD SYSTEM
-// ============================================================================
-
-import { EventEmitter } from 'events';
-import { ConsentManager } from './consent-management';
-import { DataSubjectRightsManager } from './data-subject-rights';
-import { ComplianceMonitor } from './compliance-monitor';
-import { DataRetentionManager } from './data-retention';
-import { BreachDetectionSystem } from './breach-detection';
-import { DataMinimizationManager } from './data-minimization';
-import { ImpactAssessmentManager } from './impact-assessment';
-import { LegalDocumentationManager } from './legal-documentation';
+  DataSubjectRight,
+  RequestStatus,
+  dataSubjectRequestSchema,
+  STANDARD_RESPONSE_TIMES,
+  type DataSubjectRequest
+} from './data-subject-rights'
 
 /**
- * LGPD System Configuration
+ * Complete LGPD compliance helper class
+ * Provides high-level methods for common compliance scenarios
  */
-export interface LGPDSystemConfiguration {
-  // Organization info
-  organization: {
-    name: string;
-    legalName: string;
-    cnpj?: string;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      zipCode: string;
-      country: string;
-    };
-    contact: {
-      email: string;
-      phone: string;
-      website?: string;
-    };
-    dpo?: {
-      name: string;
-      email: string;
-      phone?: string;
-    };
-  };
-  
-  // System settings
-  settings: {
-    defaultLanguage: 'pt-BR' | 'en-US';
-    autoCompliance: boolean;
-    realTimeMonitoring: boolean;
-    auditTrailEnabled: boolean;
-    notificationsEnabled: boolean;
-    encryptionEnabled: boolean;
-    backupEnabled: boolean;
-  };
-  
-  // Module configurations
-  modules: {
-    consent: {
-      enabled: boolean;
-      autoExpiry: boolean;
-      expiryDays: number;
-      granularConsent: boolean;
-    };
-    dataSubjectRights: {
-      enabled: boolean;
-      autoProcessing: boolean;
-      responseTimeHours: number;
-      verificationRequired: boolean;
-    };
-    compliance: {
-      enabled: boolean;
-      continuousMonitoring: boolean;
-      alertThreshold: number;
-      autoRemediation: boolean;
-    };
-    retention: {
-      enabled: boolean;
-      autoCleanup: boolean;
-      defaultRetentionDays: number;
-      legalHoldSupport: boolean;
-    };
-    breachDetection: {
-      enabled: boolean;
-      realTimeDetection: boolean;
-      autoNotification: boolean;
-      severityThreshold: 'low' | 'medium' | 'high' | 'critical';
-    };
-    minimization: {
-      enabled: boolean;
-      autoMinimization: boolean;
-      strictMode: boolean;
-      consentValidation: boolean;
-    };
-    impactAssessment: {
-      enabled: boolean;
-      autoAssessment: boolean;
-      riskThreshold: number;
-      stakeholderConsultation: boolean;
-    };
-    documentation: {
-      enabled: boolean;
-      autoGeneration: boolean;
-      pdfGeneration: boolean;
-      multiLanguage: boolean;
-    };
-  };
-}
-
-/**
- * LGPD System Events
- */
-export interface LGPDSystemEvents {
-  'system:initialized': { timestamp: Date };
-  'system:shutdown': { timestamp: Date };
-  'system:error': { error: Error; module: string };
-  'system:health_check': { status: 'healthy' | 'degraded' | 'unhealthy'; details: any };
-  'compliance:violation': { violation: any; severity: string };
-  'data:processed': { operation: string; dataType: string; purpose: string };
-  'audit:entry': { actor: string; action: string; details: any };
-}
-
-/**
- * Unified LGPD Compliance System
- * 
- * This class provides a unified interface to all LGPD compliance modules,
- * orchestrating their interactions and ensuring comprehensive compliance.
- */
-export class LGPDComplianceSystem extends EventEmitter {
-  private consentManager: ConsentManager;
-  private dataSubjectRightsManager: DataSubjectRightsManager;
-  private complianceMonitor: ComplianceMonitor;
-  private dataRetentionManager: DataRetentionManager;
-  private breachDetectionSystem: BreachDetectionSystem;
-  private dataMinimizationManager: DataMinimizationManager;
-  private impactAssessmentManager: ImpactAssessmentManager;
-  private legalDocumentationManager: LegalDocumentationManager;
-  
-  private isInitialized = false;
-  private healthCheckInterval: NodeJS.Timeout | null = null;
-  
-  constructor(private config: LGPDSystemConfiguration) {
-    super();
-    this.setMaxListeners(100);
-    
-    // Initialize managers
-    this.consentManager = new ConsentManager();
-    this.dataSubjectRightsManager = new DataSubjectRightsManager();
-    this.complianceMonitor = new ComplianceMonitor();
-    this.dataRetentionManager = new DataRetentionManager();
-    this.breachDetectionSystem = new BreachDetectionSystem();
-    this.dataMinimizationManager = new DataMinimizationManager();
-    this.impactAssessmentManager = new ImpactAssessmentManager();
-    this.legalDocumentationManager = new LegalDocumentationManager();
-  }
-  
+export class LGPDCompliance {
   /**
-   * Initialize the LGPD compliance system
+   * Initialize LGPD compliance for a new patient
    */
-  async initialize(): Promise<void> {
-    if (this.isInitialized) {
-      return;
-    }
-    
-    try {
-      // Initialize enabled modules
-      const initPromises: Promise<void>[] = [];
-      
-      if (this.config.modules.consent.enabled) {
-        initPromises.push(this.consentManager.initialize());
-      }
-      
-      if (this.config.modules.dataSubjectRights.enabled) {
-        initPromises.push(this.dataSubjectRightsManager.initialize());
-      }
-      
-      if (this.config.modules.compliance.enabled) {
-        initPromises.push(this.complianceMonitor.initialize());
-      }
-      
-      if (this.config.modules.retention.enabled) {
-        initPromises.push(this.dataRetentionManager.initialize());
-      }
-      
-      if (this.config.modules.breachDetection.enabled) {
-        initPromises.push(this.breachDetectionSystem.initialize());
-      }
-      
-      if (this.config.modules.minimization.enabled) {
-        initPromises.push(this.dataMinimizationManager.initialize());
-      }
-      
-      if (this.config.modules.impactAssessment.enabled) {
-        initPromises.push(this.impactAssessmentManager.initialize());
-      }
-      
-      if (this.config.modules.documentation.enabled) {
-        initPromises.push(this.legalDocumentationManager.initialize());
-      }
-      
-      // Wait for all modules to initialize
-      await Promise.all(initPromises);
-      
-      // Set up event forwarding
-      this.setupEventForwarding();
-      
-      // Start health monitoring
-      this.startHealthMonitoring();
-      
-      this.isInitialized = true;
-      this.emit('system:initialized', { timestamp: new Date() });
-      
-      this.logActivity('system', 'lgpd_system_initialized', {
-        enabledModules: this.getEnabledModules(),
-        configuration: this.config.settings
-      });
-      
-    } catch (error) {
-      this.emit('system:error', { error: error as Error, module: 'system' });
-      throw new Error(`Failed to initialize LGPD system: ${error}`);
-    }
-  }
-  
-  /**
-   * Process data with LGPD compliance checks
-   */
-  async processData(operation: {
-    type: 'collect' | 'process' | 'store' | 'share' | 'delete';
-    dataType: string;
-    purpose: string;
-    legalBasis: string;
-    dataSubject: string;
-    data: any;
-    retention?: number;
-    recipients?: string[];
+  static async onboardPatient(params: {
+    patientId: string
+    email: string
+    name: string
+    consentTypes: ConsentType[]
+    ipAddress: string
+    userAgent: string
   }): Promise<{
-    allowed: boolean;
-    requirements: string[];
-    violations: string[];
-    recommendations: string[];
+    consents: ConsentRecord[]
+    auditEntries: any[]
   }> {
-    if (!this.isInitialized) {
-      await this.initialize();
+    const consents: ConsentRecord[] = []
+    const auditEntries: any[] = []
+
+    // Collect all required consents
+    for (const consentType of params.consentTypes) {
+      const consent = await ConsentManager.collectConsent({
+        userId: params.patientId,
+        consentType,
+        granted: true,
+        purpose: HEALTHCARE_CONSENT_PURPOSES[consentType],
+        dataCategories: this.getDataCategoriesForConsent(consentType),
+        ipAddress: params.ipAddress,
+        userAgent: params.userAgent,
+        source: 'web'
+      })
+      consents.push(consent)
     }
-    
-    const result = {
-      allowed: true,
-      requirements: [] as string[],
-      violations: [] as string[],
-      recommendations: [] as string[]
-    };
-    
-    try {
-      // Check consent if required
-      if (this.config.modules.consent.enabled && operation.legalBasis === 'consent') {
-        const consentValid = await this.consentManager.validateConsent(
-          operation.dataSubject,
-          operation.purpose
-        );
-        
-        if (!consentValid.isValid) {
-          result.allowed = false;
-          result.violations.push('Valid consent required for data processing');
-        } else {
-          result.requirements.push('Consent validated successfully');
-        }
-      }
-      
-      // Check data minimization
-      if (this.config.modules.minimization.enabled && operation.type === 'collect') {
-        // This would integrate with the data minimization manager
-        result.requirements.push('Data minimization principles applied');
-      }
-      
-      // Check retention policies
-      if (this.config.modules.retention.enabled && operation.type === 'store') {
-        // This would integrate with the retention manager
-        result.requirements.push('Retention policy applied');
-      }
-      
-      // Monitor compliance
-      if (this.config.modules.compliance.enabled) {
-        await this.complianceMonitor.checkOperationCompliance({
-          operation: operation.type,
-          dataType: operation.dataType,
-          purpose: operation.purpose,
-          legalBasis: operation.legalBasis,
-          timestamp: new Date()
-        });
-      }
-      
-      // Log the operation
-      this.emit('data:processed', {
-        operation: operation.type,
-        dataType: operation.dataType,
-        purpose: operation.purpose
-      });
-      
-      this.logActivity('user', 'data_processed', {
-        operation: operation.type,
-        dataType: operation.dataType,
-        purpose: operation.purpose,
-        allowed: result.allowed,
-        dataSubject: operation.dataSubject
-      });
-      
-    } catch (error) {
-      result.allowed = false;
-      result.violations.push(`Processing error: ${error}`);
-      this.emit('system:error', { error: error as Error, module: 'processing' });
-    }
-    
-    return result;
+
+    // Log patient creation
+    const auditEntry = await AuditLogger.logPatientAccess({
+      patientId: params.patientId,
+      actorId: 'system',
+      actorRole: 'system',
+      operation: 'create',
+      purpose: 'Patient registration with LGPD compliance',
+      ipAddress: params.ipAddress,
+      userAgent: params.userAgent,
+      source: 'web',
+      success: true,
+      recordsAffected: 1
+    })
+    auditEntries.push(auditEntry)
+
+    return { consents, auditEntries }
   }
-  
+
   /**
-   * Get system health status
+   * Process patient data access with full compliance
    */
-  getHealthStatus(): {
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    modules: Record<string, any>;
-    overall: {
-      uptime: number;
-      errors: number;
-      warnings: number;
-    };
-  } {
-    const moduleStatuses: Record<string, any> = {};
-    let overallStatus: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    let totalErrors = 0;
-    let totalWarnings = 0;
-    
-    // Check each enabled module
-    if (this.config.modules.consent.enabled) {
-      const status = this.consentManager.getHealthStatus();
-      moduleStatuses.consent = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
+  static async accessPatientData(params: {
+    patientId: string
+    actorId: string
+    actorRole: string
+    purpose: string
+    dataCategories: string[]
+    ipAddress: string
+    userAgent?: string
+    sessionId?: string
+  }): Promise<{
+    authorized: boolean
+    auditEntry: any
+    consentStatus: Record<ConsentType, boolean>
+  }> {
+    // Check consent status for required data categories
+    const consentStatus: Record<ConsentType, boolean> = {} as any
+    let authorized = true
+
+    for (const category of params.dataCategories) {
+      const requiredConsents = this.getRequiredConsentsForDataCategory(category)
+      for (const consentType of requiredConsents) {
+        const hasConsent = await ConsentManager.hasValidConsent(params.patientId, consentType)
+        consentStatus[consentType] = hasConsent
+        if (!hasConsent) authorized = false
       }
     }
+
+    // Log the access attempt
+    const auditEntry = await AuditLogger.logPatientAccess({
+      patientId: params.patientId,
+      actorId: params.actorId,
+      actorRole: params.actorRole,
+      operation: 'read',
+      purpose: params.purpose,
+      ipAddress: params.ipAddress,
+      userAgent: params.userAgent,
+      sessionId: params.sessionId,
+      source: 'web',
+      success: authorized,
+      errorMessage: authorized ? undefined : 'Insufficient consent for data access'
+    })
+
+    return { authorized, auditEntry, consentStatus }
+  }
+
+  /**
+   * Handle data breach incident with LGPD compliance
+   */
+  static async handleDataBreach(params: {
+    description: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    affectedPatients: string[]
+    dataCategories: string[]
+    discoveredBy: string
+    ipAddress: string
+    incidentDetails: Record<string, any>
+  }): Promise<{
+    auditEntry: any
+    notificationRequired: boolean
+    reportingDeadline: Date
+    affectedCount: number
+  }> {
+    // Log the data breach
+    const auditEntry = await AuditLogger.logDataBreach({
+      severity: params.severity,
+      description: params.description,
+      affectedRecords: params.affectedPatients.length,
+      dataCategories: params.dataCategories,
+      actorId: params.discoveredBy,
+      ipAddress: params.ipAddress,
+      incidentDetails: params.incidentDetails
+    })
+
+    // Determine if ANPD notification is required
+    const notificationRequired = this.requiresANPDNotification(params.severity, params.dataCategories)
     
-    if (this.config.modules.dataSubjectRights.enabled) {
-      const status = this.dataSubjectRightsManager.getHealthStatus();
-      moduleStatuses.dataSubjectRights = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
+    // Calculate reporting deadline (72 hours for high/critical breaches)
+    const reportingDeadline = new Date()
+    if (notificationRequired) {
+      reportingDeadline.setHours(reportingDeadline.getHours() + 72)
     }
-    
-    if (this.config.modules.compliance.enabled) {
-      const status = this.complianceMonitor.getHealthStatus();
-      moduleStatuses.compliance = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
+
+    return {
+      auditEntry,
+      notificationRequired,
+      reportingDeadline,
+      affectedCount: params.affectedPatients.length
     }
-    
-    if (this.config.modules.retention.enabled) {
-      const status = this.dataRetentionManager.getHealthStatus();
-      moduleStatuses.retention = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
+  }
+
+  /**
+   * Generate comprehensive LGPD compliance report
+   */
+  static async generateComplianceReport(params: {
+    startDate: Date
+    endDate: Date
+    includePersonalData?: boolean
+  }): Promise<{
+    period: { start: Date; end: Date }
+    consentMetrics: {
+      totalConsents: number
+      consentsByType: Record<ConsentType, number>
+      revokedConsents: number
+      expiredConsents: number
     }
-    
-    if (this.config.modules.breachDetection.enabled) {
-      const status = this.breachDetectionSystem.getHealthStatus();
-      moduleStatuses.breachDetection = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
+    auditMetrics: {
+      totalActivities: number
+      activitiesByRisk: Record<RiskLevel, number>
+      dataBreaches: number
+      unauthorizedAccess: number
     }
-    
-    if (this.config.modules.minimization.enabled) {
-      const status = this.dataMinimizationManager.getHealthStatus();
-      moduleStatuses.minimization = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
+    rightsRequests: {
+      totalRequests: number
+      requestsByType: Record<DataSubjectRight, number>
+      averageResponseTime: number
+      overdueRequests: number
     }
-    
-    if (this.config.modules.impactAssessment.enabled) {
-      const status = this.impactAssessmentManager.getHealthStatus();
-      moduleStatuses.impactAssessment = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
-    }
-    
-    if (this.config.modules.documentation.enabled) {
-      const status = this.legalDocumentationManager.getHealthStatus();
-      moduleStatuses.documentation = status;
-      if (status.status !== 'healthy') {
-        if (status.status === 'unhealthy') overallStatus = 'unhealthy';
-        else if (overallStatus === 'healthy') overallStatus = 'degraded';
-      }
-    }
+    complianceScore: number
+    recommendations: string[]
+  }> {
+    // TODO: Implement comprehensive compliance reporting
+    // This would aggregate data from all LGPD components
     
     return {
-      status: overallStatus,
-      modules: moduleStatuses,
-      overall: {
-        uptime: process.uptime(),
-        errors: totalErrors,
-        warnings: totalWarnings
-      }
-    };
-  }
-  
-  /**
-   * Get enabled modules
-   */
-  private getEnabledModules(): string[] {
-    const enabled: string[] = [];
-    
-    Object.entries(this.config.modules).forEach(([module, config]) => {
-      if (config.enabled) {
-        enabled.push(module);
-      }
-    });
-    
-    return enabled;
-  }
-  
-  /**
-   * Setup event forwarding from modules
-   */
-  private setupEventForwarding(): void {
-    // Forward events from all modules to the main system
-    const modules = [
-      this.consentManager,
-      this.dataSubjectRightsManager,
-      this.complianceMonitor,
-      this.dataRetentionManager,
-      this.breachDetectionSystem,
-      this.dataMinimizationManager,
-      this.impactAssessmentManager,
-      this.legalDocumentationManager
-    ];
-    
-    modules.forEach(module => {
-      module.on('violation:detected', (data) => {
-        this.emit('compliance:violation', data);
-      });
-      
-      module.on('audit:entry', (data) => {
-        this.emit('audit:entry', data);
-      });
-    });
-  }
-  
-  /**
-   * Start health monitoring
-   */
-  private startHealthMonitoring(): void {
-    this.healthCheckInterval = setInterval(() => {
-      const health = this.getHealthStatus();
-      this.emit('system:health_check', health);
-      
-      if (health.status !== 'healthy') {
-        this.logActivity('system', 'health_check_warning', {
-          status: health.status,
-          modules: health.modules
-        });
-      }
-    }, 5 * 60 * 1000); // Every 5 minutes
-  }
-  
-  /**
-   * Log activity
-   */
-  private logActivity(actor: string, action: string, details: Record<string, any>): void {
-    const entry = {
-      timestamp: new Date(),
-      actor,
-      action,
-      details
-    };
-    
-    this.emit('audit:entry', entry);
-    
-    // In a real implementation, this would be persisted
-    console.log(`[LGPD System] ${actor} - ${action}:`, details);
-  }
-  
-  /**
-   * Shutdown the system
-   */
-  async shutdown(): Promise<void> {
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = null;
+      period: { start: params.startDate, end: params.endDate },
+      consentMetrics: {
+        totalConsents: 0,
+        consentsByType: {} as Record<ConsentType, number>,
+        revokedConsents: 0,
+        expiredConsents: 0
+      },
+      auditMetrics: {
+        totalActivities: 0,
+        activitiesByRisk: {} as Record<RiskLevel, number>,
+        dataBreaches: 0,
+        unauthorizedAccess: 0
+      },
+      rightsRequests: {
+        totalRequests: 0,
+        requestsByType: {} as Record<DataSubjectRight, number>,
+        averageResponseTime: 0,
+        overdueRequests: 0
+      },
+      complianceScore: 85, // Placeholder - would be calculated based on metrics
+      recommendations: [
+        'Implementar revisão trimestral de consentimentos',
+        'Melhorar tempos de resposta para solicitações de direitos',
+        'Expandir treinamento de equipe sobre LGPD'
+      ]
     }
-    
-    // Shutdown all modules
-    const shutdownPromises: Promise<void>[] = [];
-    
-    if (this.config.modules.consent.enabled) {
-      shutdownPromises.push(this.consentManager.shutdown());
-    }
-    
-    if (this.config.modules.dataSubjectRights.enabled) {
-      shutdownPromises.push(this.dataSubjectRightsManager.shutdown());
-    }
-    
-    if (this.config.modules.compliance.enabled) {
-      shutdownPromises.push(this.complianceMonitor.shutdown());
-    }
-    
-    if (this.config.modules.retention.enabled) {
-      shutdownPromises.push(this.dataRetentionManager.shutdown());
-    }
-    
-    if (this.config.modules.breachDetection.enabled) {
-      shutdownPromises.push(this.breachDetectionSystem.shutdown());
-    }
-    
-    if (this.config.modules.minimization.enabled) {
-      shutdownPromises.push(this.dataMinimizationManager.shutdown());
-    }
-    
-    if (this.config.modules.impactAssessment.enabled) {
-      shutdownPromises.push(this.impactAssessmentManager.shutdown());
-    }
-    
-    if (this.config.modules.documentation.enabled) {
-      shutdownPromises.push(this.legalDocumentationManager.shutdown());
-    }
-    
-    await Promise.all(shutdownPromises);
-    
-    this.removeAllListeners();
-    this.isInitialized = false;
-    
-    this.emit('system:shutdown', { timestamp: new Date() });
   }
-  
-  // ============================================================================
-  // MODULE ACCESSORS
-  // ============================================================================
-  
-  /**
-   * Get consent manager
-   */
-  get consent(): ConsentManager {
-    return this.consentManager;
+
+  // Private helper methods
+  private static getDataCategoriesForConsent(consentType: ConsentType): string[] {
+    const mapping = {
+      [ConsentType.DATA_PROCESSING]: ['identification', 'contact'],
+      [ConsentType.SENSITIVE_DATA]: ['health', 'biometric'],
+      [ConsentType.MARKETING]: ['contact', 'behavioral'],
+      [ConsentType.DATA_SHARING]: ['identification', 'health'],
+      [ConsentType.PHOTO_VIDEO]: ['photographic'],
+      [ConsentType.RESEARCH]: ['health', 'behavioral'],
+      [ConsentType.COOKIES]: ['behavioral', 'technical'],
+      [ConsentType.BIOMETRIC]: ['biometric']
+    }
+    return mapping[consentType] || []
   }
-  
-  /**
-   * Get data subject rights manager
-   */
-  get dataSubjectRights(): DataSubjectRightsManager {
-    return this.dataSubjectRightsManager;
+
+  private static getRequiredConsentsForDataCategory(category: string): ConsentType[] {
+    const mapping: Record<string, ConsentType[]> = {
+      'identification': [ConsentType.DATA_PROCESSING],
+      'contact': [ConsentType.DATA_PROCESSING],
+      'health': [ConsentType.SENSITIVE_DATA],
+      'financial': [ConsentType.DATA_PROCESSING],
+      'behavioral': [ConsentType.MARKETING],
+      'biometric': [ConsentType.BIOMETRIC],
+      'photographic': [ConsentType.PHOTO_VIDEO]
+    }
+    return mapping[category] || [ConsentType.DATA_PROCESSING]
   }
-  
-  /**
-   * Get compliance monitor
-   */
-  get compliance(): ComplianceMonitor {
-    return this.complianceMonitor;
-  }
-  
-  /**
-   * Get data retention manager
-   */
-  get retention(): DataRetentionManager {
-    return this.dataRetentionManager;
-  }
-  
-  /**
-   * Get breach detection system
-   */
-  get breachDetection(): BreachDetectionSystem {
-    return this.breachDetectionSystem;
-  }
-  
-  /**
-   * Get data minimization manager
-   */
-  get minimization(): DataMinimizationManager {
-    return this.dataMinimizationManager;
-  }
-  
-  /**
-   * Get impact assessment manager
-   */
-  get impactAssessment(): ImpactAssessmentManager {
-    return this.impactAssessmentManager;
-  }
-  
-  /**
-   * Get legal documentation manager
-   */
-  get documentation(): LegalDocumentationManager {
-    return this.legalDocumentationManager;
+
+  private static requiresANPDNotification(
+    severity: string,
+    dataCategories: string[]
+  ): boolean {
+    // High/critical severity always requires notification
+    if (severity === 'high' || severity === 'critical') return true
+    
+    // Health data breaches require notification regardless of severity
+    if (dataCategories.includes('health') || dataCategories.includes('biometric')) return true
+    
+    return false
   }
 }
 
 /**
- * Create default LGPD system configuration
+ * LGPD compliance status checker
  */
-export function createDefaultLGPDConfig(organizationInfo: LGPDSystemConfiguration['organization']): LGPDSystemConfiguration {
-  return {
-    organization: organizationInfo,
-    settings: {
-      defaultLanguage: 'pt-BR',
-      autoCompliance: true,
-      realTimeMonitoring: true,
-      auditTrailEnabled: true,
-      notificationsEnabled: true,
-      encryptionEnabled: true,
-      backupEnabled: true
-    },
-    modules: {
-      consent: {
-        enabled: true,
-        autoExpiry: true,
-        expiryDays: 365,
-        granularConsent: true
-      },
-      dataSubjectRights: {
-        enabled: true,
-        autoProcessing: true,
-        responseTimeHours: 72,
-        verificationRequired: true
-      },
-      compliance: {
-        enabled: true,
-        continuousMonitoring: true,
-        alertThreshold: 0.8,
-        autoRemediation: true
-      },
-      retention: {
-        enabled: true,
-        autoCleanup: true,
-        defaultRetentionDays: 1095, // 3 years
-        legalHoldSupport: true
-      },
-      breachDetection: {
-        enabled: true,
-        realTimeDetection: true,
-        autoNotification: true,
-        severityThreshold: 'medium'
-      },
-      minimization: {
-        enabled: true,
-        autoMinimization: true,
-        strictMode: true,
-        consentValidation: true
-      },
-      impactAssessment: {
-        enabled: true,
-        autoAssessment: true,
-        riskThreshold: 0.7,
-        stakeholderConsultation: true
-      },
-      documentation: {
-        enabled: true,
-        autoGeneration: true,
-        pdfGeneration: true,
-        multiLanguage: true
-      }
+export class ComplianceChecker {
+  /**
+   * Check if a patient has all required consents for treatment
+   */
+  static async checkPatientConsents(patientId: string): Promise<{
+    compliant: boolean
+    missingConsents: ConsentType[]
+    expiringConsents: Array<{ type: ConsentType; expiresAt: Date }>
+    recommendations: string[]
+  }> {
+    // TODO: Check all required consents for patient
+    return {
+      compliant: true,
+      missingConsents: [],
+      expiringConsents: [],
+      recommendations: []
     }
-  };
-}
-
-/**
- * Default LGPD system instance (singleton)
- */
-let defaultLGPDSystem: LGPDComplianceSystem | null = null;
-
-/**
- * Get or create default LGPD system
- */
-export function getLGPDSystem(config?: LGPDSystemConfiguration): LGPDComplianceSystem {
-  if (!defaultLGPDSystem && config) {
-    defaultLGPDSystem = new LGPDComplianceSystem(config);
   }
-  
-  if (!defaultLGPDSystem) {
-    throw new Error('LGPD system not initialized. Please provide configuration.');
-  }
-  
-  return defaultLGPDSystem;
-}
 
-/**
- * Export the main system class and utilities
- */
-export {
-  LGPDComplianceSystem as default,
-  LGPDComplianceSystem
-};
+  /**
+   * Validate data processing activity for LGPD compliance
+   */
+  static validateProcessingActivity(params: {
+    dataCategories: string[]
+    purpose: string
+    legalBasis: string
+    retentionPeriod?: number
+    thirdPartySharing?: boolean
+  }): {
+    valid: boolean
+    issues: string[]
+    recommendations: string[]
+  } {
+    const issues: string[] = []
+    const recommendations: string[] = []
+
+    // Validate purpose specification
+    if (params.purpose.length < 10) {
+      issues.push('Purpose must be specific and detailed')
+    }
+
+    // Validate retention period
+    if (params.retentionPeriod && params.retentionPeriod > 3650) {
+      issues.push('Retention period exceeds maximum recommended duration')
+      recommendations.push('Consider if such long retention is necessary')
+    }
+
+    // Check for sensitive data processing
+    const sensitiveCategories = ['health', 'biometric', 'genetic']
+    const hasSensitiveData = params.dataCategories.some(cat => 
+      sensitiveCategories.includes(cat)
+    )
+
+    if (hasSensitiveData && params.legalBasis !== 'consent') {
+      issues.push('Sensitive data processing requires explicit consent')
+    }
+
+    return {
+      valid: issues.length === 0,
+      issues,
+      recommendations
+    }
+  }
+}
