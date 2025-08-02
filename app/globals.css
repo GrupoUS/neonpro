@@ -161,64 +161,70 @@
   }
 }
 
-/* NEONPROV1 Custom Purple Gradient Classes */
+/* NEONPROV1 Healthcare Specific Classes */
 @layer utilities {
-  .bg-gradient-purple-neon {
-    background: linear-gradient(135deg, rgb(139 92 246) 0%, rgb(124 58 237) 50%, rgb(109 40 217) 100%);
+  .bg-gradient-neon-primary {
+    background: linear-gradient(135deg, oklch(0.5854 0.2041 277.1173), oklch(0.5106 0.2301 276.9656));
   }
   
-  .bg-gradient-purple-soft {
-    background: linear-gradient(135deg, rgb(196 181 253) 0%, rgb(168 85 247) 100%);
-  }
-  
-  .text-gradient-purple {
-    background: linear-gradient(135deg, rgb(139 92 246), rgb(124 58 237));
+  .text-gradient-neon {
+    background: linear-gradient(135deg, oklch(0.5854 0.2041 277.1173), oklch(0.4568 0.2146 277.0229));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-}
-
-/* NEONPROV1 Purple Button Variants */
-@layer components {
-  .btn-purple-primary {
-    @apply bg-purple-600 hover:bg-purple-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl;
-  }  
-  .btn-purple-secondary {
-    @apply bg-purple-100 hover:bg-purple-200 text-purple-700 font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-purple-200;
-  }
   
-  .btn-purple-ghost {
-    @apply bg-transparent hover:bg-purple-50 text-purple-600 font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-purple-200 hover:border-purple-300;
+  .border-gradient-neon {
+    border: 1px solid;
+    border-image: linear-gradient(135deg, oklch(0.5854 0.2041 277.1173), oklch(0.8687 0.0043 56.3660)) 1;
   }
 }
 
-/* NEONPROV1 Purple Card Styles */
+/* NEONPROV1 Healthcare Button Variants */
 @layer components {
-  .card-purple-gradient {
-    @apply bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300;
+  .btn-neon-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
   }
   
-  .card-purple-dark {
-    @apply bg-slate-800 border-purple-500/20 shadow-lg hover:shadow-purple-500/10 transition-all duration-300;
+  .btn-neon-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-border;
+  }
+  
+  .btn-neon-ghost {
+    @apply bg-transparent hover:bg-accent text-accent-foreground font-medium px-6 py-3 rounded-lg transition-all duration-200 border border-border hover:border-accent;
   }
 }
 
-/* Medical Status Indicators - NEONPROV1 Purple Theme */
+/* NEONPROV1 Healthcare Card Components */
 @layer components {
-  .status-healthy {
-    @apply bg-emerald-100 text-emerald-700 border-emerald-200;
+  .card-neon {
+    @apply bg-card border-border shadow-md hover:shadow-lg transition-all duration-300 rounded-lg;
   }
   
-  .status-warning {
-    @apply bg-amber-100 text-amber-700 border-amber-200;
+  .card-neon-gradient {
+    @apply bg-gradient-to-br from-card to-accent/10 border-border shadow-md hover:shadow-lg transition-all duration-300 rounded-lg;
+  }
+}
+
+/* Healthcare Status Indicators - NEONPROV1 Theme */
+@layer components {
+  .status-scheduled {
+    @apply bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full text-sm font-medium;
   }
   
-  .status-critical {
-    @apply bg-red-100 text-red-700 border-red-200;
+  .status-confirmed {
+    @apply bg-emerald-100 text-emerald-700 border-emerald-200 px-3 py-1 rounded-full text-sm font-medium;
   }
   
-  .status-purple {
-    @apply bg-purple-100 text-purple-700 border-purple-200;
+  .status-pending {
+    @apply bg-amber-100 text-amber-700 border-amber-200 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-cancelled {
+    @apply bg-destructive/10 text-destructive border-destructive/20 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-completed {
+    @apply bg-secondary text-secondary-foreground border-border px-3 py-1 rounded-full text-sm font-medium;
   }
 }

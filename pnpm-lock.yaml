@@ -8,12 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@clerk/localizations':
+        specifier: ^3.20.6
+        version: 3.20.6
       '@clerk/nextjs':
         specifier: ^6.10.0
         version: 6.28.1(next@15.4.3(@opentelemetry/api@1.9.0)(@playwright/test@1.53.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
+      '@radix-ui/react-slot':
+        specifier: ^1.2.3
+        version: 1.2.3(@types/react@18.3.23)(react@18.3.1)
       '@supabase/ssr':
         specifier: ^0.5.2
         version: 0.5.2(@supabase/supabase-js@2.52.0)
@@ -29,6 +35,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.6)
+      lucide-react:
+        specifier: ^0.536.0
+        version: 0.536.0(react@18.3.1)
       next:
         specifier: 15.4.3
         version: 15.4.3(@opentelemetry/api@1.9.0)(@playwright/test@1.53.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -47,6 +56,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.17
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.17)
       typescript:
         specifier: ^5.7.2
         version: 5.8.3
@@ -617,6 +629,10 @@ packages:
     peerDependencies:
       react: ^18.0.0 || ^19.0.0 || ^19.0.0-0
       react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-0
+
+  '@clerk/localizations@3.20.6':
+    resolution: {integrity: sha512-HxbJr6R/Zf17C++UDuIrGbq81xgMv9MGstI8uIi9LtNZ3+tEfOAOs6b8L9u9fnQcYQCFn3vm9pm2sM5U0dYegw==}
+    engines: {node: '>=18.17.0'}
 
   '@clerk/nextjs@6.28.1':
     resolution: {integrity: sha512-1R+kK5lSwY4RCwEMUgNcryR588af59LPw25rO/DzBn9EAsIcLgRP8Tu8tKWvnBoXaSzIUYVZUQa7/bAAjoMnXA==}
@@ -4927,6 +4943,11 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
+  lucide-react@0.536.0:
+    resolution: {integrity: sha512-2PgvNa9v+qz4Jt/ni8vPLt4jwoFybXHuubQT8fv4iCW5TjDxkbZjNZZHa485ad73NSEn/jdsEtU57eE1g+ma8A==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
@@ -6895,6 +6916,10 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       tslib: 2.8.1
+
+  '@clerk/localizations@3.20.6':
+    dependencies:
+      '@clerk/types': 4.72.0
 
   '@clerk/nextjs@6.28.1(next@15.4.3(@opentelemetry/api@1.9.0)(@playwright/test@1.53.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -12087,6 +12112,10 @@ snapshots:
   lru-cache@7.18.3: {}
 
   lucide-react@0.468.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  lucide-react@0.536.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
