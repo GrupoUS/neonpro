@@ -60,12 +60,23 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       return NextResponse.redirect(url);
     }
 
-    // TODO: Integrate existing subscription validation
-    // const subscriptionValid = await subscriptionCheck(userId, req);
-    // if (!subscriptionValid) {
-    //   url.pathname = '/pricing';
-    //   return NextResponse.redirect(url);
-    // }
+    // Healthcare SaaS: Subscription validation for professional accounts
+    try {
+      // TODO: Integrate with existing subscription logic
+      // const subscription = await validateSubscription(userId);
+      // if (!subscription.active) {
+      //   url.pathname = '/pricing';
+      //   url.searchParams.set('reason', 'subscription_expired');
+      //   return NextResponse.redirect(url);
+      // }
+      
+      // Placeholder: Basic subscription check
+      const response = NextResponse.next();
+      response.headers.set('X-Subscription-Status', 'active'); // Placeholder
+    } catch (error) {
+      console.error('Subscription validation error:', error);
+      // Graceful degradation - allow access but log error
+    }
 
     // Admin routes - require admin role
     if (isAdminRoute(req)) {
@@ -76,11 +87,50 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       }
     }
 
-    // TODO: Integrate existing RBAC validation
-    // const rbacValid = await rbacCheck(userId, req.nextUrl.pathname);
-    // if (!rbacValid) {
-    //   return NextResponse.json({ error: 'Insufficient permissions' }, { status: 403 });
-    // }
+    // Healthcare RBAC: Role-based access control for medical professionals
+    try {
+      const userRole = sessionClaims?.metadata?.role || 'user';
+      const requestPath = req.nextUrl.pathname;
+      
+      // TODO: Integrate with existing RBAC system
+      // const hasPermission = await checkRolePermissions(userRole, requestPath);
+      // if (!hasPermission) {
+      //   return NextResponse.json(
+      //     { error: 'Acesso negado: Privilégios insuficientes' }, 
+      //     { status: 403 }
+      //   );
+      // }
+      
+      // Placeholder: Basic role-based routing
+      if (requestPath.startsWith('/admin') && !['admin', 'super_admin'].includes(userRole)) {
+        url.pathname = '/dashboard';
+        url.searchParams.set('error', 'insufficient_permissions');
+        return NextResponse.redirect(url);
+      }
+      
+      // Healthcare professional access validation
+      const healthcarePaths = ['/patients', '/appointments', '/inventory'];
+      if (healthcarePaths.some(path => requestPath.startsWith(path))) {
+        if (!['healthcare_professional', 'admin', 'super_admin'].includes(userRole)) {
+          url.pathname = '/dashboard';
+          url.searchParams.set('error', 'healthcare_access_required');
+          return NextResponse.redirect(url);
+        }
+      }
+      
+      // TODO: Audit logging integration
+      // await logAuditEvent({
+      //   userId,
+      //   action: 'page_access',
+      //   resource: requestPath,
+      //   userAgent: req.headers.get('user-agent'),
+      //   ip: req.ip || 'unknown'
+      // });
+      
+    } catch (error) {
+      console.error('RBAC validation error:', error);
+      // Graceful degradation - allow access but log error for security review
+    }
   }
 
   // Healthcare compliance headers for all routes

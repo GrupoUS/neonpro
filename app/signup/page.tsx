@@ -1,247 +1,71 @@
-"use client";
+// app/signup/page.tsx
+import { SignUp } from '@clerk/nextjs';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-import { SignInWithGooglePopupButton } from "@/components/auth/google-popup-button";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { AuthProvider, useAuth } from "@/contexts/auth-context";
-import { toast } from "sonner";
-
-const signupSchema = z
-  .object({
-    name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-    email: z.string().email("Email inválido"),
-    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Senhas não coincidem",
-    path: ["confirmPassword"],
-  });
-
-type SignupForm = z.infer<typeof signupSchema>;
-
-function SignupContent() {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const { signUp, user, loading } = useAuth();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupForm>({
-    resolver: zodResolver(signupSchema),
-  });
-
-  useEffect(() => {
-    if (user && !loading) {
-      router.push("/dashboard");
-    }
-  }, [user, loading, router]);
-
-  const onSubmit = async (data: SignupForm) => {
-    setIsLoading(true);
-    try {
-      console.log("=== Starting Signup Process ===");
-      console.log("Form data:", { email: data.email, name: data.name });
-
-      const { error } = await signUp(data.email, data.password, data.name);
-
-      if (error) {
-        console.error("Signup error:", error);
-        if (
-          error.message.includes("already registered") ||
-          error.message.includes("User already registered")
-        ) {
-          toast.error("Este email já está cadastrado. Faça login.");
-        } else if (error.message.includes("Invalid email")) {
-          toast.error("Email inválido. Verifique o formato do email.");
-        } else if (error.message.includes("Password")) {
-          toast.error("Senha deve ter pelo menos 6 caracteres.");
-        } else {
-          toast.error(`Erro ao criar conta: ${error.message}`);
-        }
-      } else {
-        console.log("Signup successful!");
-        toast.success(
-          "Conta criada com sucesso! Verifique seu email para confirmação."
-        );
-        // Clear form or redirect after successful signup
-        setTimeout(() => {
-          router.push("/login?message=check-email");
-        }, 2000);
-      }
-    } catch (error: any) {
-      console.error("Unexpected signup error:", error);
-      toast.error(`Erro inesperado ao criar conta: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (loading && !user) {
-    // Mostrar loading apenas se não houver usuário e estiver carregando
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
-
+export default function SignUpPage() {
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-      <div className="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-sm rounded-2xl shadow-lg">
-          <CardHeader>
-            <div className="mb-4 text-center">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                NEON PRO
-              </h1>
-            </div>
-            <CardTitle className="text-2xl">Criar Conta</CardTitle>
-            <CardDescription>
-              Preencha os dados abaixo para criar sua conta
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Seu nome completo"
-                  {...register("name")}
-                  disabled={isLoading}
-                />
-                {errors.name && (
-                  <p className="text-sm text-destructive">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  {...register("email")}
-                  disabled={isLoading}
-                />
-                {errors.email && (
-                  <p className="text-sm text-destructive">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p className="text-sm text-destructive">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register("confirmPassword")}
-                  disabled={isLoading}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full rounded-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? "Criando conta..." : "Criar Conta"}
-              </Button>
-
-              <SignInWithGooglePopupButton
-                text="Criar conta com Google"
-                loadingText="Aguarde..."
-                className="w-full"
-                disabled={isLoading}
-              />
-            </form>
-
-            <div className="mt-4 text-center text-sm">
-              Já tem uma conta?{" "}
-              <Link
-                href="/login"
-                className="underline text-primary hover:text-primary/80"
-              >
-                Fazer login
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="hidden bg-muted lg:block relative">
-        <Image
-          src="/spectral-dark-bg.jpg"
-          alt="Spectral Dark Background"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover"
-          priority
+    <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-sky-50 p-4">
+      <div className="w-full max-w-md">
+        {/* Healthcare compliance notice */}
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">
+            NeonPro - Cadastro Seguro
+          </h1>
+          <p className="text-sm text-slate-600">
+            Crie sua conta em conformidade com LGPD para profissionais de saúde
+          </p>
+        </div>
+        
+        {/* Clerk SignUp Component with Healthcare Styling */}
+        <SignUp 
+          appearance={{
+            variables: {
+              colorPrimary: '#0ea5e9', // Sky blue for healthcare
+              colorBackground: '#ffffff',
+              colorInputBackground: '#f8fafc',
+              colorInputText: '#1e293b',
+              borderRadius: '0.5rem',
+            },
+            elements: {
+              formButtonPrimary: 
+                'bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200',
+              card: 
+                'bg-white shadow-xl border border-slate-200 rounded-xl p-6',
+              headerTitle: 
+                'text-slate-900 font-semibold text-xl',
+              headerSubtitle: 
+                'text-slate-600 text-sm mt-1',
+              socialButtonsBlockButton: 
+                'border border-slate-300 hover:border-slate-400 text-slate-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200',
+              formFieldInput: 
+                'border border-slate-300 focus:border-sky-500 focus:ring-sky-500 rounded-lg px-3 py-2',
+              footerActionText: 
+                'text-slate-600 text-sm',
+              footerActionLink: 
+                'text-sky-600 hover:text-sky-700 font-medium text-sm',
+            }
+          }}
+          redirectUrl="/dashboard"
+          routing="path"
+          path="/signup"
         />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white p-8">
-            <h2 className="text-4xl font-bold mb-4">Junte-se ao NEON PRO!</h2>
-            <p className="text-lg">
-              Transforme a gestão da sua clínica de estética.
-            </p>
-          </div>
+        
+        {/* Healthcare compliance footer */}
+        <div className="mt-6 text-center text-xs text-slate-500">
+          <p>Dados protegidos conforme LGPD • Cadastro seguro para profissionais de saúde</p>
+          <p className="mt-1">
+            Ao criar sua conta, você concorda com nossos{' '}
+            <a href="/terms" className="text-sky-600 hover:underline">Termos de Uso</a>
+            {' '}e{' '}
+            <a href="/privacy" className="text-sky-600 hover:underline">Política de Privacidade</a>
+          </p>
         </div>
       </div>
     </div>
   );
 }
 
-export default function SignupPage() {
-  return (
-    <AuthProvider>
-      <SignupContent />
-    </AuthProvider>
-  );
+export const metadata = {
+  title: 'Cadastro - NeonPro',
+  description: 'Cadastro seguro para profissionais de saúde - Sistema em conformidade com LGPD',
+  robots: 'index, follow',
 }

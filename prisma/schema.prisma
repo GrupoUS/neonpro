@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  extensions = [uuid_ossp(map: "uuid-ossp")]
+}
+
+// 🚧 CORE MODELS FOR NEONPRO HEALTHCARE SYSTEM
+// Based on Supabase introspection of 167+ tables
+
+/// Healthcare professional profiles with RLS enabled
+model Profile {
+  id                     String    @id @db.Uuid
+  email                  String?   @unique
+  full_name              String?
+  first_name             String?
+  last_name              String?
+  role                   String?   @default("professional")
+  medical_license        String?
+  department             String?
+  professional_title     String?
+  phone                  String?
+  avatar_url             String?
+  
+  // Google integration
+  google_provider_id     String?   @unique
+  google_picture         String?
+  google_verified_email  Boolean?  @default(false)
+  profile_sync_status    String?   @default("pending")
+  google_sync_enabled    Boolean?  @default(true)
+  last_google_sync       DateTime? @db.Timestamptz(6)
+  
+  // LGPD compliance
+  data_consent_given     Boolean?  @default(false)
+  data_consent_date      DateTime? @db.Timestamptz(6)
+  
+  // Timestamps
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+  
+  // Relations (will be added based on actual FK constraints)
+  patients_created       Patient[] @relation("PatientCreatedBy")
+  clinics_created        Clinic[]  @relation("ClinicCreatedBy")
+  
+  @@map("profiles")
+}
+
+/// Patient records with medical information
+model Patient {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clinic_id              String    @db.Uuid
+  full_name              String
+  email                  String?
+  phone                  String?
+  birth_date             DateTime? @db.Date
+  
+  // Healthcare specific
+  medical_record_number  String?   @unique
+  emergency_contact      String?
+  insurance_provider     String?
+  
+  // LGPD compliance
+  data_consent_given     Boolean?  @default(false)
+  data_consent_date      DateTime? @db.Timestamptz(6)
+  
+  // Metadata
+  created_by             String    @db.Uuid
+  updated_by             String?   @db.Uuid
+  created_at             DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime  @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  clinic                 Clinic    @relation(fields: [clinic_id], references: [id])
+  created_by_profile     Profile   @relation("PatientCreatedBy", fields: [created_by], references: [id])
+  
+  // Appointments, medical conditions, etc. will be added
+  
+  @@map("patients")
+}
+
+/// Clinic facilities management
+model Clinic {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  address           String?
+  phone             String?
+  email             String?
+  
+  // Business information
+  cnpj              String?   @unique
+  license_number    String?
+  
+  // Compliance and settings
+  is_active         Boolean?  @default(true)
+  
+  // Metadata
+  created_by        String    @db.Uuid
+  updated_by        String?   @db.Uuid
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @default(now()) @db.Timestamptz(6)
+  
+  // Relations
+  created_by_profile Profile  @relation("ClinicCreatedBy", fields: [created_by], references: [id])
+  patients          Patient[]
+  
+  @@map("clinics")
+}
+
+// 🚧 MORE MODELS WILL BE ADDED AFTER INTROSPECTION
+// This is a starter schema with core models identified from Supabase MCP analysis

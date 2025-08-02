@@ -1,6 +1,0 @@
-import { ServerComponentContext } from '../common/types';
-/**
- * Wraps an `app` directory server component with Sentry error instrumentation.
- */
-export declare function wrapServerComponentWithSentry<F extends (...args: any[]) => any>(appDirComponent: F, context: ServerComponentContext): F;
-//# sourceMappingURL=wrapServerComponentWithSentry.d.ts.map
