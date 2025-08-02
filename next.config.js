@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    appDir: true,
+    // appDir is now stable in Next.js 14+ and should be removed
   },
   images: {
     domains: ['localhost'],

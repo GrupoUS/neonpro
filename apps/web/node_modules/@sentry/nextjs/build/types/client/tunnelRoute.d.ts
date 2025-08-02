@@ -1,0 +1,6 @@
+import type { BrowserOptions } from '@sentry/react';
+/**
+ * Applies the `tunnel` option to the Next.js SDK options based on `withSentryConfig`'s `tunnelRoute` option.
+ */
+export declare function applyTunnelRouteOption(options: BrowserOptions): void;
+//# sourceMappingURL=tunnelRoute.d.ts.map
