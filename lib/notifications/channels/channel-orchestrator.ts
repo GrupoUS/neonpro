@@ -137,7 +137,7 @@ export interface ChannelHealthStatus {
  * Notification Channel Orchestrator
  * Central hub for managing all notification channels with intelligent routing
  */
-export class NotificationChannelOrchestrator {
+class NotificationChannelOrchestrator {
   private emailFactory: EmailProviderFactory;
   private pushFactory: PushProviderFactory;
   private smsFactory: SMSProviderFactory;

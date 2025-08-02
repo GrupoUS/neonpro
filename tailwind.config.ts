@@ -19,6 +19,23 @@ const config: Config = {
     },
     extend: {
       colors: {
+        // NEONPROV1 Design System Colors
+        neon: {
+          primary: '#1E40AF',      // Blue-700 - Primary brand
+          secondary: '#3B82F6',    // Blue-500 - Secondary actions
+          accent: '#60A5FA',       // Blue-400 - Accent elements
+          success: '#10B981',      // Emerald-500 - Success states
+          warning: '#F59E0B',      // Amber-500 - Warning states
+          danger: '#EF4444',       // Red-500 - Error/danger states
+        },
+        // Healthcare specific colors
+        healthcare: {
+          critical: '#DC2626',     // Red-600 - Critical alerts
+          urgent: '#EA580C',       // Orange-600 - Urgent priority
+          normal: '#059669',       // Emerald-600 - Normal status
+          pending: '#D97706',      // Amber-600 - Pending status
+          completed: '#16A34A',    // Green-600 - Completed
+        },
         border: "oklch(var(--border))",
         input: "oklch(var(--input))",
         ring: "oklch(var(--ring))",
@@ -74,6 +91,38 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      // NEONPROV1 Animation System
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-in-out',
+        'slide-in': 'slideIn 0.3s ease-out',
+        'pulse-neon': 'pulseNeon 2s ease-in-out infinite',
+        'bounce-soft': 'bounceSoft 0.6s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        pulseNeon: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' },
+        },
+        bounceSoft: {
+          '0%, 20%, 53%, 80%, 100%': { transform: 'translateY(0)' },
+          '40%, 43%': { transform: 'translateY(-8px)' },
+          '70%': { transform: 'translateY(-4px)' },
+        },
+      },
+      // Healthcare specific spacing
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
       },
       keyframes: {
         "accordion-down": {

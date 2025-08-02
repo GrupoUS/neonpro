@@ -150,7 +150,7 @@ export interface WhatsAppProviderConfig {
  * Twilio WhatsApp Business API Provider
  * Primary WhatsApp provider for NeonPro
  */
-export class TwilioWhatsAppProvider implements WhatsAppProvider {
+class TwilioWhatsAppProvider implements WhatsAppProvider {
   public readonly id = 'twilio-whatsapp';
   public readonly name = 'Twilio WhatsApp Business API';
   public readonly type = 'whatsapp' as const;
@@ -603,7 +603,7 @@ export class TwilioWhatsAppProvider implements WhatsAppProvider {
  * WhatsApp Provider Factory
  * Manages WhatsApp providers and compliance
  */
-export class WhatsAppProviderFactory {
+class WhatsAppProviderFactory {
   private provider: WhatsAppProvider;
   private config: WhatsAppProviderConfig;
 

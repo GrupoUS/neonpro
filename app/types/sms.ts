@@ -225,16 +225,16 @@ export interface SMSOptIn {
 
 // ==================== VALIDATION SCHEMAS ====================
 
-export const PhoneNumberSchema = z.string()
+const PhoneNumberSchema = z.string()
   .regex(/^\+55\d{10,11}$/, 'Número deve estar no formato +55XXXXXXXXXXX')
   .describe('Número de telefone brasileiro no formato internacional');
 
-export const SMSMessageBodySchema = z.string()
+const SMSMessageBodySchema = z.string()
   .min(1, 'Mensagem não pode estar vazia')
   .max(1600, 'Mensagem muito longa (máximo 1600 caracteres)')
   .describe('Corpo da mensagem SMS');
 
-export const SMSTemplateSchema = z.object({
+const SMSTemplateSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório').max(100),
   body: z.string().min(1, 'Corpo da template é obrigatório').max(1600),
   category: z.enum(['marketing', 'transactional', 'otp', 'notification']),
@@ -242,7 +242,7 @@ export const SMSTemplateSchema = z.object({
   variables: z.array(z.string()).default([])
 });
 
-export const SendSMSSchema = z.object({
+const SendSMSSchema = z.object({
   provider_id: z.string().uuid('ID do provedor inválido'),
   to: PhoneNumberSchema,
   body: SMSMessageBodySchema,
@@ -251,7 +251,7 @@ export const SendSMSSchema = z.object({
   scheduled_at: z.string().datetime().optional()
 });
 
-export const BulkSMSSchema = z.object({
+const BulkSMSSchema = z.object({
   provider_id: z.string().uuid('ID do provedor inválido'),
   messages: z.array(z.object({
     to: PhoneNumberSchema,

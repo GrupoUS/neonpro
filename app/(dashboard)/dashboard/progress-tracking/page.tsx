@@ -1,7 +1,6 @@
 // Story 10.2: Progress Tracking through Computer Vision - Dashboard Page
 // Next.js page for progress tracking dashboard
 
-import ProgressTrackingDashboard from "@/app/components/dashboard/progress-tracking";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,7 +12,10 @@ export const metadata: Metadata = {
 export default function ProgressTrackingPage() {
   return (
     <div className="container mx-auto py-6">
-      <ProgressTrackingDashboard />
+      <div className="p-8 text-center">
+        <h1 className="text-2xl font-bold">Progress Tracking</h1>
+        <p className="text-muted-foreground">Feature em desenvolvimento...</p>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 // app/(dashboard)/dashboard/automated-analysis/page.tsx
 // Dashboard page for Story 10.1: Automated Before/After Analysis
 
-import { AutomatedBeforeAfterAnalysis } from "@/app/components/dashboard/automated-before-after-analysis";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,7 +12,10 @@ export const metadata: Metadata = {
 export default function AutomatedAnalysisPage() {
   return (
     <div className="container mx-auto py-6">
-      <AutomatedBeforeAfterAnalysis />
+      <div className="p-8 text-center">
+        <h1 className="text-2xl font-bold">Automated Analysis</h1>
+        <p className="text-muted-foreground">Feature em desenvolvimento...</p>
+      </div>
     </div>
   );
 }

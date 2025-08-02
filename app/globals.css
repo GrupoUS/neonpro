@@ -209,7 +209,7 @@
 /* Healthcare Status Indicators - NEONPROV1 Theme */
 @layer components {
   .status-scheduled {
-    @apply bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-full text-sm font-medium;
+    @apply bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium;
   }
   
   .status-confirmed {
@@ -221,7 +221,7 @@
   }
   
   .status-cancelled {
-    @apply bg-destructive/10 text-destructive border-destructive/20 px-3 py-1 rounded-full text-sm font-medium;
+    @apply bg-red-100 text-red-700 border-red-200 px-3 py-1 rounded-full text-sm font-medium;
   }
   
   .status-completed {

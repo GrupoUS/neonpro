@@ -109,7 +109,7 @@ export interface PushProviderConfig {
  * Firebase Cloud Messaging Provider
  * Primary push notification provider for NeonPro
  */
-export class FCMPushProvider implements PushProvider {
+class FCMPushProvider implements PushProvider {
   public readonly id = 'fcm';
   public readonly name = 'Firebase Cloud Messaging';
   public readonly type = 'push' as const;
@@ -459,7 +459,7 @@ export class FCMPushProvider implements PushProvider {
  * Push Provider Factory
  * Manages push notification providers and device management
  */
-export class PushProviderFactory {
+class PushProviderFactory {
   private fcmProvider: FCMPushProvider;
   private config: PushProviderConfig;
 

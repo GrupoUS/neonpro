@@ -40,7 +40,7 @@ import { auditLogger } from '../auth/audit/audit-logger';
 /**
  * Gerenciador central do sistema de notificações
  */
-export class NotificationManager {
+class NotificationManager {
   private supabase: any;
   private templateEngine: TemplateEngine;
   private channelManager: ChannelOrchestrator;

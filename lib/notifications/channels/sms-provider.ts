@@ -106,7 +106,7 @@ export interface SMSProviderConfig {
  * Twilio SMS Provider Implementation
  * Primary SMS provider for NeonPro (Brazil-compliant)
  */
-export class TwilioSMSProvider implements SMSProvider {
+class TwilioSMSProvider implements SMSProvider {
   public readonly id = 'twilio';
   public readonly name = 'Twilio SMS Provider';
   public readonly type = 'sms' as const;
@@ -436,7 +436,7 @@ export class TwilioSMSProvider implements SMSProvider {
  * SMS Provider Factory
  * Manages SMS providers and fallback logic
  */
-export class SMSProviderFactory {
+class SMSProviderFactory {
   private primaryProvider: SMSProvider;
   private config: SMSProviderConfig;
 

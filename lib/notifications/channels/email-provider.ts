@@ -89,7 +89,7 @@ export interface EmailProviderConfig {
  * Resend Provider Implementation
  * Primary email provider for NeonPro
  */
-export class ResendEmailProvider implements EmailProvider {
+class ResendEmailProvider implements EmailProvider {
   public readonly id = 'resend';
   public readonly name = 'Resend Email Provider';
   public readonly type = 'email' as const;
@@ -277,7 +277,7 @@ export class ResendEmailProvider implements EmailProvider {
  * SendGrid Provider Implementation
  * Fallback email provider for NeonPro
  */
-export class SendGridEmailProvider implements EmailProvider {
+class SendGridEmailProvider implements EmailProvider {
   public readonly id = 'sendgrid';
   public readonly name = 'SendGrid Email Provider';
   public readonly type = 'email' as const;
@@ -461,7 +461,7 @@ export class SendGridEmailProvider implements EmailProvider {
  * Email Provider Factory
  * Manages provider selection and fallback logic
  */
-export class EmailProviderFactory {
+class EmailProviderFactory {
   private primaryProvider: EmailProvider;
   private fallbackProvider: EmailProvider;
   private config: EmailProviderConfig;
