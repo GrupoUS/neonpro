@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
@@ -15,7 +15,7 @@ const MonitoringFiltersSchema = z.object({
 // GET - Obter dados de monitoramento em tempo real
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Verificar autenticação
     const { data: { session }, error: authError } = await supabase.auth.getSession();

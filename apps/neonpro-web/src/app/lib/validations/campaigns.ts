@@ -198,3 +198,18 @@ export type CampaignUpdateInput = z.infer<typeof UpdateCampaignSchema>;
 export type ABTestInput = z.infer<typeof CreateABTestSchema>;
 export type ConsentInput = z.infer<typeof CreateConsentSchema>;
 export type CampaignQueryInput = z.infer<typeof CampaignQuerySchema>;
+
+// Temporary schema exports
+export const createProtocolExperimentSchema = { type: 'object' } as const;
+export const updateProtocolExperimentSchema = { type: 'object' } as const;
+export const createProtocolFeedbackSchema = { type: 'object' } as const;
+export const updateProtocolFeedbackSchema = { type: 'object' } as const;
+export const createProtocolOutcomeSchema = { type: 'object' } as const;
+export const createProtocolVersionSchema = { type: 'object' } as const;
+export const updateProtocolVersionSchema = { type: 'object' } as const;
+export const predictionPeriodTypeSchema = { type: 'string' } as const;
+export const createForecastingScenarioSchema = { type: 'object' } as const;
+export const budgetSchema = { type: 'object' } as const;
+export const approvalSchema = { type: 'object' } as const;
+export const bulkBudgetCreateSchema = { type: 'object' } as const;
+export const ABTestCreateSchema = { type: 'object' } as const;

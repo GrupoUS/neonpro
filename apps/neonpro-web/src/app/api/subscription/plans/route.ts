@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscription Plans API
  * Epic: EPIC-001 - Advanced Subscription Management
  * Story: EPIC-001.1 - Subscription Middleware & Management System
@@ -7,13 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import type { Database } from '@/types/database';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = createClient();
     
     // Get all active subscription plans
     const { data: plans, error } = await supabase

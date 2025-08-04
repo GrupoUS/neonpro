@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Audit Statistics API
  * 
  * API para consulta de estatísticas e métricas do sistema de auditoria.
@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { AuditSeverity, logAuditEvent, AuditEventType } from '@/lib/audit/audit-system'
@@ -308,7 +308,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Autenticação
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {

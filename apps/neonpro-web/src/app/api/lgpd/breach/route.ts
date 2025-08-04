@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+﻿import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { LGPDComplianceManager } from '@/lib/lgpd/compliance-manager'
@@ -54,7 +54,7 @@ const notificationSchema = z.object({
 // GET /api/lgpd/breach - Get breach incidents (admin only)
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
@@ -231,7 +231,7 @@ export async function GET(request: NextRequest) {
 // POST /api/lgpd/breach - Report new breach incident
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
@@ -300,7 +300,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/lgpd/breach - Update breach incident
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {

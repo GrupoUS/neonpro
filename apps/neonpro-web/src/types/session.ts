@@ -11,3 +11,18 @@ export interface SessionData {
   devices: SessionDevice[];
   expiresAt: string;
 }
+// Temporary session exports
+export enum SecurityEventType {
+  LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
+  SESSION_EXTEND = 'SESSION_EXTEND',
+  DEVICE_REGISTER = 'DEVICE_REGISTER',
+  SUSPICIOUS_ACTIVITY = 'SUSPICIOUS_ACTIVITY'
+}
+
+export enum SecuritySeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}

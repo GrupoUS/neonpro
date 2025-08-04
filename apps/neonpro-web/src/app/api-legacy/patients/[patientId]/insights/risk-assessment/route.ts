@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
 // Remove PatientInsightsIntegration that causes constructor error
-// import PatientInsightsIntegration from '@/lib/ai/patient-insights'
+// import { PatientInsightsIntegration } from '@/lib/ai/patient-insights'
 
 // GET /api/patients/[patientId]/insights/risk-assessment
 export async function GET(

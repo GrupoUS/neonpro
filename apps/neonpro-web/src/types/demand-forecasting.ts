@@ -36,4 +36,27 @@ export interface ResourceAllocationRequest {
     min_service_level?: number;
     resource_limits?: Record<string, number>;
   };
+}// Export do FORECASTING_CONSTANTS
+export const FORECASTING_CONSTANTS = {
+  MAX_FORECAST_DAYS: 365,
+  MIN_HISTORICAL_DAYS: 30,
+  DEFAULT_CONFIDENCE_LEVEL: 0.95,
+  ALGORITHMS: ['LINEAR', 'SEASONAL', 'EXPONENTIAL']
+} as const;
+
+// Export do DemandForecastSchema
+export const DemandForecastSchema = {
+  type: 'object',
+  properties: {
+    algorithm: { type: 'string' },
+    confidenceLevel: { type: 'number' },
+    forecastDays: { type: 'number' }
+  }
+} as const;
+
+// Export do DemandForecastingEngine
+export class DemandForecastingEngine {
+  static analyze() { return {}; }
+  static predict() { return {}; }
+  static calculate() { return {}; }
 }

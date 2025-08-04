@@ -1,16 +1,16 @@
-// app/api/automated-analysis/processing/route.ts
+﻿// app/api/automated-analysis/processing/route.ts
 // API endpoints for analysis processing and comparison operations
 
 import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server';
 
 // POST /api/automated-analysis/processing - Start analysis processing
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
 // GET /api/automated-analysis/processing - Get analysis progress
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

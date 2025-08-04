@@ -1,9 +1,9 @@
-// NeonPro - Subscriptions API Routes
+﻿// NeonPro - Subscriptions API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Main subscription management endpoints
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { subscriptionManager } from '@/lib/payments/recurring/subscription-manager';
 import { logger } from '@/lib/utils/logger';
@@ -29,7 +29,7 @@ const updateSubscriptionSchema = z.object({
 // GET /api/subscriptions - List subscriptions
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
 // POST /api/subscriptions - Create new subscription
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/subscriptions - Bulk update subscriptions (admin only)
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -270,7 +270,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/subscriptions - Bulk cancel subscriptions (admin only)
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {

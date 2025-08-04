@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Audit Logs API
  * 
  * API para consulta, filtros e exportação de logs de auditoria.
@@ -13,7 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { 
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Autenticação
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
@@ -291,7 +291,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Autenticação
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {

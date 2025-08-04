@@ -6,7 +6,7 @@
  * capabilities to predict service demand with ≥80% accuracy.
  */
 
-import { createServerSupabaseClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { DemandForecast, ForecastModel, DemandFactor, ForecastValidation } from '@/types/demand-forecasting';
 
 interface ForecastingOptions {
@@ -56,7 +56,7 @@ export class DemandForecastingEngine {
   };
 
   constructor() {
-    this.supabase = createServerSupabaseClient();
+    this.supabase = createClient();
     this.config = {
       minAccuracyThreshold: 0.8, // FORECASTING_CONSTANTS.MIN_ACCURACY_THRESHOLD
       maxLookAheadDays: undefined, // Will be set by getConfiguration method

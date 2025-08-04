@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
@@ -36,7 +36,7 @@ const AutomationConfigSchema = z.object({
 // GET - Obter configuração atual
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Verificar autenticação
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
 // PUT - Atualizar configuração
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Verificar autenticação
     const { data: { session }, error: authError } = await supabase.auth.getSession();

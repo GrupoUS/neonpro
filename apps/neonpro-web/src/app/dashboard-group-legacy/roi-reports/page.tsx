@@ -29,7 +29,7 @@ import {
 import {
   CalendarIcon, DownloadIcon, FilterIcon, RefreshCwIcon, TrendingUpIcon, TrendingDownIcon,
   DollarSignIcon, PercentIcon, UsersIcon, TargetIcon, BarChart3Icon, PieChartIcon,
-  TrendingIcon, AlertTriangleIcon, CheckCircleIcon, XCircleIcon, InfoIcon,
+  TrendingUp, AlertTriangleIcon, CheckCircleIcon, XCircleIcon, InfoIcon,
   ArrowUpIcon, ArrowDownIcon, MinusIcon, PlayIcon, PauseIcon, StopIcon,
   FileTextIcon, ShareIcon, PrinterIcon, MailIcon, SlackIcon, Settings2Icon
 } from 'lucide-react';
@@ -433,7 +433,7 @@ export default function ROIReportsPage() {
         <nav className="flex space-x-8">
           {[
             { key: 'overview', label: 'Visão Geral', icon: BarChart3Icon },
-            { key: 'channels', label: 'Canais', icon: TrendingIcon },
+            { key: 'channels', label: 'Canais', icon: TrendingUp },
             { key: 'campaigns', label: 'Campanhas', icon: TargetIcon },
             { key: 'projections', label: 'Projeções', icon: TrendingUpIcon },
             { key: 'benchmarks', label: 'Benchmarks', icon: PercentIcon }

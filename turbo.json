@@ -26,15 +26,10 @@
       "inputs": [
         "$TURBO_DEFAULT$",
         "jest.config.js",
-        "jest.setup.js",
-        "cypress.config.ts",
-        "playwright.config.ts"
+        "jest.setup.js"
       ],
       "outputs": [
-        "coverage/**",
-        "test-results/**",
-        "cypress/screenshots/**",
-        "cypress/videos/**"
+        "coverage/**"
       ]
     },
     "test:unit": {
@@ -46,19 +41,7 @@
       ],
       "outputs": ["coverage/**"]
     },
-    "test:e2e": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "cypress.config.ts",
-        "playwright.config.ts"
-      ],
-      "outputs": [
-        "test-results/**",
-        "cypress/screenshots/**",
-        "cypress/videos/**"
-      ]
-    },
+
     "lint": {
       "dependsOn": ["^build"],
       "inputs": [

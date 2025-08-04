@@ -1,9 +1,9 @@
-// NeonPro - Payment Retry API Routes
+﻿// NeonPro - Payment Retry API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Payment retry processing endpoints
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { recurringPaymentProcessor } from '@/lib/payments/recurring/recurring-payment-processor';
 import { logger } from '@/lib/utils/logger';
@@ -25,7 +25,7 @@ const bulkRetrySchema = z.object({
 // POST /api/recurring-payments/retry - Retry failed payment
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/recurring-payments/retry - Bulk retry failed payments
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -261,7 +261,7 @@ export async function PUT(request: NextRequest) {
 // GET /api/recurring-payments/retry - Get retry statistics
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {

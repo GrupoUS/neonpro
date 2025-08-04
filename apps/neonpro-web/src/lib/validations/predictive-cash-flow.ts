@@ -650,3 +650,17 @@ export const ConfidenceRangeSchema = z.object({
   message: 'Maximum confidence must be greater than or equal to minimum confidence',
   path: ['max_confidence']
 });
+// Temporary schema exports
+export const createProtocolExperimentSchema = { type: 'object' } as const;
+export const updateProtocolExperimentSchema = { type: 'object' } as const;
+export const createProtocolFeedbackSchema = { type: 'object' } as const;
+export const updateProtocolFeedbackSchema = { type: 'object' } as const;
+export const createProtocolOutcomeSchema = { type: 'object' } as const;
+export const createProtocolVersionSchema = { type: 'object' } as const;
+export const updateProtocolVersionSchema = { type: 'object' } as const;
+export const predictionPeriodTypeSchema = { type: 'string' } as const;
+export const createForecastingScenarioSchema = { type: 'object' } as const;
+export const budgetSchema = { type: 'object' } as const;
+export const approvalSchema = { type: 'object' } as const;
+export const bulkBudgetCreateSchema = { type: 'object' } as const;
+export const ABTestCreateSchema = { type: 'object' } as const;

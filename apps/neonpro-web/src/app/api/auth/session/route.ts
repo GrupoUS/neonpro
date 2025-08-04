@@ -1,10 +1,10 @@
-// =====================================================
+﻿// =====================================================
 // Session Management API Routes
 // Story 1.4: Session Management & Security
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers'
 import { UnifiedSessionSystem } from '@/lib/auth/session'
 import { z } from 'zod'
@@ -55,7 +55,7 @@ function getUserAgent(request: NextRequest): string {
 }
 
 async function initializeSessionSystem() {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
   return new UnifiedSessionSystem(supabase)
 }
 

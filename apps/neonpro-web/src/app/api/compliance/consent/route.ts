@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Compliance Framework - Consent Management API
  * API para gerenciamento de consentimentos LGPD
  * 
@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { 
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
     const { clinicId, userId, consentType, status, page, limit } = validatedQuery;
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -235,7 +235,7 @@ export async function POST(request: NextRequest) {
     const { consentType, purpose, description, legalBasis, expiresAt, metadata } = validatedData;
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -355,7 +355,7 @@ export async function DELETE(request: NextRequest) {
     const { consentId, reason } = validatedData;
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();

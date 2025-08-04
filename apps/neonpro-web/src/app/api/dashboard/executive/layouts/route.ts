@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { DashboardLayoutEngine } from '@/lib/dashboard/executive/dashboard-layout-engine';
@@ -28,7 +28,7 @@ const UpdateLayoutSchema = CreateLayoutSchema.partial();
 // GET /api/dashboard/executive/layouts
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 // POST /api/dashboard/executive/layouts
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();

@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { DemandForecastingEngine } from '@/lib/analytics/demand-forecasting';
 import { z } from 'zod';
 
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get forecasts from database
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { data: forecasts, error: fetchError } = await supabase
       .from('demand_forecasts')
       .select('*')
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     const validatedRequest = ResourceAllocationRequestSchema.parse(body);
 
     // Get forecasts from database
-    const supabase = createServerSupabaseClient();
+    const supabase = createClient();
     const { data: forecasts, error: fetchError } = await supabase
       .from('demand_forecasts')
       .select('*')

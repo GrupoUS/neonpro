@@ -1,0 +1,215 @@
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/client'
+import { cookies } from 'next/headers';
+import { z } from 'zod';
+import { ReportSystem } from '@/lib/dashboard/executive/report-system';
+
+// Schema for report generation request
+const GenerateReportSchema = z.object({
+  templateId: z.string().uuid(),
+  name: z.string().min(1, 'Nome é obrigatório'),
+  format: z.enum(['pdf', 'excel', 'csv', 'json']).default('pdf'),
+  parameters: z.object({
+    dateRange: z.object({
+      start: z.string().datetime(),
+      end: z.string().datetime()
+    }),
+    departments: z.array(z.string()).optional(),
+    services: z.array(z.string()).optional(),
+    includeCharts: z.boolean().default(true),
+    includeTables: z.boolean().default(true),
+    includeKPIs: z.boolean().default(true)
+  })
+});
+
+// Schema for report template creation
+const CreateTemplateSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  description: z.string().optional(),
+  type: z.enum([
+    'executive_summary', 'financial_report', 'operational_report',
+    'patient_analytics', 'staff_performance', 'custom_report'
+  ]),
+  configuration: z.object({
+    sections: z.array(z.object({
+      id: z.string(),
+      title: z.string(),
+      type: z.enum(['kpi_summary', 'chart', 'table', 'text']),
+      dataSource: z.string(),
+      config: z.record(z.any()).optional()
+    })),
+    layout: z.object({
+      orientation: z.enum(['portrait', 'landscape']).default('portrait'),
+      pageSize: z.enum(['A4', 'A3', 'Letter']).default('A4'),
+      margins: z.object({
+        top: z.number(),
+        right: z.number(),
+        bottom: z.number(),
+        left: z.number()
+      }),
+      header: z.object({
+        enabled: z.boolean(),
+        content: z.string(),
+        height: z.number()
+      }).optional(),
+      footer: z.object({
+        enabled: z.boolean(),
+        content: z.string(),
+        height: z.number()
+      }).optional()
+    }),
+    filters: z.object({
+      dateRange: z.object({
+        enabled: z.boolean(),
+        defaultPeriod: z.string()
+      }).optional(),
+      departments: z.object({
+        enabled: z.boolean(),
+        defaultSelection: z.array(z.string()).optional()
+      }).optional(),
+      services: z.object({
+        enabled: z.boolean(),
+        defaultSelection: z.array(z.string()).optional()
+      }).optional()
+    }).optional()
+  })
+});
+
+// GET /api/dashboard/executive/reports
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = const supabase = createClient();
+    
+    // Verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Não autorizado' },
+        { status: 401 }
+      );
+    }
+
+    // Get user's clinic
+    const { data: clinicUser } = await supabase
+      .from('clinic_users')
+      .select('clinic_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!clinicUser) {
+      return NextResponse.json(
+        { error: 'Usuário não associado a uma clínica' },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type'); // 'templates', 'schedules', or 'instances'
+    const status = searchParams.get('status');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const offset = parseInt(searchParams.get('offset') || '0');
+
+    const reportSystem = new ReportSystem(supabase, clinicUser.clinic_id);
+
+    if (type === 'templates') {
+      // Get report templates
+      const templates = await reportSystem.getTemplates({
+        isActive: status !== 'inactive'
+      });
+      return NextResponse.json({ templates });
+    } else if (type === 'schedules') {
+      // Get report schedules
+      const schedules = await reportSystem.getSchedules({
+        isActive: status !== 'inactive'
+      });
+      return NextResponse.json({ schedules });
+    } else {
+      // Get report instances (default)
+      const filters: any = {};
+      if (status) filters.status = status;
+
+      const instances = await reportSystem.getReportInstances(filters, limit, offset);
+      return NextResponse.json({ instances });
+    }
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/dashboard/executive/reports
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = const supabase = createClient();
+    
+    // Verify authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Não autorizado' },
+        { status: 401 }
+      );
+    }
+
+    // Get user's clinic
+    const { data: clinicUser } = await supabase
+      .from('clinic_users')
+      .select('clinic_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!clinicUser) {
+      return NextResponse.json(
+        { error: 'Usuário não associado a uma clínica' },
+        { status: 403 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const action = searchParams.get('action'); // 'generate' or 'template'
+
+    const reportSystem = new ReportSystem(supabase, clinicUser.clinic_id);
+
+    if (action === 'generate') {
+      // Generate a report
+      const body = await request.json();
+      const validatedData = GenerateReportSchema.parse(body);
+
+      const reportInstance = await reportSystem.generateReport(
+        validatedData.templateId,
+        {
+          name: validatedData.name,
+          format: validatedData.format,
+          parameters: validatedData.parameters,
+          generatedBy: user.id
+        }
+      );
+
+      return NextResponse.json({ reportInstance }, { status: 201 });
+    } else {
+      // Create a template (default)
+      const body = await request.json();
+      const validatedData = CreateTemplateSchema.parse(body);
+
+      const template = await reportSystem.createTemplate(validatedData);
+
+      return NextResponse.json({ template }, { status: 201 });
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Dados inválidos', details: error.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error('Error processing report request:', error);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    );
+  }
+}

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Compliance Framework - Data Subject Rights API
  * API para direitos do titular dos dados (LGPD Art. 18)
  * 
@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { 
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
     const { clinicId, userId, requestType, status, page, limit } = validatedQuery;
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
     const { requestType, description, specificData, reason, urgency, metadata } = validatedData;
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -418,7 +418,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Initialize Supabase client
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();

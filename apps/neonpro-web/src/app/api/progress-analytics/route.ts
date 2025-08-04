@@ -1,14 +1,14 @@
-// Story 10.2: Progress Tracking through Computer Vision - Analytics API
+﻿// Story 10.2: Progress Tracking through Computer Vision - Analytics API
 // API endpoint for progress tracking analytics and dashboard data
 
 import { progressTrackingService } from '@/app/lib/services/progress-tracking';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();

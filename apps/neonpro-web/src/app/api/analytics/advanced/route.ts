@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Advanced Analytics API Routes for NeonPro
  * 
  * API endpoints for cohort analysis, forecasting, statistical insights,
@@ -8,8 +8,8 @@
 
 import { CohortAnalyzer } from '@/lib/analytics/advanced/cohort-analyzer'
 import { ForecastingEngine } from '@/lib/analytics/advanced/forecasting-engine'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -70,7 +70,7 @@ function handleAPIError(error: any, context: string) {
 
 // Main API router
 export async function POST(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
   
   try {
     // Get user session
@@ -345,7 +345,7 @@ async function handleStatisticalAnalysis(request: NextRequest, supabase: any, us
 
 // GET endpoint for retrieving cached results
 export async function GET(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = createClient()
   
   try {
     const { data: { user }, error: authError } = await supabase.auth.getUser()

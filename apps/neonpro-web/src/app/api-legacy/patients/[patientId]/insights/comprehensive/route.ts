@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/utils/supabase/server'
-import PatientInsightsIntegration from '@/lib/ai/patient-insights'
+import { PatientInsightsIntegration } from '@/lib/ai/patient-insights'
 import { PatientInsightRequest } from '@/lib/ai/patient-insights/types'
 
 // Initialize patient insights integration

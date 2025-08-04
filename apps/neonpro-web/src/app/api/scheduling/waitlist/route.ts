@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Waitlist Management API Route
  * Story 2.2: Intelligent conflict detection and resolution - Waitlist functionality
  * 
@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { WaitlistService, TimeSlot, UrgencyLevel } from '@/lib/scheduling/conflict-resolution';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   
   try {
     // Get user session
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
   
   try {
     // Get user session
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError || !session) {

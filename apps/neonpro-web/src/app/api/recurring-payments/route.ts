@@ -1,9 +1,9 @@
-// NeonPro - Recurring Payments API Routes
+﻿// NeonPro - Recurring Payments API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Recurring payment processing endpoints
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { recurringPaymentProcessor } from '@/lib/payments/recurring/recurring-payment-processor';
 import { logger } from '@/lib/utils/logger';
@@ -32,7 +32,7 @@ const bulkProcessSchema = z.object({
 // GET /api/recurring-payments - Get payment processing status
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
 // POST /api/recurring-payments - Process recurring payment
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/recurring-payments - Bulk process payments
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {

@@ -1,17 +1,17 @@
-// Story 10.2: Progress Tracking through Computer Vision - Predictions API
+﻿// Story 10.2: Progress Tracking through Computer Vision - Predictions API
 // API endpoint for managing progress predictions
 
 import { progressTrackingService } from '@/app/lib/services/progress-tracking';
 import {
     createProgressPredictionRequestSchema
 } from '@/app/lib/validations/progress-tracking';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();

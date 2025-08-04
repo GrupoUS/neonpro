@@ -1,9 +1,9 @@
-// NeonPro - Payment Plans API Routes
+﻿// NeonPro - Payment Plans API Routes
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for payment plan management
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/lib/supabase/client'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { getInstallmentManager } from '@/lib/payments/installments/installment-manager';
@@ -49,7 +49,7 @@ const querySchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -290,7 +290,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
