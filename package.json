@@ -11,32 +11,36 @@
     "supabase"
   ],
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "test": "turbo test",
-    "test:unit": "turbo test:unit",
-    "test:e2e": "turbo test:e2e",
-    "type-check": "turbo type-check",
-    "clean": "turbo clean && rm -rf node_modules",
-    "db:push": "turbo db:push",
-    "db:migrate": "turbo db:migrate",
-    "db:generate": "turbo db:generate",
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next dist out node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,md}\"",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo build && changeset publish"
+    "format:check": "prettier --check \"**/*.{ts,tsx,md}\""
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.13.2",
+    "@supabase/supabase-js": "^2.48.1",
+    "next": "^15.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "node-cron": "^3.0.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.1",
+    "@types/node": "^22.9.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/node-cron": "^3.0.11",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.1.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.2",
     "typescript": "^5.4.5"
   },
-  "packageManager": "pnpm@9.0.6",
   "engines": {
     "node": ">=18.17.0",
-    "pnpm": ">=8.0.0"
+    "npm": ">=8.0.0"
   }
 }
