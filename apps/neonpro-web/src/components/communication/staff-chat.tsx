@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { useCommunicationRealtime } from '@/hooks/use-communication-realtime';
-import { Message } from '@/src/types/communication';
+import { Message } from '@/types/communication';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';

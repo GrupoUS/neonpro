@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Message, CommunicationConversation } from '@/src/types/communication';
+import { Message, CommunicationConversation } from '@/types/communication';
 import { useToast } from './use-toast';
 
 export interface UseCommunicationRealtimeProps {

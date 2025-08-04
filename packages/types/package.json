@@ -7,9 +7,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
@@ -20,9 +20,9 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "typescript": "catalog:",
+    "typescript": "^5.4.0",
     "tsup": "^8.0.2",
-    "eslint": "catalog:",
+    "eslint": "^8.57.0",
     "@neonpro/config": "workspace:*"
   }
 }

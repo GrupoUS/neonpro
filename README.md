@@ -1,436 +1,141 @@
-# 🌟 NeonPro - Healthcare Management System
+# NeonPro Healthcare Platform
 
-Sistema completo e moderno para gestão de clínicas de estética e beleza, desenvolvido com arquitetura moderna otimizada para performance e escalabilidade.
+## 🏥 Plataforma SaaS de Gestão Hospitalar Modernizada
 
-## 🏗️ Arquitetura Moderna (2025)
+### 📋 Stack Tecnológica
 
-### 🚀 Turborepo Monorepo
-- **Performance**: 80% redução tempo de build (180s → 36s)
-- **Cache Inteligente**: Build pipeline otimizado com cache remoto
-- **Escalabilidade**: Estrutura preparada para múltiplas aplicações
+- **Frontend**: Next.js 14 + React 18 + TypeScript
+- **Backend**: Supabase + tRPC
+- **Database**: PostgreSQL (Supabase)
+- **Monorepo**: Turborepo
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Deployment**: Vercel
 
-### 🛡️ tRPC Type-Safe APIs  
-- **Type Safety**: 98% coverage end-to-end
-- **Healthcare Compliance**: LGPD + audit trail automático
-- **Performance**: Batch requests + React Query caching
-- **Developer Experience**: Autocomplete e refactoring automático
+### 🚀 Início Rápido
+
+```bash
+# 1. Clone o repositório
+git clone <repo-url>
+cd neonpro
+
+# 2. Instale as dependências
+npm install
+
+# 3. Configure as variáveis de ambiente
+cp .env.example .env.local
+# Edite .env.local com suas configurações
+
+# 4. Execute em desenvolvimento
+npm run dev
+
+# 5. Execute o build
+npm run build
+```
 
 ### 📁 Estrutura do Projeto
+
 ```
-apps/
-├── neonpro-web/          # Aplicação principal Next.js 14
-packages/
-├── ui/                   # Componentes compartilhados
-├── utils/                # Utilitários e helpers
-├── types/                # Definições TypeScript
-└── config/               # Configurações e schemas
-```
-
-## 🛠️ Tech Stack
-- **Frontend**: Next.js 14 + React 18 + TypeScript 5.2
-- **Backend**: tRPC + Supabase + Prisma 6.13
-- **Database**: PostgreSQL com Row Level Security
-- **Build**: Turborepo + PNPM workspace
-- **UI**: TailwindCSS + Radix UI + shadcn/ui
-- **Auth**: Clerk + Supabase Auth dual-system
-
-## ✨ Funcionalidades Principais
-
-### 📋 Gestão de Serviços
-
-- ✅ CRUD completo de serviços
-- ✅ Categorização por especialidades
-- ✅ Configuração de duração e preços
-- ✅ Status ativo/inativo
-- ✅ Histórico de agendamentos por serviço
-
-### 👥 Gestão de Profissionais
-
-- ✅ Cadastro completo da equipe
-- ✅ Especialidades e comissões
-- ✅ Horários de trabalho
-- ✅ Agenda individual
-- ✅ Performance e estatísticas
-
-### ⚙️ Configurações da Clínica
-
-- ✅ Informações básicas da clínica
-- ✅ Configurações de agendamento
-- ✅ Horários de funcionamento
-- ✅ Políticas de cancelamento
-
-### 📱 WhatsApp Business Integration
-
-- ✅ Envio automático de lembretes
-- ✅ Confirmações de agendamento
-- ✅ Notificações de cancelamento
-- ✅ Templates personalizáveis
-- ✅ Teste de conexão
-
-### 📱 PWA (Progressive Web App)
-
-- ✅ Instalação como app nativo
-- ✅ Funcionamento offline
-- ✅ Sincronização em background
-- ✅ Notificações push
-- ✅ Cache inteligente
-
-### 🔐 Sistema de Sessões e Segurança
-
-- ✅ Gerenciamento avançado de sessões
-- ✅ Autenticação multi-dispositivo
-- ✅ Monitoramento de segurança em tempo real
-- ✅ Detecção de atividades suspeitas
-- ✅ Auditoria e conformidade LGPD
-- ✅ Fingerprinting de dispositivos
-- ✅ Geolocalização e análise de risco
-- ✅ Políticas de sessão personalizáveis
-
-### 🧪 Testes Automatizados
-
-- ✅ Testes unitários com Jest
-- ✅ Testes de componentes com Testing Library
-- ✅ Cobertura de código
-- ✅ Testes de integração
-
-## 📦 Estrutura do Projeto
-
-Este projeto contém todos os arquivos necessários para funcionar independentemente:
-
-\`\`\`
 neonpro/
-├── app/              # Next.js App Router
-├── components/       # Componentes React
-│   └── ui/          # Componentes UI (shadcn/ui)
-├── lib/             # Utilitários e configurações
-├── public/          # Arquivos públicos
-├── styles/          # Estilos globais
-├── .env.example     # Template de variáveis de ambiente
-├── .gitignore       # Arquivos ignorados pelo Git
-├── next.config.mjs  # Configuração Next.js
-├── package.json     # Dependências e scripts
-├── tailwind.config.ts # Configuração Tailwind
-└── tsconfig.json    # Configuração TypeScript
-\`\`\`
-
-## 🚀 Setup e Instalação
-
-### Pré-requisitos
-- Node.js ≥20.0.0
-- PNPM ≥8.0.0
-- Git
-
-### 1. Instalação das Dependências
-```bash
-# Instalar Turborepo globalmente
-npm install -g turbo
-
-# Instalar dependências do projeto
-pnpm install
-
-# Instalar dependências tRPC
-pnpm add @trpc/server @trpc/react-query @trpc/next @tanstack/react-query zod superjson
+├── apps/
+│   └── neonpro-web/          # Aplicação Next.js principal
+├── packages/
+│   ├── config/               # Configurações compartilhadas
+│   ├── types/                # Tipos TypeScript
+│   ├── ui/                   # Componentes UI
+│   └── utils/                # Utilitários
+├── turbo.json                # Configuração Turborepo
+└── vercel.json              # Configuração de deploy
 ```
 
-### 2. Configuração do Ambiente
-```bash
-# Copiar template de variáveis
-cp .env.example .env.local
+### 🔧 Scripts Disponíveis
 
-# Configurar variáveis Supabase e outras APIs
-# Ver .env.example para lista completa
+```bash
+npm run dev          # Desenvolvimento
+npm run build        # Build de produção (~26s)
+npm run lint         # Linting
+npm run type-check   # Verificação de tipos
+npm run clean        # Limpeza
 ```
 
-### 3. Configuração do Banco de Dados
-```bash
-# Gerar cliente Prisma
-pnpm db:generate
+### 🏥 Recursos Healthcare
 
-# Executar migrations (se aplicável)
-pnpm db:migrate
-```
+- ✅ Compliance LGPD/ANVISA
+- ✅ Gestão de Pacientes
+- ✅ Portal do Paciente
+- ✅ Sistema de Comunicação
+- ✅ Relatórios e Analytics
+- ✅ Forecasting de Demanda
+- ✅ Auditoria e Logs
 
-### 4. Execução do Projeto
-```bash
-# Desenvolvimento (usando Turborepo)
-pnpm dev
+### 🚀 Deploy
 
-# Build de produção
-pnpm build
+#### Vercel (Recomendado)
 
-# Executar build
-pnpm start
-```
-
-### 5. Scripts Disponíveis
-```bash
-pnpm dev          # Inicia servidor de desenvolvimento
-pnpm build        # Build de produção com Turborepo
-pnpm start        # Executa build de produção
-pnpm lint         # Executa ESLint
-pnpm test         # Executa testes Jest
-pnpm test:coverage # Testes com coverage
-```
-
-## 🚀 Tecnologias Utilizadas
-
-### Frontend
-
-- **Next.js 15** - Framework React com App Router
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização utilitária
-- **Radix UI** - Componentes acessíveis
-- **React Hook Form** - Gerenciamento de formulários
-- **Zod** - Validação de schemas
-
-### Backend
-
-- **Supabase** - Backend as a Service (Project ID: `ownkoxryswokcdanrdgj` - Brasil/São Paulo)
-- **PostgreSQL** - Banco de dados completo com 40+ tabelas
-- **Row Level Security** - Segurança de dados
-- **Real-time subscriptions** - Atualizações em tempo real
-- **Performance Monitoring** - Sistema de monitoramento integrado
-- **CRM System** - Gestão completa de relacionamento com clientes
-- **Financial Management** - Contas a pagar, fornecedores, relatórios
-
-### Testes
-
-- **Jest** - Framework de testes
-- **Testing Library** - Testes de componentes
-- **Playwright** - Testes E2E
-
-### PWA
-
-- **Service Worker** - Cache e offline
-- **Web App Manifest** - Instalação
-- **Background Sync** - Sincronização
-
-## 🗄️ Arquitetura do Banco de Dados
-
-**Projeto Supabase: `ownkoxryswokcdanrdgj` (São Paulo, Brasil)**  
-**Todas as tabelas do NeonPro estão hospedadas neste projeto Supabase**
-
-### Tabelas Principais (Sistema Core)
-- `profiles` - Perfis de usuários com dados de autenticação
-- `clients` - Gestão completa de pacientes/clientes
-- `services` - Catálogo de serviços oferecidos pela clínica
-- `professionals` - Equipe e profissionais da clínica
-- `appointments` - Sistema de agendamentos e consultas
-- `transactions` - Controle financeiro e transações
-- `clinic_settings` - Configurações gerais do sistema
-
-### Sistema Educacional
-- `courses` - Cursos e programas educacionais
-- `course_enrollments` - Inscrições e matrículas
-- `medical_documents` - Documentos médicos com verificação
-
-### CRM Avançado
-- `customers` - Base de clientes CRM
-- `customer_segments` - Segmentação inteligente
-- `customer_segment_memberships` - Relacionamentos de segmentos
-- `customer_interactions` - Histórico de interações
-- `marketing_campaigns` - Campanhas de marketing
-
-### Gestão Financeira
-- `vendors` - Cadastro de fornecedores
-- `expense_categories` - Categorização de despesas
-- `accounts_payable` - Contas a pagar
-- `payment_schedules` - Cronogramas de pagamento
-- `ap_payments` - Registro de pagamentos
-- `ap_documents` - Documentos fiscais
-- `ap_audit_log` - Auditoria financeira
-
-### Sistema de Performance
-- `performance_metrics` - Métricas de performance em tempo real
-- `performance_alerts` - Alertas automáticos de performance
-- `bundle_analysis` - Análise de bundles de JavaScript
-- `cache_performance` - Monitoramento de cache do sistema
-
-### Sistema de Sessões e Segurança
-- `user_sessions` - Gerenciamento de sessões de usuários
-- `device_registrations` - Registro e validação de dispositivos
-- `session_audit_logs` - Logs de auditoria de sessões
-- `security_events` - Eventos de segurança e monitoramento
-- `ip_blacklist` - Lista de IPs bloqueados
-- `session_policies` - Políticas de sessão personalizáveis
-
-### Recursos Avançados
-- **Row Level Security (RLS)** em todas as tabelas
-- **Triggers automáticos** para criação de perfis
-- **Funções PostgreSQL** para cálculos complexos
-- **Real-time subscriptions** para atualizações instantâneas
-- **Índices otimizados** para consultas rápidas
-
-## 📦 Instalação
-
-### Pré-requisitos
-
-- Node.js 18+
-- npm ou yarn
-- Conta no Supabase
-
-### 1. Clone o repositório
-
-\`\`\`bash
-git clone https://github.com/seu-usuario/neonpro.git
-cd neonpro
-\`\`\`
-
-### 2. Instale as dependências
-
-\`\`\`bash
-npm install
-# ou
-yarn install
-\`\`\`
-
-### 3. Configure as variáveis de ambiente
-
-\`\`\`bash
-cp .env.example .env.local
-\`\`\`
-
-Edite o arquivo `.env.local` com suas configurações:
-
-\`\`\`env
-NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima
-SUPABASE_SERVICE_ROLE_KEY=sua_chave_de_servico
-\`\`\`
-
-### 4. Configure o banco de dados
-
-Execute as migrações do Supabase:
-
-\`\`\`bash
-npm run db:migrate
-\`\`\`
-
-### 5. Execute o projeto
-
-\`\`\`bash
-npm run dev
-\`\`\`
-
-Acesse [http://localhost:3000](http://localhost:3000) no seu navegador.
-
-## 🧪 Executando Testes
-
-### Testes unitários
-
-\`\`\`bash
-# Executar todos os testes
-npm run test
-
-# Executar em modo watch
-npm run test:watch
-
-# Executar com cobertura
-npm run test:coverage
-\`\`\`
-
-### Testes E2E
-
-\`\`\`bash
-# Executar testes E2E
-npm run test:e2e
-
-# Executar com interface gráfica
-npm run test:e2e:ui
-\`\`\`
-
-## 📱 PWA - Progressive Web App
-
-O NeonPro é um PWA completo que pode ser instalado como um aplicativo nativo:
-
-### Funcionalidades PWA
-
-- **Instalação**: Pode ser instalado em dispositivos móveis e desktop
-- **Offline**: Funciona sem conexão com internet
-- **Sincronização**: Dados são sincronizados quando a conexão retorna
-- **Notificações**: Suporte a notificações push
-- **Performance**: Cache inteligente para carregamento rápido
-
-### Como instalar
-
-1. Acesse o site no navegador
-2. Procure pelo ícone de "Instalar app" na barra de endereços
-3. Clique em "Instalar" quando solicitado
-4. O app será adicionado à sua tela inicial
-
-## 📞 Integração WhatsApp Business
-
-### Configuração
-
-1. Acesse **Configurações > Notificações**
-2. Ative as notificações por WhatsApp
-3. Configure sua API Key do WhatsApp Business
-4. Adicione o número do WhatsApp
-5. Teste a conexão
-
-### Templates Disponíveis
-
-- **Lembrete de Agendamento**: Enviado automaticamente antes do horário
-- **Confirmação**: Enviado quando agendamento é confirmado
-- **Cancelamento**: Enviado quando agendamento é cancelado
-
-## 🚀 Deploy
-
-### Vercel (Recomendado)
-
-1. Conecte seu repositório ao Vercel
+1. Conecte o repositório ao Vercel
 2. Configure as variáveis de ambiente
-3. Deploy automático a cada push
+3. Deploy automático em cada push
 
-### Outros provedores
+#### Configuração de Variáveis
 
-O projeto é compatível com qualquer provedor que suporte Next.js:
+No painel da Vercel, adicione:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
 
-- Netlify
-- Railway
-- DigitalOcean App Platform
+### 📊 Performance
 
-## 🔒 Segurança
+- **Build Time**: ~26s (85% melhoria vs. anterior)
+- **Bundle Size**: Otimizado com Tree Shaking
+- **Cache**: Turborepo cache habilitado
+- **Edge**: Deploy global via Vercel Edge
 
-### Row Level Security (RLS)
+### 🔐 Segurança
 
-Todas as tabelas do Supabase utilizam RLS para garantir que:
+- Autenticação via NextAuth.js
+- RLS (Row Level Security) no Supabase
+- Sanitização de dados
+- Rate limiting
+- Logs de auditoria
 
-- Usuários só acessem seus próprios dados
-- Operações são validadas no nível do banco
-- Dados sensíveis são protegidos
+### 📈 Monitoramento
 
-### Sistema de Sessões Avançado
+- Vercel Analytics
+- Sentry para error tracking
+- Custom healthcare metrics
+- LGPD compliance tracking
 
-- **Gerenciamento Multi-Dispositivo**: Controle de sessões simultâneas
-- **Fingerprinting de Dispositivos**: Identificação única de dispositivos
-- **Monitoramento de Segurança**: Detecção de atividades suspeitas em tempo real
-- **Geolocalização**: Análise de risco baseada em localização
-- **Auditoria LGPD**: Logs completos para conformidade
-- **Políticas Personalizáveis**: Configurações flexíveis por clínica
-- **Renovação Automática**: Tokens rotativos para máxima segurança
-- **Blacklist de IPs**: Bloqueio automático de IPs maliciosos
+### 🛠️ Desenvolvimento
 
-### Autenticação
+#### Adicionando Nova Feature
 
-- Autenticação via Supabase Auth
-- Sessões seguras com JWT
-- Logout automático em caso de inatividade
-- Validação contínua de sessões
-- Detecção de sequestro de sessão
+```bash
+# 1. Crie branch
+git checkout -b feature/nova-funcionalidade
 
-## 📝 Licença
+# 2. Desenvolva
+npm run dev
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+# 3. Teste
+npm run build
+npm run lint
 
-## 📞 Suporte
+# 4. Commit e push
+git add .
+git commit -m "feat: nova funcionalidade"
+git push origin feature/nova-funcionalidade
+```
 
-Para suporte e dúvidas:
+#### tRPC APIs
 
-- 📧 Email: suporte@neonpro.com
-- 💬 Discord: [NeonPro Community](https://discord.gg/neonpro)
-- 📖 Documentação: [docs.neonpro.com](https://docs.neonpro.com)
+Migração gradual de REST para tRPC:
+- `/api-legacy/` - APIs REST existentes
+- `/api/trpc/` - Novas APIs tRPC
 
----
+### 📞 Suporte
 
-Desenvolvido com ❤️ para profissionais da estética e beleza.
+Para dúvidas ou suporte:
+- Documentação: `/docs`
+- Issues: GitHub Issues
+- Healthcare Compliance: Consulte `/docs/compliance`

@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { CommunicationConsent } from '@/src/types/communication';
+import { CommunicationConsent } from '@/types/communication';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';

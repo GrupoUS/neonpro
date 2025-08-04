@@ -26,7 +26,7 @@ import {
   CommunicationTemplate, 
   CommunicationConsent,
   CommunicationNotification 
-} from '@/src/types/communication';
+} from '@/types/communication';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';

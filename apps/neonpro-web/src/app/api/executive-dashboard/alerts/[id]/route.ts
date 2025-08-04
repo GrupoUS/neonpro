@@ -4,7 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/utils/supabase/server';
-import { executiveDashboardService } from '@/src/lib/services/executive-dashboard';
+import { executiveDashboardService } from '@/lib/services/executive-dashboard';
 
 export async function PUT(
   request: NextRequest,

@@ -1,45 +1,39 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev", 
-  "installCommand": "npm ci",
+  "version": 2,
+  "buildCommand": "turbo build --filter=@neonpro/web",
+  "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["iad1", "gru1"],
+  "outputDirectory": "apps/neonpro-web/.next",
+  "rootDirectory": "apps/neonpro-web",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
   "functions": {
-    "app/api/cron/evaluate-alerts/route.ts": {
-      "maxDuration": 60
-    },
-    "app/api/trigger/route.ts": {
-      "maxDuration": 300,
-      "memory": 1024
-    },
-    "app/api/appointments/enhanced/route.ts": {
-      "maxDuration": 30,
-      "memory": 512
-    },
-    "app/api/monitoring/*/route.ts": {
-      "maxDuration": 15,
-      "memory": 256
-    },
-    "app/api/webhooks/clerk/route.ts": {
-      "maxDuration": 30,
-      "memory": 256
+    "apps/neonpro-web/src/app/api/**/*.ts": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 30
     }
   },
-  "crons": [
+  "rewrites": [
     {
-      "path": "/api/cron/evaluate-alerts",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/cleanup-metrics",
-      "schedule": "0 2 * * *"
+      "source": "/api/trpc/(.*)",
+      "destination": "/api/trpc/$1"
     }
   ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
@@ -47,62 +41,8 @@
         {
           "key": "X-Frame-Options",
           "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
-      ]
-    },
-    {
-      "source": "/auth/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/metrics",
-      "destination": "/api/monitoring/performance"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/login",
-      "destination": "/auth/entrar",
-      "permanent": true
-    },
-    {
-      "source": "/signup",
-      "destination": "/auth/cadastrar",
-      "permanent": true
-    },
-    {
-      "source": "/sign-in",
-      "destination": "/auth/entrar",
-      "permanent": true
-    },
-    {
-      "source": "/sign-up",
-      "destination": "/auth/cadastrar",
-      "permanent": true
-    }
-  ],
-  "env": {
-    "VERCEL_ENV": "production",
-    "NODE_ENV": "production",
-    "ENABLE_EXPERIMENTAL_COREPACK": "1"
-  }
+  ]
 }

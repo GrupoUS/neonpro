@@ -1,21 +1,59 @@
-// Database types
-export * from './database';
-export * from './supabase';
+/**
+ * NeonPro Types Package
+ * Shared TypeScript types for healthcare platform
+ */
 
-// API types
-export * from './api';
-export * from './auth';
+// Patient types
+export interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  cpf: string;
+  birth_date: string;
+  gender: 'M' | 'F' | 'O';
+  status: 'active' | 'inactive';
+  created_at: string;
+  updated_at: string;
+}
 
-// Healthcare domain types
-export * from './patient';
-export * from './appointment';
-export * from './medical';
-export * from './analytics';
+// Doctor types
+export interface Doctor {
+  id: string;
+  name: string;
+  email: string;
+  crm: string;
+  specialty: string;
+  department: string;
+  status: 'active' | 'inactive';
+  working_hours: Record<string, { start: string; end: string }>;
+}
 
-// UI and form types
-export * from './forms';
-export * from './components';
+// Appointment types
+export interface Appointment {
+  id: string;
+  patient_id: string;
+  doctor_id: string;
+  appointment_date: string;
+  duration_minutes: number;
+  appointment_type: 'consultation' | 'follow_up' | 'emergency' | 'surgery';
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  notes?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+}
 
-// Utility types
-export * from './utils';
-export * from './tenant';
+// API Response types
+export interface ApiResponse<T> {
+  data: T;
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+  hasMore: boolean;
+}

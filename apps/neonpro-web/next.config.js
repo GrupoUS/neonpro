@@ -7,9 +7,6 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['@neonpro/ui'],
-    turbotrace: {
-      logLevel: 'error',
-    },
   },
   
   // Build optimizations

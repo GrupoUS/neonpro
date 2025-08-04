@@ -36,7 +36,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { CommunicationTemplate } from '@/src/types/communication';
+import { CommunicationTemplate } from '@/types/communication';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';

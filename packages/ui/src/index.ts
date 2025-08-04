@@ -1,24 +1,33 @@
-// Base UI Components Export
-export * from './button';
-export * from './input';
-export * from './card';
-export * from './form';
-export * from './table';
-export * from './dialog';
-export * from './dropdown';
-export * from './toast';
-export * from './loading';
+/**
+ * NeonPro UI Package
+ * Shared UI components for healthcare platform
+ */
 
-// Healthcare-specific components
-export * from './patient-card';
-export * from './appointment-form';
-export * from './medical-chart';
-export * from './analytics-widget';
+// Button component
+export const Button = {
+  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+  secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
+  success: 'bg-green-600 hover:bg-green-700 text-white',
+  danger: 'bg-red-600 hover:bg-red-700 text-white',
+};
 
-// Layout components
-export * from './header';
-export * from './sidebar';
-export * from './navigation';
+// Healthcare specific styling
+export const HealthcareTheme = {
+  colors: {
+    primary: '#0070f3',
+    secondary: '#7c3aed', 
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+  },
+};
 
-// Utils
-export * from './utils';
+// Export placeholder for now
+export default { Button, HealthcareTheme };
