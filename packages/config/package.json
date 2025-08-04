@@ -27,7 +27,7 @@
     "typescript": "catalog:",
     "tsup": "^8.0.2",
     "eslint": "catalog:",
-    "@next/eslint-config-next": "catalog:",
+    "eslint-config-next": "catalog:",
     "prettier": "catalog:",
     "tailwindcss": "catalog:"
   }

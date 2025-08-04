@@ -39,7 +39,16 @@ catalog:
   # Development tools
   eslint: "^8.57.0"
   "@next/eslint-config-next": "^14.2.0"
+  "eslint-config-next": "^14.2.0"
   prettier: "^3.2.0"
+  
+  # tRPC
+  "@trpc/server": "^10.45.0"
+  "@trpc/client": "^10.45.0"
+  "@trpc/react-query": "^10.45.0"
+  "@trpc/next": "^10.45.0"
+  "@tanstack/react-query": "^5.25.0"
+  "superjson": "^2.2.0"
   
   # Testing
   jest: "^29.7.0"
