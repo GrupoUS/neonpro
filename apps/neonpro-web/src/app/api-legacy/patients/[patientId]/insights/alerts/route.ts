@@ -2,16 +2,7 @@
 // Story 3.2: Task 8 - API Endpoints
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import PatientInsightsIntegration from '@/lib/ai/patient-insights'
-
-// Initialize patient insights integration
-const patientInsights = new PatientInsightsIntegration({
-  enableRiskAssessment: true,
-  enableBehaviorAnalysis: true,
-  enableHealthTrends: true
-})
+import { createClient } from '@/app/utils/supabase/server'
 
 // GET /api/patients/[patientId]/insights/alerts
 export async function GET(
@@ -20,7 +11,7 @@ export async function GET(
 ) {
   try {
     // 1. Authenticate user
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { data: { session } } = await supabase.auth.getSession()
     
     if (!session) {
@@ -152,7 +143,7 @@ export async function POST(
 ) {
   try {
     // 1. Authenticate user
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createClient()
     const { data: { session } } = await supabase.auth.getSession()
     
     if (!session) {

@@ -862,4 +862,12 @@ export class SessionManager {
   }
 }
 
+// Create a default instance for direct import
+export const sessionManager = new SessionManager({
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+  supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+  defaultTimeout: 24 * 60 * 60 * 1000, // 24 hours
+  enableLogging: process.env.NODE_ENV === 'development'
+});
+
 export default SessionManager;
