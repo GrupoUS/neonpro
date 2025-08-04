@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { SessionManager } from '@/lib/auth/session-manager';
+import { SessionManager } from '@/lib/auth/session/SessionManager';
 import { createClient } from '@/lib/supabase/server';
 
 // Initialize session manager

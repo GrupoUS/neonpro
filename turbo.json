@@ -1,0 +1,113 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "!.env.local",
+        "!.env*.local"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "build/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "jest.config.js",
+        "jest.setup.js",
+        "cypress.config.ts",
+        "playwright.config.ts"
+      ],
+      "outputs": [
+        "coverage/**",
+        "test-results/**",
+        "cypress/screenshots/**",
+        "cypress/videos/**"
+      ]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "jest.config.js",
+        "jest.setup.js"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "cypress.config.ts",
+        "playwright.config.ts"
+      ],
+      "outputs": [
+        "test-results/**",
+        "cypress/screenshots/**",
+        "cypress/videos/**"
+      ]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".eslintrc.json",
+        ".eslintignore"
+      ]
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "tsconfig.json"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    },
+    "db:generate": {
+      "inputs": [
+        "prisma/schema.prisma",
+        "supabase/migrations/**"
+      ],
+      "outputs": [
+        "node_modules/.prisma/**",
+        "prisma/generated/**"
+      ]
+    }
+  },
+  "globalDependencies": [
+    "package.json",
+    "pnpm-workspace.yaml",
+    ".env",
+    ".env.production",
+    "turbo.json"
+  ],
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "DATABASE_URL",
+    "DIRECT_URL",
+    "VERCEL_URL"
+  ]
+}

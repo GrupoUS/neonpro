@@ -4,7 +4,7 @@ import type React from "react";
 
 import { createClient } from "@/app/utils/supabase/client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { sessionManager } from "@/lib/auth/session/session-manager";
+import { sessionManager } from "@/lib/auth/session/SessionManager";
 import { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
 import { securityAuditLogger } from "@/lib/auth/security-audit-logger";
 import { permissionValidator } from "@/lib/auth/permission-validator";

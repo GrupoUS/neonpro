@@ -4,7 +4,7 @@
  */
 
 import { AuthError } from '@supabase/supabase-js';
-import { sessionManager } from './session/session-manager';
+import { sessionManager } from './session/SessionManager';
 import { performanceTracker } from './performance-tracker';
 
 export interface OAuthErrorContext {

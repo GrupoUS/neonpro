@@ -1,0 +1,10 @@
+{
+  "teamId": "neonpro-healthcare",
+  "apiUrl": "https://vercel.com/api/turborepo",
+  "loginUrl": "https://vercel.com/turborepo/token",
+  "signature": true,
+  "preflight": true,
+  "timeout": 300,
+  "upload": true,
+  "enabled": true
+}

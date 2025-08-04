@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { securityAuditLogger } from '@/lib/auth/security-audit-logger';
 import { permissionValidator } from '@/lib/auth/permission-validator';
-import { sessionManager } from '@/lib/auth/session/session-manager';
+import { sessionManager } from '@/lib/auth/session/SessionManager';
 
 interface AuditLog {
   id: string;

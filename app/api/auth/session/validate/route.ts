@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { SessionManager } from '@/lib/auth/session-manager';
+import { SessionManager } from '@/lib/auth/session/SessionManager';
 import { createClient } from '@/lib/supabase/server';
 import {
   SessionValidationResult,

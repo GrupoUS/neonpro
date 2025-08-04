@@ -1,11 +1,49 @@
 packages:
-  - apps/*
-  - packages/*
+  - "apps/*"
+  - "packages/*"
+  - "tools/*"
 
-onlyBuiltDependencies:
-  - '@clerk/shared'
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@sentry/cli'
-  - '@vercel/speed-insights'
-  - cypress
+# Turborepo configuration
+catalog:
+  # Next.js and React ecosystem
+  next: "^14.2.0"
+  react: "^18.3.0"
+  react-dom: "^18.3.0"
+  
+  # TypeScript
+  typescript: "^5.4.0"
+  "@types/react": "^18.3.0"
+  "@types/react-dom": "^18.3.0"
+  "@types/node": "^20.12.0"
+  
+  # Supabase
+  "@supabase/ssr": "^0.3.0"
+  "@supabase/supabase-js": "^2.43.0"
+  
+  # Database
+  prisma: "^5.14.0"
+  "@prisma/client": "^5.14.0"
+  
+  # UI and styling
+  tailwindcss: "^3.4.0"
+  "@radix-ui/react-slot": "^1.0.2"
+  "class-variance-authority": "^0.7.0"
+  clsx: "^2.1.0"
+  "tailwind-merge": "^2.3.0"
+  
+  # Forms and validation
+  "react-hook-form": "^7.51.0"
+  "@hookform/resolvers": "^3.3.0"
+  zod: "^3.23.0"
+  
+  # Development tools
+  eslint: "^8.57.0"
+  "@next/eslint-config-next": "^14.2.0"
+  prettier: "^3.2.0"
+  
+  # Testing
+  jest: "^29.7.0"
+  "@testing-library/react": "^15.0.0"
+  "@testing-library/jest-dom": "^6.4.0"
+  cypress: "^13.8.0"
+  "@playwright/test": "^1.43.0"

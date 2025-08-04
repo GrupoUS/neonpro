@@ -7,7 +7,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { sessionManager, SessionData } from './session-manager'
+import { sessionManager, SessionData } from './SessionManager'
 import { createClient } from '@/lib/supabase/client'
 
 interface UseSessionReturn {
