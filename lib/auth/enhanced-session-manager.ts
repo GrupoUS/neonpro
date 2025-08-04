@@ -5,8 +5,26 @@
 
 import { createClient } from '@/app/utils/supabase/client';
 import { createClient as createBrowserClient } from '@/app/utils/supabase/client';
-import { sessionManager } from './session-manager';
+import { SessionManager } from './session-manager';
 import { performanceTracker } from './performance-tracker';
+
+// Create singleton instance of SessionManager
+let sessionManagerInstance: SessionManager | null = null;
+
+const getSessionManager = (): SessionManager => {
+  if (!sessionManagerInstance) {
+    sessionManagerInstance = new SessionManager({
+      redis: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+        prefix: 'neonpro:session:'
+      },
+      policies: {
+        cleanup_interval_minutes: 30
+      }
+    });
+  }
+  return sessionManagerInstance;
+};
 
 export interface SecureTokenStorage {
   accessToken: string;
@@ -169,7 +187,7 @@ class EnhancedSessionManager {
     await this.logSessionActivity(activityRecord);
     
     // Update session manager
-    await sessionManager.updateSessionActivity(sessionId, {
+    await getSessionManager().updateSessionActivity(sessionId, {
       action: activity.action,
       resource: activity.resource,
     });
@@ -213,7 +231,7 @@ class EnhancedSessionManager {
       });
       
       // Notify session manager
-      await sessionManager.manageConcurrentSessions('', sessionId);
+      await getSessionManager().manageConcurrentSessions('', sessionId);
     } catch (error) {
       console.error('Force session timeout failed:', error);
     }
@@ -289,7 +307,7 @@ class EnhancedSessionManager {
       }
       
       // Use existing session manager for general concurrent session management
-      await sessionManager.manageConcurrentSessions(userId, '');
+      await getSessionManager().manageConcurrentSessions(userId, '');
     } catch (error) {
       console.error('Concurrent session monitoring failed:', error);
     }
