@@ -673,3 +673,13 @@ export function getEnvironmentSpecificConfig(): SessionConfig {
 
 // Exportar configuração final baseada no ambiente
 export const FINAL_CONFIG = getEnvironmentSpecificConfig()
+
+// Export para compatibilidade com imports existentes
+export const sessionConfig = {
+  ...FINAL_CONFIG,
+  cleanup: DEFAULT_CLEANUP_CONFIG,
+  device: DEFAULT_DEVICE_CONFIG,
+  security: DEFAULT_SECURITY_CONFIG,
+  notification: DEFAULT_NOTIFICATION_CONFIG,
+  database: DEFAULT_DATABASE_CONFIG
+}

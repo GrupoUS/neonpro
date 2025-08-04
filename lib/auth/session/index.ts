@@ -11,12 +11,12 @@
  */
 
 // Core Session Management
-export { UnifiedSessionSystem } from './core/SessionManager';
-export { SessionAuth } from './core/SessionAuth';
-export { DeviceManager } from './core/DeviceManager';
-export { SecurityEventLogger } from './core/SecurityEventLogger';
-export { NotificationService } from './core/NotificationService';
-export { DataCleanupService } from './core/DataCleanupService';
+export { UnifiedSessionSystem } from './UnifiedSessionSystem';
+export { SessionManager } from './SessionManager';
+export { DeviceManager } from './DeviceManager';
+export { SecurityEventLogger } from './SecurityEventLogger';
+export { NotificationService } from './NotificationService';
+export { DataCleanupService } from './DataCleanupService';
 
 // Configuration and Types
 export * from './config';
