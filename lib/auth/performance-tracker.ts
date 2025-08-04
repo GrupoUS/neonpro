@@ -173,3 +173,42 @@ class PerformanceTracker {
 }
 
 export const performanceTracker = PerformanceTracker.getInstance();
+
+/**
+ * Convenience functions for common tracking scenarios
+ */
+export const trackLoginPerformance = (
+  duration: number,
+  metadata?: Record<string, string>
+): void => {
+  performanceTracker.recordMetric('login_duration', duration, metadata);
+};
+
+export const trackAuthenticationTime = (
+  duration: number,
+  method: string,
+  success: boolean
+): void => {
+  performanceTracker.recordMetric('authentication_time', duration, {
+    method,
+    success: success.toString()
+  });
+};
+
+export const trackSessionCreation = (
+  duration: number,
+  userRole?: string
+): void => {
+  performanceTracker.recordMetric('session_creation', duration, {
+    userRole: userRole || 'unknown'
+  });
+};
+
+export const trackDeviceRegistration = (
+  duration: number,
+  deviceType?: string
+): void => {
+  performanceTracker.recordMetric('device_registration', duration, {
+    deviceType: deviceType || 'unknown'
+  });
+};
