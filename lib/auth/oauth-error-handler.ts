@@ -4,7 +4,7 @@
  */
 
 import { AuthError } from '@supabase/supabase-js';
-import { enhancedSessionManager } from './enhanced-session-manager';
+import { sessionManager } from './session/session-manager';
 import { performanceTracker } from './performance-tracker';
 
 export interface OAuthErrorContext {
@@ -498,7 +498,7 @@ class OAuthErrorHandler {
   ): Promise<void> {
     // Clear session if exists
     if (context.sessionId) {
-      await enhancedSessionManager.forceSessionTimeout(
+      await sessionManager.terminateSession(
         context.sessionId,
         'error_recovery_redirect'
       );

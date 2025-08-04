@@ -8,8 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -27,8 +26,8 @@ export async function GET(
 ) {
   try {
     // Get user session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
         { status: 401 }
@@ -82,10 +81,10 @@ export async function GET(
     const { data: userProfile } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', session.user.id)
+      .eq('id', userId)
       .single();
     
-    const isOwner = cardPayment.created_by === session.user.id;
+    const isOwner = cardPayment.created_by === userId;
     const hasPermission = userProfile?.role && ['admin', 'manager', 'financial'].includes(userProfile.role);
     
     if (!isOwner && !hasPermission) {

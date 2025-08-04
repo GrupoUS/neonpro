@@ -9,8 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 import { CardPaymentService } from '@/lib/payments/card/card-payment-service';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@clerk/nextjs/server';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -103,8 +102,8 @@ function isValidDocument(document: string): boolean {
 export async function POST(request: NextRequest) {
   try {
     // Get user session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { userId } = auth();
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized', message: 'User not authenticated' },
         { status: 401 }
@@ -115,7 +114,7 @@ export async function POST(request: NextRequest) {
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', session.user.id)
+      .eq('id', userId)
       .single();
     
     if (profileError || !profile) {
@@ -177,7 +176,7 @@ export async function POST(request: NextRequest) {
         patientId: validatedData.patientId || '',
         installments: validatedData.installments.toString(),
         originalAmount: validatedData.amount.toString(),
-        createdBy: session.user.id,
+        createdBy: userId,
       },
       payableId: validatedData.payableId,
       patientId: validatedData.patientId,
@@ -202,7 +201,7 @@ export async function POST(request: NextRequest) {
             installments: validatedData.installments,
             original_amount: validatedData.amount,
           },
-          created_by: session.user.id,
+          created_by: userId,
         });
       
       if (paymentRecordError) {
@@ -275,7 +274,7 @@ export async function POST(request: NextRequest) {
           customer_email: validatedData.customer.email,
           installments: validatedData.installments,
         },
-        user_id: session.user.id,
+        user_id: userId,
       });
     
     return NextResponse.json({

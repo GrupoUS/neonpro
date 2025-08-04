@@ -4,7 +4,7 @@ import type React from "react";
 
 import { createClient } from "@/app/utils/supabase/client";
 import { createContext, useContext, useEffect, useState } from "react";
-import { enhancedSessionManager } from "@/lib/auth/enhanced-session-manager";
+import { sessionManager } from "@/lib/auth/session/session-manager";
 import { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
 import { securityAuditLogger } from "@/lib/auth/security-audit-logger";
 import { permissionValidator } from "@/lib/auth/permission-validator";
@@ -200,7 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Enhanced secure logout
       if (session) {
-        await enhancedSessionManager.secureLogout(session.access_token);
+        await sessionManager.terminateSession(session.access_token, 'user_logout');
       }
       
       await supabase.auth.signOut();

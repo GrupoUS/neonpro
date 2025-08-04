@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { securityAuditLogger } from '@/lib/auth/security-audit-logger';
 import { permissionValidator } from '@/lib/auth/permission-validator';
-import { enhancedSessionManager } from '@/lib/auth/enhanced-session-manager';
+import { sessionManager } from '@/lib/auth/session/session-manager';
 
 interface AuditLog {
   id: string;
@@ -61,7 +61,7 @@ export default function EnhancedOAuthDemo() {
     if (!session) return;
     
     try {
-      const info = await enhancedSessionManager.getSessionInfo(session.access_token);
+      const info = await sessionManager.getActiveSessions(user.id);
       setSessionInfo(info);
     } catch (error) {
       console.error('Error loading session info:', error);
