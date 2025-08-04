@@ -287,6 +287,10 @@ export const PerformanceOptimizationSchema = z.object({
   compression_enabled: z.boolean().default(true),
 });
 
+// Export missing schemas with proper names
+export const dashboardLayoutSchema = DashboardLayoutSchema;
+export const dashboardWidgetSchema = DashboardWidgetSchema;
+
 // Export types
 export type FinancialKPIInput = z.infer<typeof FinancialKPISchema>;
 export type KPIThresholdInput = z.infer<typeof KPIThresholdSchema>;

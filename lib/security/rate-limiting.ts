@@ -10,3 +10,6 @@ export function rateLimiter() {
 export function checkRateLimit(key: string) {
   return { success: true, limit: 100, remaining: 99, reset: Date.now() + 3600000 };
 }
+
+// Export with expected name
+export const rateLimit = rateLimiter;

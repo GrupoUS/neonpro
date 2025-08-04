@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash, randomBytes } from 'crypto';
 import { createClient } from '@/app/utils/supabase/client';
+import { useState, useEffect } from 'react';
 
 export interface CSRFTokenData {
   token: string;
@@ -316,3 +317,6 @@ export function useCSRFToken() {
 
 // Export for use in other modules
 export default CSRFProtection;
+
+// Export with expected function name
+export const validateCSRF = CSRFProtection.validateCSRFMiddleware;
