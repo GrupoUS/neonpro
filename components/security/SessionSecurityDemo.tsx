@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSessionSecurity, useCSRFToken, useSessionTimeout } from '@/lib/security/hooks/useSessionSecurity';
+import { useSessionSecurity, useSessionTimeout } from '@/lib/security/hooks/useSessionSecurity';
+import { useCSRFToken } from '@/lib/security/csrf-protection-hooks';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
