@@ -6,12 +6,6 @@
   "framework": "nextjs",
   "regions": ["iad1", "gru1"],
   "functions": {
-    "app/auth/popup-callback/route.ts": {
-      "maxDuration": 30
-    },
-    "app/auth/callback/route.ts": {
-      "maxDuration": 30
-    },
     "app/api/cron/evaluate-alerts/route.ts": {
       "maxDuration": 60
     },
@@ -26,6 +20,10 @@
     "app/api/monitoring/*/route.ts": {
       "maxDuration": 15,
       "memory": 256
+    },
+    "app/api/webhooks/clerk/route.ts": {
+      "maxDuration": 30,
+      "memory": 256
     }
   },
   "crons": [
@@ -39,6 +37,27 @@
     }
   ],
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
     {
       "source": "/auth/(.*)",
       "headers": [
@@ -57,6 +76,28 @@
     {
       "source": "/metrics",
       "destination": "/api/monitoring/performance"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/login",
+      "destination": "/auth/entrar",
+      "permanent": true
+    },
+    {
+      "source": "/signup",
+      "destination": "/auth/cadastrar",
+      "permanent": true
+    },
+    {
+      "source": "/sign-in",
+      "destination": "/auth/entrar",
+      "permanent": true
+    },
+    {
+      "source": "/sign-up",
+      "destination": "/auth/cadastrar",
+      "permanent": true
     }
   ],
   "env": {
