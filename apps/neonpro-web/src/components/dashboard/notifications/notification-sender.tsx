@@ -202,23 +202,23 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
   // ================================================================================
 
   const renderRecipientSelection = () => (
-    <div className=\"space-y-4\">
+    <div className="space-y-4">
       <FormField
         control={form.control}
-        name=\"recipientType\"
+        name="recipientType"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Destinatários</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder=\"Selecione o tipo de destinatário\" />
+                  <SelectValue placeholder="Selecione o tipo de destinatário" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value=\"single\">Paciente Individual</SelectItem>
-                <SelectItem value=\"group\">Grupo de Pacientes</SelectItem>
-                <SelectItem value=\"all\">Todos os Pacientes</SelectItem>
+                <SelectItem value="single">Paciente Individual</SelectItem>
+                <SelectItem value="group">Grupo de Pacientes</SelectItem>
+                <SelectItem value="all">Todos os Pacientes</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -229,12 +229,12 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
       {form.watch('recipientType') === 'single' && (
         <FormField
           control={form.control}
-          name=\"recipientId\"
+          name="recipientId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Paciente</FormLabel>
               <FormControl>
-                <Input placeholder=\"Buscar paciente...\" {...field} />
+                <Input placeholder="Buscar paciente..." {...field} />
               </FormControl>
               <FormDescription>
                 Digite o nome ou CPF do paciente
@@ -245,8 +245,8 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
         />
       )}
 
-      <div className=\"flex items-center space-x-2 text-sm text-muted-foreground\">
-        <Icons.Users className=\"h-4 w-4\" />
+      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+        <Icons.Users className="h-4 w-4" />
         <span>Alcance estimado: {estimatedReach} destinatário(s)</span>
       </div>
     </div>
@@ -255,16 +255,16 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
   const renderChannelSelection = () => (
     <FormField
       control={form.control}
-      name=\"channels\"
+      name="channels"
       render={() => (
         <FormItem>
-          <div className=\"mb-4\">
-            <FormLabel className=\"text-base\">Canais de Envio</FormLabel>
+          <div className="mb-4">
+            <FormLabel className="text-base">Canais de Envio</FormLabel>
             <FormDescription>
               Selecione os canais para envio da notificação
             </FormDescription>
           </div>
-          <div className=\"grid grid-cols-2 gap-4\">
+          <div className="grid grid-cols-2 gap-4">
             {[
               { id: 'email', label: 'E-mail', icon: Icons.Mail },
               { id: 'sms', label: 'SMS', icon: Icons.MessageSquare },
@@ -275,13 +275,13 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
               <FormField
                 key={channel.id}
                 control={form.control}
-                name=\"channels\"
+                name="channels"
                 render={({ field }) => {
                   const Icon = channel.icon;
                   return (
                     <FormItem
                       key={channel.id}
-                      className=\"flex flex-row items-start space-x-3 space-y-0\"
+                      className="flex flex-row items-start space-x-3 space-y-0"
                     >
                       <FormControl>
                         <Checkbox
@@ -294,9 +294,9 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
                           }}
                         />
                       </FormControl>
-                      <div className=\"flex items-center space-x-2\">
-                        <Icon className=\"h-4 w-4\" />
-                        <FormLabel className=\"font-normal\">
+                      <div className="flex items-center space-x-2">
+                        <Icon className="h-4 w-4" />
+                        <FormLabel className="font-normal">
                           {channel.label}
                         </FormLabel>
                       </div>
@@ -313,11 +313,11 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
   );
 
   const renderAdvancedOptions = () => (
-    <div className=\"space-y-4\">
-      <div className=\"grid grid-cols-2 gap-4\">
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
-          name=\"priority\"
+          name="priority"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Prioridade</FormLabel>
@@ -328,10 +328,10 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value=\"low\">Baixa</SelectItem>
-                  <SelectItem value=\"normal\">Normal</SelectItem>
-                  <SelectItem value=\"high\">Alta</SelectItem>
-                  <SelectItem value=\"urgent\">Urgente</SelectItem>
+                  <SelectItem value="low">Baixa</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="high">Alta</SelectItem>
+                  <SelectItem value="urgent">Urgente</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -341,13 +341,13 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
 
         <FormField
           control={form.control}
-          name=\"scheduledFor\"
+          name="scheduledFor"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Agendar Para</FormLabel>
               <FormControl>
                 <Input
-                  type=\"datetime-local\"
+                  type="datetime-local"
                   {...field}
                 />
               </FormControl>
@@ -360,14 +360,14 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
         />
       </div>
 
-      <div className=\"space-y-3\">
+      <div className="space-y-3">
         <FormField
           control={form.control}
-          name=\"enableMLOptimization\"
+          name="enableMLOptimization"
           render={({ field }) => (
-            <FormItem className=\"flex flex-row items-center justify-between rounded-lg border p-4\">
-              <div className=\"space-y-0.5\">
-                <FormLabel className=\"text-base\">
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">
                   Otimização Inteligente
                 </FormLabel>
                 <FormDescription>
@@ -386,11 +386,11 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
 
         <FormField
           control={form.control}
-          name=\"testMode\"
+          name="testMode"
           render={({ field }) => (
-            <FormItem className=\"flex flex-row items-center justify-between rounded-lg border p-4\">
-              <div className=\"space-y-0.5\">
-                <FormLabel className=\"text-base\">
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">
                   Modo Teste
                 </FormLabel>
                 <FormDescription>
@@ -415,7 +415,7 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
   // ================================================================================
 
   return (
-    <div className=\"max-w-4xl space-y-6\">
+    <div className="max-w-4xl space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Enviar Notificação</CardTitle>
@@ -425,17 +425,17 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className=\"space-y-6\">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Destinatários */}
               {renderRecipientSelection()}
 
               <Separator />
 
               {/* Conteúdo */}
-              <div className=\"grid grid-cols-1 gap-4\">
+              <div className="grid grid-cols-1 gap-4">
                 <FormField
                   control={form.control}
-                  name=\"type\"
+                  name="type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo de Notificação</FormLabel>
@@ -446,11 +446,11 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value=\"appointment_reminder\">Lembrete de Consulta</SelectItem>
-                          <SelectItem value=\"promotional\">Promocional</SelectItem>
-                          <SelectItem value=\"informational\">Informativa</SelectItem>
-                          <SelectItem value=\"urgent\">Urgente</SelectItem>
-                          <SelectItem value=\"system\">Sistema</SelectItem>
+                          <SelectItem value="appointment_reminder">Lembrete de Consulta</SelectItem>
+                          <SelectItem value="promotional">Promocional</SelectItem>
+                          <SelectItem value="informational">Informativa</SelectItem>
+                          <SelectItem value="urgent">Urgente</SelectItem>
+                          <SelectItem value="system">Sistema</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -460,13 +460,13 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
 
                 <FormField
                   control={form.control}
-                  name=\"title\"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Título</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder=\"Título da notificação...\" 
+                          placeholder="Título da notificação..." 
                           {...field} 
                         />
                       </FormControl>
@@ -480,14 +480,14 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
 
                 <FormField
                   control={form.control}
-                  name=\"content\"
+                  name="content"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Conteúdo</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder=\"Conteúdo da notificação...\"
-                          className=\"min-h-[100px]\"
+                          placeholder="Conteúdo da notificação..."
+                          className="min-h-[100px]"
                           {...field} 
                         />
                       </FormControl>
@@ -511,26 +511,26 @@ export function NotificationSender({ onNotificationSent }: NotificationSenderPro
               {renderAdvancedOptions()}
 
               {/* Ações */}
-              <div className=\"flex items-center justify-between pt-6\">
-                <div className=\"flex items-center space-x-2\">
+              <div className="flex items-center justify-between pt-6">
+                <div className="flex items-center space-x-2">
                   {form.watch('testMode') && (
-                    <Badge variant=\"outline\">Modo Teste</Badge>
+                    <Badge variant="outline">Modo Teste</Badge>
                   )}
                   {form.watch('enableMLOptimization') && (
-                    <Badge variant=\"secondary\">IA Ativada</Badge>
+                    <Badge variant="secondary">IA Ativada</Badge>
                   )}
                 </div>
                 
-                <div className=\"space-x-2\">
+                <div className="space-x-2">
                   <Button 
-                    type=\"button\" 
-                    variant=\"outline\"
+                    type="button" 
+                    variant="outline"
                     onClick={() => form.reset()}
                   >
                     Limpar
                   </Button>
-                  <Button type=\"submit\" disabled={loading}>
-                    {loading && <Icons.Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />}
+                  <Button type="submit" disabled={loading}>
+                    {loading && <Icons.Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {loading ? 'Enviando...' : 'Enviar Notificação'}
                   </Button>
                 </div>

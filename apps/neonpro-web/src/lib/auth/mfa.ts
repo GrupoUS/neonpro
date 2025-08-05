@@ -102,7 +102,7 @@ export interface MFAAuditLog {
   userAgent: string;
   deviceFingerprint?: string;
   emergencyBypass?: boolean;
-  metadata: Record&lt;string, unknown&gt;;
+  metadata: Record<string, unknown>;
   timestamp: Date;
 }
 
@@ -112,7 +112,7 @@ export const MFASetupSchema = z.object({
   method: z.enum(['totp', 'sms']),
   phoneNumber: z.string().optional(),
   deviceName: z.string().min(1, 'Device name is required'),
-  lgpdConsent: z.boolean().refine(val =&gt; val === true, 'LGPD consent is required'),
+  lgpdConsent: z.boolean().refine(val => val === true, 'LGPD consent is required'),
 });
 
 export const MFAVerificationSchema = z.object({
@@ -148,7 +148,7 @@ export class MFAService {
   private supabase;
   private config: MFAConfig;
 
-  constructor(supabaseUrl: string, supabaseKey: string, config?: Partial&lt;MFAConfig&gt;) {
+  constructor(supabaseUrl: string, supabaseKey: string, config?: Partial<MFAConfig>) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.config = { ...DEFAULT_MFA_CONFIG, ...config };
   }
@@ -166,7 +166,7 @@ export class MFAService {
       userAgent: string;
       ipAddress: string;
     }
-  ): Promise&lt;MFASetupResult&gt; {
+  ): Promise<MFASetupResult> {
     try {
       // Validate input
       const validation = MFASetupSchema.parse({

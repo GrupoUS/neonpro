@@ -70,67 +70,134 @@ export default function PatientForm() {
 - **GitHub Actions**: CI/CD pipeline with BMAD quality gates and automated testing
 - **Docker**: Containerized development environment for consistency across team
 
-## 📦 Complete Dependency Map
+## 📦 BMAD-Enhanced Dependency Map
 
-### Production Dependencies
+### Production Dependencies (React 19 + Vite 6 Ready)
 ```json
 {
-  "@hookform/resolvers": "latest",
-  "@radix-ui/react-avatar": "latest",
-  "@radix-ui/react-dialog": "latest", 
-  "@radix-ui/react-dropdown-menu": "latest",
-  "@radix-ui/react-icons": "latest",
-  "@radix-ui/react-label": "latest",
-  "@radix-ui/react-navigation-menu": "latest",
-  "@radix-ui/react-popover": "latest",
-  "@radix-ui/react-scroll-area": "latest",
-  "@radix-ui/react-separator": "latest",
-  "@radix-ui/react-slot": "latest",
-  "@radix-ui/react-tabs": "latest",
-  "@radix-ui/react-toast": "latest",
-  "@supabase/ssr": "latest",
-  "@supabase/supabase-js": "latest",
-  "class-variance-authority": "latest",
-  "clsx": "latest",
-  "lucide-react": "latest",
-  "next": "latest",
-  "next-themes": "latest",
-  "react": "latest",
-  "react-dom": "latest",
-  "react-hook-form": "latest",
-  "sonner": "latest",
-  "tailwind-merge": "latest",
-  "tailwindcss-animate": "latest",
-  "zod": "latest"
+  "@hookform/resolvers": "^3.3.4",
+  "@radix-ui/react-avatar": "^1.0.4",
+  "@radix-ui/react-dialog": "^1.0.5", 
+  "@radix-ui/react-dropdown-menu": "^2.0.6",
+  "@radix-ui/react-icons": "^1.3.0",
+  "@radix-ui/react-label": "^2.0.2",
+  "@radix-ui/react-navigation-menu": "^1.1.4",
+  "@radix-ui/react-popover": "^1.0.7",
+  "@radix-ui/react-scroll-area": "^1.0.5",
+  "@radix-ui/react-separator": "^1.0.3",
+  "@radix-ui/react-slot": "^1.0.2",
+  "@radix-ui/react-tabs": "^1.0.4",
+  "@radix-ui/react-toast": "^1.1.5",
+  "@supabase/ssr": "^0.1.0",
+  "@supabase/supabase-js": "^2.39.3",
+  "class-variance-authority": "^0.7.0",
+  "clsx": "^2.1.0",
+  "lucide-react": "^0.263.1",
+  "next": "^15.0.3",
+  "next-themes": "^0.2.1",
+  "react": "^19.0.0",
+  "react-dom": "^19.0.0",
+  "react-hook-form": "^7.49.3",
+  "sonner": "^1.4.0",
+  "tailwind-merge": "^2.2.1",
+  "tailwindcss-animate": "^1.0.7",
+  "zod": "^3.22.4",
+  "framer-motion": "^11.0.3",
+  "date-fns": "^3.3.1",
+  "use-debounce": "^10.0.0"
 }
 ```
 
-### Development Dependencies
+### Development Dependencies (BMAD Toolchain)
 ```json
 {
-  "@types/node": "latest",
-  "@types/react": "latest", 
-  "@types/react-dom": "latest",
-  "eslint": "latest",
-  "eslint-config-next": "latest",
-  "postcss": "latest",
-  "tailwindcss": "latest",
-  "typescript": "latest"
+  "@types/node": "^20.11.17",
+  "@types/react": "^19.0.0", 
+  "@types/react-dom": "^19.0.0",
+  "eslint": "^9.0.0",
+  "eslint-config-next": "^15.0.3",
+  "postcss": "^8.4.35",
+  "tailwindcss": "^4.0.0-alpha.20",
+  "typescript": "^5.6.2",
+  "vite": "^6.0.0",
+  "@vitejs/plugin-react": "^4.2.1",
+  "vitest": "^2.0.5",
+  "@testing-library/react": "^14.2.1",
+  "@testing-library/jest-dom": "^6.4.2",
+  "playwright": "^1.41.2",
+  "@biomejs/biome": "^1.5.3",
+  "husky": "^9.0.10",
+  "lint-staged": "^15.2.2"
 }
 ```
 
-## ⚙️ Configuration Files
+### Vite Configuration Integration
+```typescript
+// vite.config.ts - For interactive component development
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
-### Next.js Configuration
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+    },
+  },
+  server: {
+    port: 3001, // Different port from Next.js (3000)
+    open: false,
+  },
+  build: {
+    lib: {
+      entry: 'components/interactive/index.ts',
+      name: 'NeonProInteractive',
+      fileName: 'neonpro-interactive',
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+        },
+      },
+    },
+  },
+})
+```
+
+## ⚙️ BMAD-Enhanced Configuration Files
+
+### Next.js 15 Configuration (React 19 Ready)
 ```javascript
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     serverActions: true,
+    ppr: true, // Partial Prerendering
+    reactCompiler: true, // React 19 Compiler
   },
   images: {
     domains: ['supabase.co', 'your-supabase-url.supabase.co'],
+    formats: ['image/webp', 'image/avif'],
+  },
+  typescript: {
+    // Enable strict type checking for BMAD quality
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    // Enforce BMAD coding standards
+    ignoreDuringBuilds: false,
+  },
+  // Vite integration for development components
+  webpack: (config, { dev, isServer }) => {
+    if (dev && !isServer) {
+      config.resolve.alias['@vite-components'] = path.resolve('./components/interactive')
+    }
+    return config
   },
 }
 
@@ -169,7 +236,7 @@ export default nextConfig
 }
 ```
 
-### Tailwind Configuration
+### Tailwind 4.0 Configuration (Aesthetic Clinic Theme)
 ```typescript
 // tailwind.config.ts
 import type { Config } from 'tailwindcss'
@@ -181,6 +248,8 @@ const config: Config = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    // Vite components integration
+    './components/interactive/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -193,6 +262,7 @@ const config: Config = {
     },
     extend: {
       colors: {
+        // BMAD Design System Colors for Aesthetic Clinics
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -226,6 +296,17 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Aesthetic clinic specific colors
+        wellness: {
+          50: "hsl(var(--wellness-50))",
+          500: "hsl(var(--wellness-500))",
+          900: "hsl(var(--wellness-900))",
+        },
+        treatment: {
+          success: "hsl(var(--treatment-success))",
+          warning: "hsl(var(--treatment-warning))",
+          danger: "hsl(var(--treatment-danger))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -241,14 +322,30 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // Aesthetic-specific animations
+        "fade-in-up": {
+          from: {
+            opacity: "0",
+            transform: "translateY(10px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in-up": "fade-in-up 0.3s ease-out",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+  ],
 }
 
 export default config
@@ -387,3 +484,140 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
 ---
 
 *This document is part of the BMad Method configuration for NeonPro and is automatically loaded by the Dev Agent for consistent technology stack alignment.*
+## 🚀 React 19 + Vite Migration Strategy
+
+### Phase 1: Parallel Development Setup
+```bash
+# Install React 19 and Vite 6
+pnpm add react@19 react-dom@19 vite@6 @vitejs/plugin-react@4
+pnpm add -D @types/react@19 @types/react-dom@19
+
+# Update Next.js to 15 for React 19 support
+pnpm add next@15
+```
+
+### Phase 2: Hybrid Architecture Implementation
+```typescript
+// Development Workflow:
+// 1. Use Vite for interactive component development (HMR speed)
+// 2. Use Next.js for SSR pages and production builds
+// 3. Share components between both environments
+
+// components/interactive/index.ts (Vite entry point)
+export { PatientForm } from './PatientForm'
+export { AppointmentCalendar } from './AppointmentCalendar'
+export { TreatmentSelector } from './TreatmentSelector'
+
+// app/dashboard/patients/page.tsx (Next.js page)
+import { PatientForm } from '@/components/interactive/PatientForm'
+```
+
+### Phase 3: React 19 Features Integration
+```typescript
+// Use React 19 Actions for form handling
+"use client"
+import { useActionState } from 'react'
+
+export function PatientForm() {
+  const [state, formAction] = useActionState(createPatient, {
+    message: '',
+    errors: {}
+  })
+  
+  return (
+    <form action={formAction}>
+      {/* Optimistic updates built-in */}
+    </form>
+  )
+}
+
+// Server Actions with React 19 compatibility
+export async function createPatient(prevState: any, formData: FormData) {
+  // Validation with Zod
+  const validatedFields = PatientSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+  })
+  
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Failed to create patient.',
+    }
+  }
+  
+  // Database operation
+  const { error } = await supabase
+    .from('patients')
+    .insert(validatedFields.data)
+    
+  if (error) {
+    return { message: 'Database Error: Failed to create patient.' }
+  }
+  
+  revalidatePath('/dashboard/patients')
+  redirect('/dashboard/patients')
+}
+```
+
+## 🔄 Development Scripts (BMAD-Enhanced)
+
+### Package.json Scripts
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "dev:vite": "vite",
+    "dev:both": "concurrently \"next dev\" \"vite\"",
+    "build": "next build", 
+    "build:vite": "vite build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "prepare": "husky install"
+  }
+}
+```
+
+### BMAD Quality Gates Integration
+```json
+// .husky/pre-commit
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+pnpm lint
+pnpm type-check
+pnpm test run
+echo "✅ BMAD Quality Gates Passed"
+```
+
+## 📈 Performance Benchmarks (BMAD Target)
+
+### Development Speed
+- **Vite HMR**: <50ms component updates
+- **Next.js SSR**: <100ms server response
+- **Type Checking**: <2s full project check
+- **Build Time**: <30s production build
+
+### Runtime Performance
+- **First Contentful Paint**: <1.2s
+- **Largest Contentful Paint**: <2.5s
+- **Cumulative Layout Shift**: <0.1
+- **First Input Delay**: <100ms
+- **Time to Interactive**: <3s
+
+### Quality Metrics (BMAD ≥9.5/10)
+- **TypeScript Coverage**: 100%
+- **Test Coverage**: ≥90%
+- **Accessibility Score**: ≥95
+- **Performance Score**: ≥90
+- **SEO Score**: ≥95
+
+---
+
+*This technology stack documentation is maintained as part of the BMAD Method and ensures consistent development standards across all NeonPro components.*
