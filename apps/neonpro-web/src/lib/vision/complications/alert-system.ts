@@ -698,5 +698,5 @@ Para emergências, ligue: 192 (SAMU)
 }
 
 // Export singleton instance
-export const complicationAlertSystem = new ComplicationAlertSystem();
+export const createcomplicationAlertSystem = () => new ComplicationAlertSystem();
 

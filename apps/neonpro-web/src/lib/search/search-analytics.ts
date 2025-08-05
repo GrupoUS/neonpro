@@ -809,5 +809,5 @@ export class SearchAnalytics {
 }
 
 // Export singleton instance
-export const searchAnalytics = new SearchAnalytics();
+export const createsearchAnalytics = () => new SearchAnalytics();
 

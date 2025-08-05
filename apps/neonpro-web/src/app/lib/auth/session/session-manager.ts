@@ -403,7 +403,7 @@ class SessionManager {
 }
 
 // Export singleton instance
-export const sessionManager = new SessionManager()
+export const createsessionManager = () => new SessionManager()
 
 // Export types
 export type { SessionData, SessionActivity }

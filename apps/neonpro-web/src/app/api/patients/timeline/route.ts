@@ -1,10 +1,10 @@
-/**
+﻿/**
  * Medical Timeline API Route
  * Handles medical history timeline operations
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { medicalTimelineService } from '@/lib/patients/medical-timeline';
+import { createmedicalTimelineService } from '@/lib/patients/medical-timeline';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -48,16 +48,16 @@ export async function GET(request: NextRequest) {
           includeAttachments: searchParams.get('includeAttachments') === 'true'
         };
 
-        const timeline = await medicalTimelineService.getPatientTimeline(patientId, filter);
+        const timeline = await createmedicalTimelineService().getPatientTimeline(patientId, filter);
         return NextResponse.json({ timeline }, { status: 200 });
 
       case 'milestones':
-        const milestones = await medicalTimelineService.getTreatmentMilestones(patientId);
+        const milestones = await createmedicalTimelineService().getTreatmentMilestones(patientId);
         return NextResponse.json({ milestones }, { status: 200 });
 
       case 'summary':
         const period = searchParams.get('period') as 'week' | 'month' | 'quarter' | 'year' || 'month';
-        const summary = await medicalTimelineService.getTimelineSummary(patientId, period);
+        const summary = await createmedicalTimelineService().getTimelineSummary(patientId, period);
         return NextResponse.json({ summary }, { status: 200 });
 
       default:
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const newEvent = await medicalTimelineService.addTimelineEvent({
+        const newEvent = await createmedicalTimelineService().addTimelineEvent({
           patientId,
           eventType,
           title,
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const progressNote = await medicalTimelineService.addProgressNote(eventId, {
+        const progressNote = await createmedicalTimelineService().addProgressNote(eventId, {
           note,
           date: new Date(),
           author,
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const beforeAfterPhotos = await medicalTimelineService.addBeforeAfterPhotos(photoEventId, {
+        const beforeAfterPhotos = await createmedicalTimelineService().addBeforeAfterPhotos(photoEventId, {
           comparisonType,
           notes,
           quality: quality || 100
@@ -197,7 +197,7 @@ export async function PUT(request: NextRequest) {
           updates.date = new Date(updates.date);
         }
 
-        const updatedEvent = await medicalTimelineService.updateTimelineEvent(eventId, updates);
+        const updatedEvent = await createmedicalTimelineService().updateTimelineEvent(eventId, updates);
         return NextResponse.json({ event: updatedEvent }, { status: 200 });
 
       case 'updateMilestone':
@@ -210,7 +210,7 @@ export async function PUT(request: NextRequest) {
           );
         }
 
-        const updatedMilestone = await medicalTimelineService.updateMilestoneProgress(
+        const updatedMilestone = await createmedicalTimelineService().updateMilestoneProgress(
           milestoneId,
           progress,
           notes

@@ -1,8 +1,8 @@
-// Story 9.2: Personalized Treatment Recommendations - API Factors Route
+﻿// Story 9.2: Personalized Treatment Recommendations - API Factors Route
 // Personalization factors API endpoint
 
 import { NextRequest, NextResponse } from 'next/server';
-import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createpersonalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import { createPersonalizationFactorRequestSchema } from '../../../lib/validations/personalized-recommendations';
 import { CreatePersonalizationFactorRequest } from '../../../types/personalized-recommendations';
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const factors = await personalizedRecommendationsService.getPersonalizationFactors(patientId);
+    const factors = await createpersonalizedRecommendationsService().getPersonalizationFactors(patientId);
     
     return NextResponse.json({
       factors,
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     const factorData: CreatePersonalizationFactorRequest = validationResult.data;
-    const factor = await personalizedRecommendationsService.createPersonalizationFactor(factorData);
+    const factor = await createpersonalizedRecommendationsService().createPersonalizationFactor(factorData);
     
     return NextResponse.json({
       factor,

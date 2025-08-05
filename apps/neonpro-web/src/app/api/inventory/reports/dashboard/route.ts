@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { inventoryReportsService } from '@/app/lib/services/inventory-reports-service';
+import { createinventoryReportsService } from '@/app/lib/services/inventory-reports-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get dashboard statistics
-    const stats = await inventoryReportsService.getDashboardStats();
+    const stats = await createinventoryReportsService().getDashboardStats();
 
     return NextResponse.json({
       success: true,

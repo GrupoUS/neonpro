@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Medical History Timeline Service
  * Manages patient medical history with visual timeline representation
  */
@@ -115,7 +115,7 @@ export interface TimelineFilter {
   includeAttachments?: boolean;
 }
 
-export class MedicalTimelineService {
+export class createmedicalTimelineService {
   private async getSupabase() {
     return await createClient();
   }
@@ -672,4 +672,3 @@ export class MedicalTimelineService {
 }
 
 // Export instance for use
-export const medicalTimelineService = new MedicalTimelineService();

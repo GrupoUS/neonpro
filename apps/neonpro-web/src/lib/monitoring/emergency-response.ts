@@ -799,7 +799,7 @@ class EmergencyResponseSystem {
 }
 
 // Export singleton instance
-export const emergencyResponse = new EmergencyResponseSystem();
+export const createemergencyResponse = () => new EmergencyResponseSystem();
 
 // Utility functions
 export async function addEmergencyRule(rule: EmergencyRule): Promise<void> {

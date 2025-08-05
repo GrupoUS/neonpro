@@ -1,4 +1,4 @@
-// Medical Knowledge Base Service
+﻿// Medical Knowledge Base Service
 // Story 9.5: Comprehensive medical knowledge management backend service
 
 import {
@@ -621,5 +621,4 @@ export class MedicalKnowledgeBaseService {
     return Array.from(categories).sort();
   }
 }
-
 

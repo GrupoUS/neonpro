@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 export const budgetPeriodUpdateSchema = z.object({
   startDate: z.date(),
@@ -25,7 +25,6 @@ export const createBudgetPeriodSchema = budgetPeriodUpdateSchema.extend({
 export type BudgetPeriod = z.infer<typeof createBudgetPeriodSchema>;
 export type BudgetPeriodUpdate = z.infer<typeof budgetPeriodUpdateSchema>;
 
-
 // Missing exports for budget approval API routes
 export const approvalSchema = z.object({
   placeholder: z.string().optional()
@@ -38,5 +37,4 @@ export const budgetSchema = z.object({
 export const bulkBudgetCreateSchema = z.object({
   placeholder: z.string().optional()
 });
-
 

@@ -229,7 +229,7 @@ export async function GET(request: NextRequest) {
     const filters = validationResult.data
     
     // Consulta dos logs
-    const events = await auditSystem.queryEvents({
+    const events = await createauditSystem().queryEvents({
       ...filters,
       start_date: filters.start_date ? new Date(filters.start_date) : undefined,
       end_date: filters.end_date ? new Date(filters.end_date) : undefined
@@ -381,6 +381,4 @@ export async function OPTIONS(request: NextRequest) {
     },
   })
 }
-
-
 

@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // TREATMENT FOLLOW-UP SERVICE
 // Epic 7.3: Comprehensive service layer for follow-up automation
 // =====================================================================================
@@ -551,6 +551,5 @@ class TreatmentFollowupService {
 }
 
 // Export singleton instance
-export const treatmentFollowupService = new TreatmentFollowupService();
-
+export const createtreatmentFollowupService = () => new TreatmentFollowupService();
 

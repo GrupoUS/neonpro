@@ -759,5 +759,5 @@ export class AuditTrailManager {
 }
 
 // Export singleton instance
-export const auditTrailManager = new AuditTrailManager();
+export const createauditTrailManager = () => new AuditTrailManager();
 

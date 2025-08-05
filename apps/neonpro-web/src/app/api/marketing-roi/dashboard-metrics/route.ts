@@ -1,11 +1,11 @@
-/**
+﻿/**
  * ROI Dashboard Metrics API Routes
  * /api/marketing-roi/dashboard-metrics
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service';
 
 // Utility functions
 async function validateUserAndClinic(request: NextRequest) {
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
     const includeComparisons = request.nextUrl.searchParams.get('include_comparisons') === 'true';
     const includeForecasts = request.nextUrl.searchParams.get('include_forecasts') === 'true';
     
-    const dashboardMetrics = await marketingROIService.getROIDashboardMetrics(
+    const dashboardMetrics = await createmarketingROIService().getROIDashboardMetrics(
       clinicId,
       start_date,
       end_date,

@@ -1,9 +1,9 @@
-// WhatsApp Business API Webhook Handler
+﻿// WhatsApp Business API Webhook Handler
 // Handles webhook events from Meta's WhatsApp Cloud API
 // Used for message status updates and incoming messages
 
 import { NextRequest, NextResponse } from 'next/server';
-import { whatsAppService } from '@/app/lib/services/whatsapp-service';
+import { createwhatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/lib/supabase/server';
 
 // Webhook verification (required by Meta)
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Process the webhook payload
-    await whatsAppService.handleWebhook(payload);
+    await createwhatsAppService().handleWebhook(payload);
 
     // Log webhook event for debugging
     await logWebhookEvent(payload);

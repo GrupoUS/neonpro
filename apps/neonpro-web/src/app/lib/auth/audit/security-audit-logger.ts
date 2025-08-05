@@ -620,7 +620,7 @@ class SecurityAuditLogger {
 }
 
 // Export singleton instance
-export const securityAuditLogger = new SecurityAuditLogger()
+export const createsecurityAuditLogger = () => new SecurityAuditLogger()
 
 // Export convenience functions
 export async function logAuthEvent(

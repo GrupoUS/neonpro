@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // FOLLOW-UP TEMPLATES API ROUTES
 // Epic 7.3: REST API endpoints for follow-up templates
 // GET /api/followups/templates - List templates with filters
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import type { TemplateFilters, CreateFollowupTemplateData } from '@/app/types/treatment-followups';
 
 export async function GET(request: NextRequest) {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch templates
-    const templates = await treatmentFollowupService.getTemplates(filters);
+    const templates = await createtreatmentFollowupService().getTemplates(filters);
 
     return NextResponse.json({
       data: templates,
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Create template
-    const newTemplate = await treatmentFollowupService.createTemplate(templateData);
+    const newTemplate = await createtreatmentFollowupService().createTemplate(templateData);
 
     return NextResponse.json({
       data: newTemplate,

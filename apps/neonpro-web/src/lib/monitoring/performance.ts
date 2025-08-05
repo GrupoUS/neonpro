@@ -268,7 +268,7 @@ class PerformanceMonitor {
 }
 
 // Export singleton instance
-export const performanceMonitor = new PerformanceMonitor();
+export const createperformanceMonitor = () => new PerformanceMonitor();
 
 // Utility decorators and hooks for easy integration
 export function measureAsync<T>(

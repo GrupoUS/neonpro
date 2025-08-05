@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WebAuthn Service for TASK-002: Multi-Factor Authentication Enhancement
  * 
  * Provides WebAuthn/FIDO2 authentication capabilities including:
@@ -54,7 +54,7 @@ export interface WebAuthnAuthenticationOptions {
   allowCredentials?: boolean;
 }
 
-class WebAuthnService {
+class createwebAuthnService {
   private readonly rpName = 'NeonPro';
   private readonly rpID = process.env.NEXT_PUBLIC_WEBAUTHN_RP_ID || 'localhost';
   private readonly origin = process.env.NEXT_PUBLIC_WEBAUTHN_ORIGIN || 'http://localhost:3000';
@@ -390,8 +390,8 @@ class WebAuthnService {
 }
 
 // Export singleton instance
-export const webAuthnService = new WebAuthnService();
 
 declare global {
   var webauthnChallenges: Map<string, { challenge: string; timestamp: number }> | undefined;
 }
+

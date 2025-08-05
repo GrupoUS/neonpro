@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+﻿import { createClient } from '@/lib/supabase/client';
 import type {
   ReportType,
   ReportParameters,
@@ -909,6 +909,5 @@ class InventoryReportsService {
   }
 }
 
-export const inventoryReportsService = new InventoryReportsService();
-
+export const createinventoryReportsService = () => new InventoryReportsService();
 

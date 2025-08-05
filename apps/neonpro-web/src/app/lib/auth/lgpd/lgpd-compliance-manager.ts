@@ -666,7 +666,7 @@ class LGPDComplianceManager {
 }
 
 // Export singleton instance
-export const lgpdComplianceManager = new LGPDComplianceManager()
+export const createlgpdComplianceManager = () => new LGPDComplianceManager()
 
 // Export convenience functions
 export async function recordConsent(

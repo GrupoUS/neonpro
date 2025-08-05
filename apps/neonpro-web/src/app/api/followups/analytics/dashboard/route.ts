@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // FOLLOW-UP DASHBOARD API ROUTE
 // Epic 7.3: REST API endpoint for dashboard summary
 // GET /api/followups/analytics/dashboard - Get dashboard summary data
@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch dashboard summary
-    const summary = await treatmentFollowupService.getDashboardSummary(clinicId);
+    const summary = await createtreatmentFollowupService().getDashboardSummary(clinicId);
 
     return NextResponse.json({
       data: summary,

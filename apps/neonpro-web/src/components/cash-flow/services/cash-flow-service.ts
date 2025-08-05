@@ -323,5 +323,5 @@ export class CashFlowService {
   }
 }
 
-export const cashFlowService = new CashFlowService();
+export const createcashFlowService = () => new CashFlowService();
 

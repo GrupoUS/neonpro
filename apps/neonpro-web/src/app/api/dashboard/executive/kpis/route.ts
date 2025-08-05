@@ -2,7 +2,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
-import { KPICalculationService } from '@/lib/dashboard/executive/kpi-calculation-service';
+import { createkpiCalculationService } from '@/lib/dashboard/executive/kpi-calculation-service';
 
 // Schema for KPI calculation request
 const CalculateKPIsSchema = z.object({
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = CalculateKPIsSchema.parse(body);
 
-    const kpiService = new KPICalculationService(supabase, clinicUser.clinic_id);
+    const kpiService = new createkpiCalculationService(supabase, clinicUser.clinic_id);
     
     // Calculate KPIs based on request
     const results = await kpiService.calculateKPIsForPeriod(

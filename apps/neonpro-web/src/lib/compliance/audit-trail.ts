@@ -1341,4 +1341,5 @@ export { AuditTrailManager as LGPDAuditTrailService };
 export { AuditEventType } from '../../types/lgpd';
 
 // Export singleton instance
-export const auditTrailManager = new AuditTrailManager();
+export const createauditTrailManager = () => new AuditTrailManager();
+

@@ -1,8 +1,8 @@
-// WhatsApp Template Message API Route
+﻿// WhatsApp Template Message API Route
 // Handles sending template messages with parameters
 
 import { NextRequest, NextResponse } from 'next/server';
-import { whatsAppService } from '@/app/lib/services/whatsapp-service';
+import { createwhatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if WhatsApp is configured
-    const config = await whatsAppService.getConfig();
+    const config = await createwhatsAppService().getConfig();
     if (!config || !config.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     // Check opt-in status if patientId is provided
     if (patientId) {
-      const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
+      const isOptedIn = await createwhatsAppService().checkOptIn(phoneNumber);
       if (!isOptedIn) {
         return NextResponse.json(
           { error: 'Patient has not opted in for WhatsApp communications' },
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send the template message
-    const messageId = await whatsAppService.sendTemplateMessage(
+    const messageId = await createwhatsAppService().sendTemplateMessage(
       phoneNumber,
       templateName,
       parameters,

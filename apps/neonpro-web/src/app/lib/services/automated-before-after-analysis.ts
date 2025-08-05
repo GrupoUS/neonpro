@@ -1,4 +1,4 @@
-// app/lib/services/automated-before-after-analysis.ts
+﻿// app/lib/services/automated-before-after-analysis.ts
 // Backend service for Story 10.1: Automated Before/After Analysis
 
 import type {
@@ -67,4 +67,4 @@ export class AutomatedBeforeAfterAnalysisService {
 }
 
 // Export a singleton instance
-export const automatedBeforeAfterAnalysisService = new AutomatedBeforeAfterAnalysisService();
+export const createautomatedBeforeAfterAnalysisService = () => new AutomatedBeforeAfterAnalysisService();

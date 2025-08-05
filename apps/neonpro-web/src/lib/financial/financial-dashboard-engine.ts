@@ -16,7 +16,7 @@ import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/lib/database.types'
 import { CashFlowEngine, type CashFlowSummary, type CashFlowMetrics } from './cash-flow-engine'
 import { AutomatedAlertsEngine, type FinancialAlert } from './automated-alerts-engine'
-import { PredictiveAnalyticsEngine, type FinancialForecast, type RiskAssessment } from './predictive-analytics-engine'
+import { createpredictiveAnalyticsEngine, type FinancialForecast, type RiskAssessment } from './predictive-analytics-engine'
 
 // Dashboard Types and Interfaces
 export interface FinancialDashboardData {
@@ -245,7 +245,7 @@ export class FinancialDashboardEngine {
   private supabase = createClient()
   private cashFlowEngine = new CashFlowEngine()
   private alertsEngine = new AutomatedAlertsEngine()
-  private predictiveEngine = new PredictiveAnalyticsEngine()
+  private predictiveEngine = new createpredictiveAnalyticsEngine()
   private cache = new Map<string, { data: any; timestamp: number; ttl: number }>()
 
   /**

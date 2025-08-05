@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 export const createProgressTrackingSchema = z.object({
   patientId: z.string().uuid(),
@@ -25,7 +25,6 @@ export const updateProgressTrackingSchema = createProgressTrackingSchema.partial
 
 export type ProgressTracking = z.infer<typeof createProgressTrackingSchema>;
 export type ProgressTrackingUpdate = z.infer<typeof updateProgressTrackingSchema>;
-
 
 // Missing exports for API routes
 export const createProgressAlertRequestSchema = z.object({
@@ -55,5 +54,4 @@ export const createProgressPredictionRequestSchema = z.object({
 export const progressTrackingFiltersSchema = z.object({
   placeholder: z.string().optional()
 });
-
 

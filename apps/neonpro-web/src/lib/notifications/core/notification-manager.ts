@@ -616,6 +616,6 @@ export class NotificationManager {
   }
 }
 
-// Export both class and singleton instance
-export const notificationManager = new NotificationManager();
+// Export factory function instead of singleton to avoid global initialization
+export const createNotificationManager = () => new NotificationManager();
 export default NotificationManager;

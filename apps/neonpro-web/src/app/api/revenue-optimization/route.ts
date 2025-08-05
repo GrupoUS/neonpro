@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Revenue Optimization API
  * 
  * API endpoints for revenue optimization engine:
@@ -12,7 +12,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { revenueOptimizationEngine } from '@/lib/financial/revenue-optimization-engine';
+import { createrevenueOptimizationEngine } from '@/lib/financial/revenue-optimization-engine';
 import { z } from 'zod';
 
 // 🔥 Request Schemas
@@ -82,12 +82,12 @@ export async function GET(request: NextRequest) {
       competitiveAnalysis,
       roiTracking
     ] = await Promise.all([
-      revenueOptimizationEngine.optimizePricing(clinicId),
-      revenueOptimizationEngine.optimizeServiceMix(clinicId),
-      revenueOptimizationEngine.enhanceCLV(clinicId),
-      revenueOptimizationEngine.generateAutomatedRecommendations(clinicId),
-      revenueOptimizationEngine.getCompetitiveAnalysis(clinicId),
-      revenueOptimizationEngine.trackROI(clinicId)
+      createrevenueOptimizationEngine().optimizePricing(clinicId),
+      createrevenueOptimizationEngine().optimizeServiceMix(clinicId),
+      createrevenueOptimizationEngine().enhanceCLV(clinicId),
+      createrevenueOptimizationEngine().generateAutomatedRecommendations(clinicId),
+      createrevenueOptimizationEngine().getCompetitiveAnalysis(clinicId),
+      createrevenueOptimizationEngine().trackROI(clinicId)
     ]);
 
     // Get current optimization records
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     switch (optimizationType) {
       case 'pricing':
         const pricingRequest = PricingOptimizationRequestSchema.parse({ clinicId, ...optimizationData });
-        result = await revenueOptimizationEngine.optimizePricing(
+        result = await createrevenueOptimizationEngine().optimizePricing(
           pricingRequest.clinicId,
           pricingRequest.serviceId
         );
@@ -190,12 +190,12 @@ export async function POST(request: NextRequest) {
 
       case 'service_mix':
         const serviceMixRequest = ServiceMixRequestSchema.parse({ clinicId });
-        result = await revenueOptimizationEngine.optimizeServiceMix(serviceMixRequest.clinicId);
+        result = await createrevenueOptimizationEngine().optimizeServiceMix(serviceMixRequest.clinicId);
         break;
 
       case 'clv':
         const clvRequest = CLVRequestSchema.parse({ clinicId, ...optimizationData });
-        result = await revenueOptimizationEngine.enhanceCLV(
+        result = await createrevenueOptimizationEngine().enhanceCLV(
           clvRequest.clinicId,
           clvRequest.patientId
         );
@@ -203,21 +203,21 @@ export async function POST(request: NextRequest) {
 
       case 'automated':
         const automatedRequest = AutomatedRecommendationsRequestSchema.parse({ clinicId });
-        result = await revenueOptimizationEngine.generateAutomatedRecommendations(
+        result = await createrevenueOptimizationEngine().generateAutomatedRecommendations(
           automatedRequest.clinicId
         );
         break;
 
       case 'competitive':
         const competitiveRequest = CompetitiveAnalysisRequestSchema.parse({ clinicId });
-        result = await revenueOptimizationEngine.getCompetitiveAnalysis(
+        result = await createrevenueOptimizationEngine().getCompetitiveAnalysis(
           competitiveRequest.clinicId
         );
         break;
 
       case 'roi_tracking':
         const roiRequest = ROITrackingRequestSchema.parse({ clinicId, ...optimizationData });
-        result = await revenueOptimizationEngine.trackROI(
+        result = await createrevenueOptimizationEngine().trackROI(
           roiRequest.clinicId,
           roiRequest.optimizationId
         );

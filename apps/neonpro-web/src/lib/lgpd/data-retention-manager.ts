@@ -671,5 +671,5 @@ export class DataRetentionManager {
 }
 
 // Export singleton instance
-export const dataRetentionManager = new DataRetentionManager();
+export const createdataRetentionManager = () => new DataRetentionManager();
 

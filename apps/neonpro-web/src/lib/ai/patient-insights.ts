@@ -3,8 +3,6 @@
  * Comprehensive AI system for patient risk assessment, behavior analysis, and personalized care recommendations
  */
 
-import { createClient } from '@/lib/supabase/server';
-
 // Core interfaces for AI engine
 export interface PatientRiskAssessment {
   overallRiskScore: number;
@@ -124,7 +122,15 @@ export interface PersonalizationInsight {
  * Provides comprehensive patient analysis, risk assessment, and personalized care recommendations
  */
 export class PatientInsightsEngine {
-  private supabase = createClient();
+  private supabase: ReturnType<typeof import('@/lib/supabase/server').createClient> | null = null;
+
+  private async getSupabase() {
+    if (!this.supabase) {
+      const { createClient } = await import('@/lib/supabase/server');
+      this.supabase = await createClient();
+    }
+    return this.supabase;
+  }
 
   /**
    * Generate comprehensive risk assessment for patient

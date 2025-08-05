@@ -1,4 +1,4 @@
-// Story 9.2: Personalized Treatment Recommendations - Backend Service
+﻿// Story 9.2: Personalized Treatment Recommendations - Backend Service
 // AI-powered personalized treatment recommendation engine
 
 import type {
@@ -786,4 +786,5 @@ export class PersonalizedRecommendationService {
 }
 
 // Export service instance
-export const personalizedRecommendationsService = new PersonalizedRecommendationService();
+export const createpersonalizedRecommendationsService = () => new PersonalizedRecommendationService();
+

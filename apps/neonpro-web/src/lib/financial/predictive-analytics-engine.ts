@@ -145,7 +145,7 @@ export interface PatientLTVPrediction {
   next_visit_probability: number
 }
 
-export class PredictiveAnalyticsEngine {
+export class createpredictiveAnalyticsEngine {
   private supabase = createClient()
   private models: Map<string, PredictionModel> = new Map()
 
@@ -731,5 +731,5 @@ export class PredictiveAnalyticsEngine {
   }
 }
 
-export default PredictiveAnalyticsEngine
+export default createpredictiveAnalyticsEngine
 

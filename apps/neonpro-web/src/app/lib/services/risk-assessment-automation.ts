@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Risk Assessment Automation Service
  * Story 9.4: Comprehensive automated risk assessment with medical validation
  * 
@@ -655,5 +655,4 @@ export class RiskAssessmentService {
     return data;
   }
 }
-
 

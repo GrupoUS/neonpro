@@ -727,7 +727,7 @@ export class ConflictDetectionEngine {
 }
 
 // Instância singleton para uso global
-export const conflictDetectionEngine = new ConflictDetectionEngine()
+export const createconflictDetectionEngine = () => new ConflictDetectionEngine()
 
 // Função utilitária para detecção rápida
 export async function detectConflicts(

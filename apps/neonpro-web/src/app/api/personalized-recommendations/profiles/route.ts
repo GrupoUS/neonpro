@@ -1,8 +1,8 @@
-// Story 9.2: Personalized Treatment Recommendations - API Profiles Route
+﻿// Story 9.2: Personalized Treatment Recommendations - API Profiles Route
 // Recommendation profiles API endpoint
 
 import { NextRequest, NextResponse } from 'next/server';
-import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createpersonalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
     createRecommendationProfileRequestSchema,
     updateRecommendationProfileRequestSchema
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc'
     };
 
-    const profiles = await personalizedRecommendationsService.getProfiles(query);
+    const profiles = await createpersonalizedRecommendationsService().getProfiles(query);
     
     return NextResponse.json({
       profiles,
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     const profileData: CreateRecommendationProfileRequest = validationResult.data;
-    const profile = await personalizedRecommendationsService.createProfile(profileData);
+    const profile = await createpersonalizedRecommendationsService().createProfile(profileData);
     
     return NextResponse.json({
       profile,
@@ -95,7 +95,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const { id, ...updateData }: UpdateRecommendationProfileRequest = validationResult.data;
-    const profile = await personalizedRecommendationsService.updateProfile(id, updateData);
+    const profile = await createpersonalizedRecommendationsService().updateProfile(id, updateData);
     
     if (!profile) {
       return NextResponse.json(

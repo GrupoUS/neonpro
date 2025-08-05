@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { inventoryReportsService } from '@/app/lib/services/inventory-reports-service';
+import { createinventoryReportsService } from '@/app/lib/services/inventory-reports-service';
 import type { 
   ReportParameters, 
   ReportType,
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Generate the report
-    const reportResult = await inventoryReportsService.generateReport(parameters);
+    const reportResult = await createinventoryReportsService().generateReport(parameters);
 
     // Handle different output formats
     if (parameters.format === 'csv') {
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Generate the report
-    const reportResult = await inventoryReportsService.generateReport(parameters);
+    const reportResult = await createinventoryReportsService().generateReport(parameters);
 
     return NextResponse.json({
       success: true,

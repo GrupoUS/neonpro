@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Treatment Profitability Analysis API Routes
  * /api/marketing-roi/treatment-profitability
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service';
 import { TreatmentROIFiltersSchema } from '@/app/types/marketing-roi';
 import { z } from 'zod';
 
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     // Validate filters
     const validatedFilters = TreatmentROIFiltersSchema.parse(filters);
     
-    const profitabilityAnalysis = await marketingROIService.getTreatmentProfitabilityAnalysis(
+    const profitabilityAnalysis = await createmarketingROIService().getTreatmentProfitabilityAnalysis(
       clinicId,
       validatedFilters
     );
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const treatmentROI = await marketingROIService.calculateTreatmentROI(
+    const treatmentROI = await createmarketingROIService().calculateTreatmentROI(
       clinicId,
       treatment_id,
       new Date(period_start),

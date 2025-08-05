@@ -805,5 +805,5 @@ export const ComplianceValidationSchema = z.object({
 });
 
 // Export singleton instance
-export const healthcareComplianceManager = new HealthcareComplianceManager();
+export const createhealthcareComplianceManager = () => new HealthcareComplianceManager();
 

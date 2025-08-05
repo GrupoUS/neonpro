@@ -304,5 +304,5 @@ export class AIInsightsEngine {
   }
 }
 
-export const aiInsightsEngine = new AIInsightsEngine();
+export const createaiInsightsEngine = () => new AIInsightsEngine();
 

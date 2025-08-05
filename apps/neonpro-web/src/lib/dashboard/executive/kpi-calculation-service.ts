@@ -50,7 +50,7 @@ export type KPIValue = z.infer<typeof KPIValueSchema>;
 export type KPICalculationResult = z.infer<typeof KPICalculationResultSchema>;
 
 // KPI Calculation Service
-export class KPICalculationService {
+export class createkpiCalculationService {
   private supabase = createClient();
   private cache = new Map<string, KPICalculationResult>();
   private cacheExpiry = new Map<string, number>();
@@ -614,5 +614,3 @@ export class KPICalculationService {
 }
 
 // Export singleton instance
-export const kpiCalculationService = new KPICalculationService();
-

@@ -402,5 +402,5 @@ export class SubscriptionService {
 }
 
 // Export singleton instance
-export const subscriptionService = new SubscriptionService()
+export const createsubscriptionService = () => new SubscriptionService()
 

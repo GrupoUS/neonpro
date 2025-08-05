@@ -568,5 +568,5 @@ export class DashboardLayoutEngine {
 }
 
 // Export singleton instance
-export const dashboardLayoutEngine = new DashboardLayoutEngine();
+export const createdashboardLayoutEngine = () => new DashboardLayoutEngine();
 

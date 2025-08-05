@@ -1,11 +1,11 @@
-/**
+﻿/**
  * ROI Alerts API Routes
  * /api/marketing-roi/alerts
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service';
 import { CreateROIAlertSchema } from '@/app/types/marketing-roi';
 import { z } from 'zod';
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     const { clinicId } = validation;
     const activeOnly = request.nextUrl.searchParams.get('active_only') !== 'false';
     
-    const alerts = await marketingROIService.getROIAlerts(clinicId, activeOnly);
+    const alerts = await createmarketingROIService().getROIAlerts(clinicId, activeOnly);
     
     return NextResponse.json(alerts);
   } catch (error: any) {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = CreateROIAlertSchema.parse(body);
     
-    const alert = await marketingROIService.createROIAlert(
+    const alert = await createmarketingROIService().createROIAlert(
       clinicId,
       validatedData,
       user.id

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Financial Management Supabase Functions
  * Created: January 27, 2025
  * Purpose: Database operations for invoices, payments, and Brazilian compliance
@@ -766,5 +766,4 @@ Total: ${formatCurrency(invoice.total_amount)}
     throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
-
 

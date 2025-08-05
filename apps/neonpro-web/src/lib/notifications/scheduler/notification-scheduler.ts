@@ -944,6 +944,6 @@ export class NotificationScheduler {
 // EXPORT
 // ================================================================================
 
-export const notificationScheduler = new NotificationScheduler();
+export const createnotificationScheduler = () => new NotificationScheduler();
 export type { ScheduleConfig, ScheduledNotification, OptimizationResult, BatchExecutionResult };
 

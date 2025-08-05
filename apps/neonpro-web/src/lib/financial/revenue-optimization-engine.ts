@@ -83,7 +83,7 @@ export type PricingStrategy = z.infer<typeof PricingStrategySchema>;
 export type CLVPrediction = z.infer<typeof CLVPredictionSchema>;
 
 // 🎯 Revenue Optimization Engine
-export class RevenueOptimizationEngine {
+export class createrevenueOptimizationEngine {
   private supabase = createClient();
 
   // 💰 Dynamic Pricing Optimization
@@ -612,6 +612,4 @@ export class RevenueOptimizationEngine {
     return recommendations;
   }
 }
-
-export const revenueOptimizationEngine = new RevenueOptimizationEngine();
 

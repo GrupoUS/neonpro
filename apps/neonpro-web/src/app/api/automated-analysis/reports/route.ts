@@ -1,7 +1,7 @@
 ﻿// app/api/automated-analysis/reports/route.ts
 // API endpoints for analysis reports generation and management
 
-import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
+import { createautomatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server'
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Validate filters
     const validatedFilters = validationSchemas.reportFilters.parse(filters);
 
-    const reports = await automatedBeforeAfterAnalysisService.getAnalysisReports(validatedFilters);
+    const reports = await createautomatedBeforeAfterAnalysisService().getAnalysisReports(validatedFilters);
 
     return NextResponse.json({
       success: true,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = validationSchemas.generateReport.parse(body);
 
-    const report = await automatedBeforeAfterAnalysisService.generateReport(validatedData);
+    const report = await createautomatedBeforeAfterAnalysisService().generateReport(validatedData);
 
     return NextResponse.json({
       success: true,

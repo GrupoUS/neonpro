@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+﻿import nodemailer from 'nodemailer';
 import { SESClient, SendEmailCommand, SendBulkEmailCommand } from '@aws-sdk/client-ses';
 import {
   EmailProvider,
@@ -904,5 +904,4 @@ class PostmarkEmailProvider implements EmailServiceInterface {
 // =======================================
 
 export default EmailService;
-
 

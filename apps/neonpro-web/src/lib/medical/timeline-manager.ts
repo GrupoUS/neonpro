@@ -399,5 +399,5 @@ export class MedicalTimelineManager {
   }
 }
 
-export const medicalTimelineManager = new MedicalTimelineManager();
+export const createmedicalTimelineManager = () => new MedicalTimelineManager();
 

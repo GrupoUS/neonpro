@@ -1,8 +1,8 @@
-// Follow-up Protocols API
+﻿// Follow-up Protocols API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { createFollowupProtocolSchema } from '@/app/lib/validations/followup';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined
     };
 
-    const protocols = await treatmentFollowupService.getFollowupProtocols(filters);
+    const protocols = await createtreatmentFollowupService().getFollowupProtocols(filters);
 
     return NextResponse.json({
       success: true,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createFollowupProtocolSchema.parse(body);
     
     // Create protocol
-    const protocol = await treatmentFollowupService.createFollowupProtocol(validatedData);
+    const protocol = await createtreatmentFollowupService().createFollowupProtocol(validatedData);
 
     return NextResponse.json({
       success: true,

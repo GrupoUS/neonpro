@@ -1289,7 +1289,7 @@ export class SuggestionEngine {
 }
 
 // Instância singleton
-export const suggestionEngine = new SuggestionEngine()
+export const createsuggestionEngine = () => new SuggestionEngine()
 
 // Função utilitária
 export async function generateResolutionSuggestions(

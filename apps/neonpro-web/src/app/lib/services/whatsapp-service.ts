@@ -1,4 +1,4 @@
-// WhatsApp Business API Service
+﻿// WhatsApp Business API Service
 // Integrates with Meta's WhatsApp Cloud API for NeonPro
 // Uses official whatsapp library with TypeScript support
 
@@ -513,6 +513,5 @@ class WhatsAppService {
   }
 }
 
-export const whatsAppService = new WhatsAppService();
-
+export const createwhatsAppService = () => new WhatsAppService();
 

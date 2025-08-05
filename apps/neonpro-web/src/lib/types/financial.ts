@@ -1,10 +1,9 @@
-/**
+﻿/**
  * Financial Management Types
  * Created: January 27, 2025
  * Purpose: TypeScript interfaces for invoice generation and payment tracking
  * Standards: Brazilian NFSe compliance + Shadow validation
  */
-
 
 // Base financial types
 export type Currency = 'BRL';

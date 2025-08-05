@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { systemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
+import { createsystemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
 import { createClient } from '@/lib/supabase/server';
 import { AuditLogger } from '@/lib/audit/audit-logger';
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     switch (listType) {
       case 'recent':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'recent',
           user.id,
           limit
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'favorites':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'favorites',
           user.id,
           limit
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'high-risk':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'high-risk',
           user.id,
           limit
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'upcoming-appointments':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'upcoming-appointments',
           user.id,
           limit
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'pending-verification':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'pending-verification',
           user.id,
           limit
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
         break;
 
       case 'frequent':
-        quickAccessData = await systemIntegrationManager.getQuickAccessPatients(
+        quickAccessData = await createsystemIntegrationManager().getQuickAccessPatients(
           'frequent',
           user.id,
           limit

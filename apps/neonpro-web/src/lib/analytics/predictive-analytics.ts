@@ -472,7 +472,7 @@ export interface PlotArtifact {
 }
 
 // Main Predictive Analytics Engine
-export class PredictiveAnalyticsEngine {
+export class createpredictiveAnalyticsEngine {
   private supabase = createClient();
   private models: Map<string, PredictiveModel> = new Map();
   private predictions: Map<string, PredictionResult> = new Map();
@@ -1327,5 +1327,3 @@ export const ForecastRequestSchema = z.object({
 });
 
 // Export singleton instance
-export const predictiveAnalyticsEngine = new PredictiveAnalyticsEngine();
-

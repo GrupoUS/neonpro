@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+﻿import { createClient } from "@/lib/supabase/server";
 
 // Tipos temporários baseados na estrutura atual - substituir por tipos do Supabase quando disponível
 interface AccountsPayable {
@@ -366,4 +366,5 @@ export class NotificationService {
   }
 }
 
-export const notificationService = new NotificationService();
+export const createnotificationService = () => new NotificationService();
+

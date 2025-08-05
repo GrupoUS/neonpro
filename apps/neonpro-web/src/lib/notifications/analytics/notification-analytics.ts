@@ -17,7 +17,6 @@
  */
 
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
 import { NotificationChannel, NotificationStatus, NotificationType } from '../types';
 
 // ================================================================================
@@ -117,13 +116,20 @@ interface TimeSeriesData {
 // ================================================================================
 
 export class NotificationAnalytics {
-  private supabase: ReturnType<typeof createClient>;
+  private supabase: ReturnType<typeof import('@/lib/supabase/server').createClient> | null = null;
   private config: MetricsConfig;
   private cache = new Map<string, { data: any; expiry: number }>();
 
   constructor(config: Partial<MetricsConfig> = {}) {
-    this.supabase = createClient();
     this.config = { ...MetricsConfigSchema.parse({}), ...config };
+  }
+
+  private async getSupabase() {
+    if (!this.supabase) {
+      const { createClient } = await import('@/lib/supabase/server');
+      this.supabase = await createClient();
+    }
+    return this.supabase;
   }
 
   // ================================================================================
@@ -682,6 +688,10 @@ export class NotificationAnalytics {
 // EXPORT
 // ================================================================================
 
-export const notificationAnalytics = new NotificationAnalytics();
+// Export factory function instead of instance to avoid initialization during build
+export function createNotificationAnalytics(config?: Partial<MetricsConfig>) {
+  return new NotificationAnalytics(config);
+}
+
 export type { AnalyticsQuery, NotificationMetrics, AnalyticsReport, PredictiveInsights };
 

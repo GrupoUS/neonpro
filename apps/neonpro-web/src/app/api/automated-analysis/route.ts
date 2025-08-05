@@ -1,7 +1,7 @@
 ﻿// app/api/automated-analysis/route.ts
 // Main API endpoints for Story 10.1: Automated Before/After Analysis
 
-import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
+import { createautomatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server'
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     // Validate filters
     const validatedFilters = validationSchemas.analysisSessionFilters.parse(filters);
 
-    const sessions = await automatedBeforeAfterAnalysisService.getAnalysisSessions(validatedFilters);
+    const sessions = await createautomatedBeforeAfterAnalysisService().getAnalysisSessions(validatedFilters);
 
     return NextResponse.json({
       success: true,
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = validationSchemas.createAnalysisSession.parse(body);
 
-    const session = await automatedBeforeAfterAnalysisService.createAnalysisSession(validatedData);
+    const session = await createautomatedBeforeAfterAnalysisService().createAnalysisSession(validatedData);
 
     return NextResponse.json({
       success: true,
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest) {
     // Validate updates
     const validatedUpdates = validationSchemas.updateAnalysisSession.parse(updates);
 
-    const updatedSession = await automatedBeforeAfterAnalysisService.updateAnalysisSession(id, validatedUpdates);
+    const updatedSession = await createautomatedBeforeAfterAnalysisService().updateAnalysisSession(id, validatedUpdates);
 
     return NextResponse.json({
       success: true,
@@ -135,7 +135,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
     }
 
-    await automatedBeforeAfterAnalysisService.deleteAnalysisSession(id);
+    await createautomatedBeforeAfterAnalysisService().deleteAnalysisSession(id);
 
     return NextResponse.json({
       success: true,

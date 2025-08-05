@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // FOLLOW-UP ANALYTICS API ROUTES
 // Epic 7.3: REST API endpoints for follow-up analytics and dashboard data
 // GET /api/followups/analytics - Get analytics data
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch analytics
-    const analytics = await treatmentFollowupService.getAnalytics(clinicId, dateFrom || undefined, dateTo || undefined);
+    const analytics = await createtreatmentFollowupService().getAnalytics(clinicId, dateFrom || undefined, dateTo || undefined);
 
     return NextResponse.json({
       data: analytics,

@@ -1,4 +1,4 @@
-// Patient Communication Service
+﻿// Patient Communication Service
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // Comprehensive service for healthcare communication management
 
@@ -909,6 +909,5 @@ export class CommunicationService {
 }
 
 // Export singleton instance
-export const communicationService = new CommunicationService();
-
+export const createcommunicationService = () => new CommunicationService();
 

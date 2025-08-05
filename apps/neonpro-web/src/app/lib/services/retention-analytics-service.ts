@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // RETENTION ANALYTICS SERVICE
 // Epic 7.4: Patient Retention Analytics + Predictions
 // Core business logic for retention analytics, churn prediction, and retention strategies
@@ -881,5 +881,4 @@ export class RetentionAnalyticsService {
     };
   }
 }
-
 

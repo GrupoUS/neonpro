@@ -1,8 +1,8 @@
-// Patient Follow-ups API
+﻿// Patient Follow-ups API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { createPatientFollowupSchema } from '@/app/lib/validations/followup';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined
     };
 
-    const followups = await treatmentFollowupService.getPatientFollowups(filters);
+    const followups = await createtreatmentFollowupService().getPatientFollowups(filters);
 
     return NextResponse.json({
       success: true,
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createPatientFollowupSchema.parse(body);
     
     // Create follow-up
-    const followup = await treatmentFollowupService.createPatientFollowup(validatedData);
+    const followup = await createtreatmentFollowupService().createPatientFollowup(validatedData);
 
     return NextResponse.json({
       success: true,

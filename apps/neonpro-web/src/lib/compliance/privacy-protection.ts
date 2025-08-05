@@ -1037,4 +1037,5 @@ export const ConsentValidationSchema = z.object({
 });
 
 // Export singleton instance
-export const privacyProtectionManager = new PrivacyProtectionManager();
+export const createprivacyProtectionManager = () => new PrivacyProtectionManager();
+

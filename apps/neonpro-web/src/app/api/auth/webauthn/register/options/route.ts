@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WebAuthn Registration Options API
  * TASK-002: Multi-Factor Authentication Enhancement
  * 
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { webAuthnService } from '@/lib/auth/webauthn-service';
+import { createwebAuthnService } from '@/lib/auth/webauthn-service';
 import { trackLoginPerformance } from '@/lib/auth/performance-tracker';
 
 export async function POST(request: NextRequest) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         : userName;
 
       // Generate registration options
-      const options = await webAuthnService.generateRegistrationOptions({
+      const options = await createwebAuthnService().generateRegistrationOptions({
         userId: session.user.id,
         userName,
         userDisplayName,

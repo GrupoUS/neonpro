@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Marketing Campaigns API Routes
  * /api/marketing-roi/campaigns
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service';
 import {
   CreateMarketingCampaignSchema,
   UpdateCampaignMetricsSchema,
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
     // Validate filters
     const validatedFilters = MarketingROIFiltersSchema.parse(filters);
     
-    const campaigns = await marketingROIService.getMarketingCampaigns(
+    const campaigns = await createmarketingROIService().getMarketingCampaigns(
       clinicId,
       validatedFilters,
       limit,
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = CreateMarketingCampaignSchema.parse(body);
     
-    const campaign = await marketingROIService.createMarketingCampaign(
+    const campaign = await createmarketingROIService().createMarketingCampaign(
       clinicId,
       validatedData,
       user.id

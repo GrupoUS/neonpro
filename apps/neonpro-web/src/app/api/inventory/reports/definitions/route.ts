@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { inventoryReportsService } from '@/app/lib/services/inventory-reports-service';
+import { createinventoryReportsService } from '@/app/lib/services/inventory-reports-service';
 import type { ReportDefinition } from '@/app/lib/types/inventory-reports';
 
 export async function GET(request: NextRequest) {
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       filters.is_active = searchParams.get('is_active') === 'true';
     }
 
-    const definitions = await inventoryReportsService.getReportDefinitions(filters);
+    const definitions = await createinventoryReportsService().getReportDefinitions(filters);
 
     return NextResponse.json({
       success: true,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       created_by: user.id,
     };
 
-    const savedDefinition = await inventoryReportsService.saveReportDefinition(definitionData);
+    const savedDefinition = await createinventoryReportsService().saveReportDefinition(definitionData);
 
     return NextResponse.json({
       success: true,

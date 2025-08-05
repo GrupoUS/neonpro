@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // TREATMENT FOLLOW-UPS API ROUTES
 // Epic 7.3: REST API endpoints for follow-up automation
 // GET /api/followups - List follow-ups with filters
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import type { FollowupFilters, CreateFollowupData } from '@/app/types/treatment-followups';
 
 export async function GET(request: NextRequest) {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch follow-ups
-    const followups = await treatmentFollowupService.getFollowups(filters);
+    const followups = await createtreatmentFollowupService().getFollowups(filters);
 
     return NextResponse.json({
       data: followups,
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Create follow-up
-    const newFollowup = await treatmentFollowupService.createFollowup(followupData);
+    const newFollowup = await createtreatmentFollowupService().createFollowup(followupData);
 
     return NextResponse.json({
       data: newFollowup,

@@ -1,8 +1,8 @@
-// AI-Powered Follow-up Optimization API
+﻿// AI-Powered Follow-up Optimization API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate optimal timing
-    const optimalTiming = await treatmentFollowupService.calculateOptimalTiming(patientId);
+    const optimalTiming = await createtreatmentFollowupService().calculateOptimalTiming(patientId);
     
     // Generate personalized message
-    const personalizedMessage = await treatmentFollowupService.generatePersonalizedMessage(
+    const personalizedMessage = await createtreatmentFollowupService().generatePersonalizedMessage(
       patientId, 
       protocolId, 
       channel

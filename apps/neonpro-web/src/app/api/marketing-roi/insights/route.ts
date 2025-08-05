@@ -1,14 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { MarketingROIService } from '@/app/lib/services/marketing-roi-service'
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service'
 import { 
   MarketingInsightsRequest,
   MarketingInsightsResponse,
   MarketingInsightType,
   MarketingInsightCategory
 } from '@/app/types/marketing-roi'
-
-const marketingROIService = new MarketingROIService()
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
       includeMetrics: searchParams.get('includeMetrics') === 'true'
     }
 
-    const insights = await marketingROIService.generateMarketingInsights(requestData)
+    const insights = await createmarketingROIService().generateMarketingInsights(requestData)
 
     const response: MarketingInsightsResponse = {
       insights,
@@ -80,10 +78,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const insights = await marketingROIService.generateMarketingInsights(requestData)
+    const insights = await createmarketingROIService().generateMarketingInsights(requestData)
 
     // Generate deep analytics for POST requests
-    const analytics = await marketingROIService.generateDeepAnalytics({
+    const analytics = await createmarketingROIService().generateDeepAnalytics({
       insights,
       includeCorrelations: true,
       includeTrends: true,
@@ -92,7 +90,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Generate actionable recommendations
-    const recommendations = await marketingROIService.generateActionableRecommendations({
+    const recommendations = await createmarketingROIService().generateActionableRecommendations({
       insights,
       analytics,
       priority: 'high'
@@ -144,7 +142,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update insight feedback and tracking
-    const updatedInsight = await marketingROIService.updateInsightFeedback(
+    const updatedInsight = await createmarketingROIService().updateInsightFeedback(
       insightId,
       {
         feedback,
@@ -155,7 +153,7 @@ export async function PUT(request: NextRequest) {
     )
 
     // Learn from feedback to improve future insights
-    const learningResult = await marketingROIService.improveInsightAccuracy(
+    const learningResult = await createmarketingROIService().improveInsightAccuracy(
       insightId,
       { feedback, rating, implemented }
     )
@@ -194,7 +192,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const result = await marketingROIService.deleteInsight(insightId)
+    const result = await createmarketingROIService().deleteInsight(insightId)
 
     return NextResponse.json({
       success: true,

@@ -1,7 +1,4 @@
-import PatientInsights from '@/lib/ai/patient-insights';
-import { Database } from '@/types/supabase';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -13,7 +10,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createRouteHandlerClient<Database>({ cookies });
+    const supabase = await createClient();
     const { id: patientId } = await params;
 
     // Get user session
@@ -34,6 +31,7 @@ export async function GET(
     }
 
     // Generate AI insights
+    const { default: PatientInsights } = await import('@/lib/ai/patient-insights');
     const insightsEngine = new PatientInsights();
     const insights = await insightsEngine.generatePatientInsights(patientId);
 

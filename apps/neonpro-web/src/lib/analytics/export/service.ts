@@ -796,5 +796,5 @@ export class AnalyticsExportService {
 }
 
 // Export singleton instance
-export const analyticsExportService = new AnalyticsExportService()
+export const createanalyticsExportService = () => new AnalyticsExportService()
 

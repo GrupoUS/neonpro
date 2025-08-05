@@ -1,4 +1,4 @@
-/**
+﻿/**
  * =====================================================================================
  * PREDICTIVE CASH FLOW API - PREDICTIONS ENDPOINT
  * =====================================================================================
@@ -25,7 +25,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
-import PredictiveAnalyticsEngine from '@/lib/financial/predictive-analytics-engine';
+import createpredictiveAnalyticsEngine from '@/lib/financial/predictive-analytics-engine';
 import {
   createCashFlowPredictionSchema,
   predictionPeriodTypeSchema,
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize prediction engine
-    const engine = new PredictiveAnalyticsEngine(supabase);
+    const engine = new createpredictiveAnalyticsEngine(supabase);
 
     // Generate prediction
     const { data: prediction, error: predictionError } = await engine.generatePrediction(
@@ -350,7 +350,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Initialize prediction engine and validate
-    const engine = new PredictiveAnalyticsEngine(supabase);
+    const engine = new createpredictiveAnalyticsEngine(supabase);
     const { accuracy, error: validationError } = await engine.validatePrediction(
       predictionId,
       actualInflow,

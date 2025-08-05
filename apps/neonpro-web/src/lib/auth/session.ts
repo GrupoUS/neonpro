@@ -666,7 +666,7 @@ export class SessionManager {
 // SINGLETON INSTANCE
 // ============================================================================
 
-export const sessionManager = new SessionManager();
+export const createsessionManager = () => new SessionManager();
 
 // ============================================================================
 // UNIFIED SESSION SYSTEM (LEGACY COMPATIBILITY)

@@ -1189,5 +1189,5 @@ export class OptimalTimingEngine {
 }
 
 // Export singleton instance
-export const optimalTimingEngine = new OptimalTimingEngine();
+export const createoptimalTimingEngine = () => new OptimalTimingEngine();
 

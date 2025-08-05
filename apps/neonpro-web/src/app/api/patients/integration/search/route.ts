@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { systemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
+import { createsystemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
 import { createClient } from '@/lib/supabase/server';
 import { AuditLogger } from '@/lib/audit/audit-logger';
 
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Execute search
-    const searchResults = await systemIntegrationManager.searchPatients(
+    const searchResults = await createsystemIntegrationManager().searchPatients(
       query,
       filters,
       user.id,
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create patient segment
-    const segment = await systemIntegrationManager.createPatientSegment(
+    const segment = await createsystemIntegrationManager().createPatientSegment(
       name,
       description,
       criteria,

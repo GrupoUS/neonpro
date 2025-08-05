@@ -691,7 +691,7 @@ class BaselineManager {
 }
 
 // Export singleton instance
-export const baselineManager = new BaselineManager();
+export const createbaselineManager = () => new BaselineManager();
 
 // Utility functions
 export async function establishBaseline(

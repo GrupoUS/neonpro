@@ -1,7 +1,7 @@
 ﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
-import { kpiCalculationService } from './kpi-calculation-service';
+import { createkpiCalculationService } from './kpi-calculation-service';
 import { widgetService } from './widget-service';
 
 // Report Types and Schemas
@@ -607,10 +607,10 @@ export class ReportSystem {
 
     switch (dataSource) {
       case 'all_kpis':
-        return await kpiCalculationService.calculateClinicKPIs(clinicId, periodStart, periodEnd);
+        return await createkpiCalculationService().calculateClinicKPIs(clinicId, periodStart, periodEnd);
       
       case 'financial_kpis':
-        const allKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId, periodStart, periodEnd);
+        const allKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId, periodStart, periodEnd);
         return allKPIs.filter(kpi => kpi.kpi.category === 'financial');
       
       default:
@@ -863,5 +863,5 @@ export class ReportSystem {
 }
 
 // Export singleton instance
-export const reportSystem = new ReportSystem();
+export const createreportSystem = () => new ReportSystem();
 

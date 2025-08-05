@@ -63,7 +63,7 @@ export interface QuickAccessItem {
   context: 'search' | 'appointment' | 'treatment' | 'emergency';
 }
 
-export class SystemIntegrationManager {
+export class createsystemIntegrationManager {
   private supabase = createClient();
   private auditLogger = new AuditLogger();
   private lgpdManager = new LGPDManager();
@@ -478,6 +478,4 @@ export class SystemIntegrationManager {
     return 50;
   }
 }
-
-export const systemIntegrationManager = new SystemIntegrationManager();
 

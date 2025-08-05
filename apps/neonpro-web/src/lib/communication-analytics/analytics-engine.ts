@@ -1413,5 +1413,5 @@ export class CommunicationAnalyticsEngine {
 }
 
 // Export singleton instance
-export const communicationAnalytics = new CommunicationAnalyticsEngine();
+export const createcommunicationAnalytics = () => new CommunicationAnalyticsEngine();
 

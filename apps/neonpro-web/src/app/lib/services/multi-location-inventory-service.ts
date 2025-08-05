@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+﻿import { createClient } from '@/lib/supabase/client';
 import type { 
   InventoryItem, 
   CreateInventoryItem, 
@@ -420,5 +420,4 @@ export class MultiLocationInventoryService {
     return this.createStockTransfer(transfer);
   }
 }
-
 

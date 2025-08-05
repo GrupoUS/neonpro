@@ -1,9 +1,9 @@
-// AI-Powered Patient Insights Integration Module
+﻿// AI-Powered Patient Insights Integration Module
 // Story 3.2: Task 7 - Main Integration Module
 
 import { RiskAssessmentEngine } from './risk-assessment'
 import { TreatmentRecommendationEngine } from './treatment-recommendations'
-import { PredictiveAnalyticsEngine } from './predictive-analytics'
+import { createpredictiveAnalyticsEngine } from './predictive-analytics'
 import { BehaviorAnalysisEngine } from './behavior-analysis'
 import { HealthTrendMonitor } from './health-trend-monitor'
 import { ContinuousLearningSystem } from './continuous-learning'
@@ -23,7 +23,7 @@ import {
 export class PatientInsightsIntegration {
   private riskEngine: RiskAssessmentEngine
   private recommendationEngine: TreatmentRecommendationEngine
-  private predictiveEngine: PredictiveAnalyticsEngine
+  private predictiveEngine: createpredictiveAnalyticsEngine
   private behaviorEngine: BehaviorAnalysisEngine
   private trendMonitor: HealthTrendMonitor
   private learningSystem: ContinuousLearningSystem
@@ -474,7 +474,7 @@ export class PatientInsightsIntegration {
   private initializeEngines(): void {
     this.riskEngine = new RiskAssessmentEngine()
     this.recommendationEngine = new TreatmentRecommendationEngine()
-    this.predictiveEngine = new PredictiveAnalyticsEngine()
+    this.predictiveEngine = new createpredictiveAnalyticsEngine()
     this.behaviorEngine = new BehaviorAnalysisEngine()
     this.trendMonitor = new HealthTrendMonitor()
     this.learningSystem = new ContinuousLearningSystem()
@@ -760,7 +760,7 @@ export {
   PatientInsightsIntegration,
   RiskAssessmentEngine,
   TreatmentRecommendationEngine,
-  PredictiveAnalyticsEngine,
+  createpredictiveAnalyticsEngine,
   BehaviorAnalysisEngine,
   HealthTrendMonitor,
   ContinuousLearningSystem

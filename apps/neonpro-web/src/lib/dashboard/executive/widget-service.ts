@@ -1,7 +1,7 @@
 ﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
-import { kpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
+import { createkpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
 
 // Widget Types and Schemas
 export const WidgetTypeSchema = z.enum([
@@ -347,31 +347,31 @@ export class WidgetService {
   private async fetchKPIData(clinicId: string, kpiSource: string, parameters?: any): Promise<any> {
     switch (kpiSource) {
       case 'all_kpis':
-        return await kpiCalculationService.calculateClinicKPIs(
+        return await createkpiCalculationService().calculateClinicKPIs(
           clinicId,
           parameters?.periodStart ? new Date(parameters.periodStart) : undefined,
           parameters?.periodEnd ? new Date(parameters.periodEnd) : undefined
         );
       
       case 'financial_summary':
-        const allKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
+        const allKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId);
         return allKPIs.filter(kpi => kpi.kpi.category === 'financial');
       
       case 'operational_summary':
-        const operationalKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
+        const operationalKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId);
         return operationalKPIs.filter(kpi => kpi.kpi.category === 'operational');
       
       case 'patient_summary':
-        const patientKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
+        const patientKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId);
         return patientKPIs.filter(kpi => kpi.kpi.category === 'patient');
       
       case 'staff_summary':
-        const staffKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
+        const staffKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId);
         return staffKPIs.filter(kpi => kpi.kpi.category === 'staff');
       
       default:
         // Fetch specific KPI
-        const specificKPIs = await kpiCalculationService.calculateClinicKPIs(clinicId);
+        const specificKPIs = await createkpiCalculationService().calculateClinicKPIs(clinicId);
         return specificKPIs.find(kpi => kpi.kpi.name === kpiSource) || null;
     }
   }
@@ -636,5 +636,5 @@ export class WidgetService {
 }
 
 // Export singleton instance
-export const widgetService = new WidgetService();
+export const createwidgetService = () => new WidgetService();
 

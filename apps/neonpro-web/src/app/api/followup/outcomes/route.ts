@@ -1,8 +1,8 @@
-// Treatment Outcomes API
+﻿// Treatment Outcomes API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { createTreatmentOutcomeSchema } from '@/app/lib/validations/followup';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined
     };
 
-    const outcomes = await treatmentFollowupService.getTreatmentOutcomes(filters);
+    const outcomes = await createtreatmentFollowupService().getTreatmentOutcomes(filters);
 
     return NextResponse.json({
       success: true,
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const validatedData = createTreatmentOutcomeSchema.parse(body);
     
     // Create outcome
-    const outcome = await treatmentFollowupService.createTreatmentOutcome(validatedData);
+    const outcome = await createtreatmentFollowupService().createTreatmentOutcome(validatedData);
 
     return NextResponse.json({
       success: true,

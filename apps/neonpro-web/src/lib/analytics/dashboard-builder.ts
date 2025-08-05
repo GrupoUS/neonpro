@@ -607,6 +607,6 @@ export class DashboardBuilder {
   }
 }
 
-// Export singleton instance
-export const dashboardBuilder = new DashboardBuilder();
+// Export factory function instead of singleton to avoid global initialization
+export const createDashboardBuilder = () => new DashboardBuilder();
 

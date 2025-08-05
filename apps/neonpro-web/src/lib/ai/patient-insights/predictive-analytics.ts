@@ -4,7 +4,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { HealthPrediction, PatientOutcome, PatientRiskAssessment } from './types'
 
-export class PredictiveAnalyticsEngine {
+export class createpredictiveAnalyticsEngine {
   private supabase = createClient()
   private models: Map<string, PredictiveModel> = new Map()
 

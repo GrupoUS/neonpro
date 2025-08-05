@@ -11,7 +11,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-import { notificationAnalytics } from '@/lib/notifications/analytics/notification-analytics';
 
 // ================================================================================
 // VALIDATION SCHEMAS
@@ -156,6 +155,10 @@ export async function GET(request: NextRequest) {
 
     // Buscar métricas baseadas no tipo solicitado
     let analyticsData;
+
+    // Load analytics module dynamically to avoid build-time initialization
+    const { createNotificationAnalytics } = await import('@/lib/notifications/analytics/notification-analytics');
+    const notificationAnalytics = createNotificationAnalytics();
 
     switch (query.metric) {
       case 'overview':

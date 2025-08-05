@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscription Database Query Optimizer
  * 
  * Advanced database query optimization for subscription operations:
@@ -782,4 +782,5 @@ export class SubscriptionQueryOptimizer {
 }
 
 // Global query optimizer instance
-export const subscriptionQueryOptimizer = new SubscriptionQueryOptimizer()
+export const createsubscriptionQueryOptimizer = () => new SubscriptionQueryOptimizer()
+

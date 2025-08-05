@@ -375,5 +375,5 @@ export class DuplicateDetectionSystem {
   }
 }
 
-export const duplicateDetectionSystem = new DuplicateDetectionSystem();
+export const createduplicateDetectionSystem = () => new DuplicateDetectionSystem();
 

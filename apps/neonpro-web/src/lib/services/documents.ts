@@ -191,5 +191,5 @@ class DocumentsService {
   }
 }
 
-export const documentsService = new DocumentsService()
+export const createdocumentsService = () => new DocumentsService()
 

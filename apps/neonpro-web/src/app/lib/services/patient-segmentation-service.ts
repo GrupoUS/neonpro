@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   CreateSegmentationRuleRequest,
   CreateSegmentRequest,
   EngagementLevel,
@@ -614,6 +614,5 @@ export class PatientSegmentationService {
   }
 }
 
-export const patientSegmentationService = new PatientSegmentationService();
-
+export const createpatientSegmentationService = () => new PatientSegmentationService();
 

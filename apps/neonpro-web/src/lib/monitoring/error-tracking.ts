@@ -478,7 +478,7 @@ class ErrorTracker {
 }
 
 // Export singleton instance
-export const errorTracker = new ErrorTracker();
+export const createerrorTracker = () => new ErrorTracker();
 
 // Utility function for manual error tracking
 export async function trackError(

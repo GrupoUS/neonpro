@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Marketing ROI Analysis Service
  * Comprehensive ROI calculation and optimization service for marketing campaigns and treatments
  * 
@@ -1013,6 +1013,5 @@ export class MarketingROIService {
   // (getTreatmentFinancialData, getClinicAverageROI, analyzeOptimizationPotential, etc.)
 }
 
-export const marketingROIService = new MarketingROIService();
-
+export const createmarketingROIService = () => new MarketingROIService();
 

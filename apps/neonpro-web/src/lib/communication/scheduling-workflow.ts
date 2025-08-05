@@ -775,5 +775,5 @@ export class SchedulingCommunicationWorkflow {
   }
 }
 
-export const schedulingCommunicationWorkflow = new SchedulingCommunicationWorkflow()
+export const createschedulingCommunicationWorkflow = () => new SchedulingCommunicationWorkflow()
 

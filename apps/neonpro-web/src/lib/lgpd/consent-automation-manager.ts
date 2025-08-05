@@ -601,5 +601,5 @@ export class ConsentAutomationManager {
 }
 
 // Export singleton instance
-export const consentAutomationManager = new ConsentAutomationManager();
+export const createconsentAutomationManager = () => new ConsentAutomationManager();
 

@@ -1,7 +1,7 @@
 ﻿// app/api/automated-analysis/processing/route.ts
 // API endpoints for analysis processing and comparison operations
 
-import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
+import { createautomatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server'
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       case 'start_analysis': {
         // Validate start analysis request
         const validatedData = validationSchemas.startAnalysis.parse(data);
-        const progress = await automatedBeforeAfterAnalysisService.startAnalysis(validatedData);
+        const progress = await createautomatedBeforeAfterAnalysisService().startAnalysis(validatedData);
 
         return NextResponse.json({
           success: true,
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       case 'comparison_analysis': {
         // Validate comparison analysis request
         const validatedData = validationSchemas.comparisonAnalysis.parse(data);
-        const result = await automatedBeforeAfterAnalysisService.performComparisonAnalysis(validatedData);
+        const result = await createautomatedBeforeAfterAnalysisService().performComparisonAnalysis(validatedData);
 
         return NextResponse.json({
           success: true,
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       case 'batch_analysis': {
         // Validate batch analysis request
         const validatedData = validationSchemas.batchAnalysis.parse(data);
-        const results = await automatedBeforeAfterAnalysisService.batchAnalysis(validatedData);
+        const results = await createautomatedBeforeAfterAnalysisService().batchAnalysis(validatedData);
 
         return NextResponse.json({
           success: true,
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 });
     }
 
-    const progress = await automatedBeforeAfterAnalysisService.getAnalysisProgress(sessionId);
+    const progress = await createautomatedBeforeAfterAnalysisService().getAnalysisProgress(sessionId);
 
     return NextResponse.json({
       success: true,

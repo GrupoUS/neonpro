@@ -378,7 +378,7 @@ export interface ResourceOptimization {
 }
 
 // Main Performance Monitoring Engine
-export class PerformanceMonitoringEngine {
+export class createperformanceMonitoringEngine {
   private supabase = createClient();
   private metrics: Map<string, SystemMetrics> = new Map();
   private alerts: Map<string, PerformanceAlert> = new Map();
@@ -1267,5 +1267,3 @@ export const SystemMetricsSchema = z.object({
 });
 
 // Export singleton instance
-export const performanceMonitoringEngine = new PerformanceMonitoringEngine();
-

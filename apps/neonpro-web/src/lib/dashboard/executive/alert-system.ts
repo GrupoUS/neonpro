@@ -1,7 +1,7 @@
 ﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
-import { kpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
+import { createkpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
 
 // Alert Types and Schemas
 export const AlertSeveritySchema = z.enum(['low', 'medium', 'high', 'critical']);
@@ -480,7 +480,7 @@ export class AlertSystem {
       }
 
       // Get current KPI value
-      const kpiResults = await kpiCalculationService.calculateClinicKPIs(rule.clinicId);
+      const kpiResults = await createkpiCalculationService().calculateClinicKPIs(rule.clinicId);
       const targetKPI = kpiResults.find(kpi => kpi.kpi.id === rule.conditions.kpiId);
 
       if (!targetKPI) {
@@ -862,5 +862,5 @@ export class AlertSystem {
 }
 
 // Export singleton instance
-export const alertSystem = new AlertSystem();
+export const createalertSystem = () => new AlertSystem();
 

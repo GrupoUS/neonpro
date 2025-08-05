@@ -1,8 +1,8 @@
-// Story 9.2: Personalized Treatment Recommendations - API Recommendations Route
+﻿// Story 9.2: Personalized Treatment Recommendations - API Recommendations Route
 // Treatment recommendations API endpoint
 
 import { NextRequest, NextResponse } from 'next/server';
-import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createpersonalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
     approveRecommendationRequestSchema,
     createTreatmentRecommendationRequestSchema
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       sort_order: (searchParams.get('sort_order') as 'asc' | 'desc') || 'desc'
     };
 
-    const recommendations = await personalizedRecommendationsService.getRecommendations(query);
+    const recommendations = await createpersonalizedRecommendationsService().getRecommendations(query);
     
     return NextResponse.json({
       recommendations,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const recommendationData: CreateTreatmentRecommendationRequest = validationResult.data;
-    const recommendation = await personalizedRecommendationsService.createRecommendation(recommendationData);
+    const recommendation = await createpersonalizedRecommendationsService().createRecommendation(recommendationData);
     
     return NextResponse.json({
       recommendation,
@@ -96,7 +96,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const approvalData: ApproveRecommendationRequest = validationResult.data;
-    const recommendation = await personalizedRecommendationsService.approveRecommendation(
+    const recommendation = await createpersonalizedRecommendationsService().approveRecommendation(
       approvalData.id, 
       approvalData
     );

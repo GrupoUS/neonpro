@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WebAuthn Authentication Verification API
  * TASK-002: Multi-Factor Authentication Enhancement
  * 
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { webAuthnService } from '@/lib/auth/webauthn-service';
+import { createwebAuthnService } from '@/lib/auth/webauthn-service';
 import { trackLoginPerformance } from '@/lib/auth/performance-tracker';
 
 export async function POST(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Verify authentication response
-      const verification = await webAuthnService.verifyAuthenticationResponse(
+      const verification = await createwebAuthnService().verifyAuthenticationResponse(
         response,
         userIdentifier
       );

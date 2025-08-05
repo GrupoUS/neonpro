@@ -1,14 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { MarketingROIService } from '@/app/lib/services/marketing-roi-service'
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service'
 import { 
   MarketingForecastRequest,
   MarketingForecastResponse,
   MarketingForecastType,
   MarketingForecastPeriod
 } from '@/app/types/marketing-roi'
-
-const marketingROIService = new MarketingROIService()
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,7 +32,7 @@ export async function GET(request: NextRequest) {
       includeScenarios: searchParams.get('includeScenarios') === 'true'
     }
 
-    const forecast = await marketingROIService.generateMarketingForecast(requestData)
+    const forecast = await createmarketingROIService().generateMarketingForecast(requestData)
 
     const response: MarketingForecastResponse = {
       forecast,
@@ -77,10 +75,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const forecast = await marketingROIService.generateMarketingForecast(requestData)
+    const forecast = await createmarketingROIService().generateMarketingForecast(requestData)
 
     // Generate additional insights for POST requests
-    const insights = await marketingROIService.generateForecastInsights({
+    const insights = await createmarketingROIService().generateForecastInsights({
       forecast,
       includeRecommendations: true,
       includeRiskAssessment: true
@@ -129,14 +127,14 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update forecast accuracy based on actual results
-    const updatedForecast = await marketingROIService.updateForecastAccuracy(
+    const updatedForecast = await createmarketingROIService().updateForecastAccuracy(
       forecastId,
       actualResults,
       feedback
     )
 
     // Recalibrate forecasting model if needed
-    const recalibrationResult = await marketingROIService.recalibrateForecastModel(
+    const recalibrationResult = await createmarketingROIService().recalibrateForecastModel(
       forecastId,
       actualResults
     )

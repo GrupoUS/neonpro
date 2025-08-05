@@ -1,4 +1,4 @@
-// Backend service for Patient Retention Analytics + Predictions
+﻿// Backend service for Patient Retention Analytics + Predictions
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 
 import type {
@@ -567,5 +567,4 @@ export class RetentionService {
     };
   }
 }
-
 

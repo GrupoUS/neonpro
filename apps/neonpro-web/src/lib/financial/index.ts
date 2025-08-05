@@ -978,7 +978,7 @@ export {
 // Story 4.2: Financial Analytics & Business Intelligence - Export new engines
 export { CashFlowEngine } from './cash-flow-engine'
 export { AutomatedAlertsEngine } from './automated-alerts-engine'
-export { PredictiveAnalyticsEngine } from './predictive-analytics-engine'
+export { createpredictiveAnalyticsEngine } from './predictive-analytics-engine'
 export { FinancialDashboardEngine } from './financial-dashboard-engine'
 
 // Export types from new engines

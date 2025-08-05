@@ -1320,5 +1320,5 @@ export class ChannelOptimizationEngine {
 }
 
 // Export singleton instance
-export const channelOptimizationEngine = new ChannelOptimizationEngine();
+export const createchannelOptimizationEngine = () => new ChannelOptimizationEngine();
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Subscription Status Validation Utilities
  * 
  * This module provides utilities for validating and managing user subscription status
@@ -141,7 +141,6 @@ class SubscriptionCache {
 }
 
 // Global cache instance
-const subscriptionCache = new SubscriptionCache()
 
 // Performance metrics collector
 const performanceMetrics: PerformanceMetrics[] = []

@@ -1,4 +1,4 @@
-// =====================================================================================
+﻿// =====================================================================================
 // NeonPro Inventory Tracking Engine
 // Epic 6: Real-time Stock Tracking with =99% Accuracy
 // Created: 2025-01-26
@@ -857,5 +857,4 @@ export function validateStockOperation(
 }
 
 export default InventoryTrackingEngine;
-
 

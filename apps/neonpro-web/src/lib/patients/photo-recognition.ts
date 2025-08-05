@@ -425,5 +425,5 @@ export class PhotoRecognitionSystem {
   }
 }
 
-export const photoRecognitionSystem = new PhotoRecognitionSystem();
+export const createphotoRecognitionSystem = () => new PhotoRecognitionSystem();
 

@@ -1427,5 +1427,5 @@ export const InteroperabilityValidationSchema = z.object({
 });
 
 // Export singleton instance
-export const interoperabilityManager = new InteroperabilityManager();
+export const createinteroperabilityManager = () => new InteroperabilityManager();
 

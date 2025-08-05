@@ -1,8 +1,8 @@
-// Follow-up Analytics API
+﻿// Follow-up Analytics API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       protocol_id: searchParams.get('protocol_id') || undefined
     };
 
-    const analytics = await treatmentFollowupService.getPerformanceAnalytics(filters);
+    const analytics = await createtreatmentFollowupService().getPerformanceAnalytics(filters);
 
     return NextResponse.json({
       success: true,

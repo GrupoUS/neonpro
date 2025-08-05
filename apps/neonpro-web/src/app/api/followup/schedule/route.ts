@@ -1,8 +1,8 @@
-// Auto-schedule Follow-ups API
+﻿// Auto-schedule Follow-ups API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
-import { treatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
+import { createtreatmentFollowupService } from '@/app/lib/services/treatment-followup-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Schedule automatic follow-ups
-    const scheduledFollowups = await treatmentFollowupService.scheduleAutomaticFollowups(
+    const scheduledFollowups = await createtreatmentFollowupService().scheduleAutomaticFollowups(
       patientId, 
       treatmentId, 
       protocolId

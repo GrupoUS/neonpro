@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WebAuthn Credentials Management API
  * TASK-002: Multi-Factor Authentication Enhancement
  * 
@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { webAuthnService } from '@/lib/auth/webauthn-service';
+import { createwebAuthnService } from '@/lib/auth/webauthn-service';
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's WebAuthn credentials
-    const credentials = await webAuthnService.getUserCredentials(session.user.id);
+    const credentials = await createwebAuthnService().getUserCredentials(session.user.id);
 
     return NextResponse.json({
       success: true,

@@ -947,5 +947,5 @@ export class SearchSuggestions {
 }
 
 // Export singleton instance
-export const searchSuggestions = new SearchSuggestions();
+export const createsearchSuggestions = () => new SearchSuggestions();
 

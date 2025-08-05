@@ -1,4 +1,4 @@
-// Intelligent Threshold Management Service
+﻿// Intelligent Threshold Management Service
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
 import { DemandForecast, ReorderAlert, ReorderThreshold, ThresholdOptimization } from '@/app/types/reorder-alerts';
@@ -516,5 +516,4 @@ export class IntelligentThresholdService {
     }, {} as Record<string, number>);
   }
 }
-
 

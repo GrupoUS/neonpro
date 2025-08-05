@@ -158,7 +158,7 @@ export interface AuditStatistics {
 /**
  * Sistema principal de auditoria
  */
-export class AuditSystem {
+export class createauditSystem {
   private supabase = createClient()
   private encryptionKey: string
 
@@ -596,22 +596,22 @@ export class AuditSystem {
 }
 
 // Instância singleton
-export const auditSystem = new AuditSystem()
+export const createAuditSystem = () => new createauditSystem()
 
 // Helper functions para uso fácil
 export const logAuditEvent = (event: Omit<AuditEvent, 'id' | 'timestamp' | 'checksum'>) => 
-  auditSystem.logEvent(event)
+  createAuditSystem().logEvent(event)
 
 export const queryAuditEvents = (filters: AuditQueryFilters) => 
-  auditSystem.queryEvents(filters)
+  createAuditSystem().queryEvents(filters)
 
 export const generateAuditReport = (
   title: string, 
   description: string, 
   filters: AuditQueryFilters, 
   generatedBy: string
-) => auditSystem.generateReport(title, description, filters, generatedBy)
+) => createAuditSystem().generateReport(title, description, filters, generatedBy)
 
 export const getAuditStatistics = (filters: Partial<AuditQueryFilters>) => 
-  auditSystem.getStatistics(filters)
+  createAuditSystem().getStatistics(filters)
 

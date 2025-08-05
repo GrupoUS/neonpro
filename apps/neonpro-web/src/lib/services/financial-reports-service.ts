@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/client";
+﻿import { createClient } from "@/lib/supabase/client";
 
 // Tipos para relatórios financeiros
 export interface AgingReportItem {
@@ -476,4 +476,5 @@ export class FinancialReportsService {
   }
 }
 
-export const financialReportsService = new FinancialReportsService();
+export const createfinancialReportsService = () => new FinancialReportsService();
+

@@ -1,8 +1,8 @@
-// Story 9.2: Personalized Treatment Recommendations - API Analytics Route
+﻿// Story 9.2: Personalized Treatment Recommendations - API Analytics Route
 // Recommendation analytics API endpoint
 
 import { NextRequest, NextResponse } from 'next/server';
-import { personalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
+import { createpersonalizedRecommendationsService } from '../../../lib/services/personalized-recommendations';
 import {
     recordPerformanceRequestSchema
 } from '../../../lib/validations/personalized-recommendations';
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
 
-    const analytics = await personalizedRecommendationsService.getRecommendationAnalytics(
+    const analytics = await createpersonalizedRecommendationsService().getRecommendationAnalytics(
       startDate || undefined,
       endDate || undefined
     );
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     // The validated data is guaranteed to have all required fields by the schema
-    const performance = await personalizedRecommendationsService.recordRecommendationPerformance(
+    const performance = await createpersonalizedRecommendationsService().recordRecommendationPerformance(
       validationResult.data as RecordPerformanceRequest
     );
     

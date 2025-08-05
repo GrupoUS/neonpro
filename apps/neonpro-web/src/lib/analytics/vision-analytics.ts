@@ -262,7 +262,7 @@ export interface PerformanceBenchmark {
 }
 
 // Main Analytics Engine Class
-export class VisionAnalyticsEngine {
+export class createvisionAnalyticsEngine {
   private supabase = createClient();
   private metricsBuffer: VisionMetric[] = [];
   private insights: Map<string, AnalyticsInsight> = new Map();
@@ -1032,5 +1032,3 @@ export const VisionMetricSchema = z.object({
 });
 
 // Export singleton instance
-export const visionAnalyticsEngine = new VisionAnalyticsEngine();
-

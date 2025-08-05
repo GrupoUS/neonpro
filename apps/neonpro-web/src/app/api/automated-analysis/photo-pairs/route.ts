@@ -1,7 +1,7 @@
-// app/api/automated-analysis/photo-pairs/route.ts
+﻿// app/api/automated-analysis/photo-pairs/route.ts
 // API endpoints for before/after photo pairs management
 
-import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
+import { createautomatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server'
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Validate filters
     const validatedFilters = validationSchemas.photoPairFilters.parse(filters);
 
-    const photoPairs = await automatedBeforeAfterAnalysisService.getPhotoPairs(validatedFilters);
+    const photoPairs = await createautomatedBeforeAfterAnalysisService().getPhotoPairs(validatedFilters);
 
     return NextResponse.json({
       success: true,
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = validationSchemas.createPhotoPair.parse(body);
 
-    const photoPair = await automatedBeforeAfterAnalysisService.createPhotoPair(validatedData);
+    const photoPair = await createautomatedBeforeAfterAnalysisService().createPhotoPair(validatedData);
 
     return NextResponse.json({
       success: true,
@@ -100,7 +100,7 @@ export async function PUT(request: NextRequest) {
     // Validate updates
     const validatedUpdates = validationSchemas.updatePhotoPair.parse(updates);
 
-    const updatedPhotoPair = await automatedBeforeAfterAnalysisService.updatePhotoPair(id, validatedUpdates);
+    const updatedPhotoPair = await createautomatedBeforeAfterAnalysisService().updatePhotoPair(id, validatedUpdates);
 
     return NextResponse.json({
       success: true,
@@ -134,7 +134,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Photo pair ID is required' }, { status: 400 });
     }
 
-    await automatedBeforeAfterAnalysisService.deletePhotoPair(id);
+    await createautomatedBeforeAfterAnalysisService().deletePhotoPair(id);
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+﻿import { createClient } from '@/lib/supabase/server';
 
 export class DashboardService {
   private async getSupabase() {
@@ -672,5 +672,4 @@ export class DashboardService {
     };
   }
 }
-
 

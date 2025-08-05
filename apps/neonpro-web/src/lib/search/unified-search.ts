@@ -31,7 +31,7 @@ export interface SearchAction {
   handler?: string;
 }
 
-export class UnifiedSearchSystem {
+export class createunifiedSearchSystem {
   private supabase = createClient();
   private profileManager = new ProfileManager();
   private timelineManager = new MedicalTimelineManager();
@@ -773,6 +773,4 @@ export class UnifiedSearchSystem {
     }
   }
 }
-
-export const unifiedSearchSystem = new UnifiedSearchSystem();
 

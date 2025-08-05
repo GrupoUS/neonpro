@@ -433,5 +433,5 @@ export class PaymentsService {
 }
 
 // Export singleton instance
-export const paymentsService = new PaymentsService()
+export const createpaymentsService = () => new PaymentsService()
 

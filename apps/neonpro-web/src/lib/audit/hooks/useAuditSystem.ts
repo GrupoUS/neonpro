@@ -142,7 +142,7 @@ export function useAuditLogs(options: UseAuditLogsOptions = {}): UseAuditLogsRet
       setLoading(true)
       setError(null)
       
-      const events = await auditSystem.queryEvents(filters)
+      const events = await createauditSystem().queryEvents(filters)
       setLogs(events)
       setTotalCount(events.length)
       
@@ -161,7 +161,7 @@ export function useAuditLogs(options: UseAuditLogsOptions = {}): UseAuditLogsRet
 
   const exportLogs = useCallback(async (format: 'json' | 'csv') => {
     try {
-      const events = await auditSystem.queryEvents(filters)
+      const events = await createauditSystem().queryEvents(filters)
       
       if (format === 'json') {
         const dataStr = JSON.stringify(events, null, 2)
@@ -459,7 +459,7 @@ export function useAuditReports(): UseAuditReportsReturn {
     try {
       setLoading(true)
       
-      const report = await auditSystem.generateReport(
+      const report = await createauditSystem().generateReport(
         title,
         description,
         filters,
@@ -564,7 +564,7 @@ export function useAuditStatistics(): UseAuditStatisticsReturn {
       setLoading(true)
       setError(null)
       
-      const stats = await auditSystem.getStatistics(filters)
+      const stats = await createauditSystem().getStatistics(filters)
       setStatistics(stats)
       
     } catch (err) {

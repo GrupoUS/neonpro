@@ -424,7 +424,7 @@ class FeatureFlagManager {
 }
 
 // Export singleton instance
-export const featureFlagManager = new FeatureFlagManager();
+export const createfeatureFlagManager = () => new FeatureFlagManager();
 
 //React Hook for feature flag usage
 export function useFeatureFlag(flagName: string, context?: Record<string, any>) {

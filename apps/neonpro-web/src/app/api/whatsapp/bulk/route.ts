@@ -1,8 +1,8 @@
-// WhatsApp Bulk Message API Route
+﻿// WhatsApp Bulk Message API Route
 // Handles sending bulk template messages to multiple recipients
 
 import { NextRequest, NextResponse } from 'next/server';
-import { whatsAppService } from '@/app/lib/services/whatsapp-service';
+import { createwhatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if WhatsApp is configured
-    const config = await whatsAppService.getConfig();
+    const config = await createwhatsAppService().getConfig();
     if (!config || !config.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       // Filter only opted-in phone numbers
       const optInChecks = await Promise.all(
         customPhoneNumbers.map(async (phone: string) => {
-          const isOptedIn = await whatsAppService.checkOptIn(phone);
+          const isOptedIn = await createwhatsAppService().checkOptIn(phone);
           return isOptedIn ? phone : null;
         })
       );
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     console.log(`Starting bulk send to ${phoneNumbers.length} recipients`);
 
     // Send bulk messages
-    const results = await whatsAppService.sendBulkMessages(
+    const results = await createwhatsAppService().sendBulkMessages(
       phoneNumbers,
       templateName,
       parameters

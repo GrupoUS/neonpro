@@ -623,7 +623,7 @@ class PermissionValidationSystem {
 }
 
 // Export singleton instance
-export const permissionValidator = new PermissionValidationSystem()
+export const createpermissionValidator = () => new PermissionValidationSystem()
 
 // Export convenience functions
 export async function hasPermission(

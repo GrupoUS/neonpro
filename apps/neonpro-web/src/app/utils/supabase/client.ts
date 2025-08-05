@@ -22,4 +22,3 @@ export function createOptimizedClient(clinicId: string) {
   return createClient()
 }
 
-

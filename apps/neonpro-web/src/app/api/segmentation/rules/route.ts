@@ -1,4 +1,4 @@
-import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
+﻿import { createpatientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { CreateRuleSchema } from '@/app/lib/validations/segmentation';
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       execution_schedule: undefined
     };
 
-    const rule = await patientSegmentationService.createAutomatedSegment(ruleData);
+    const rule = await createpatientSegmentationService().createAutomatedSegment(ruleData);
 
     return NextResponse.json({
       success: true,

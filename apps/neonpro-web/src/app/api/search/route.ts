@@ -1,6 +1,6 @@
-// app/api/search/route.ts
+﻿// app/api/search/route.ts
 import { createClient } from '@/lib/supabase/server';
-import { SearchQuery, unifiedSearchSystem } from "@/lib/search/unified-search";
+import { SearchQuery, createunifiedSearchSystem } from "@/lib/search/unified-search";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     
     if (searchType === 'conversational' && naturalQuery) {
       // Use conversational search for natural language queries
-      const response = await unifiedSearchSystem.conversationalSearch(
+      const response = await createunifiedSearchSystem().conversationalSearch(
         naturalQuery,
         session.user.id,
         'user'
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     
     if (searchType === 'smart' && naturalQuery) {
       // Use smart search with NLP analysis
-      const response = await unifiedSearchSystem.smartSearch(
+      const response = await createunifiedSearchSystem().smartSearch(
         naturalQuery,
         {
           userId: session.user.id,
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    const response = await unifiedSearchSystem.search(query);
+    const response = await createunifiedSearchSystem().search(query);
 
     // Log search analytics (async, don't wait)
     logSearchAnalytics(session.user.id, query.term, 'traditional', response.totalCount)
@@ -115,14 +115,14 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'advanced_search':
-        const response = await unifiedSearchSystem.advancedSearch(data.criteria);
+        const response = await createunifiedSearchSystem().advancedSearch(data.criteria);
         return NextResponse.json({
           success: true,
           data: response
         });
 
       case 'save_search':
-        const savedId = await unifiedSearchSystem.saveSearch(
+        const savedId = await createunifiedSearchSystem().saveSearch(
           data.name,
           data.query,
           data.userId
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         });
 
       case 'get_statistics':
-        const stats = await unifiedSearchSystem.getSearchStatistics(data.timeframe);
+        const stats = await createunifiedSearchSystem().getSearchStatistics(data.timeframe);
         return NextResponse.json({
           success: true,
           data: stats

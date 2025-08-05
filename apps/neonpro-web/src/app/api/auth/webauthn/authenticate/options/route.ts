@@ -1,4 +1,4 @@
-/**
+﻿/**
  * WebAuthn Authentication Options API
  * TASK-002: Multi-Factor Authentication Enhancement
  * 
@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { webAuthnService } from '@/lib/auth/webauthn-service';
+import { createwebAuthnService } from '@/lib/auth/webauthn-service';
 import { trackLoginPerformance } from '@/lib/auth/performance-tracker';
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       const { userIdentifier } = await request.json();
 
       // Generate authentication options
-      const options = await webAuthnService.generateAuthenticationOptions({
+      const options = await createwebAuthnService().generateAuthenticationOptions({
         userId: userIdentifier,
         allowCredentials: true,
       });

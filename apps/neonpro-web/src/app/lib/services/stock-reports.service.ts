@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Story 11.4: Stock Reports Service
  * Servi�o para gerenciamento de relat�rios de estoque
  */
@@ -546,5 +546,4 @@ export class StockReportsService {
     return uniqueProducts.size;
   }
 }
-
 

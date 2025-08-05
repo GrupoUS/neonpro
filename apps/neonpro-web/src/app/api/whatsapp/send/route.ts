@@ -1,8 +1,8 @@
-// WhatsApp Send Message API Route
+﻿// WhatsApp Send Message API Route
 // Handles sending individual and template messages via WhatsApp Business API
 
 import { NextRequest, NextResponse } from 'next/server';
-import { whatsAppService } from '@/app/lib/services/whatsapp-service';
+import { createwhatsAppService } from '@/app/lib/services/whatsapp-service';
 import { createClient } from '@/lib/supabase/server';
 import { WhatsAppMessageType } from '@/app/types/whatsapp';
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if WhatsApp is configured
-    const config = await whatsAppService.getConfig();
+    const config = await createwhatsAppService().getConfig();
     if (!config || !config.isActive) {
       return NextResponse.json(
         { error: 'WhatsApp is not configured or inactive' },
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     // Check opt-in status if patientId is provided
     if (patientId) {
-      const isOptedIn = await whatsAppService.checkOptIn(phoneNumber);
+      const isOptedIn = await createwhatsAppService().checkOptIn(phoneNumber);
       if (!isOptedIn) {
         return NextResponse.json(
           { error: 'Patient has not opted in for WhatsApp communications' },
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send the message
-    const messageId = await whatsAppService.sendMessage(
+    const messageId = await createwhatsAppService().sendMessage(
       phoneNumber,
       content,
       type,

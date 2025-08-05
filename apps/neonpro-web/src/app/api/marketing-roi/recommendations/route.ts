@@ -1,14 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { MarketingROIService } from '@/app/lib/services/marketing-roi-service'
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service'
 import { 
   OptimizationRecommendationsRequest,
   OptimizationRecommendationsResponse,
   MarketingOptimizationStrategy,
   MarketingOptimizationPriority
 } from '@/app/types/marketing-roi'
-
-const marketingROIService = new MarketingROIService()
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const recommendations = await marketingROIService.getOptimizationRecommendations(requestData)
+    const recommendations = await createmarketingROIService().getOptimizationRecommendations(requestData)
 
     const response: OptimizationRecommendationsResponse = {
       recommendations,
@@ -78,10 +76,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const recommendations = await marketingROIService.getOptimizationRecommendations(requestData)
+    const recommendations = await createmarketingROIService().getOptimizationRecommendations(requestData)
 
     // Generate comprehensive analysis
-    const analysis = await marketingROIService.generateOptimizationInsights({
+    const analysis = await createmarketingROIService().generateOptimizationInsights({
       recommendations,
       timeframe: '90d',
       includeMarketComparison: true
@@ -128,7 +126,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const updatedRecommendation = await marketingROIService.updateRecommendationStatus(
+    const updatedRecommendation = await createmarketingROIService().updateRecommendationStatus(
       recommendationId,
       status,
       feedback

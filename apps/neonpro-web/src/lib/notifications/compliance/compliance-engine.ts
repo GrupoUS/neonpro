@@ -810,6 +810,6 @@ export class NotificationComplianceEngine {
 // EXPORT
 // ================================================================================
 
-export const notificationComplianceEngine = new NotificationComplianceEngine();
+export const createnotificationComplianceEngine = () => new NotificationComplianceEngine();
 export type { LGPDConsent, AuditLog, DPIA, ComplianceCheckResult };
 

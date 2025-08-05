@@ -1081,5 +1081,5 @@ export class AdvancedMetricsEngine {
 }
 
 // Export singleton instance
-export const advancedMetricsEngine = new AdvancedMetricsEngine();
+export const createadvancedMetricsEngine = () => new AdvancedMetricsEngine();
 

@@ -1,11 +1,11 @@
-/**
+﻿/**
  * CAC & LTV Analysis API Routes
  * /api/marketing-roi/cac-ltv-analysis
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { marketingROIService } from '@/app/lib/services/marketing-roi-service';
+import { createmarketingROIService } from '@/app/lib/services/marketing-roi-service';
 
 // Utility functions
 async function validateUserAndClinic(request: NextRequest) {
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    const analysis = await marketingROIService.getCACLTVAnalysis(
+    const analysis = await createmarketingROIService().getCACLTVAnalysis(
       clinicId,
       start_date,
       end_date
