@@ -3,16 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "prisma generate --schema=../../prisma/schema.prisma && next build",
+    "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate --schema=../../prisma/schema.prisma",
-    "vercel-build": "prisma generate --schema=../../prisma/schema.prisma && prisma migrate deploy --schema=../../prisma/schema.prisma && next build",
-    "db:migrate": "prisma migrate deploy --schema=../../prisma/schema.prisma",
-    "db:generate": "prisma generate --schema=../../prisma/schema.prisma",
-    "db:seed": "tsx prisma/seed.ts"
+    "vercel-build": "next build"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.0",
@@ -62,7 +58,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "critters": "^0.0.25",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "framer-motion": "^12.23.12",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
