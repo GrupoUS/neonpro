@@ -1032,3 +1032,5 @@ export const VisionMetricSchema = z.object({
 });
 
 // Export singleton instance
+export const VisionAnalyticsEngine = createvisionAnalyticsEngine;
+export const visionAnalyticsEngine = new createvisionAnalyticsEngine();

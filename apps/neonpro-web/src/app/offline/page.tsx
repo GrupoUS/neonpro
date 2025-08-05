@@ -2,16 +2,12 @@
 // VIBECODE V1.0 - Healthcare PWA Pattern
 // Purpose: Fallback page when user is offline
 
+'use client'
+
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, Loader2, Wifi, WifiOff } from 'lucide-react'
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Offline - NeonPro',
-  description: 'You are currently offline. Some features may be limited.',
-}
 
 export default function OfflinePage() {
   return (

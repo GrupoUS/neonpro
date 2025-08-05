@@ -551,5 +551,7 @@ class TreatmentFollowupService {
 }
 
 // Export singleton instance
+export const treatmentFollowupService = new TreatmentFollowupService();
 export const createtreatmentFollowupService = () => new TreatmentFollowupService();
+
 

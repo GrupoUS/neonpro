@@ -54,7 +54,7 @@ export interface WebAuthnAuthenticationOptions {
   allowCredentials?: boolean;
 }
 
-class createwebAuthnService {
+class WebAuthnService {
   private readonly rpName = 'NeonPro';
   private readonly rpID = process.env.NEXT_PUBLIC_WEBAUTHN_RP_ID || 'localhost';
   private readonly origin = process.env.NEXT_PUBLIC_WEBAUTHN_ORIGIN || 'http://localhost:3000';
@@ -395,3 +395,14 @@ declare global {
   var webauthnChallenges: Map<string, { challenge: string; timestamp: number }> | undefined;
 }
 
+
+
+export const webAuthnService = createWebAuthnService();
+
+// Factory function to create WebAuthn service
+export function createWebAuthnService(): WebAuthnService {
+  return new WebAuthnService();
+}
+
+// Export alias for compatibility
+export const createwebAuthnService = createWebAuthnService;

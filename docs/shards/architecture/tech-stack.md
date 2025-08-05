@@ -1,46 +1,74 @@
-# NeonPro Technology Stack
+# NeonPro Technology Stack - BMAD Enhanced
 
 *Auto-loaded by BMad Dev Agent (@dev) - Version: BMad v4.29.0*
 
 ## 🎯 Overview
-This document defines the complete technology stack, configurations, and architectural decisions for NeonPro. It is automatically loaded when using the BMad Dev Agent (@dev) to ensure all implementations align with the chosen technology foundation.
+This document defines the complete technology stack, configurations, and architectural decisions for NeonPro following BMAD Method standards. It is automatically loaded when using the BMad Dev Agent (@dev) to ensure all implementations align with the chosen technology foundation and maintain ≥9.5/10 quality standards.
 
-## 🏗️ Core Technology Stack
+## 🏗️ BMAD-Enhanced Core Technology Stack
 
-### Frontend Framework
-- **Next.js 15**: App Router with Server Components by default
-- **React 19**: Latest stable version with concurrent features
-- **TypeScript**: Strict configuration for type safety
-- **Tailwind CSS**: Utility-first CSS framework with design tokens
+### Hybrid Frontend Architecture (BMAD-Optimized)
+- **Next.js 15**: App Router with React 19 Server Components by default
+- **React 19**: Latest stable with concurrent features, Actions, and enhanced form handling  
+- **Vite 6**: Ultra-fast development server for interactive components and rapid iteration
+- **TypeScript 5.6+**: Strict configuration for type safety and BMAD quality compliance
+- **Tailwind CSS 4.0**: Utility-first CSS framework with design tokens and CSS-in-JS support
 
-### Backend & Database
-- **Supabase**: Postgres database with real-time capabilities
-- **Supabase Auth**: JWT-based authentication with OAuth providers
-- **Row Level Security (RLS)**: Multi-tenant data isolation
-- **Edge Functions**: Serverless functions for business logic
+### React 19 + Vite Integration Strategy
+```typescript
+// Hybrid Architecture Pattern
+// Next.js for SSR pages and SEO-critical routes
+// Vite for interactive components and development speed
 
-### UI Component System
-- **shadcn/ui**: Component library built on Radix UI primitives
-- **Radix UI**: Accessible, unstyled UI primitives
-- **Lucide React**: Icon library for consistent iconography
-- **CSS Variables**: Design token system for theming
+// Next.js Pages (app/dashboard/page.tsx)
+export default async function DashboardPage() {
+  const data = await fetchServerData()
+  return <DashboardLayout data={data} />
+}
 
-### Form & Validation
-- **react-hook-form**: Performant forms with minimal re-renders
-- **zod**: TypeScript-first schema validation
-- **@hookform/resolvers**: Integration between react-hook-form and zod
+// Vite Components (components/interactive/PatientForm.tsx)  
+"use client"
+import { useActionState } from 'react' // React 19 feature
+export default function PatientForm() {
+  const [state, formAction] = useActionState(createPatient, initialState)
+  // Fast HMR development with Vite
+}
+```
 
-### Development Tools
-- **pnpm**: Fast, efficient package manager
-- **ESLint**: Code linting with Next.js configuration
-- **Prettier**: Code formatting (via ESLint integration)
-- **TypeScript**: Static type checking
+### Backend & Database (BMAD-Compliant)
+- **Supabase**: Postgres database with real-time capabilities and edge functions
+- **Supabase Auth**: JWT-based authentication with OAuth providers and RLS integration
+- **Row Level Security (RLS)**: Multi-tenant data isolation with clinic_id sharding
+- **Edge Functions**: Serverless Deno functions for BMAD-compliant business logic
+- **Supabase Realtime**: WebSocket connections for live collaborative features
 
-### Deployment & Infrastructure
-- **Vercel**: Frontend hosting with Edge Runtime
-- **Supabase Cloud**: Managed Postgres with global CDN
-- **Vercel Analytics**: Performance and user analytics
-- **GitHub**: Version control and CI/CD integration
+### UI Component System (Design System Excellence)
+- **shadcn/ui v4**: Component library built on Radix UI primitives with BMAD quality standards
+- **Radix UI**: Accessible, unstyled UI primitives ensuring WCAG 2.1 AA+ compliance
+- **Lucide React**: Icon library for consistent iconography across all components
+- **CSS Variables**: Design token system for theming and dark mode support
+- **Tailwind CSS**: Utility-first with custom aesthetic clinic design system
+
+### Form & Validation (React 19 Enhanced)
+- **react-hook-form**: Performant forms with minimal re-renders and React 19 Actions integration
+- **zod**: TypeScript-first schema validation with BMAD compliance rules
+- **@hookform/resolvers**: Integration between react-hook-form and zod for form validation
+- **React 19 Actions**: Server Actions for optimistic updates and error handling
+
+### Development Tools (BMAD Workflow)
+- **pnpm**: Fast, efficient package manager for monorepo support
+- **Vite 6**: Development server with HMR for rapid component iteration
+- **ESLint 9**: Code linting with Next.js configuration and BMAD quality rules
+- **Prettier**: Code formatting integrated with ESLint for consistency
+- **TypeScript 5.6+**: Static type checking with strict configuration
+- **Biome**: Fast linter and formatter alternative for performance-critical workflows
+
+### Deployment & Infrastructure (Edge-Optimized)
+- **Vercel**: Frontend hosting with Edge Runtime and global CDN
+- **Supabase Cloud**: Managed Postgres with global replication and edge functions
+- **Vercel Analytics**: Performance monitoring and user analytics with GDPR compliance
+- **GitHub Actions**: CI/CD pipeline with BMAD quality gates and automated testing
+- **Docker**: Containerized development environment for consistency across team
 
 ## 📦 Complete Dependency Map
 

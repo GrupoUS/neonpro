@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { format, parseISO, isToday, isTomorrow, addDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

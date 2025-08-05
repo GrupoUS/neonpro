@@ -1267,3 +1267,5 @@ export const SystemMetricsSchema = z.object({
 });
 
 // Export singleton instance
+export const PerformanceMonitoringEngine = createperformanceMonitoringEngine;
+export const performanceMonitoringEngine = new createperformanceMonitoringEngine();

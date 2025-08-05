@@ -614,5 +614,7 @@ export class PatientSegmentationService {
   }
 }
 
+export const patientSegmentationService = new PatientSegmentationService();
 export const createpatientSegmentationService = () => new PatientSegmentationService();
+
 

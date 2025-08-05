@@ -141,23 +141,35 @@ export const stockAlertConfigSchema = z.object({
 );
 
 // Create alert config schema (for API requests)
-export const createStockAlertConfigSchema = stockAlertConfigSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  createdBy: true,
-  updatedBy: true
-});
+export const createStockAlertConfigSchema = z.object({
+  clinicId: uuidSchema,
+  productId: uuidSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  alertType: alertTypeSchema,
+  thresholdValue: positiveNumberSchema,
+  thresholdUnit: thresholdUnitSchema.default('quantity'),
+  severityLevel: severityLevelSchema.default('medium'),
+  isActive: z.boolean().default(true),
+  notificationChannels: z.array(notificationChannelSchema).min(1, 'At least one notification channel required')
+}).refine(
+  (data) => data.productId || data.categoryId || (!data.productId && !data.categoryId),
+  {
+    message: "Either productId, categoryId, or neither should be provided (not both)",
+    path: ["productId", "categoryId"]
+  }
+);
 
 // Update alert config schema (for API requests)
-export const updateStockAlertConfigSchema = stockAlertConfigSchema.partial().omit({
-  id: true,
-  clinicId: true,
-  createdAt: true,
-  updatedAt: true,
-  createdBy: true,
-  updatedBy: true
-});
+export const updateStockAlertConfigSchema = z.object({
+  productId: uuidSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  alertType: alertTypeSchema.optional(),
+  thresholdValue: positiveNumberSchema.optional(),
+  thresholdUnit: thresholdUnitSchema.optional(),
+  severityLevel: severityLevelSchema.optional(),
+  isActive: z.boolean().optional(),
+  notificationChannels: z.array(notificationChannelSchema).optional()
+}).partial();
 
 // =====================================================
 // STOCK ALERT SCHEMAS
@@ -267,12 +279,14 @@ export const customStockReportSchema = z.object({
 });
 
 // Create custom report schema
-export const createCustomReportSchema = customStockReportSchema.omit({
-  id: true,
-  lastExecutedAt: true,
-  executionCount: true,
-  createdAt: true,
-  updatedAt: true
+export const createCustomReportSchema = z.object({
+  clinicId: uuidSchema,
+  userId: uuidSchema,
+  reportName: z.string().min(1, 'Report name required').max(200, 'Report name too long').trim(),
+  reportType: reportTypeSchema,
+  filters: reportFiltersSchema,
+  scheduleConfig: reportScheduleConfigSchema.optional(),
+  isActive: z.boolean().default(true)
 });
 
 // =====================================================

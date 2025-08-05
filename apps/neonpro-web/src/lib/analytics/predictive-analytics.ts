@@ -1327,3 +1327,5 @@ export const ForecastRequestSchema = z.object({
 });
 
 // Export singleton instance
+export const PredictiveAnalyticsEngine = createpredictiveAnalyticsEngine;
+export const predictiveAnalyticsEngine = new createpredictiveAnalyticsEngine();

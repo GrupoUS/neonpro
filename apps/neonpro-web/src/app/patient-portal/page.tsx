@@ -1,30 +1,12 @@
-import { Suspense } from 'react'
-import { Metadata } from 'next'
+'use client'
+
+import React, { Suspense } from 'react'
 import { PatientDashboard } from '@/components/patient-portal/patient-dashboard'
 import { PortalLayout } from '@/components/patient-portal/portal-layout'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
-export const metadata: Metadata = {
-  title: 'Portal do Paciente | NeonPro',
-  description: 'Acesse seu histórico médico, agende consultas e gerencie seus dados de forma segura.',
-  keywords: [
-    'portal paciente',
-    'agendamento online',
-    'histórico médico',
-    'clínica estética',
-    'LGPD',
-    'telemedicina'
-  ],
-  openGraph: {
-    title: 'Portal do Paciente - NeonPro',
-    description: 'Gerencie sua saúde e beleza de forma digital e segura',
-    type: 'website',
-  },
-  robots: {
-    index: false, // Portal do paciente não deve ser indexado
-    follow: false,
-  },
-}
+// Disable static generation for this page since it uses client-side auth
+export const dynamic = 'force-dynamic'
 
 export default function PatientPortalPage() {
   return (
