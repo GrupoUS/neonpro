@@ -1,6 +1,6 @@
 // 🧪 Test file for pre-commit hooks
 const testFunction = () => {
-  console.log("Testing   pre-commit   hooks");
+  console.log("Testing pre-commit hooks with TypeScript validation");
   return "success";
 };
 
