@@ -1,9 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate --schema=../../prisma/schema.prisma && cd apps/neonpro-web && npm run build",
+  "buildCommand": "cd apps/neonpro-web && npx prisma generate --schema=../../prisma/schema.prisma && npm run build",
   "installCommand": "npm install && cd apps/neonpro-web && npm install",
-  "framework": "nextjs",
-  "rootDirectory": "apps/neonpro-web",
   "outputDirectory": "apps/neonpro-web/.next",
   "env": {
     "PRISMA_CLI_BINARY_TARGETS": "rhel-openssl-1.0.x,linux-musl",
