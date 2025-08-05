@@ -1,8 +1,8 @@
 import { ConsentService } from '../consent.service';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 // Mock do createClient - usando definição simples
-jest.mock('@/app/utils/supabase/client', () => ({
+jest.mock('@/lib/supabase/client', () => ({
   createClient: jest.fn()
 }));
 

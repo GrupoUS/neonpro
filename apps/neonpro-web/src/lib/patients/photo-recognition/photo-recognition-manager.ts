@@ -545,10 +545,10 @@ export class PhotoRecognitionManager {
       const recommendations: string[] = []
       
       // Basic quality checks
-      let sharpness = 0.8 + Math.random() * 0.2 // Mock sharpness score
-      let lighting = 0.7 + Math.random() * 0.3 // Mock lighting score
-      let faceVisibility = 0.85 + Math.random() * 0.15 // Mock face visibility
-      let resolution = fileSize > 100000 ? 0.9 : 0.6 // Basic resolution check
+      const sharpness = 0.8 + Math.random() * 0.2 // Mock sharpness score
+      const lighting = 0.7 + Math.random() * 0.3 // Mock lighting score
+      const faceVisibility = 0.85 + Math.random() * 0.15 // Mock face visibility
+      const resolution = fileSize > 100000 ? 0.9 : 0.6 // Basic resolution check
       
       // Generate recommendations
       if (sharpness < 0.7) {

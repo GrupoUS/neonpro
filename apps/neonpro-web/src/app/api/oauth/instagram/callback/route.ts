@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { OAuthAuthorizationCodeRequest } from '@/lib/oauth/types';
 

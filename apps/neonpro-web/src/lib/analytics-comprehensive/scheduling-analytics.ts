@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/supabase'
 
 type SupabaseClient = ReturnType<typeof createClient>
@@ -608,3 +608,4 @@ export class SchedulingAnalytics {
 }
 
 export default SchedulingAnalytics
+

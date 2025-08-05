@@ -17,7 +17,7 @@ import {
  * Inventory Configuration Manager
  */
 export class InventoryConfigManager {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
   private config: InventoryConfig = DEFAULT_INVENTORY_CONFIG;
 
   /**
@@ -100,7 +100,7 @@ export class InventoryConfigManager {
  * Inventory Dashboard Data Provider
  */
 export class InventoryDashboardProvider {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
 
   /**
    * Get comprehensive dashboard summary
@@ -330,7 +330,7 @@ export class InventoryDashboardProvider {
  * Inventory System Integration Manager
  */
 export class InventoryIntegrationManager {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
 
   /**
    * Get system integration status

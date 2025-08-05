@@ -1,7 +1,7 @@
 // app/api/auth/mfa/sms/send/route.ts
 // API route for sending SMS verification codes
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 // Note: This will require Twilio or AWS SNS configuration
 // For now, we'll use a mock implementation that logs the code

@@ -316,7 +316,7 @@ export class InAppProvider implements ChannelProvider {
   ): InAppNotification[] {
     const userNotifications = this.notifications.get(userId) || [];
     
-    let filtered = userNotifications.filter(n => {
+    const filtered = userNotifications.filter(n => {
       if (options.unreadOnly && n.isRead) return false;
       if (options.category && n.category !== options.category) return false;
       if (n.isArchived) return false;

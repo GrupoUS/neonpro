@@ -1,8 +1,8 @@
-// hooks/useLGPDCompliance.ts
+﻿// hooks/useLGPDCompliance.ts
 // React hooks for LGPD compliance in NeonPro frontend
 // Provides easy-to-use hooks for audit logging, consent management, and data subject rights
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import {
     LGPDComplianceManager,
     type LGPDConsentType,
@@ -100,7 +100,7 @@ interface DataSubjectRequest {
 export const useLGPDAudit = (): UseLGPDAuditReturn => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const supabase = await createClient()
   const compliance = new LGPDComplianceManager()
 
   const logEvent = useCallback(async (
@@ -211,7 +211,7 @@ export const useConsentManagement = (patientId?: string, clinicId?: string): Use
   const [consents, setConsents] = useState<PatientConsent[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const supabase = await createClient()
   const compliance = new LGPDComplianceManager()
 
   const refreshConsents = useCallback(async () => {
@@ -375,7 +375,7 @@ export const useDataSubjectRights = (patientId?: string, clinicId?: string): Use
   const [requests, setRequests] = useState<DataSubjectRequest[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const supabase = await createClient()
   const compliance = new LGPDComplianceManager()
   const router = useRouter()
 
@@ -559,7 +559,7 @@ export const useLGPDComplianceStatus = (patientId?: string, clinicId?: string) =
     lastAccess: null as string | null,
     complianceScore: 0
   })
-  const supabase = createClient()
+  const supabase = await createClient()
 
   useEffect(() => {
     if (!patientId || !clinicId) return
@@ -619,3 +619,4 @@ export default {
   withLGPDProtection,
   useLGPDComplianceStatus
 }
+

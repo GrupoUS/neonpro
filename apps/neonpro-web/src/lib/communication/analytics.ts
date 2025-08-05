@@ -3,7 +3,7 @@
  * Story 2.3: Automated Communication System
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { CommunicationAnalytics, CommunicationChannel, MessageType } from './types';
 
 export interface CommunicationMetrics {

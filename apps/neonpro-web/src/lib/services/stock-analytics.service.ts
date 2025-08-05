@@ -3,7 +3,7 @@
 // Story 11.4: Enhanced Stock Alerts System
 // Created: 2025-01-21 (Claude Code Implementation)
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export interface AlertResolutionMetrics {
   id: string;

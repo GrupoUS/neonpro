@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Permission Validation System
  * 
  * Comprehensive role-based access control (RBAC) and permission validation
@@ -687,3 +687,4 @@ export type {
   PermissionResult,
   RolePermission
 }
+

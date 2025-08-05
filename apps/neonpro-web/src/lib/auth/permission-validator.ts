@@ -3,7 +3,7 @@
  * Comprehensive role-based access control with fine-grained permissions
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { securityAuditLogger } from './security-audit-logger';
 import { performanceTracker } from './performance-tracker';
 

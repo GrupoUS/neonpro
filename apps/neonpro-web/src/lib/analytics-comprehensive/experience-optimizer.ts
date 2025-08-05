@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🎯 NeonPro Experience Optimizer
  * 
  * HEALTHCARE EXPERIENCE OPTIMIZATION - Sistema de Otimização da Experiência do Paciente
@@ -1395,3 +1395,4 @@ export {
   type JourneyPathOptimization,
   type ResourceAllocationOptimization
 }
+

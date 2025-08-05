@@ -1,4 +1,4 @@
-// NeonPro - Bank Reconciliation API Routes
+﻿// NeonPro - Bank Reconciliation API Routes
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Main API endpoints for bank reconciliation management
 
@@ -57,7 +57,7 @@ const ManualMatchSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -295,7 +295,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -392,7 +392,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -465,3 +465,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

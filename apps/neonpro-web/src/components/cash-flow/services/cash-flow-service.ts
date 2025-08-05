@@ -1,7 +1,7 @@
-// Cash Flow Service - Supabase operations for cash flow management
+﻿// Cash Flow Service - Supabase operations for cash flow management
 // Following financial dashboard patterns from Context7 research
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { 
   CashFlowEntry, 
   CashRegister, 
@@ -324,3 +324,4 @@ export class CashFlowService {
 }
 
 export const cashFlowService = new CashFlowService();
+

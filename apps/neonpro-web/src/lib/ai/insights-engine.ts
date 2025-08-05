@@ -1,5 +1,5 @@
-// lib/ai/insights-engine.ts
-import { createClient } from "@/app/utils/supabase/server";
+﻿// lib/ai/insights-engine.ts
+import { createClient } from "@/lib/supabase/server";
 
 export interface InsightData {
   patientId: string;
@@ -305,3 +305,4 @@ export class AIInsightsEngine {
 }
 
 export const aiInsightsEngine = new AIInsightsEngine();
+

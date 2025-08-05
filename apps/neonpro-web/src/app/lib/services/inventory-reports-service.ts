@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type {
   ReportType,
   ReportParameters,
@@ -22,7 +22,7 @@ import type {
 } from '@/app/lib/types/inventory-reports';
 
 class InventoryReportsService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // =============================================================================
   // STOCK MOVEMENT REPORTS
@@ -34,7 +34,7 @@ class InventoryReportsService {
     const startTime = Date.now();
 
     // Build query for stock movements
-    let query = this.supabase
+    let query = supabase
       .from('stock_transactions')
       .select(`
         id,
@@ -185,7 +185,7 @@ class InventoryReportsService {
   ): Promise<ReportResult<'stock_valuation'>> {
     const startTime = Date.now();
 
-    let query = this.supabase
+    let query = supabase
       .from('inventory_stock')
       .select(`
         item_id,
@@ -348,7 +348,7 @@ class InventoryReportsService {
 
     // For this example, we'll assume expiry dates are stored in inventory_stock
     // In a real implementation, you might have a separate batch tracking system
-    let query = this.supabase
+    let query = supabase
       .from('inventory_stock')
       .select(`
         item_id,
@@ -509,7 +509,7 @@ class InventoryReportsService {
   ): Promise<ReportResult<'transfers'>> {
     const startTime = Date.now();
 
-    let query = this.supabase
+    let query = supabase
       .from('stock_transfers')
       .select(`
         id,
@@ -621,7 +621,7 @@ class InventoryReportsService {
       summary.by_status[transfer.status].value += transfer.total_value;
 
       // By route
-      const route = `${transfer.from_clinic_name} → ${transfer.to_clinic_name}`;
+      const route = `${transfer.from_clinic_name} ? ${transfer.to_clinic_name}`;
       if (!summary.by_route[route]) {
         summary.by_route[route] = { count: 0, value: 0, avg_time: 0 };
       }
@@ -665,7 +665,7 @@ class InventoryReportsService {
     const startTime = Date.now();
 
     // Get all locations
-    let locationsQuery = this.supabase
+    let locationsQuery = supabase
       .from('clinics')
       .select('id, name');
 
@@ -707,14 +707,15 @@ class InventoryReportsService {
   }
 
   private async calculateLocationPerformance(clinicId: string, filters: ReportFilters) {
+    const supabase = await createClient();
     // Get stock data for clinic
-    const { data: stockData } = await this.supabase
+    const { data: stockData } = await supabase
       .from('inventory_stock')
       .select('current_quantity, cost_per_unit, inventory_items!inner(minimum_quantity)')
       .eq('clinic_id', clinicId);
 
     // Get movement data for clinic
-    let movementQuery = this.supabase
+    let movementQuery = supabase
       .from('stock_transactions')
       .select('transaction_type, quantity_change, unit_cost, created_at')
       .eq('clinic_id', clinicId);
@@ -729,12 +730,12 @@ class InventoryReportsService {
     const { data: movements } = await movementQuery;
 
     // Get transfer data
-    const { data: transfersOut } = await this.supabase
+    const { data: transfersOut } = await supabase
       .from('stock_transfers')
       .select('id')
       .eq('from_clinic_id', clinicId);
 
-    const { data: transfersIn } = await this.supabase
+    const { data: transfersIn } = await supabase
       .from('stock_transfers')
       .select('id')
       .eq('to_clinic_id', clinicId);
@@ -853,7 +854,8 @@ class InventoryReportsService {
   // =============================================================================
 
   async saveReportDefinition(definition: Omit<ReportDefinition, 'id' | 'created_at' | 'updated_at'>): Promise<ReportDefinition> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('report_definitions')
       .insert([{
         ...definition,
@@ -871,7 +873,7 @@ class InventoryReportsService {
   }
 
   async getReportDefinitions(filters?: { created_by?: string; is_active?: boolean }): Promise<ReportDefinition[]> {
-    let query = this.supabase
+    let query = supabase
       .from('report_definitions')
       .select('*')
       .order('created_at', { ascending: false });
@@ -908,3 +910,5 @@ class InventoryReportsService {
 }
 
 export const inventoryReportsService = new InventoryReportsService();
+
+

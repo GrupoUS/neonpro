@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { withRoleValidation } from '@/lib/middleware/role-validation';
 
 export const GET = withRoleValidation(

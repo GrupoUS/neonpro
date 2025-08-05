@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Supplier Management Hooks - Epic 6, Story 6.3
 // ============================================================================
 // React hooks for supplier management, performance tracking, procurement,
@@ -27,7 +27,7 @@ import {
   QualityIssueType,
   SupplierFormData
 } from '@/lib/types/supplier';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 // ============================================================================
 // SUPPLIER MANAGEMENT HOOKS
@@ -43,7 +43,7 @@ export function useSuppliers(clinicId?: string, filters?: {
   riskLevel?: RiskLevel[];
 }) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Use demo clinic ID if not provided (for testing)
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
@@ -209,7 +209,7 @@ export function useSuppliers(clinicId?: string, filters?: {
  */
 export function useSupplier(supplierId: string) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: supplier, isLoading, error } = useQuery({
     queryKey: ['supplier', supplierId],
@@ -251,7 +251,7 @@ export function useSupplier(supplierId: string) {
  */
 export function useSupplierPerformance(supplierId: string, period?: string) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get performance data for supplier
   const { data: performance, isLoading, error } = useQuery({
@@ -340,7 +340,7 @@ export function useSupplierAnalytics(clinicId?: string, options?: {
   category?: SupplierCategory;
   compareWith?: 'industry' | 'category' | 'previous';
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
   const { data: analytics, isLoading, error } = useQuery({
@@ -382,7 +382,7 @@ export function useProcurementRequests(clinicId?: string, filters?: {
   dateRange?: { start: string; end: string };
 }) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
   const { data: requests = [], isLoading, error } = useQuery({
@@ -458,7 +458,7 @@ export function useProcurementRequests(clinicId?: string, filters?: {
  */
 export function useSupplierBids(procurementRequestId: string) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: bids = [], isLoading, error } = useQuery({
     queryKey: ['supplier-bids', procurementRequestId],
@@ -545,7 +545,7 @@ export function useQualityIssues(clinicId?: string, filters?: {
   type?: QualityIssueType[];
 }) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
   const { data: issues = [], isLoading, error } = useQuery({
@@ -678,7 +678,7 @@ export function useSupplierContracts(clinicId?: string, filters?: {
   expiringIn?: number; // days
 }) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
   const effectiveClinicId = clinicId || '89084c3a-9200-4058-a15a-b440d3c60687';
 
   const { data: contracts = [], isLoading, error } = useQuery({
@@ -746,7 +746,7 @@ export function useSupplierContracts(clinicId?: string, filters?: {
  */
 export function useSupplierCommunications(supplierId: string) {
   const queryClient = useQueryClient();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: communications = [], isLoading, error } = useQuery({
     queryKey: ['supplier-communications', supplierId],
@@ -879,7 +879,7 @@ export function useSupplierProcurement(supplierId: string, clinicId?: string) {
   const { data: procurementData, isLoading } = useQuery({
     queryKey: ['supplier-procurement', supplierId, effectiveClinicId],
     queryFn: async () => {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get procurement history
       const { data: procurements } = await supabase
@@ -916,7 +916,7 @@ export function useSupplierQuality(supplierId: string, clinicId?: string) {
   const { data: qualityData, isLoading } = useQuery({
     queryKey: ['supplier-quality', supplierId, effectiveClinicId],
     queryFn: async () => {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get quality metrics
       const { data: performance } = await supabase
@@ -951,7 +951,7 @@ export function useSupplierStats(clinicId?: string) {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['supplier-stats', effectiveClinicId],
     queryFn: async () => {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get supplier counts by status
       const { data: suppliers } = await supabase
@@ -984,3 +984,4 @@ export function useSupplierStats(clinicId?: string) {
     isLoading
   };
 }
+

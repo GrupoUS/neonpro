@@ -4,13 +4,13 @@
 import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/automated-analysis/reports - Get analysis reports with filters
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 // POST /api/automated-analysis/reports - Generate new analysis report
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -78,3 +78,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

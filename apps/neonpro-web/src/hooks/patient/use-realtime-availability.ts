@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -44,7 +44,7 @@ export function useRealTimeAvailability({
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [channel, setChannel] = useState<RealtimeChannel | null>(null)
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const fetchAvailability = useCallback(async () => {
     if (!serviceId || !enabled) return
@@ -181,7 +181,7 @@ export function useRealTimeAvailability({
 
 // Hook for conflict detection during booking
 export function useConflictDetection() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const checkForConflicts = useCallback(async (
     datetime: string,
@@ -243,7 +243,7 @@ export function useConflictDetection() {
 
 // Hook for optimistic booking (temporary reservation)
 export function useOptimisticBooking() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const [reservedSlots, setReservedSlots] = useState<Set<string>>(new Set())
 
   const reserveSlot = useCallback(async (
@@ -303,3 +303,4 @@ export function useOptimisticBooking() {
     reservedSlots: Array.from(reservedSlots)
   }
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Automated Financial Alerts Engine
  * Story 4.2: Financial Analytics & Business Intelligence
  * Phase 3: Automated Alerts & Monitoring
@@ -598,3 +598,4 @@ export class AutomatedAlertsEngine {
 }
 
 export default AutomatedAlertsEngine
+

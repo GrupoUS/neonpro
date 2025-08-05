@@ -4,7 +4,7 @@ import {
     budgetSchema,
     bulkBudgetCreateSchema
 } from '@/app/lib/validations/budget-approval';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

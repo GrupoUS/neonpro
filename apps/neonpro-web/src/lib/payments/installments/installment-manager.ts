@@ -621,3 +621,8 @@ class InstallmentManager {
 }
 
 export const installmentManager = new InstallmentManager();
+
+// Factory function for getting the manager instance
+export function getInstallmentManager(): InstallmentManager {
+  return installmentManager;
+}

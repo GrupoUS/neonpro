@@ -1,9 +1,9 @@
-/**
+﻿/**
  * A/B Testing Engine
  * NeonPro - Sistema Completo de Testes A/B para Comunicação
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type {
   ABTestConfig, TestVariation, TestResults, ABTestEvent,
@@ -1098,3 +1098,4 @@ export class ABTestingEngine {
 
 // Export singleton instance
 export const abTestingEngine = new ABTestingEngine();
+

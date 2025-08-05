@@ -1,5 +1,5 @@
-// lib/patients/duplicate-detection.ts
-import { createClient } from "@/app/utils/supabase/server";
+﻿// lib/patients/duplicate-detection.ts
+import { createClient } from "@/lib/supabase/server";
 
 export interface DuplicateMatch {
   id: string;
@@ -376,3 +376,4 @@ export class DuplicateDetectionSystem {
 }
 
 export const duplicateDetectionSystem = new DuplicateDetectionSystem();
+

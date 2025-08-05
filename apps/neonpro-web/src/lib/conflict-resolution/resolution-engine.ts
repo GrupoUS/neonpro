@@ -37,7 +37,7 @@ export class ConflictResolutionEngine {
     config: Partial<OptimizationConfig> = {},
     constraints: Partial<OptimizationConstraints> = {}
   ) {
-    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
+    this.const supabase = createClient(<Database>(supabaseUrl, supabaseKey);
     this.conflictDetector = conflictDetector;
     
     this.config = {

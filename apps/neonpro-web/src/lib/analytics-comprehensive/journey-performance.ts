@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 📊 NeonPro Journey Performance Analytics
  * 
  * HEALTHCARE JOURNEY PERFORMANCE - Sistema de Análise de Performance da Jornada do Paciente
@@ -1279,7 +1279,7 @@ export class JourneyPerformanceAnalytics {
     metrics: PerformanceMetrics
   ): number {
     // Base confidence from data quality
-    let confidence = dataQuality.overall
+    const confidence = dataQuality.overall
 
     // Adjust based on data volume (more data = higher confidence)
     // This would need actual data volume metrics in a real implementation
@@ -1443,3 +1443,4 @@ export const PerformanceUtils = {
     return Math.min(10, Math.max(1, (impact / effort) * 5))
   }
 }
+

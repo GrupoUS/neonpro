@@ -10,7 +10,7 @@
  * Supports cohort analysis, forecasting, statistical insights, and dashboard data.
  */
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import { NextRequest, NextResponse } from 'next/server'

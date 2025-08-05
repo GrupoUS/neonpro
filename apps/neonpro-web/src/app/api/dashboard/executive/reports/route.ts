@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { ReportSystem } from '@/lib/dashboard/executive/report-system';
@@ -7,7 +7,7 @@ import { ReportSystem } from '@/lib/dashboard/executive/report-system';
 // Schema for report generation request
 const GenerateReportSchema = z.object({
   templateId: z.string().uuid(),
-  name: z.string().min(1, 'Nome é obrigatório'),
+  name: z.string().min(1, 'Nome Ã© obrigatÃ³rio'),
   format: z.enum(['pdf', 'excel', 'csv', 'json']).default('pdf'),
   parameters: z.object({
     dateRange: z.object({
@@ -24,7 +24,7 @@ const GenerateReportSchema = z.object({
 
 // Schema for report template creation
 const CreateTemplateSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
+  name: z.string().min(1, 'Nome Ã© obrigatÃ³rio'),
   description: z.string().optional(),
   type: z.enum([
     'executive_summary', 'financial_report', 'operational_report',
@@ -78,13 +78,13 @@ const CreateTemplateSchema = z.object({
 // GET /api/dashboard/executive/reports
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Não autorizado' },
+        { error: 'NÃ£o autorizado' },
         { status: 401 }
       );
     }
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'Usuário não associado a uma clínica' },
+        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
         { status: 403 }
       );
     }
@@ -143,13 +143,13 @@ export async function GET(request: NextRequest) {
 // POST /api/dashboard/executive/reports
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Não autorizado' },
+        { error: 'NÃ£o autorizado' },
         { status: 401 }
       );
     }
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'Usuário não associado a uma clínica' },
+        { error: 'UsuÃ¡rio nÃ£o associado a uma clÃ­nica' },
         { status: 403 }
       );
     }
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados invÃ¡lidos', details: error.errors },
         { status: 400 }
       );
     }
@@ -213,3 +213,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

@@ -2,7 +2,7 @@
 // Story 9.5: API endpoints for medical knowledge base management
 
 import { MedicalKnowledgeBaseService } from '@/app/lib/services/medical-knowledge-base';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 const service = new MedicalKnowledgeBaseService();

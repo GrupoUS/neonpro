@@ -40,7 +40,7 @@ export class SessionManagerService implements SessionManager {
 
   constructor(hooks: SessionHooks = {}) {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.config = getSessionConfig();
@@ -553,3 +553,4 @@ class SessionError extends Error implements SessionError {
     this.name = 'SessionError';
   }
 }
+

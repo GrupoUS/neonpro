@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { stripe } from '@/lib/stripe';
 import Stripe from 'stripe';
 import { NEONPRO_PLANS, type PlanId } from '@/lib/constants/plans';

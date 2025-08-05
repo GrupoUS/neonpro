@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 
 /**
@@ -59,7 +59,7 @@ export function useRealTimeAvailability({
   autoRefetch = true,
   enableOptimistic = true
 }: UseRealTimeAvailabilityOptions) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const [state, setState] = useState<RealtimeAvailabilityState>({
     slots: [],
@@ -399,3 +399,4 @@ export function useRealTimeAvailability({
 
 // Export types for component usage
 export type { UseRealTimeAvailabilityOptions }
+

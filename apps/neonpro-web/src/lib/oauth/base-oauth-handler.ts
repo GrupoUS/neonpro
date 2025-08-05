@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { TokenEncryptionService } from './token-encryption';
 import { 
   IOAuthHandler, 

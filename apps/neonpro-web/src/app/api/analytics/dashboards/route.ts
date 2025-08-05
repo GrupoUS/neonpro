@@ -1,4 +1,4 @@
-// Dashboard Builder API
+﻿// Dashboard Builder API
 // Description: API endpoints for dashboard creation and management
 // Author: Dev Agent
 // Date: 2025-01-26
@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DashboardBuilder } from '@/lib/analytics/dashboard-builder';
 import { dashboardLayoutSchema, dashboardWidgetSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 const createDashboardSchema = z.object({
@@ -31,7 +31,7 @@ const createDashboardSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -214,3 +214,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

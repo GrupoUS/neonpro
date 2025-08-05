@@ -2,7 +2,7 @@
 // app/api/ai/universal-chat/route.ts
 
 import { UniversalChatContext } from "@/app/lib/ai/types";
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 // Rate limiting and security imports (to be implemented)

@@ -1,14 +1,16 @@
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class DashboardService {
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
     // Add new methods for dashboard API
 
   async getAllMetrics(period: string = '30d') {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const periodDays = this.parsePeriodToDays(period);
     const startDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
@@ -24,7 +26,8 @@ export class DashboardService {
   }
 
   async getMetricData(metric: string, period: string = '30d') {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const periodDays = this.parsePeriodToDays(period);
     const startDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
@@ -41,7 +44,7 @@ export class DashboardService {
   }
 
   async recordMetric(userId: string, metric: string, value: number, metadata?: any) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('dashboard_performance_logs')
@@ -74,7 +77,8 @@ export class DashboardService {
     update_frequency?: number;
     is_default?: boolean;
   }) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: config, error } = await supabase
       .from('dashboard_configurations')
       .insert({
@@ -91,7 +95,8 @@ export class DashboardService {
   }
 
   async getDashboardConfig(userId: string, configId?: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('dashboard_configurations')
       .select(`
@@ -114,7 +119,8 @@ export class DashboardService {
   }
 
   async updateDashboardConfig(configId: string, data: any) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: config, error } = await supabase
       .from('dashboard_configurations')
       .update({
@@ -130,7 +136,8 @@ export class DashboardService {
   }
 
   async deleteDashboardConfig(configId: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { error } = await supabase
       .from('dashboard_configurations')
       .delete()
@@ -153,7 +160,8 @@ export class DashboardService {
     configuration: any;
     is_visible?: boolean;
   }) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: widget, error } = await supabase
       .from('dashboard_widgets')
       .insert({
@@ -169,7 +177,8 @@ export class DashboardService {
   }
 
   async getWidgets(configId: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('dashboard_widgets')
       .select('*')
@@ -182,7 +191,8 @@ export class DashboardService {
   }
 
   async updateWidget(widgetId: string, data: any) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: widget, error } = await supabase
       .from('dashboard_widgets')
       .update({
@@ -198,7 +208,8 @@ export class DashboardService {
   }
 
   async deleteWidget(widgetId: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { error } = await supabase
       .from('dashboard_widgets')
       .delete()
@@ -210,6 +221,7 @@ export class DashboardService {
 
   // KPI Metrics
   async calculateKPIMetrics(clinicId?: string, period: string = 'daily', date?: Date) {
+    const supabase = await createClient();
     const calculationDate = date || new Date();
     const startDate = this.getDateRange(calculationDate, period).start;
     const endDate = this.getDateRange(calculationDate, period).end;
@@ -237,7 +249,8 @@ export class DashboardService {
   }
 
   private async calculateRevenueMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('appointments')
       .select(`
@@ -295,7 +308,8 @@ export class DashboardService {
   }
 
   private async calculatePatientMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('profiles')
       .select('*');
@@ -324,7 +338,8 @@ export class DashboardService {
   }
 
   private async calculateAppointmentMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('appointments')
       .select('*');
@@ -358,6 +373,7 @@ export class DashboardService {
   }
 
   private async calculateEfficiencyMetrics(clinicId?: string, startDate?: Date, endDate?: Date) {
+    const supabase = await createClient();
     // TODO: Implement efficiency calculations based on appointments, resources, and staff
     return {
       staff_productivity: 0,
@@ -379,7 +395,8 @@ export class DashboardService {
     threshold_operator?: string;
     notification_method?: string;
   }) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: alert, error } = await supabase
       .from('dashboard_alerts')
       .insert({
@@ -398,7 +415,8 @@ export class DashboardService {
   }
 
   async getAlerts(userId: string, clinicId?: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('dashboard_alerts')
       .select('*')
@@ -412,7 +430,8 @@ export class DashboardService {
   }
 
   async updateAlert(alertId: string, data: any) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: alert, error } = await supabase
       .from('dashboard_alerts')
       .update({
@@ -428,7 +447,8 @@ export class DashboardService {
   }
 
   async deleteAlert(alertId: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { error } = await supabase
       .from('dashboard_alerts')
       .delete()
@@ -445,7 +465,8 @@ export class DashboardService {
     widget_count: number;
     error_count?: number;
   }) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: log, error } = await supabase
       .from('dashboard_performance_logs')
       .insert({
@@ -461,7 +482,8 @@ export class DashboardService {
   }
 
   async getPerformanceLogs(userId: string, limit: number = 100) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('dashboard_performance_logs')
       .select('*')
@@ -475,7 +497,8 @@ export class DashboardService {
 
   // Cache Management
   async getCachedData(cacheKey: string, clinicId?: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     let query = supabase
       .from('dashboard_cache')
       .select('*')
@@ -490,7 +513,8 @@ export class DashboardService {
   }
 
   async setCachedData(cacheKey: string, data: any, expiresInMinutes: number = 30, clinicId?: string) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + expiresInMinutes);
 
@@ -545,6 +569,7 @@ export class DashboardService {
 
   // Dashboard Summary
   async getDashboardSummary(userId: string, clinicId?: string) {
+    const supabase = await createClient();
     const cacheKey = `dashboard_summary_${userId}_${clinicId || 'all'}`;
     const cached = await this.getCachedData(cacheKey, clinicId);
     
@@ -574,7 +599,8 @@ export class DashboardService {
 
   // Real-time data updates
   async getWidgetData(widgetId: string, query?: any) {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: widget, error } = await supabase
       .from('dashboard_widgets')
       .select('*')
@@ -598,6 +624,7 @@ export class DashboardService {
   }
 
   private async generateWidgetData(widget: any, query?: any) {
+    const supabase = await createClient();
     // TODO: Implement data generation based on widget type and data source
     const { data_source, configuration } = widget;
 
@@ -614,6 +641,7 @@ export class DashboardService {
   }
 
   private async getRevenueData(config: any, query?: any) {
+    const supabase = await createClient();
     // TODO: Implement revenue data generation
     return {
       total: 0,
@@ -623,6 +651,7 @@ export class DashboardService {
   }
 
   private async getPatientData(config: any, query?: any) {
+    const supabase = await createClient();
     // TODO: Implement patient data generation
     return {
       total: 0,
@@ -633,6 +662,7 @@ export class DashboardService {
   }
 
   private async getAppointmentData(config: any, query?: any) {
+    const supabase = await createClient();
     // TODO: Implement appointment data generation
     return {
       total: 0,
@@ -642,3 +672,5 @@ export class DashboardService {
     };
   }
 }
+
+

@@ -1,7 +1,7 @@
-// GET /api/treatment-prediction/models - Get prediction models
+﻿// GET /api/treatment-prediction/models - Get prediction models
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { ModelFilters } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

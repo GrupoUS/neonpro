@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Real-Time Analytics Dashboard Hook for NeonPro
  * 
  * Custom hook providing real-time analytics capabilities including:
@@ -68,7 +68,7 @@ export function useRealTimeAnalytics(
   initialConfig: RealTimeConfig
 ): RealTimeState & RealTimeActions {
   const queryClient = useQueryClient()
-  const supabase = createClient()
+  const supabase = await createClient()
   const [config, setConfig] = useState<RealTimeConfig>(initialConfig)
   const [metrics, setMetrics] = useState<RealTimeMetrics>({
     activeSubscriptions: 0,
@@ -430,7 +430,7 @@ export function useUserActivityMonitoring() {
     averageSessionDuration: 0,
     bounceRate: 0
   })
-  const supabase = createClient()
+  const supabase = await createClient()
 
   useEffect(() => {
     // Subscribe to user activity events
@@ -475,3 +475,4 @@ export function useUserActivityMonitoring() {
 
   return activity
 }
+

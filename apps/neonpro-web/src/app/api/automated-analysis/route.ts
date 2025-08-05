@@ -4,13 +4,13 @@
 import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/automated-analysis - Get analysis sessions with filters
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
 // POST /api/automated-analysis - Create new analysis session
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/automated-analysis - Update analysis session
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -121,7 +121,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/automated-analysis - Delete analysis session
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -150,3 +150,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

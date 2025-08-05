@@ -1,10 +1,10 @@
-// Report Automation & Export Engine
+﻿// Report Automation & Export Engine
 // Epic 5, Story 5.1, Task 6: Report Automation & Export
 // Created: 2025-01-27
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface ReportSchedule {
   scheduleId: string;
@@ -630,3 +630,4 @@ export class ReportAutomationEngine {
     return protectedResult;
   }
 }
+

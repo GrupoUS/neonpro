@@ -31,8 +31,8 @@ const mockSupabaseClient = {
 }
 
 // Mock environment variables
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co'
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-key'
+process.env.SUPABASE_URL = 'https://test.supabase.co'
+process.env.SUPABASE_ANON_KEY = 'test-key'
 
 describe('Healthcare Connection Pool Performance', () => {
   let poolManager: ReturnType<typeof getConnectionPoolManager>
@@ -457,3 +457,4 @@ describe('Performance Benchmarks', () => {
     expect(performanceThresholds.endToEndWorkflow).toBeLessThan(5000)
   })
 })
+

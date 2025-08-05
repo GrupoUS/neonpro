@@ -96,7 +96,7 @@ export class NotificationAnalytics {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.auditLogger = new AuditLogger();
@@ -741,3 +741,4 @@ export class NotificationAnalytics {
 }
 
 export default NotificationAnalytics;
+

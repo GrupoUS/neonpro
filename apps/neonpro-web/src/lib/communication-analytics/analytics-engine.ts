@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Communication Analytics Engine
  * 
  * Sistema avançado de análise de comunicação para NeonPro Healthcare System
@@ -18,7 +18,7 @@
  * @since 2025-01-30
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { 
   AnalyticsMetrics, 
   CommunicationEvent, 
@@ -1414,3 +1414,4 @@ export class CommunicationAnalyticsEngine {
 
 // Export singleton instance
 export const communicationAnalytics = new CommunicationAnalyticsEngine();
+

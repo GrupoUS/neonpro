@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { AuditSeverity, logAuditEvent, AuditEventType } from '@/lib/audit/audit-system'
@@ -308,7 +308,7 @@ export async function GET(request: NextRequest) {
     }
     
     // Autenticação
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
@@ -493,3 +493,6 @@ export async function OPTIONS(request: NextRequest) {
     },
   })
 }
+
+
+

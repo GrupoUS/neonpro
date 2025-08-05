@@ -156,17 +156,4 @@ export interface HealthcarePerformanceMetrics {
   data_size_bytes: number;
 }
 
-// Export all types for easy importing
-export type {
-  HealthcareRole,
-  MedicalSpecialization,
-  FacilityType,
-  LGPDCompliance,
-  HealthcareUser,
-  HealthcareTenant,
-  HealthcareAuditLog,
-  HealthcareAPIResponse,
-  HealthcarePerformanceMetrics,
-};
-
-export { HealthcareErrorCode };
+// All types are already exported individually above

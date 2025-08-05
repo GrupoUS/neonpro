@@ -1,6 +1,6 @@
 // =====================================================================================
 // NeonPro Inventory Tracking Engine
-// Epic 6: Real-time Stock Tracking with ≥99% Accuracy
+// Epic 6: Real-time Stock Tracking with =99% Accuracy
 // Created: 2025-01-26
 // =====================================================================================
 
@@ -12,7 +12,7 @@ import type {
     StockStatus,
     TransactionType
 } from '@/app/types/inventory';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 // =====================================================================================
 // CORE INVENTORY TRACKING ENGINE
@@ -26,6 +26,7 @@ export class InventoryTrackingEngine {
   }
 
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
@@ -35,7 +36,7 @@ export class InventoryTrackingEngine {
 
   /**
    * Updates stock level with real-time synchronization and automatic transaction logging
-   * Accuracy Target: ≥99%
+   * Accuracy Target: =99%
    * Performance Target: <500ms
    */
   async updateStockLevel(params: {
@@ -71,8 +72,7 @@ export class InventoryTrackingEngine {
     } = params;
 
     try {
-      const supabase = await this.getSupabase();
-      
+
       // Start transaction for atomic updates
       const { data: currentStock, error: stockError } = await supabase
         .from('stock_levels')
@@ -211,8 +211,7 @@ export class InventoryTrackingEngine {
     const { itemId, sourceLocationId, destinationLocationId, quantity, reason, batchNumber, userId } = params;
 
     try {
-      const supabase = await this.getSupabase();
-      
+
       // Validate source stock availability
       const { data: sourceStock } = await supabase
         .from('stock_levels')
@@ -314,8 +313,7 @@ export class InventoryTrackingEngine {
     const { itemId, locationId, quantity, referenceType, referenceId, userId } = params;
 
     try {
-      const supabase = await this.getSupabase();
-      
+
       const { data: currentStock } = await supabase
         .from('stock_levels')
         .select('*')
@@ -395,8 +393,7 @@ export class InventoryTrackingEngine {
     const { itemId, locationId, quantity, isConsumption, referenceId, userId } = params;
 
     try {
-      const supabase = await this.getSupabase();
-      
+
       const { data: currentStock } = await supabase
         .from('stock_levels')
         .select('*')
@@ -480,9 +477,9 @@ export class InventoryTrackingEngine {
     stockLevel: StockLevel
   ): Promise<StockAlert[]> {
     try {
-      const supabase = await this.getSupabase();
-      
+
       // Get item details for thresholds
+    const supabase = await createClient();
       const { data: item } = await supabase
         .from('inventory_items')
         .select('*')
@@ -593,8 +590,7 @@ export class InventoryTrackingEngine {
     thresholdQuantity: number;
   }): Promise<StockAlert | null> {
     try {
-      const supabase = await this.getSupabase();
-      
+
       const { data: alert, error } = await supabase
         .from('stock_alerts')
         .insert({
@@ -633,9 +629,9 @@ export class InventoryTrackingEngine {
    */
   private async deliverNotification(alert: StockAlert): Promise<void> {
     try {
-      const supabase = await this.getSupabase();
-      
+
       // Mark notification as sent (this would trigger external notification services)
+    const supabase = await createClient();
       await supabase
         .from('stock_alerts')
         .update({
@@ -708,8 +704,8 @@ export class InventoryTrackingEngine {
    * Gets current stock levels for an item across all locations
    */
   async getItemStockLevels(itemId: string): Promise<StockLevel[]> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('stock_levels')
       .select(`
@@ -731,8 +727,8 @@ export class InventoryTrackingEngine {
    * Gets low stock items requiring attention
    */
   async getLowStockItems(): Promise<any[]> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('v_low_stock_items')
       .select('*')
@@ -751,8 +747,8 @@ export class InventoryTrackingEngine {
    * Gets items expiring within specified days
    */
   async getExpiringItems(days: number = 30): Promise<any[]> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('v_expiring_items')
       .select('*')
@@ -772,8 +768,8 @@ export class InventoryTrackingEngine {
    * Gets inventory summary by category
    */
   async getInventorySummary(): Promise<any[]> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('v_inventory_summary')
       .select('*')
@@ -861,3 +857,5 @@ export function validateStockOperation(
 }
 
 export default InventoryTrackingEngine;
+
+

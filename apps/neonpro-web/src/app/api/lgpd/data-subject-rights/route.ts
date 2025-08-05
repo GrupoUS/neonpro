@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { LGPDComplianceManager } from '@/lib/lgpd/compliance-manager'
@@ -35,7 +35,7 @@ const requestQuerySchema = z.object({
 // GET /api/lgpd/data-subject-rights - Get user requests or admin view
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
 // POST /api/lgpd/data-subject-rights - Create new request
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
@@ -229,7 +229,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/lgpd/data-subject-rights - Update request (admin only)
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
@@ -369,3 +369,5 @@ export async function PUT(request: NextRequest) {
     )
   }
 }
+
+

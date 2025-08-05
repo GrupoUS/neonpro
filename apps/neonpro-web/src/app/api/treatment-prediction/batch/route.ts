@@ -1,7 +1,7 @@
-// POST /api/treatment-prediction/batch - Batch prediction generation
+﻿// POST /api/treatment-prediction/batch - Batch prediction generation
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { BatchPredictionRequest } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // POST /api/treatment-prediction/batch - Generate batch predictions

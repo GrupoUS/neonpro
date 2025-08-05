@@ -3,7 +3,7 @@
 // Epic 7.3: Comprehensive service layer for follow-up automation
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type {
   TreatmentFollowup,
   FollowupTemplate,
@@ -22,7 +22,7 @@ import type {
 } from '@/app/types/treatment-followups';
 
 class TreatmentFollowupService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // =====================================================================================
   // FOLLOW-UP MANAGEMENT
@@ -33,7 +33,7 @@ class TreatmentFollowupService {
    */
   async getFollowups(filters: FollowupFilters = {}): Promise<TreatmentFollowup[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('treatment_followups')
         .select(`
           *,
@@ -105,7 +105,8 @@ class TreatmentFollowupService {
    */
   async getFollowupById(id: string): Promise<TreatmentFollowup | null> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('treatment_followups')
         .select(`
           *,
@@ -142,7 +143,7 @@ class TreatmentFollowupService {
         priority: data.priority ?? 'normal' as const
       };
 
-      const { data: newFollowup, error } = await this.supabase
+      const { data: newFollowup, error } = await supabase
         .from('treatment_followups')
         .insert(followupData)
         .select(`
@@ -169,7 +170,8 @@ class TreatmentFollowupService {
    */
   async updateFollowup(id: string, updates: Partial<TreatmentFollowup>): Promise<TreatmentFollowup> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('treatment_followups')
         .update(updates)
         .eq('id', id)
@@ -197,7 +199,7 @@ class TreatmentFollowupService {
    */
   async deleteFollowup(id: string): Promise<void> {
     try {
-      const { error } = await this.supabase
+      const { error } = await supabase
         .from('treatment_followups')
         .delete()
         .eq('id', id);
@@ -239,7 +241,7 @@ class TreatmentFollowupService {
    */
   async getTemplates(filters: TemplateFilters = {}): Promise<FollowupTemplate[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('followup_templates')
         .select('*');
 
@@ -299,7 +301,7 @@ class TreatmentFollowupService {
         active: data.active ?? true
       };
 
-      const { data: newTemplate, error } = await this.supabase
+      const { data: newTemplate, error } = await supabase
         .from('followup_templates')
         .insert(templateData)
         .select('*')
@@ -322,7 +324,8 @@ class TreatmentFollowupService {
    */
   async updateTemplate(id: string, updates: Partial<FollowupTemplate>): Promise<FollowupTemplate> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('followup_templates')
         .update(updates)
         .eq('id', id)
@@ -350,7 +353,7 @@ class TreatmentFollowupService {
    */
   async getProtocols(filters: ProtocolFilters = {}): Promise<TreatmentProtocol[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('treatment_protocols')
         .select('*');
 
@@ -403,7 +406,7 @@ class TreatmentFollowupService {
         active: data.active ?? true
       };
 
-      const { data: newProtocol, error } = await this.supabase
+      const { data: newProtocol, error } = await supabase
         .from('treatment_protocols')
         .insert(protocolData)
         .select('*')
@@ -431,7 +434,8 @@ class TreatmentFollowupService {
   async getAnalytics(clinicId: string, dateFrom?: string, dateTo?: string): Promise<FollowupAnalytics> {
     try {
       // Get basic counts
-      const { data: followups, error } = await this.supabase
+    const supabase = await createClient();
+      const { data: followups, error } = await supabase
         .from('treatment_followups')
         .select('*, responses:followup_responses(*)')
         .eq('clinic_id', clinicId)
@@ -498,7 +502,8 @@ class TreatmentFollowupService {
       const weekEnd = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
       // Get today's follow-ups
-      const { data: todayFollowups } = await this.supabase
+    const supabase = await createClient();
+      const { data: todayFollowups } = await supabase
         .from('treatment_followups')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -506,7 +511,7 @@ class TreatmentFollowupService {
         .lt('scheduled_date', todayEnd);
 
       // Get pending responses
-      const { data: pendingResponses } = await this.supabase
+      const { data: pendingResponses } = await supabase
         .from('treatment_followups')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -514,7 +519,7 @@ class TreatmentFollowupService {
         .is('completed_date', null);
 
       // Get overdue follow-ups
-      const { data: overdueFollowups } = await this.supabase
+      const { data: overdueFollowups } = await supabase
         .from('treatment_followups')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -522,7 +527,7 @@ class TreatmentFollowupService {
         .lt('scheduled_date', todayStart);
 
       // Get upcoming this week
-      const { data: upcomingWeek } = await this.supabase
+      const { data: upcomingWeek } = await supabase
         .from('treatment_followups')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -547,3 +552,5 @@ class TreatmentFollowupService {
 
 // Export singleton instance
 export const treatmentFollowupService = new TreatmentFollowupService();
+
+

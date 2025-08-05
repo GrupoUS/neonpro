@@ -1,7 +1,7 @@
-// AI-Powered Risk Assessment Engine
+﻿// AI-Powered Risk Assessment Engine
 // Story 3.2: Task 1 - AI Risk Assessment Engine
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import {
   PatientRiskAssessment,
   RiskFactor,
@@ -578,3 +578,4 @@ export class RiskAssessmentEngine {
     }
   }
 }
+

@@ -59,7 +59,7 @@ class LocalStorageProvider implements IStorageProvider {
     // Copiar arquivo
     const stats = await fs.stat(localPath);
     const totalSize = stats.size;
-    let uploadedSize = 0;
+    const uploadedSize = 0;
     
     const readStream = await fs.readFile(localPath);
     await fs.writeFile(targetPath, readStream);

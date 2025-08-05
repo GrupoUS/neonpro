@@ -3,7 +3,7 @@
 
 import { DemandForecast, ReorderAlert, ReorderThreshold, ThresholdOptimization } from '@/app/types/reorder-alerts';
 import { Database } from '@/app/types/supabase';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 type Tables = Database['public']['Tables'];
 type ReorderThresholdRow = Tables['reorder_thresholds']['Row'];
@@ -12,13 +12,13 @@ type DemandForecastRow = Tables['demand_forecasts']['Row'];
 
 export class IntelligentThresholdService {
   private async getSupabaseClient() {
+    const supabase = await createClient();
     return await createClient();
   }
 
   // Core threshold management
   async createThreshold(threshold: Omit<ReorderThreshold, 'id' | 'created_at' | 'updated_at'>): Promise<ReorderThreshold> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Calculate intelligent thresholds
     const calculatedThreshold = await this.calculateIntelligentThresholds(
       threshold.item_id,
@@ -46,8 +46,7 @@ export class IntelligentThresholdService {
   }
 
   async updateThreshold(id: string, updates: Partial<ReorderThreshold>): Promise<ReorderThreshold> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Recalculate if key parameters changed
     let calculatedUpdates = {};
     if (updates.reorder_point || updates.safety_stock || updates.demand_forecast_weekly || updates.lead_time_days) {
@@ -83,8 +82,8 @@ export class IntelligentThresholdService {
   }
 
   async getThreshold(id: string): Promise<ReorderThreshold | null> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('reorder_thresholds')
       .select('*')
@@ -104,8 +103,7 @@ export class IntelligentThresholdService {
     auto_reorder_enabled?: boolean;
     needs_optimization?: boolean;
   }): Promise<ReorderThreshold[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     let query = supabase
       .from('reorder_thresholds')
       .select(`
@@ -192,8 +190,7 @@ export class IntelligentThresholdService {
     forecastPeriod: 'daily' | 'weekly' | 'monthly' | 'quarterly',
     forecastDate: Date
   ): Promise<DemandForecast> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Get historical data for analysis
     const historicalData = await this.getHistoricalDemand(itemId, clinicId, 365);
     
@@ -241,10 +238,10 @@ export class IntelligentThresholdService {
 
   // Alert management
   async createAlert(alert: Omit<ReorderAlert, 'id' | 'created_at' | 'updated_at'>): Promise<ReorderAlert> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Calculate delivery time estimate
     const deliveryTime = this.estimateNotificationDeliveryTime(alert.notification_channels || ['dashboard']);
+    const supabase = await createClient();
     
     const { data, error } = await supabase
       .from('reorder_alerts')
@@ -266,8 +263,8 @@ export class IntelligentThresholdService {
   }
 
   async updateAlert(id: string, updates: Partial<ReorderAlert>): Promise<ReorderAlert> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('reorder_alerts')
       .update({
@@ -311,8 +308,7 @@ export class IntelligentThresholdService {
 
   // Analytics and optimization
   async analyzeThresholdOptimization(clinicId: string): Promise<ThresholdOptimization[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Get all active thresholds
     const thresholds = await this.getThresholdsByClinic(clinicId);
     const optimizations: ThresholdOptimization[] = [];
@@ -341,8 +337,8 @@ export class IntelligentThresholdService {
   }
 
   async getAlertStats(clinicId: string, dateRange?: { start: Date; end: Date }) {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     let query = supabase
       .from('reorder_alerts')
       .select('*')
@@ -376,7 +372,8 @@ export class IntelligentThresholdService {
 
   // Private helper methods
   private async getHistoricalDemand(itemId: string, clinicId: string, days: number) {
-    const supabase = await this.getSupabaseClient();
+    const supabase = await createClient();
+    
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     
@@ -414,8 +411,8 @@ export class IntelligentThresholdService {
   }
 
   private async getLeadTimeVariability(itemId: string): Promise<number> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_lead_times')
       .select('*')
@@ -435,6 +432,7 @@ export class IntelligentThresholdService {
     period: string,
     date: Date
   ) {
+    const supabase = await createClient();
     // Simple moving average with trend (would be enhanced with ML models)
     const recentData = historicalData.slice(-30); // Last 30 data points
     const average = recentData.length > 0 
@@ -482,6 +480,7 @@ export class IntelligentThresholdService {
   }
 
   private async calculateOptimalThresholds(threshold: any) {
+    const supabase = await createClient();
     // Analyze threshold performance and calculate optimal values
     // This would use historical alert frequency, stockout incidents, etc.
     
@@ -517,3 +516,5 @@ export class IntelligentThresholdService {
     }, {} as Record<string, number>);
   }
 }
+
+

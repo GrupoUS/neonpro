@@ -4,7 +4,7 @@
 // Route: /api/appointments/validate-slot
 // =============================================
 
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 

@@ -1,8 +1,8 @@
-// Comprehensive Error Handling System with LGPD Compliance
+﻿// Comprehensive Error Handling System with LGPD Compliance
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 // LGPD-compliant error types that don't expose sensitive data
@@ -229,7 +229,7 @@ export function useErrorHandling() {
   const [errors, setErrors] = useState<AppError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Generate unique session ID for error tracking
   const sessionId = useCallback(() => {
@@ -434,3 +434,4 @@ export function useErrorHandling() {
     ERROR_TEMPLATES
   };
 }
+

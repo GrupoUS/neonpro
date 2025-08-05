@@ -1,4 +1,4 @@
-// KPI Calculation and Retrieval API
+﻿// KPI Calculation and Retrieval API
 // Description: API endpoints for financial KPI calculation and management
 // Author: Dev Agent
 // Date: 2025-01-26
@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { KPIEngine } from '@/lib/analytics/kpi-engine';
 import { kpiCalculationSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 interface KPICalculationRequest {
@@ -49,7 +49,7 @@ const requestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -215,3 +215,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

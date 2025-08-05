@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Simple auth helper for server-side user authentication
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error) {
@@ -14,3 +14,4 @@ export async function getCurrentUser() {
   
   return user;
 }
+

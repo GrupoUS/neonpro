@@ -52,7 +52,7 @@ export interface ImageProcessingOptions {
  */
 export class VisionAnalysisEngine {
   private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
@@ -531,3 +531,4 @@ export class VisionAnalysisEngine {
 
 // Export singleton instance
 export const visionAnalysisEngine = new VisionAnalysisEngine();
+

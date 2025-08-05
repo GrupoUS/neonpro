@@ -1,9 +1,9 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
-// Schema de validação para configuração de automação
+// Schema de validaï¿½ï¿½o para configuraï¿½ï¿½o de automaï¿½ï¿½o
 const AutomationConfigSchema = z.object({
   enabled: z.boolean(),
   schedules: z.object({
@@ -33,12 +33,12 @@ const AutomationConfigSchema = z.object({
     realTimeMonitoring: z.boolean()
   })
 });
-// GET - Obter configuração atual
+// GET - Obter configuraï¿½ï¿½o atual
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
-    // Verificar autenticação
+    // Verificar autenticaï¿½ï¿½o
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError || !session) {
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Buscar configuração atual
+    // Buscar configuraï¿½ï¿½o atual
     const { data: config, error } = await supabase
       .from('lgpd_automation_config')
       .select('*')
@@ -58,16 +58,16 @@ export async function GET(request: NextRequest) {
       throw error;
     }
 
-    // Se não existe configuração, retornar padrão
+    // Se nï¿½o existe configuraï¿½ï¿½o, retornar padrï¿½o
     if (!config) {
       const defaultConfig = {
         enabled: false,
         schedules: {
-          consentExpiry: '0 2 * * *', // 2h da manhã diariamente
-          dataRetention: '0 3 * * 0', // 3h da manhã aos domingos
-          auditReports: '0 1 1 * *', // 1h da manhã no primeiro dia do mês
+          consentExpiry: '0 2 * * *', // 2h da manhï¿½ diariamente
+          dataRetention: '0 3 * * 0', // 3h da manhï¿½ aos domingos
+          auditReports: '0 1 1 * *', // 1h da manhï¿½ no primeiro dia do mï¿½s
           healthChecks: '0 */6 * * *', // A cada 6 horas
-          anonymization: '0 4 * * 0' // 4h da manhã aos domingos
+          anonymization: '0 4 * * 0' // 4h da manhï¿½ aos domingos
         },        notifications: {
           email: true,
           webhook: false,
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Erro ao obter configuração:', error);    return NextResponse.json(
+    console.error('Erro ao obter configuraï¿½ï¿½o:', error);    return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
         details: error instanceof Error ? error.message : 'Erro desconhecido'
@@ -111,12 +111,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PUT - Atualizar configuração
+// PUT - Atualizar configuraï¿½ï¿½o
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
-    // Verificar autenticação
+    // Verificar autenticaï¿½ï¿½o
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError || !session) {
       return NextResponse.json(
@@ -132,7 +132,7 @@ export async function PUT(request: NextRequest) {
     if (!validationResult.success) {
       return NextResponse.json(
         { 
-          error: 'Dados inválidos',
+          error: 'Dados invï¿½lidos',
           details: validationResult.error.errors
         },
         { status: 400 }
@@ -141,7 +141,7 @@ export async function PUT(request: NextRequest) {
     const config = validationResult.data;
     const clinicId = session.user.user_metadata.clinic_id;
 
-    // Upsert configuração
+    // Upsert configuraï¿½ï¿½o
     const { data, error } = await supabase
       .from('lgpd_automation_config')
       .upsert({
@@ -174,11 +174,11 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: data.config,
-      message: 'Configuração atualizada com sucesso'
+      message: 'Configuraï¿½ï¿½o atualizada com sucesso'
     });
     
   } catch (error) {
-    console.error('Erro ao atualizar configuração:', error);
+    console.error('Erro ao atualizar configuraï¿½ï¿½o:', error);
     return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
@@ -188,3 +188,4 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+

@@ -80,7 +80,7 @@ export interface FIFOOptimizationConfig {
  * Advanced batch control with expiry optimization and intelligent selection
  */
 export class FIFOManager {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
   private stockOutputManager = new StockOutputManager();
 
   /**

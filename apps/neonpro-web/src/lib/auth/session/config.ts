@@ -411,8 +411,8 @@ export const DEFAULT_CLEANUP_CONFIG: CleanupConfig = {
  */
 export const DEFAULT_DATABASE_CONFIG: DatabaseConfig = {
   supabase: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    url: process.env.SUPABASE_URL || '',
+    anonKey: process.env.SUPABASE_ANON_KEY || '',
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   },
   tables: {
@@ -683,3 +683,4 @@ export const sessionConfig = {
   notification: DEFAULT_NOTIFICATION_CONFIG,
   database: DEFAULT_DATABASE_CONFIG
 }
+

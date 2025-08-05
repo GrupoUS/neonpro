@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/supabase'
 import { logger } from '@/lib/logger'
 
@@ -740,3 +740,4 @@ export async function detectConflicts(
 }
 
 export default ConflictDetectionEngine
+

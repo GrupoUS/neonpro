@@ -3,7 +3,7 @@
  * Production-ready utilities for Clerk integration
  */
 
-import { auth, currentUser, redirectToSignIn } from '@clerk/nextjs';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { clerkConfig } from './clerk-config';
 import { sessionManager } from './simple-session-manager';
@@ -56,9 +56,7 @@ export async function requireAuth(): Promise<AuthResult> {
   const authResult = await getAuth();
   
   if (!authResult.isAuthenticated) {
-    return redirectToSignIn({
-      returnBackUrl: clerkConfig.afterSignInUrl
-    });
+    redirect('/sign-in');
   }
   
   return authResult;

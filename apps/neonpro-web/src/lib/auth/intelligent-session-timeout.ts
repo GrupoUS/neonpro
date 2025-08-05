@@ -1,10 +1,10 @@
-/**
+﻿/**
  * Intelligent Session Timeout System
  * Story 1.4 - Task 1: Implements configurable session timeout per user role
  * with activity-based session extension logic and graceful session expiry
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 import { UserRole } from '@/types/auth';
 
@@ -672,3 +672,4 @@ class IntelligentSessionTimeout {
 
 export const intelligentSessionTimeout = IntelligentSessionTimeout.getInstance();
 export default IntelligentSessionTimeout;
+

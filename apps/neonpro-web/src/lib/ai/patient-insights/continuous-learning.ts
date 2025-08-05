@@ -1,7 +1,7 @@
-// AI-Powered Continuous Learning System
+﻿// AI-Powered Continuous Learning System
 // Story 3.2: Task 6 - Continuous Learning System
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { 
   LearningModel, 
   ModelPerformance, 
@@ -1037,3 +1037,4 @@ interface FeatureDriftScore { feature: string; score: number; threshold: number;
 interface TargetDriftScore { score: number; threshold: number; isDrifted: boolean }
 interface DriftedFeature { name: string; driftScore: number }
 interface DriftAlert { type: string; severity: string; message: string }
+

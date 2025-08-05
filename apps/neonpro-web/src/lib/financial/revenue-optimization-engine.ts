@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Revenue Optimization Engine
  * 
  * Comprehensive revenue optimization system with:
@@ -12,7 +12,7 @@
  * Target: +15% revenue increase through intelligent optimization
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { z } from 'zod';
 
 // 🔥 Core Types and Schemas
@@ -614,3 +614,4 @@ export class RevenueOptimizationEngine {
 }
 
 export const revenueOptimizationEngine = new RevenueOptimizationEngine();
+

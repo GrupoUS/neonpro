@@ -10,19 +10,20 @@ import type {
   SegmentMembershipUpdate,
   SegmentPerformance
 } from '@/app/types/segmentation';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class PatientSegmentationService {
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
   // AI Segmentation Engine
   async createAISegment(data: CreateSegmentRequest): Promise<PatientSegment> {
-    const supabase = await this.getSupabase();
-    
+
     // Generate AI-powered segment criteria
     const aiCriteria = await this.generateAICriteria(data);
+    const supabase = await createClient();
     
     const { data: segment, error } = await supabase
       .from('patient_segments')
@@ -52,8 +53,7 @@ export class PatientSegmentationService {
     segment_type?: string;
     min_accuracy?: number;
   }): Promise<PatientSegment[]> {
-    const supabase = await this.getSupabase();
-    
+
     let query = supabase
       .from('patient_segments')
       .select(`
@@ -82,9 +82,9 @@ export class PatientSegmentationService {
 
   // Multi-dimensional Segmentation
   async analyzePatientsForSegmentation(segmentId: string): Promise<PatientBehaviorAnalysis[]> {
-    const supabase = await this.getSupabase();
-    
+
     // Get patient data with comprehensive analysis
+    const supabase = await createClient();
     const { data: patients, error } = await supabase
       .from('profiles')
       .select(`
@@ -119,8 +119,7 @@ export class PatientSegmentationService {
   }
 
   async updateSegmentMemberships(updates: SegmentMembershipUpdate[]): Promise<void> {
-    const supabase = await this.getSupabase();
-    
+
     // Batch update segment memberships
     const { error } = await supabase
       .from('segment_memberships')
@@ -139,8 +138,8 @@ export class PatientSegmentationService {
 
   // Automated Segment Management
   async createAutomatedSegment(rule: CreateSegmentationRuleRequest): Promise<SegmentationRule> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data: segmentationRule, error } = await supabase
       .from('segmentation_rules')
       .insert({
@@ -166,9 +165,9 @@ export class PatientSegmentationService {
   }
 
   async executeSegmentationRule(ruleId: string): Promise<PatientSegment> {
-    const supabase = await this.getSupabase();
-    
+
     // Get rule details
+    const supabase = await createClient();
     const { data: rule, error: ruleError } = await supabase
       .from('segmentation_rules')
       .select('*')
@@ -194,8 +193,8 @@ export class PatientSegmentationService {
 
   // Performance Tracking & Analytics
   async getSegmentPerformance(segmentId: string): Promise<SegmentPerformance> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data: performance, error } = await supabase
       .from('segment_performance')
       .select('*')
@@ -215,8 +214,7 @@ export class PatientSegmentationService {
   }
 
   async getSegmentAnalytics(segmentId: string): Promise<SegmentAnalytics> {
-    const supabase = await this.getSupabase();
-    
+
     // Get comprehensive analytics
     const [memberships, performance, trends] = await Promise.all([
       this.getSegmentMemberships(segmentId),
@@ -253,8 +251,7 @@ export class PatientSegmentationService {
     analytics_consent: boolean;
     last_updated: string;
   }> {
-    const supabase = await this.getSupabase();
-    
+
     const { data: consent, error } = await supabase
       .from('patient_consent')
       .select('*')
@@ -276,8 +273,7 @@ export class PatientSegmentationService {
     marketing_consent?: boolean;
     analytics_consent?: boolean;
   }): Promise<void> {
-    const supabase = await this.getSupabase();
-    
+
     const { error } = await supabase
       .from('patient_consent')
       .upsert({
@@ -363,8 +359,7 @@ export class PatientSegmentationService {
   }
 
   private async generateSegmentMemberships(segmentId: string, criteria: any): Promise<void> {
-    const supabase = await this.getSupabase();
-    
+
     // Get all patients and analyze for segment membership
     const analyses = await this.analyzePatientsForSegmentation(segmentId);
     
@@ -390,8 +385,7 @@ export class PatientSegmentationService {
   }
 
   private async generateSegmentPerformance(segmentId: string): Promise<SegmentPerformance> {
-    const supabase = await this.getSupabase();
-    
+
     const memberships = await this.getSegmentMemberships(segmentId);
     
     const performance = {
@@ -523,8 +517,8 @@ export class PatientSegmentationService {
   }
 
   private async getSegmentMemberships(segmentId: string): Promise<SegmentMembership[]> {
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('segment_memberships')
       .select('*')
@@ -590,8 +584,7 @@ export class PatientSegmentationService {
   }
 
   private async updateRulePerformance(ruleId: string, segmentId: string): Promise<void> {
-    const supabase = await this.getSupabase();
-    
+
     const performance = await this.getSegmentPerformance(segmentId);
     
     const { error } = await supabase
@@ -611,8 +604,7 @@ export class PatientSegmentationService {
   }
 
   private async removePatientFromAllSegments(patientId: string): Promise<void> {
-    const supabase = await this.getSupabase();
-    
+
     const { error } = await supabase
       .from('segment_memberships')
       .delete()
@@ -623,3 +615,5 @@ export class PatientSegmentationService {
 }
 
 export const patientSegmentationService = new PatientSegmentationService();
+
+

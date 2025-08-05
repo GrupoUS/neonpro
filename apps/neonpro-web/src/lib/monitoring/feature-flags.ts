@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flag Management System
  * 
@@ -6,8 +6,8 @@
  * and emergency rollback functionality for enhancement phases.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
-import { createClient as createServerClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/client';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 import { useEffect, useState } from 'react';
 
 export interface FeatureFlag {
@@ -469,3 +469,4 @@ export async function checkFeatureFlagServer(
   
   return manager.isFeatureEnabled(flagName, userId, context);
 }
+

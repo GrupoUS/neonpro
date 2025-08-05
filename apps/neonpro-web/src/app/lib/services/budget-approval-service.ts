@@ -17,10 +17,11 @@ import {
     ProcessApprovalRequest,
     PurchaseOrderApproval
 } from '@/app/types/budget-approval';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class BudgetApprovalService {
   private async getSupabaseClient() {
+    const supabase = await createClient();
     return await createClient();
   }
 
@@ -29,8 +30,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createBudget(request: CreateBudgetRequest, clinicId: string, userId: string): Promise<InventoryBudget> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const budgetData = {
       ...request,
       clinic_id: clinicId,
@@ -58,8 +58,8 @@ export class BudgetApprovalService {
   }
 
   async getBudget(budgetId: string): Promise<InventoryBudget | null> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('inventory_budgets')
       .select('*')
@@ -74,8 +74,8 @@ export class BudgetApprovalService {
   }
 
   async updateBudget(budgetId: string, updates: Partial<InventoryBudget>): Promise<InventoryBudget> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('inventory_budgets')
       .update(updates)
@@ -93,8 +93,7 @@ export class BudgetApprovalService {
     budgetType?: string;
     costCenterId?: string;
   }): Promise<InventoryBudget[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     let query = supabase
       .from('inventory_budgets')
       .select('*')
@@ -120,8 +119,8 @@ export class BudgetApprovalService {
   }
 
   async approveBudget(budgetId: string, approverId: string): Promise<InventoryBudget> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('inventory_budgets')
       .update({
@@ -196,8 +195,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createBudgetAllocations(budgetId: string, allocations: Omit<BudgetAllocationRequest, 'budget_id'>[]): Promise<BudgetAllocation[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const allocationsData = allocations.map(allocation => ({
       ...allocation,
       budget_id: budgetId,
@@ -220,8 +218,8 @@ export class BudgetApprovalService {
   }
 
   async getBudgetAllocations(budgetId: string): Promise<BudgetAllocation[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('budget_allocations')
       .select('*')
@@ -233,8 +231,8 @@ export class BudgetApprovalService {
   }
 
   async updateBudgetAllocation(allocationId: string, updates: Partial<BudgetAllocation>): Promise<BudgetAllocation> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('budget_allocations')
       .update(updates)
@@ -247,8 +245,7 @@ export class BudgetApprovalService {
   }
 
   private async updateBudgetAllocatedAmount(budgetId: string, additionalAmount: number): Promise<void> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const { error } = await supabase.rpc('update_budget_allocated_amount', {
       budget_id: budgetId,
       additional_amount: additionalAmount
@@ -262,8 +259,8 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createCostCenter(costCenter: Omit<CostCenter, 'id' | 'created_at' | 'updated_at'>, clinicId: string): Promise<CostCenter> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('cost_centers')
       .insert({ ...costCenter, clinic_id: clinicId })
@@ -275,8 +272,8 @@ export class BudgetApprovalService {
   }
 
   async listCostCenters(clinicId: string): Promise<CostCenter[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('cost_centers')
       .select('*')
@@ -293,8 +290,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createApprovalRequest(request: CreateApprovalRequest): Promise<PurchaseOrderApproval[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Simplified approval creation - would be expanded based on actual requirements
     const approvals: any[] = [{
       purchase_order_id: request.purchase_order_id,
@@ -313,8 +309,7 @@ export class BudgetApprovalService {
   }
 
   async processApproval(request: ProcessApprovalRequest): Promise<PurchaseOrderApproval> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const updates: any = {
       status: 'approved', // Simplified - would use request.decision in real implementation
       decision_date: new Date().toISOString(),
@@ -333,8 +328,8 @@ export class BudgetApprovalService {
   }
 
   async checkApprovalEligibility(purchaseOrderId: string): Promise<ApprovalEligibility> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data: approvals, error } = await supabase
       .from('purchase_order_approvals')
       .select('*')
@@ -362,8 +357,8 @@ export class BudgetApprovalService {
   }
 
   private async getApplicableWorkflowRules(amount: number, category?: string): Promise<ApprovalWorkflowRule[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('approval_workflow_rules')
       .select('*')
@@ -389,8 +384,8 @@ export class BudgetApprovalService {
   }
 
   async createWorkflowRule(request: CreateWorkflowRuleRequest, clinicId: string, userId: string): Promise<ApprovalWorkflowRule> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('approval_workflow_rules')
       .insert({
@@ -410,8 +405,7 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async getBudgetUtilization(budgetId: string): Promise<BudgetUtilizationSummary> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const budget = await this.getBudget(budgetId);
     if (!budget) throw new Error('Budget not found');
 
@@ -446,8 +440,7 @@ export class BudgetApprovalService {
   }
 
   async getApprovalWorkflowPerformance(workflowId: string, periodStart: string, periodEnd: string): Promise<ApprovalWorkflowPerformance> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // This would require more complex queries in a real implementation
     // For now, returning a mock structure
     return {
@@ -555,8 +548,8 @@ export class BudgetApprovalService {
   // =====================================================================================
 
   async createBudgetNotification(notification: Omit<BudgetNotification, 'id' | 'created_at'>): Promise<BudgetNotification> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('budget_notifications')
       .insert(notification)
@@ -568,8 +561,8 @@ export class BudgetApprovalService {
   }
 
   async getBudgetNotifications(budgetId: string): Promise<BudgetNotification[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('budget_notifications')
       .select('*')
@@ -581,8 +574,8 @@ export class BudgetApprovalService {
   }
 
   async acknowledgeNotification(notificationId: string, userId: string): Promise<BudgetNotification> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('budget_notifications')
       .update({
@@ -597,3 +590,5 @@ export class BudgetApprovalService {
     return data;
   }
 }
+
+

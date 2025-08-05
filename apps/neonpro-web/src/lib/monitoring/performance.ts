@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TASK-001: Foundation Setup & Baseline
  * Performance Measurement Utilities
  * 
@@ -6,7 +6,7 @@
  * API endpoints, and database queries to establish baseline measurements.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface PerformanceMetric {
   route_path: string;
@@ -348,3 +348,4 @@ export async function getPerformanceMetrics() {
 export async function recordPerformanceMetric(metric: PerformanceMetric) {
   return performanceMonitor.logPerformanceMetric(metric);
 }
+

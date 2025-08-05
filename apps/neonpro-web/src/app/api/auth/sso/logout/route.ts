@@ -1,4 +1,4 @@
-// SSO Logout Route
+﻿// SSO Logout Route
 // Story 1.3: SSO Integration - Session Termination & Token Revocation
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -15,7 +15,7 @@ const logoutSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const cookieStore = cookies();
+// Cookie instantiation moved inside request handlers;
     const sessionCookie = cookieStore.get('sso_session');
     const userCookie = cookieStore.get('sso_user');
 
@@ -175,3 +175,4 @@ export async function DELETE() {
     { status: 405 }
   );
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI Duration Prediction API Route
  * POST /api/ai/predict-duration
  * 
@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { AIDurationPredictionService, AIABTestingService } from '@/lib/ai/duration-prediction';
 import type { PredictionFeatures } from '@/lib/ai/duration-prediction';
 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -215,3 +215,4 @@ export async function DELETE() {
     { status: 405 }
   );
 }
+

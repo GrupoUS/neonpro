@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 
@@ -615,3 +615,4 @@ export class KPICalculationService {
 
 // Export singleton instance
 export const kpiCalculationService = new KPICalculationService();
+

@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { noShowPredictionEngine } from '@/app/lib/services/no-show-prediction';
 import { GetAnalyticsQuerySchema, DashboardPeriodSchema } from '@/app/lib/validations/no-show-prediction';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {

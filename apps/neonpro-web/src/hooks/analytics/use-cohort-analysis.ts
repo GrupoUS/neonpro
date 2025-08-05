@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Advanced Cohort Analysis React Hook for NeonPro
  * 
  * Custom hook providing comprehensive cohort analysis capabilities including:
@@ -58,7 +58,7 @@ export function useCohortAnalysis(
   initialConfig: CohortAnalysisHookConfig
 ): CohortAnalysisState & CohortAnalysisActions {
   const queryClient = useQueryClient()
-  const supabase = createClient()
+  const supabase = await createClient()
   const [config, setConfig] = useState<CohortAnalysisHookConfig>(initialConfig)
   const [error, setError] = useState<string | null>(null)
 
@@ -268,7 +268,7 @@ export function useCohortComparison(cohortIds: string[]) {
  */
 export function useRealTimeCohortMetrics(cohortId: string, enabled: boolean = true) {
   const [metrics, setMetrics] = useState<CohortMetrics[]>([])
-  const supabase = createClient()
+  const supabase = await createClient()
 
   useEffect(() => {
     if (!enabled || !cohortId) return
@@ -383,3 +383,4 @@ export function useCohortDataFormatters() {
     }
   }), [])
 }
+

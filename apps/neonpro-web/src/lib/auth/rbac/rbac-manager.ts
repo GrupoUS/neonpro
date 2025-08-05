@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RBAC Permission Manager Class
  * Story 1.2: Role-Based Access Control Implementation
  * 
@@ -7,7 +7,7 @@
  */
 
 import { UserRole, Permission, PermissionCheck, PermissionResult, RoleDefinition, UserRoleAssignment } from '@/types/rbac';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { AuthUser } from '@/lib/middleware/auth';
 
 export class RBACPermissionManager {
@@ -199,3 +199,4 @@ export class RBACPermissionManager {
     console.log('Clearing all permission caches');
   }
 }
+

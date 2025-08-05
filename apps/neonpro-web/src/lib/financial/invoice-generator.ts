@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Automated Invoice Generation System
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
  * 
@@ -1206,3 +1206,4 @@ export {
   type NFSeResponse,
   type TaxCalculation
 }
+

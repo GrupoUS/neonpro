@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 import { kpiCalculationService, type KPICalculationResult } from './kpi-calculation-service';
@@ -863,3 +863,4 @@ export class AlertSystem {
 
 // Export singleton instance
 export const alertSystem = new AlertSystem();
+

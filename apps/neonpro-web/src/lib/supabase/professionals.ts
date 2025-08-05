@@ -1,8 +1,8 @@
-// Professional Management Supabase Functions
+﻿// Professional Management Supabase Functions
 // FHIR-compliant healthcare professional data management with modern automation
 
-import { createClient } from '@/app/utils/supabase/client';
-const supabase = createClient();
+import { createClient } from '@/lib/supabase/client';
+const supabase = await createClient();
 import type { Database } from '@/types/supabase';
 import type {
   Professional,
@@ -1051,3 +1051,4 @@ export async function getComprehensiveProfessionalProfile(id: string) {
     activeAlerts
   };
 }
+

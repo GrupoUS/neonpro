@@ -1,7 +1,7 @@
-// GET/POST /api/treatment-prediction/predictions - Get/Create predictions
+﻿// GET/POST /api/treatment-prediction/predictions - Get/Create predictions
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { PredictionFilters, PredictionRequest } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/treatment-prediction/predictions - Get predictions with filters

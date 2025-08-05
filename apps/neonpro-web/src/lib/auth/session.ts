@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Session Management Service
  * Story 1.4: Session Management & Security
  * 
@@ -6,7 +6,7 @@
  * device tracking, and LGPD compliance.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { 
   UserSession, 
   SessionSecurityEvent, 
@@ -15,9 +15,16 @@ import {
   SessionPolicy,
   SecurityEventType,
   SecuritySeverity,
+} from '@/types/session';
+
+// Re-export types that are needed elsewhere
+export {
   SessionAction,
   DeviceType,
-  SecurityLevel,
+  SecurityLevel
+} from '@/types/session';
+
+import {
   CreateSessionRequest,
   UpdateSessionRequest,
   SessionFilter,
@@ -660,3 +667,28 @@ export class SessionManager {
 // ============================================================================
 
 export const sessionManager = new SessionManager();
+
+// ============================================================================
+// UNIFIED SESSION SYSTEM (LEGACY COMPATIBILITY)
+// ============================================================================
+
+export class UnifiedSessionSystem {
+  private sessionManager: SessionManager;
+
+  constructor() {
+    this.sessionManager = sessionManager;
+  }
+
+  async createSession(userId: string, deviceInfo?: Partial<DeviceRegistration>) {
+    return this.sessionManager.createSession(userId, deviceInfo);
+  }
+
+  async validateSession(sessionToken: string) {
+    return this.sessionManager.validateSession(sessionToken);
+  }
+
+  async terminateSession(sessionId: string) {
+    return this.sessionManager.terminateSession(sessionId);
+  }
+}
+

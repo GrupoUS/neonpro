@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RBAC Permissions System for NeonPro
  * Story 1.2: Role-Based Access Control Implementation
  * 
@@ -8,7 +8,7 @@
 
 import { UserRole, Permission, PermissionCheck, PermissionResult, DEFAULT_ROLES } from '@/types/rbac';
 import { AuthUser } from '@/lib/middleware/auth';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 // Export the class-based manager interface
 export { RBACPermissionManager } from './rbac-manager';
@@ -186,7 +186,7 @@ async function checkPatientAccess(
   user: AuthUser
 ): Promise<PermissionResult> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if patient belongs to user's clinic
     const { data: patient } = await supabase
@@ -230,7 +230,7 @@ async function checkAppointmentAccess(
   user: AuthUser
 ): Promise<PermissionResult> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check if appointment belongs to user's clinic
     const { data: appointment } = await supabase
@@ -302,7 +302,7 @@ async function logPermissionCheck(
   granted: boolean
 ): Promise<void> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     await supabase.from('permission_audit_log').insert({
       user_id: check.userId,
@@ -410,3 +410,4 @@ export function getPermissionCacheStats(): {
     entries: permissionCache.size
   };
 }
+

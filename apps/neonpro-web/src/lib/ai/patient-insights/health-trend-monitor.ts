@@ -1,7 +1,7 @@
-// AI-Powered Health Trend Monitoring Engine
+﻿// AI-Powered Health Trend Monitoring Engine
 // Story 3.2: Task 5 - Health Trend Monitoring Engine
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { HealthTrend, TrendAlert, HealthTrendAnalysis } from './types'
 
 export class HealthTrendMonitor {
@@ -710,7 +710,7 @@ export class HealthTrendMonitor {
 
   private calculateTimeWindow(timeframe?: string): { start: Date; end: Date } {
     const end = new Date()
-    let start = new Date()
+    const start = new Date()
 
     switch (timeframe) {
       case 'week':
@@ -952,3 +952,4 @@ interface Scenario {
   outcomes: HealthPrediction[]
   description: string
 }
+

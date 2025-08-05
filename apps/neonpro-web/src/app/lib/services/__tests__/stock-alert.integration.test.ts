@@ -18,8 +18,8 @@ import {
 // TEST SETUP AND CONFIGURATION
 // =====================================================
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'test-key';
+const supabaseUrl = process.env.SUPABASE_URL || 'http://localhost:54321';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'test-key';
 
 // Mock Supabase client for testing
 const mockSupabaseClient = {
@@ -549,3 +549,4 @@ describe('Stock Alert Integration Tests', () => {
     });
   });
 });
+

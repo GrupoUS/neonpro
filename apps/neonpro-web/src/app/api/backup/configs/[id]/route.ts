@@ -8,7 +8,16 @@ import { BackupManager } from '@/lib/backup/backup-manager';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
-const backupManager = new BackupManager();
+// Initialize BackupManager only if Supabase is configured
+const backupManager: BackupManager | null = null;
+// TODO: Re-enable after environment is properly configured
+// try {
+//   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+//     backupManager = new BackupManager();
+//   }
+// } catch (error) {
+//   console.warn('BackupManager initialization failed:', error);
+// }
 
 // Schema para atualização de configuração
 const updateConfigSchema = z.object({
@@ -37,6 +46,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!backupManager) {
+      return NextResponse.json(
+        { error: 'Backup service not configured' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -68,6 +84,13 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!backupManager) {
+      return NextResponse.json(
+        { error: 'Backup service not configured' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -114,6 +137,13 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!backupManager) {
+      return NextResponse.json(
+        { error: 'Backup service not configured' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 

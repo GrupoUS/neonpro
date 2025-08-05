@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { WaitlistService, TimeSlot, UrgencyLevel } from '@/lib/scheduling/conflict-resolution';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
   
   try {
     // Get user session
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
   
   try {
     // Get user session
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
     if (sessionError || !session) {
@@ -271,3 +271,4 @@ export async function OPTIONS(request: NextRequest) {
     },
   });
 }
+

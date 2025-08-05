@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🗺️ NeonPro Patient Journey Mapping Engine
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Journey Mapping Core Engine
@@ -1020,3 +1020,4 @@ export {
   type JourneyAnalysis,
   type JourneyMappingConfig
 }
+

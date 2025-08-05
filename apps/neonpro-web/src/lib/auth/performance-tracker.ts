@@ -1,214 +1,111 @@
-/**
- * Performance Tracker for OAuth and Authentication Systems
- * Monitors and tracks performance metrics for optimization
- */
+// Performance tracker utilities and monitoring
 
-export interface PerformanceMetric {
-  name: string;
-  value: number;
+export interface PerformanceMetrics {
+  duration: number;
   timestamp: number;
-  tags?: Record<string, string>;
+  operation: string;
+  success: boolean;
+  metadata?: Record<string, any>;
 }
 
-export interface PerformanceStats {
-  count: number;
-  min: number;
-  max: number;
-  avg: number;
-  p50: number;
-  p95: number;
-  p99: number;
-}
-
-class PerformanceTracker {
+export class PerformanceTracker {
   private static instance: PerformanceTracker;
-  private metrics: Map<string, number[]> = new Map();
-  private metricTags: Map<string, Record<string, string>[]> = new Map();
-  private readonly MAX_METRICS_PER_TYPE = 1000;
   
-  private constructor() {}
-  
-  public static getInstance(): PerformanceTracker {
+  static getInstance(): PerformanceTracker {
     if (!PerformanceTracker.instance) {
       PerformanceTracker.instance = new PerformanceTracker();
     }
     return PerformanceTracker.instance;
   }
 
-  /**
-   * Record a performance metric
-   */
-  recordMetric(
-    name: string,
-    value: number,
-    tags?: Record<string, string>
-  ): void {
-    try {
-      // Get or create metric array
-      let values = this.metrics.get(name);
-      if (!values) {
-        values = [];
-        this.metrics.set(name, values);
-      }
-      
-      // Add value
-      values.push(value);
-      
-      // Maintain size limit
-      if (values.length > this.MAX_METRICS_PER_TYPE) {
-        values.shift(); // Remove oldest
-      }
-      
-      // Store tags if provided
-      if (tags) {
-        let tagArray = this.metricTags.get(name);
-        if (!tagArray) {
-          tagArray = [];
-          this.metricTags.set(name, tagArray);
-        }
-        
-        tagArray.push(tags);
-        
-        // Maintain size limit
-        if (tagArray.length > this.MAX_METRICS_PER_TYPE) {
-          tagArray.shift();
-        }
-      }
-    } catch (error) {
-      console.error('Failed to record metric:', error);
-    }
-  }
-
-  /**
-   * Get statistics for a metric
-   */
-  getStats(name: string): PerformanceStats | null {
-    const values = this.metrics.get(name);
-    if (!values || values.length === 0) {
-      return null;
-    }
-    
-    const sorted = [...values].sort((a, b) => a - b);
-    const count = sorted.length;
+  track(operation: string, metadata?: Record<string, any>): {
+    end: (success?: boolean) => void;
+  } {
+    const startTime = Date.now();
     
     return {
-      count,
-      min: sorted[0],
-      max: sorted[count - 1],
-      avg: sorted.reduce((sum, val) => sum + val, 0) / count,
-      p50: this.getPercentile(sorted, 0.5),
-      p95: this.getPercentile(sorted, 0.95),
-      p99: this.getPercentile(sorted, 0.99),
+      end: (success = true) => {
+        const duration = Date.now() - startTime;
+        const metrics: PerformanceMetrics = {
+          duration,
+          timestamp: startTime,
+          operation,
+          success,
+          metadata,
+        };
+        
+        this.logMetrics(metrics);
+      },
     };
   }
 
-  /**
-   * Get all metric names
-   */
-  getMetricNames(): string[] {
-    return Array.from(this.metrics.keys());
-  }
-
-  /**
-   * Get recent metrics
-   */
-  getRecentMetrics(name: string, count: number = 10): PerformanceMetric[] {
-    const values = this.metrics.get(name);
-    const tags = this.metricTags.get(name);
+  private logMetrics(metrics: PerformanceMetrics): void {
+    console.log('[PERFORMANCE]', metrics);
     
-    if (!values) {
-      return [];
+    // Em produção, enviar para sistema de monitoramento
+    if (process.env.NODE_ENV === 'production') {
+      // Implementar envio para sistema de monitoramento
     }
-    
-    const recentValues = values.slice(-count);
-    const recentTags = tags ? tags.slice(-count) : [];
-    
-    return recentValues.map((value, index) => ({
-      name,
-      value,
-      timestamp: Date.now() - (recentValues.length - index - 1) * 1000,
-      tags: recentTags[index],
-    }));
-  }
-
-  /**
-   * Clear metrics for a specific name
-   */
-  clearMetrics(name: string): void {
-    this.metrics.delete(name);
-    this.metricTags.delete(name);
-  }
-
-  /**
-   * Clear all metrics
-   */
-  clearAllMetrics(): void {
-    this.metrics.clear();
-    this.metricTags.clear();
-  }
-
-  /**
-   * Get performance summary
-   */
-  getPerformanceSummary(): Record<string, PerformanceStats> {
-    const summary: Record<string, PerformanceStats> = {};
-    
-    for (const name of this.getMetricNames()) {
-      const stats = this.getStats(name);
-      if (stats) {
-        summary[name] = stats;
-      }
-    }
-    
-    return summary;
-  }
-
-  /**
-   * Private helper methods
-   */
-  private getPercentile(sortedValues: number[], percentile: number): number {
-    const index = Math.ceil(sortedValues.length * percentile) - 1;
-    return sortedValues[Math.max(0, index)];
   }
 }
 
+// Instância global
 export const performanceTracker = PerformanceTracker.getInstance();
 
-/**
- * Convenience functions for common tracking scenarios
- */
-export const trackLoginPerformance = (
-  duration: number,
-  metadata?: Record<string, string>
-): void => {
-  performanceTracker.recordMetric('login_duration', duration, metadata);
+// Funções utilitárias específicas
+export const trackMFAVerification = (data: any) => {
+  console.log('[MFA PERFORMANCE]', data);
 };
 
-export const trackAuthenticationTime = (
-  duration: number,
-  method: string,
-  success: boolean
-): void => {
-  performanceTracker.recordMetric('authentication_time', duration, {
-    method,
-    success: success.toString()
-  });
+export const trackPerformance = (metric: string, value: number) => {
+  console.log('[PERFORMANCE]', metric, value);
 };
 
-export const trackSessionCreation = (
-  duration: number,
-  userRole?: string
-): void => {
-  performanceTracker.recordMetric('session_creation', duration, {
-    userRole: userRole || 'unknown'
-  });
+export const trackLoginPerformance = (data: any) => {
+  console.log('[LOGIN PERFORMANCE]', data);
 };
 
-export const trackDeviceRegistration = (
-  duration: number,
-  deviceType?: string
-): void => {
-  performanceTracker.recordMetric('device_registration', duration, {
-    deviceType: deviceType || 'unknown'
-  });
+export const trackAuthPerformance = (operation: string, duration: number, success: boolean = true) => {
+  const metrics: PerformanceMetrics = {
+    duration,
+    timestamp: Date.now(),
+    operation: `auth.${operation}`,
+    success,
+  };
+  console.log('[AUTH PERFORMANCE]', metrics);
 };
+
+export const trackAPIPerformance = (endpoint: string, method: string, duration: number, statusCode: number) => {
+  const metrics: PerformanceMetrics = {
+    duration,
+    timestamp: Date.now(),
+    operation: `api.${method}.${endpoint}`,
+    success: statusCode >= 200 && statusCode < 400,
+    metadata: { statusCode, method, endpoint },
+  };
+  console.log('[API PERFORMANCE]', metrics);
+};
+
+// Decorator para tracking automático
+export function trackOperation(operationName: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+
+    descriptor.value = async function (...args: any[]) {
+      const tracker = performanceTracker.track(operationName);
+      
+      try {
+        const result = await originalMethod.apply(this, args);
+        tracker.end(true);
+        return result;
+      } catch (error) {
+        tracker.end(false);
+        throw error;
+      }
+    };
+
+    return descriptor;
+  };
+}
+
+export default performanceTracker;

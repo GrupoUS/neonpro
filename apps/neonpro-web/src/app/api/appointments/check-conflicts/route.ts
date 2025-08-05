@@ -1,5 +1,5 @@
 import type { ConflictCheckResponse } from "@/app/lib/types/appointments";
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 // 🚀 Edge Runtime para detecção instantânea de conflitos

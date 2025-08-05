@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 
@@ -39,10 +39,21 @@ export function PatientAuthProvider({ children }: { children: React.ReactNode })
   const [user, setUser] = useState<User | null>(null)
   const [patient, setPatient] = useState<Patient | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const supabase = createClient()
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
+
+  // Initialize Supabase client
+  useEffect(() => {
+    const initSupabase = async () => {
+      const client = await createClient()
+      setSupabase(client)
+    }
+    initSupabase()
+  }, [])
 
   useEffect(() => {
     const getUser = async () => {
+      if (!supabase) return
+      
       try {
         const { data: { user }, error } = await supabase.auth.getUser()
         if (error) throw error
@@ -187,3 +198,4 @@ export const usePatientAuth = () => {
   }
   return context
 }
+

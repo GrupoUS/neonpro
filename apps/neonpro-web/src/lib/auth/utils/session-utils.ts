@@ -12,7 +12,7 @@ import {
  * Session utility functions
  */
 export class SessionUtils {
-  private static supabase = createClientComponentClient();
+  private static const supabase = createClient(ComponentClient();
 
   /**
    * Generate a secure session token

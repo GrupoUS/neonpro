@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI-Powered Automatic Scheduling Core
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
  * 
@@ -386,7 +386,7 @@ class AISchedulingCore {
     const [endHour, endMinute] = dayHours.end_time.split(':').map(Number)
     endTime.setHours(endHour, endMinute, 0, 0)
     
-    let currentSlot = new Date(startTime)
+    const currentSlot = new Date(startTime)
     
     while (currentSlot < endTime) {
       const slotEnd = new Date(currentSlot)
@@ -606,3 +606,4 @@ class AISchedulingCore {
 }
 
 export { AISchedulingCore, type SchedulingCriteria, type SchedulingRecommendation, type AISchedulingConfig }
+

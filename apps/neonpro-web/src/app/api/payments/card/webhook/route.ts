@@ -17,7 +17,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
@@ -429,3 +429,4 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     console.error('Error handling invoice payment failure:', error);
   }
 }
+

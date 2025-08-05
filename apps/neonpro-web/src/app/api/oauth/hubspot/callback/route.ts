@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { HubSpotOAuthHandler } from '@/lib/oauth/platforms/hubspot-handler';
 import { Logger } from '@/lib/logger';
 import { randomBytes } from 'crypto';

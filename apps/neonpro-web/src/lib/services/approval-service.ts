@@ -76,7 +76,7 @@ export interface ApprovalAction {
 }
 
 class ApprovalService {
-  private supabase = createClientComponentClient()
+  private const supabase = createClient(ComponentClient()
 
   // Approval Levels Management
   async getApprovalLevels(): Promise<ApprovalLevel[]> {

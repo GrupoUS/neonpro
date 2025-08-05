@@ -1,10 +1,10 @@
-// lib/services/accounts-payable.ts
+﻿// lib/services/accounts-payable.ts
 // Service layer for accounts payable management
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { AccountsPayable, AccountsPayableFilters, AccountsPayableFormData, AccountsPayableResponse } from '@/lib/types/accounts-payable'
 
-const supabase = createClient()
+const supabase = await createClient()
 
 export class AccountsPayableService {
   
@@ -400,3 +400,4 @@ export class AccountsPayableService {
     }
   }
 }
+

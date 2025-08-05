@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Session Extend API Route
  * Extends session timeout with custom duration
  */
@@ -17,7 +17,7 @@ let sessionManager: SessionManager | null = null;
 
 async function getSessionManager() {
   if (!sessionManager) {
-    const supabase = createClient();
+    const supabase = await createClient();
     sessionManager = new SessionManager(supabase, {
       defaultTimeout: 30,
       maxConcurrentSessions: 5,
@@ -35,7 +35,7 @@ async function getSessionManager() {
 export async function POST(request: NextRequest) {
   try {
     const { extendMinutes, reason } = await request.json();
-    const cookieStore = cookies();
+// Cookie instantiation moved inside request handlers;
     const sessionToken = cookieStore.get('session-token')?.value;
     
     if (!sessionToken) {
@@ -133,3 +133,5 @@ export async function OPTIONS(request: NextRequest) {
     },
   });
 }
+
+

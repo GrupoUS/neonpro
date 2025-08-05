@@ -81,6 +81,19 @@ export {
 // Analytics Service - Main service interface
 export class AnalyticsService {
   /**
+   * Track analytics event
+   */
+  async trackEvent(eventData: any) {
+    // Mock implementation for now
+    console.log('Analytics event tracked:', eventData);
+    return {
+      id: `event_${Date.now()}`,
+      tracked: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  /**
    * Get dashboard overview data
    */
   async getDashboardOverview(params: {

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Sistema de Otimização Inteligente com ML - NeonPro
  * 
  * Engine de Machine Learning para otimização de notificações utilizando
@@ -17,7 +17,7 @@
  */
 
 import { z } from 'zod';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NotificationChannel, NotificationType } from '../types';
 
 // ================================================================================
@@ -954,3 +954,4 @@ export const notificationMLEngine = new NotificationMLEngine({
   },
 });
 export type { UserProfile, OptimizationResult, SegmentationResult, ABTestResult };
+

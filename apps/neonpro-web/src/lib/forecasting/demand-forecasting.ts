@@ -682,7 +682,7 @@ export class DemandForecastingEngine {
     const applicableFactors = this.getApplicableExternalFactors(startDate, endDate);
     
     // Apply factor adjustments to data
-    let adjustedData = [...data];
+    const adjustedData = [...data];
     
     applicableFactors.forEach(factor => {
       const impactMultiplier = 1 + (factor.impact_weight * 0.1);

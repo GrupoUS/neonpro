@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Interoperability Standards
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Interoperability)
  * 
@@ -1428,3 +1428,4 @@ export const InteroperabilityValidationSchema = z.object({
 
 // Export singleton instance
 export const interoperabilityManager = new InteroperabilityManager();
+

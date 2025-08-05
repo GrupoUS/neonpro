@@ -97,7 +97,7 @@ export interface DemographicRiskFactors {
 
 // Main risk scoring engine class
 export class RiskScoringEngine {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
   private config: RiskScoringConfig;
 
   constructor() {

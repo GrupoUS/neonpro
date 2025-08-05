@@ -1,7 +1,7 @@
-// AI-Powered Behavioral Analysis Engine
+﻿// AI-Powered Behavioral Analysis Engine
 // Story 3.2: Task 4 - Behavioral Analysis Engine
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { PatientBehaviorPattern, BehaviorAnalysis, BehaviorAlert } from './types'
 
 export class BehaviorAnalysisEngine {
@@ -955,3 +955,4 @@ interface EngagementStrategy {
   touchpoints: string[]
   escalationPath: string[]
 }
+

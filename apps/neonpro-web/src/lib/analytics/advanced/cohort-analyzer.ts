@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Advanced Cohort Analysis Engine for NeonPro
  * 
  * This module provides comprehensive cohort analysis capabilities including:
@@ -12,7 +12,7 @@
  * enhancements for SaaS subscription metrics.
  */
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 
 // Types for cohort analysis
@@ -528,3 +528,4 @@ export const cohortUtils = {
     return comparison.sort((a, b) => b.averageRetention - a.averageRetention)
   }
 }
+

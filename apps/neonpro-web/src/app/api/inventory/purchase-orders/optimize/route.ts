@@ -1,7 +1,7 @@
 // Bulk Order Optimization API Endpoint
 // POST /api/inventory/purchase-orders/optimize - Get bulk order optimization recommendations
 import { purchaseOrderService } from '@/app/lib/services/purchase-order-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

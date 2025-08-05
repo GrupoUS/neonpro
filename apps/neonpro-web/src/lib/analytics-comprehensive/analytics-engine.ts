@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Analytics Engine Base - NeonPro Analytics System
  * 
  * Core analytics calculation engine for healthcare metrics,
@@ -8,7 +8,7 @@
  * @author NeonPro Development Team
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { cache } from 'react';
 
 export interface AnalyticsTimeRange {
@@ -275,3 +275,4 @@ export function createTimeRange(
       throw new Error(`Unsupported period: ${period}`);
   }
 }
+

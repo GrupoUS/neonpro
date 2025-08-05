@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 // Maximum file size: 10MB (as per Story 12.1 requirements)
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB

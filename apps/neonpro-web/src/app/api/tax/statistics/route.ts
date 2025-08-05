@@ -1,12 +1,12 @@
-// Tax Statistics API Endpoint
+﻿// Tax Statistics API Endpoint
 // Story 5.5: Get Brazilian tax statistics and insights
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -163,3 +163,4 @@ export async function GET(request: Request) {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Real-time Subscription Status Validation System
  * 
  * This module provides WebSocket integration for real-time subscription status
@@ -497,3 +497,4 @@ export function getRealtimeMetrics(): RealtimeMetrics {
 export function isRealtimeConnected(): boolean {
   return subscriptionRealtimeManager.isConnectedToRealtime()
 }
+

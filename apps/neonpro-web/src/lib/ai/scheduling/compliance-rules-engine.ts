@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Compliance and Rules Engine for AI Scheduling
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
  * 
@@ -911,3 +911,4 @@ export {
   type SuggestedModification,
   type BrazilianHealthcareRegulation
 }
+

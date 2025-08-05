@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI Duration Prediction Engine - Core ML Service
  * Story 2.1: AI Duration Prediction Engine
  * 
@@ -6,7 +6,7 @@
  * with A/B testing, professional efficiency tracking, and continuous learning.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
 
 // ===============================================
@@ -646,3 +646,4 @@ export class ModelPerformanceService {
     }
   }
 }
+

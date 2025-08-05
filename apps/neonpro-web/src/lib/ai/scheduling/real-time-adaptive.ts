@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Real-Time Adaptive Scheduling System
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
  * 
@@ -750,3 +750,4 @@ export {
   type MonitoringMetrics,
   type PredictiveAdjustment
 }
+

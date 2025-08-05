@@ -108,15 +108,4 @@ export const PatientDataSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-// Export all schemas for easy importing
-export {
-  HealthcareRoleSchema,
-  MedicalSpecializationSchema,
-  MedicalLicenseSchema,
-  LGPDComplianceSchema,
-  HealthcareUserSchema,
-  HealthcareAuditLogSchema,
-  UpdateConsentInputSchema,
-  TenantFilterInputSchema,
-  PatientDataSchema,
-};
+// All schemas are already exported individually above

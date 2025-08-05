@@ -1,4 +1,4 @@
-// RBAC React Hook for Frontend Permission Management
+﻿// RBAC React Hook for Frontend Permission Management
 // Story 1.2: Role-Based Permissions Enhancement
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -50,7 +50,7 @@ interface UseRBACOptions {
 export function useRBAC(options: UseRBACOptions = {}) {
   const { clinicId, cacheTimeout = 5 * 60 * 1000, autoRefresh = true } = options;
   const user = useUser();
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const [state, setState] = useState<RBACState>({
     userRole: null,
@@ -421,3 +421,4 @@ export function usePermissionGuard(requiredPermissions: Permission[], clinicId?:
     isLoading
   };
 }
+

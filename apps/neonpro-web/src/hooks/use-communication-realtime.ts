@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -35,7 +35,7 @@ export function useCommunicationRealtime({
   });
 
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Carregar mensagens iniciais
   const loadMessages = useCallback(async (convId: string) => {
@@ -277,3 +277,4 @@ export function useCommunicationRealtime({
     connect: (convId: string) => connect(convId)
   };
 }
+

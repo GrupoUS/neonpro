@@ -4,7 +4,7 @@
  * 
  * @author APEX Master Developer
  * @version 1.0.0
- * @compliance LGPD Art. 7º, 8º, 9º
+ * @compliance LGPD Art. 7�, 8�, 9�
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -13,11 +13,13 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { 
   LGPDCore,
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
   ConsentRecord
 } from '@/lib/compliance/lgpd-core';
+import {
+  ConsentType,
+  ConsentStatus, 
+  LegalBasis
+} from '@/types/lgpd';
 import { withAuth } from '@/lib/auth/middleware';
 import { withRateLimit } from '@/lib/security/rate-limit';
 import { auditLog } from '@/lib/audit/audit-logger';
@@ -105,7 +107,7 @@ export async function GET(request: NextRequest) {
     const { clinicId, userId, consentType, status, page, limit } = validatedQuery;
 
     // Initialize Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -235,7 +237,7 @@ export async function POST(request: NextRequest) {
     const { consentType, purpose, description, legalBasis, expiresAt, metadata } = validatedData;
 
     // Initialize Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -355,7 +357,7 @@ export async function DELETE(request: NextRequest) {
     const { consentId, reason } = validatedData;
 
     // Initialize Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -429,3 +431,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

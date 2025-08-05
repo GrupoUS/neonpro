@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 
 export interface Document {
   id: string
@@ -192,3 +192,4 @@ class DocumentsService {
 }
 
 export const documentsService = new DocumentsService()
+

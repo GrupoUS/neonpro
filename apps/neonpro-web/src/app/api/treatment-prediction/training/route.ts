@@ -1,7 +1,7 @@
-// POST /api/treatment-prediction/training - Start model training
+﻿// POST /api/treatment-prediction/training - Start model training
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { TrainingRequest } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // POST /api/treatment-prediction/training - Start model training

@@ -41,3 +41,11 @@ export class Logger {
     this.log(LogLevel.DEBUG, message, metadata);
   }
 }
+
+// Export a default instance that matches the expected interface
+export const logger = {
+  error: (message: string, metadata?: Record<string, any>) => Logger.error(message, metadata),
+  warn: (message: string, metadata?: Record<string, any>) => Logger.warn(message, metadata),
+  info: (message: string, metadata?: Record<string, any>) => Logger.info(message, metadata),
+  debug: (message: string, metadata?: Record<string, any>) => Logger.debug(message, metadata),
+};

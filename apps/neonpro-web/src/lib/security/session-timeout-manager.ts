@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Session Timeout Manager for NeonPro
  * Handles automatic session timeouts with progressive warnings
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface SessionTimeoutConfig {
   maxInactivityMinutes: number;
@@ -55,7 +55,7 @@ export class SessionTimeoutManager {
     const fullConfig = { ...this.DEFAULT_CONFIG, ...config };
     
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Store session timeout configuration
       await supabase
@@ -89,7 +89,7 @@ export class SessionTimeoutManager {
     activity: Omit<SessionActivity, 'sessionId'>
   ): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const now = new Date();
       
       // Get current session timeout config
@@ -150,7 +150,7 @@ export class SessionTimeoutManager {
     requiresReauth: boolean;
   }> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       const { data: sessionTimeout } = await supabase
         .from('session_timeouts')
@@ -196,7 +196,7 @@ export class SessionTimeoutManager {
     additionalMinutes?: number
   ): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       const { data: sessionTimeout } = await supabase
         .from('session_timeouts')
@@ -240,7 +240,7 @@ export class SessionTimeoutManager {
    */
   static async forceTimeout(sessionId: string): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Mark session as inactive
       const { error } = await supabase
@@ -362,7 +362,7 @@ export class SessionTimeoutManager {
     minutesRemaining: number
   ): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Update warnings sent
       const { data: sessionTimeout } = await supabase
@@ -395,7 +395,7 @@ export class SessionTimeoutManager {
    */
   static async cleanupExpiredSessions(): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const now = new Date().toISOString();
       
       // Mark expired sessions as inactive
@@ -420,3 +420,4 @@ export class SessionTimeoutManager {
 }
 
 export default SessionTimeoutManager;
+

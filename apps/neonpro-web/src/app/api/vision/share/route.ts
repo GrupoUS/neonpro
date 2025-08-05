@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vision Analysis Sharing API
  * POST /api/vision/share
  * GET /api/vision/share/[shareId]
@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { withErrorMonitoring } from '@/lib/monitoring';
 import { randomUUID } from 'crypto';
@@ -31,7 +31,7 @@ const shareRequestSchema = z.object({
 
 // POST - Create a shareable link
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -158,7 +158,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
 
 // GET - Retrieve shared analysis
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     const { searchParams } = new URL(request.url);
@@ -319,7 +319,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
 
 // DELETE - Revoke/deactivate a share
 export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -385,3 +385,4 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     );
   }
 });
+

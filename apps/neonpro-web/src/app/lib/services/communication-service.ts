@@ -31,7 +31,7 @@ import {
 import { createClient } from '@/utils/supabase/client';
 
 export class CommunicationService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // ============================================================================
   // MESSAGE OPERATIONS
@@ -92,7 +92,7 @@ export class CommunicationService {
         attachments: [], // File attachments would be processed separately
       };
 
-      const { data: message, error } = await this.supabase
+      const { data: message, error } = await supabase
         .from('communication_messages')
         .insert(messageData)
         .select()
@@ -133,7 +133,7 @@ export class CommunicationService {
    */
   async getMessages(request: GetMessagesRequest): Promise<GetMessagesResponse> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('communication_messages')
         .select(`
           *,
@@ -202,7 +202,7 @@ export class CommunicationService {
    */
   async getMessageThreads(patientId?: string, includeArchived: boolean = false): Promise<MessageThreadWithLastMessage[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('communication_threads')
         .select(`
           *,
@@ -255,7 +255,7 @@ export class CommunicationService {
    */
   async getMessageTemplates(category?: TemplateCategory, channel?: CommunicationChannel): Promise<MessageTemplate[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('communication_templates')
         .select('*')
         .eq('is_active', true)
@@ -286,7 +286,8 @@ export class CommunicationService {
    */
   async createMessageTemplate(template: Omit<MessageTemplate, 'id' | 'created_at' | 'updated_at' | 'usage_count' | 'last_used_at'>): Promise<MessageTemplate> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('communication_templates')
         .insert({
           ...template,
@@ -310,7 +311,8 @@ export class CommunicationService {
    */
   async updateMessageTemplate(id: string, updates: Partial<MessageTemplate>): Promise<MessageTemplate> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('communication_templates')
         .update(updates)
         .eq('id', id)
@@ -336,7 +338,7 @@ export class CommunicationService {
    */
   async getCommunicationCampaigns(status?: CampaignStatus): Promise<CommunicationCampaign[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('communication_campaigns')
         .select(`
           *,
@@ -367,8 +369,9 @@ export class CommunicationService {
     try {
       // Estimate audience size
       const estimatedSize = await this.estimateAudienceSize(campaign.target_audience);
+    const supabase = await createClient();
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('communication_campaigns')
         .insert({
           ...campaign,
@@ -453,7 +456,8 @@ export class CommunicationService {
    */
   async checkPatientConsent(patientId: string, channel: CommunicationChannel): Promise<boolean> {
     try {
-      const { data: consent, error } = await this.supabase
+    const supabase = await createClient();
+      const { data: consent, error } = await supabase
         .from('communication_consent')
         .select('*')
         .eq('patient_id', patientId)
@@ -483,7 +487,8 @@ export class CommunicationService {
    */
   async updatePatientConsent(consent: Omit<CommunicationConsent, 'id' | 'created_at' | 'updated_at'>): Promise<CommunicationConsent> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('communication_consent')
         .upsert(consent, { 
           onConflict: 'patient_id,channel',
@@ -507,7 +512,8 @@ export class CommunicationService {
    */
   async getPatientPreferences(patientId: string): Promise<CommunicationPreferences | null> {
     try {
-      const { data: preferences, error } = await this.supabase
+    const supabase = await createClient();
+      const { data: preferences, error } = await supabase
         .from('communication_preferences')
         .select('*')
         .eq('patient_id', patientId)
@@ -535,7 +541,8 @@ export class CommunicationService {
       const dateRange = this.getDateRange(period);
 
       // Get basic message counts
-      const { data: messageStats, error: statsError } = await this.supabase
+    const supabase = await createClient();
+      const { data: messageStats, error: statsError } = await supabase
         .from('communication_messages')
         .select('channel, type, status, created_at')
         .gte('created_at', dateRange.from)
@@ -615,7 +622,8 @@ export class CommunicationService {
   }
 
   private async createMessageThread(patientId: string, subject?: string): Promise<string> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_threads')
       .insert({
         patient_id: patientId,
@@ -632,7 +640,8 @@ export class CommunicationService {
   }
 
   private async getMessageTemplate(templateId: string): Promise<MessageTemplate | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_templates')
       .select('*')
       .eq('id', templateId)
@@ -656,7 +665,8 @@ export class CommunicationService {
   private async deliverMessage(messageId: string, channel: CommunicationChannel): Promise<void> {
     // In a real implementation, this would integrate with external providers
     // For now, we'll just update the message status
-    await this.supabase
+    const supabase = await createClient();
+    await supabase
       .from('communication_messages')
       .update({
         status: 'delivered',
@@ -666,7 +676,8 @@ export class CommunicationService {
   }
 
   private async updateThreadLastMessage(threadId: string): Promise<void> {
-    await this.supabase
+    const supabase = await createClient();
+    await supabase
       .from('communication_threads')
       .update({
         last_message_at: new Date().toISOString()
@@ -710,7 +721,7 @@ export class CommunicationService {
   }
 
   private async getUnreadMessageCount(threadId: string): Promise<number> {
-    const { count, error } = await this.supabase
+    const { count, error } = await supabase
       .from('communication_messages')
       .select('id', { count: 'exact' })
       .eq('thread_id', threadId)
@@ -726,7 +737,8 @@ export class CommunicationService {
   }
 
   private async getCampaign(campaignId: string): Promise<CommunicationCampaign | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_campaigns')
       .select('*')
       .eq('id', campaignId)
@@ -746,7 +758,8 @@ export class CommunicationService {
   }
 
   private async updateCampaignStatus(campaignId: string, status: CampaignStatus): Promise<void> {
-    await this.supabase
+    const supabase = await createClient();
+    await supabase
       .from('communication_campaigns')
       .update({ status })
       .eq('id', campaignId);
@@ -834,22 +847,26 @@ export class CommunicationService {
   }
 
   private async getTopTemplates(dateRange: any) {
+    const supabase = await createClient();
     // Simplified - would query actual template usage
     return [];
   }
 
   private async getPeakHours(dateRange: any) {
+    const supabase = await createClient();
     // Simplified - would analyze message patterns by hour
     return [];
   }
 
   private async getStaffPerformance(dateRange: any) {
+    const supabase = await createClient();
     // Simplified - would analyze staff communication metrics
     return [];
   }
 
   private async getRecentMessages(limit: number): Promise<Message[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_messages')
       .select('*')
       .order('created_at', { ascending: false })
@@ -860,7 +877,8 @@ export class CommunicationService {
   }
 
   private async getPendingApprovals(): Promise<Message[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_messages')
       .select('*')
       .eq('status', 'draft')
@@ -871,7 +889,8 @@ export class CommunicationService {
   }
 
   private async getFailedMessages(): Promise<Message[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('communication_messages')
       .select('*')
       .eq('status', 'failed')
@@ -883,6 +902,7 @@ export class CommunicationService {
   }
 
   private async getTopPerformers() {
+    const supabase = await createClient();
     // Simplified - would calculate actual staff performance metrics
     return [];
   }
@@ -890,3 +910,5 @@ export class CommunicationService {
 
 // Export singleton instance
 export const communicationService = new CommunicationService();
+
+

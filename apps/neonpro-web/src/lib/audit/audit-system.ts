@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Audit Trail System
  * 
  * Sistema completo de auditoria para rastreamento de todas as ações
@@ -614,3 +614,4 @@ export const generateAuditReport = (
 
 export const getAuditStatistics = (filters: Partial<AuditQueryFilters>) => 
   auditSystem.getStatistics(filters)
+

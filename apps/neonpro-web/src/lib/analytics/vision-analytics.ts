@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vision Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
  * 
@@ -1033,3 +1033,4 @@ export const VisionMetricSchema = z.object({
 
 // Export singleton instance
 export const visionAnalyticsEngine = new VisionAnalyticsEngine();
+

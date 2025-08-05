@@ -2,7 +2,7 @@
 // GET /api/inventory/purchase-orders - List purchase orders
 // POST /api/inventory/purchase-orders - Create new purchase order
 import { purchaseOrderService } from '@/app/lib/services/purchase-order-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

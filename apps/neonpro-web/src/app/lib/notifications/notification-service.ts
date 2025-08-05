@@ -3,7 +3,7 @@
  * Manages email, SMS, and in-app notifications with HIPAA compliance
  */
 
-import { supabase } from '@/app/utils/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { NOTIFICATION_CONFIG, type NotificationType, type NotificationChannel, type NotificationPriority, type NotificationPreferences } from './config';
 import { EmailService } from './email-service';
 import { SMSService } from './sms-service';

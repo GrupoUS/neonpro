@@ -1,9 +1,9 @@
-// lib/supabase/lgpd-compliance.ts
+﻿// lib/supabase/lgpd-compliance.ts
 // LGPD (Lei Geral de Proteção de Dados) Compliance Utilities for NeonPro
 // Provides comprehensive audit logging, consent management, and data protection features
 
-import { createClient } from '@/app/utils/supabase/client'
-import { createClient as createServerClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/client'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/types/supabase'
 
 // LGPD Compliance Event Types
@@ -637,3 +637,4 @@ export const lgpdUtils = {
 
 // Default export
 export default LGPDComplianceManager
+

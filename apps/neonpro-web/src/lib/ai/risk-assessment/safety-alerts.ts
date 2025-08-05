@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Safety Alerts System
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
  * 
@@ -1319,3 +1319,4 @@ export {
   type AlertStatus,
   type AlertChannel
 }
+

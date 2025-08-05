@@ -4,7 +4,7 @@
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers'
 import { UnifiedSessionSystem } from '@/lib/auth/session'
 import { z } from 'zod'
@@ -55,7 +55,7 @@ function getUserAgent(request: NextRequest): string {
 }
 
 async function initializeSessionSystem() {
-  const supabase = createClient()
+  const supabase = await createClient()
   return new UnifiedSessionSystem(supabase)
 }
 
@@ -362,3 +362,5 @@ export async function DELETE(request: NextRequest) {
     )
   }
 }
+
+

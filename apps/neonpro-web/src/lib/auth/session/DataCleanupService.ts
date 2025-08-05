@@ -41,8 +41,8 @@ export class DataCleanupService {
     this.config = config;
     
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
 
     this.initializeScheduledTasks();
@@ -764,3 +764,4 @@ export class DataCleanupService {
 }
 
 export default DataCleanupService;
+

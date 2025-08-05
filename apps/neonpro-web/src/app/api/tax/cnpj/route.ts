@@ -1,10 +1,10 @@
-// CNPJ Validation & Consultation API
+﻿// CNPJ Validation & Consultation API
 // Story 5.5: Specialized API for CNPJ operations with Brasil API integration
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 // Validation schemas
@@ -34,7 +34,7 @@ const cnpjSearchSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action');
 
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const body = await request.json();
     const action = body.action;
 
@@ -549,3 +549,4 @@ async function updateCNPJStatus(supabase: any, body: any) {
     );
   }
 }
+

@@ -1,5 +1,6 @@
+﻿import { createClient } from '@/lib/supabase/server';
 // Treatment Success Prediction Service
-// Comprehensive AI/ML-powered treatment success prediction with ≥85% accuracy
+// Comprehensive AI/ML-powered treatment success prediction with =85% accuracy
 
 import {
     AlternativeTreatment,
@@ -24,19 +25,19 @@ import {
     TreatmentPrediction,
     TreatmentRecommendation
 } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
-
+import { createServerClient } from '@/lib/supabase/server';
 export class TreatmentPredictionService {
-  private supabase;
+  // Supabase client created per method for proper request context
 
   constructor() {
-    this.supabase = createServerClient();
+    supabase = createServerClient();
   }
 
   // ==================== PREDICTION MODELS ====================
 
   async getModels(filters?: ModelFilters) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('prediction_models')
       .select('*')
       .order('accuracy', { ascending: false });
@@ -68,7 +69,8 @@ export class TreatmentPredictionService {
   }
 
   async getActiveModel(): Promise<PredictionModel | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('prediction_models')
       .select('*')
       .eq('status', 'active')
@@ -81,7 +83,8 @@ export class TreatmentPredictionService {
   }
 
   async createModel(model: Omit<PredictionModel, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('prediction_models')
       .insert(model)
       .select()
@@ -92,7 +95,8 @@ export class TreatmentPredictionService {
   }
 
   async updateModel(id: string, updates: Partial<PredictionModel>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('prediction_models')
       .update(updates)
       .eq('id', id)
@@ -106,7 +110,8 @@ export class TreatmentPredictionService {
   // ==================== TREATMENT PREDICTIONS ====================
 
   async createPrediction(predictionData: Omit<TreatmentPrediction, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('treatment_predictions')
       .insert(predictionData)
       .select('*, prediction_models(name, version, accuracy)')
@@ -117,7 +122,8 @@ export class TreatmentPredictionService {
   }
 
   async getPredictions(filters?: PredictionFilters) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('treatment_predictions')
       .select(`
         *,
@@ -165,7 +171,8 @@ export class TreatmentPredictionService {
   }
 
   async updatePredictionOutcome(id: string, outcome: string, outcomeDate: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('treatment_predictions')
       .update({
         actual_outcome: outcome,
@@ -188,7 +195,8 @@ export class TreatmentPredictionService {
   // ==================== PATIENT FACTORS ====================
 
   async getPatientFactors(patientId: string): Promise<PatientFactors | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('patient_factors')
       .select('*')
       .eq('patient_id', patientId)
@@ -199,7 +207,8 @@ export class TreatmentPredictionService {
   }
 
   async upsertPatientFactors(factors: Omit<PatientFactors, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('patient_factors')
       .upsert(factors, { onConflict: 'patient_id' })
       .select()
@@ -212,7 +221,8 @@ export class TreatmentPredictionService {
   // ==================== TREATMENT CHARACTERISTICS ====================
 
   async getTreatmentCharacteristics(treatmentType?: string) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('treatment_characteristics')
       .select('*')
       .order('treatment_type');
@@ -227,7 +237,8 @@ export class TreatmentPredictionService {
   }
 
   async createTreatmentCharacteristics(characteristics: Omit<TreatmentCharacteristics, 'id' | 'created_at' | 'updated_at'>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('treatment_characteristics')
       .insert(characteristics)
       .select()
@@ -378,6 +389,7 @@ export class TreatmentPredictionService {
   }
 
   private async runPredictionModel(model: PredictionModel, features: PredictionFeatures) {
+    const supabase = await createClient();
     // Simplified ML prediction logic
     // In production, this would call an actual ML model service
     
@@ -489,8 +501,7 @@ export class TreatmentPredictionService {
       similar_cases: [], // Would be populated from database of similar cases
       confidence_reasoning: `Prediction based on ${Object.keys(features).length} patient factors with ${(model.accuracy * 100).toFixed(1)}% model accuracy.`
     };
-
-    return {
+return {
       score: baseScore,
       confidence_interval,
       risk_assessment,
@@ -514,7 +525,7 @@ export class TreatmentPredictionService {
         importance: 'critical',
         evidence_level: 'clinical_trials'
       });
-    }
+}
 
     // Smoking-related recommendations
     if (patientFactors.lifestyle_factors?.smoking === 'current') {
@@ -524,7 +535,7 @@ export class TreatmentPredictionService {
         importance: 'high',
         evidence_level: 'clinical_trials'
       });
-    }
+}
 
     // BMI-related recommendations
     if (patientFactors.bmi && patientFactors.bmi > 30) {
@@ -534,7 +545,7 @@ export class TreatmentPredictionService {
         importance: 'medium',
         evidence_level: 'case_studies'
       });
-    }
+}
 
     // Anxiety management
     if (patientFactors.psychological_factors?.anxiety_level && patientFactors.psychological_factors.anxiety_level > 4) {
@@ -544,7 +555,7 @@ export class TreatmentPredictionService {
         importance: 'medium',
         evidence_level: 'expert_opinion'
       });
-    }
+}
 
     // Follow-up recommendations
     if (prediction.prediction_score < 0.7) {
@@ -554,7 +565,7 @@ export class TreatmentPredictionService {
         importance: 'high',
         evidence_level: 'clinical_trials'
       });
-    }
+}
 
     // Expectation management
     if (patientFactors.psychological_factors?.treatment_expectations === 'unrealistic') {
@@ -564,7 +575,7 @@ export class TreatmentPredictionService {
         importance: 'high',
         evidence_level: 'expert_opinion'
       });
-    }
+}
 
     return recommendations;
   }
@@ -655,7 +666,7 @@ export class TreatmentPredictionService {
           modifiable: this.isModifiableFactor(factor),
           recommendation: this.getFactorRecommendation(factor, impact)
         });
-      }
+}
     }
 
     return riskFactors.sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
@@ -721,7 +732,8 @@ export class TreatmentPredictionService {
   // ==================== MODEL PERFORMANCE ====================
 
   async getModelPerformance(filters?: PerformanceFilters) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('model_performance')
       .select('*, prediction_models(name, version)')
       .order('evaluation_date', { ascending: false });
@@ -750,8 +762,9 @@ export class TreatmentPredictionService {
   }
 
   async updateModelPerformance(modelId: string) {
+    const supabase = await createClient();
     // Calculate current model performance based on validated predictions
-    const { data: predictions, error } = await this.supabase
+    const { data: predictions, error } = await supabase
       .from('treatment_predictions')
       .select('prediction_score, predicted_outcome, actual_outcome')
       .eq('model_id', modelId)
@@ -771,7 +784,7 @@ export class TreatmentPredictionService {
       const accuracy = correctPredictions / predictions.length;
 
       // Insert new performance record
-      const { data: performanceData, error: perfError } = await this.supabase
+      const { data: performanceData, error: perfError } = await supabase
         .from('model_performance')
         .insert({
           model_id: modelId,
@@ -793,7 +806,8 @@ export class TreatmentPredictionService {
   // ==================== PREDICTION FEEDBACK ====================
 
   async createFeedback(feedback: Omit<PredictionFeedback, 'id' | 'created_at'>) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('prediction_feedback')
       .insert(feedback)
       .select()
@@ -804,7 +818,8 @@ export class TreatmentPredictionService {
   }
 
   async getFeedback(predictionId?: string) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('prediction_feedback')
       .select('*, treatment_predictions(treatment_type, prediction_score)')
       .order('created_at', { ascending: false });
@@ -867,7 +882,8 @@ export class TreatmentPredictionService {
   // ==================== ANALYTICS & REPORTING ====================
 
   async getPredictionAnalytics(dateFrom?: string, dateTo?: string) {
-    let query = this.supabase
+    const supabase = await createClient();
+    let query = supabase
       .from('treatment_predictions')
       .select(`
         prediction_score,
@@ -927,3 +943,6 @@ export class TreatmentPredictionService {
     return correctPredictions / validatedPredictions.length;
   }
 }
+
+
+

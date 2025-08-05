@@ -30,7 +30,7 @@ export class LGPDAutomationService {
 
   constructor() {
     // Inicializar cliente Supabase
-    this.supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY)
+    this.const supabase = createClient(<Database>(SUPABASE_URL, SUPABASE_ANON_KEY)
     
     // Inicializar gerenciador de conformidade
     this.complianceManager = new LGPDComplianceManager(this.supabase)
@@ -522,3 +522,4 @@ export function lgpdConsentMiddleware(requiredPurpose: string) {
 
 // Exportar instância singleton
 export default getLGPDService
+

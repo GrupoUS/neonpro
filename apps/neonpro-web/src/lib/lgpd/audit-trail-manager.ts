@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Audit Trail Manager
  * Story 1.5: LGPD Compliance Automation
  * 
@@ -6,7 +6,7 @@
  * with automated logging, monitoring, and reporting capabilities.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 import { SecurityAuditLogger } from '@/lib/auth/security-audit-logger';
 import { logger } from '@/lib/logger';
@@ -760,3 +760,4 @@ export class AuditTrailManager {
 
 // Export singleton instance
 export const auditTrailManager = new AuditTrailManager();
+

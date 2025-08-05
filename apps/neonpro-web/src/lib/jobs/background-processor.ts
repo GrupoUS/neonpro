@@ -11,7 +11,7 @@
  * Based on research from Bull, Redis patterns, and serverless job processing
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { InstagramOAuthHandler } from '@/lib/oauth/platforms/instagram-handler';
 import { FacebookOAuthHandler } from '@/lib/oauth/platforms/facebook-handler';
 import { WhatsAppOAuthHandler } from '@/lib/oauth/platforms/whatsapp-handler';

@@ -3,7 +3,7 @@
  * Handles medical history timeline operations
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { medicalTimelineService } from '@/lib/patients/medical-timeline';
 import { NextRequest, NextResponse } from 'next/server';
 

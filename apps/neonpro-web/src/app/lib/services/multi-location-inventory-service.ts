@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { 
   InventoryItem, 
   CreateInventoryItem, 
@@ -19,12 +19,12 @@ import type {
 } from '@/app/lib/types/inventory';
 
 export class MultiLocationInventoryService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // ===== INVENTORY ITEMS =====
   
   async getInventoryItems(filters: InventoryFilters = {}): Promise<InventoryItem[]> {
-    let query = this.supabase
+    let query = supabase
       .from('inventory_items')
       .select('*')
       .order('name');
@@ -47,7 +47,8 @@ export class MultiLocationInventoryService {
   }
 
   async getInventoryItem(id: string): Promise<InventoryItem | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('inventory_items')
       .select('*')
       .eq('id', id)
@@ -58,7 +59,8 @@ export class MultiLocationInventoryService {
   }
 
   async createInventoryItem(item: CreateInventoryItem): Promise<InventoryItem> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('inventory_items')
       .insert(item)
       .select()
@@ -70,7 +72,7 @@ export class MultiLocationInventoryService {
 
   async updateInventoryItem(item: UpdateInventoryItem): Promise<InventoryItem> {
     const { id, ...updates } = item;
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('inventory_items')
       .update(updates)
       .eq('id', id)
@@ -82,7 +84,7 @@ export class MultiLocationInventoryService {
   }
 
   async deleteInventoryItem(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('inventory_items')
       .delete()
       .eq('id', id);
@@ -93,7 +95,7 @@ export class MultiLocationInventoryService {
   // ===== INVENTORY STOCK =====
   
   async getInventoryStock(filters: InventoryFilters = {}): Promise<InventoryStock[]> {
-    let query = this.supabase
+    let query = supabase
       .from('inventory_stock')
       .select(`
         *,
@@ -136,7 +138,7 @@ export class MultiLocationInventoryService {
 
   async updateStock(stock: UpdateInventoryStock): Promise<InventoryStock> {
     const { id, ...updates } = stock;
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('inventory_stock')
       .update({
         ...updates,
@@ -156,7 +158,8 @@ export class MultiLocationInventoryService {
   }
 
   async createOrUpdateStock(stock: CreateInventoryStock): Promise<InventoryStock> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('inventory_stock')
       .upsert(stock)
       .select(`
@@ -172,7 +175,7 @@ export class MultiLocationInventoryService {
   }  // ===== STOCK TRANSFERS =====
   
   async getStockTransfers(filters: StockTransferFilters = {}): Promise<StockTransfer[]> {
-    let query = this.supabase
+    let query = supabase
       .from('stock_transfers')
       .select(`
         *,
@@ -211,7 +214,8 @@ export class MultiLocationInventoryService {
   }
 
   async createStockTransfer(transfer: CreateStockTransfer): Promise<StockTransfer> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('stock_transfers')
       .insert({
         ...transfer,
@@ -245,7 +249,7 @@ export class MultiLocationInventoryService {
       updates.received_at = new Date().toISOString();
     }
 
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('stock_transfers')
       .update(updates)
       .eq('id', id)
@@ -266,7 +270,7 @@ export class MultiLocationInventoryService {
   // ===== STOCK TRANSACTIONS =====
   
   async getStockTransactions(filters: StockTransactionFilters = {}): Promise<StockTransaction[]> {
-    let query = this.supabase
+    let query = supabase
       .from('stock_transactions')
       .select(`
         *,
@@ -307,7 +311,8 @@ export class MultiLocationInventoryService {
   }
 
   async createStockTransaction(transaction: CreateStockTransaction): Promise<StockTransaction> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('stock_transactions')
       .insert(transaction)
       .select(`
@@ -325,7 +330,7 @@ export class MultiLocationInventoryService {
   // ===== DASHBOARD & ANALYTICS =====
   
   async getLocationStockSummary(clinic_id?: string): Promise<LocationStockSummary[]> {
-    let query = this.supabase
+    let query = supabase
       .rpc('get_location_stock_summary');
     
     if (clinic_id) {
@@ -343,8 +348,9 @@ export class MultiLocationInventoryService {
   ): Promise<InventoryMovementSummary[]> {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - days);
+    const supabase = await createClient();
 
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .rpc('get_inventory_movement_summary', {
         clinic_filter: clinic_id,
         from_date: fromDate.toISOString(),
@@ -372,7 +378,8 @@ export class MultiLocationInventoryService {
   // ===== BULK OPERATIONS =====
   
   async bulkUpdateStock(updates: UpdateInventoryStock[]): Promise<InventoryStock[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('inventory_stock')
       .upsert(updates.map(update => ({
         ...update,
@@ -407,9 +414,11 @@ export class MultiLocationInventoryService {
       quantity,
       transfer_type: from_clinic_id === to_clinic_id ? 'internal' : 'inter_clinic',
       notes,
-      requested_by: (await this.supabase.auth.getUser()).data.user?.id || '',
+      requested_by: '',
     };
 
     return this.createStockTransfer(transfer);
   }
 }
+
+

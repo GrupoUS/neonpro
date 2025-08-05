@@ -3,7 +3,7 @@
  * Optimized for Clerk integration and healthcare compliance
  */
 
-import { auth, currentUser } from '@clerk/nextjs';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { clerkConfig } from './clerk-config';
 
 export interface SessionMetadata {

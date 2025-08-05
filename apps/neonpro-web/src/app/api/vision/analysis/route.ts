@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Computer Vision Analysis API Route
  * POST /api/vision/analysis
  * 
@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { visionAnalysisEngine } from '@/lib/vision/analysis-engine';
 import { z } from 'zod';
 import { withErrorMonitoring } from '@/lib/monitoring';
@@ -35,7 +35,7 @@ const analysisRequestSchema = z.object({
 
 // GET - Retrieve analysis history
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -90,7 +90,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
 
 // POST - Start new analysis
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -178,7 +178,7 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
 
 // PUT - Update analysis
 export const PUT = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -241,7 +241,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
 
 // DELETE - Delete analysis
 export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -293,3 +293,4 @@ export const DELETE = withErrorMonitoring(async (request: NextRequest) => {
     );
   }
 });
+

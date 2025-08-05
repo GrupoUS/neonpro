@@ -1,7 +1,7 @@
-// GET /api/treatment-prediction/performance - Model performance metrics
+﻿// GET /api/treatment-prediction/performance - Model performance metrics
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
 import { PerformanceFilters } from '@/app/types/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/treatment-prediction/performance - Get model performance data

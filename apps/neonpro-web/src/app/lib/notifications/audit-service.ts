@@ -3,7 +3,7 @@
  * Comprehensive logging for notification activities and compliance tracking
  */
 
-import { supabase } from '@/app/utils/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { NotificationType, NotificationChannel } from './config';
 
 interface AuditLogEntry {

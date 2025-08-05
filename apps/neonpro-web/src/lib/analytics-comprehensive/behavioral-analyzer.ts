@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 📊 NeonPro Behavioral Analysis System
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Sistema de Análise Comportamental de Pacientes
@@ -1493,3 +1493,4 @@ export {
   type BehavioralPrediction,
   type BehavioralSegment
 }
+

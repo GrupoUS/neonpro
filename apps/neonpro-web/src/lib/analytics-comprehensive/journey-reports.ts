@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 📊 NeonPro Journey Reports Engine
  * 
  * HEALTHCARE JOURNEY REPORTING - Sistema de Relatórios e Visualização da Jornada do Paciente
@@ -1200,3 +1200,4 @@ export const ReportUtils = {
     return startDate < endDate && endDate <= new Date()
   }
 }
+

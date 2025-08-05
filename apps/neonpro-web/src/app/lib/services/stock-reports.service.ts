@@ -1,6 +1,6 @@
 /**
  * Story 11.4: Stock Reports Service
- * Serviço para gerenciamento de relatórios de estoque
+ * Servi�o para gerenciamento de relat�rios de estoque
  */
 
 import {
@@ -10,23 +10,25 @@ import {
     ReportType,
     StockPerformanceMetrics
 } from '@/app/lib/types/stock-alerts';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class StockReportsService {
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
   // ==========================================
-  // CONFIGURAÇÕES DE RELATÓRIOS
+  // CONFIGURA��ES DE RELAT�RIOS
   // ==========================================
 
   /**
-   * Criar novo relatório personalizado
+   * Criar novo relat�rio personalizado
    */
   async createCustomReport(data: CreateCustomReport, user_id: string) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
+      
       const { data: report, error } = await supabase
         .from('stock_report_configs')
         .insert({
@@ -47,15 +49,16 @@ export class StockReportsService {
   }
 
   /**
-   * Listar relatórios da clínica
+   * Listar relat�rios da cl�nica
    */
   async getClinicReports(clinic_id: string, filters?: {
     type?: ReportType;
     user_id?: string;
     active_only?: boolean;
   }) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
+      
       let query = supabase
         .from('stock_report_configs')
         .select('*')
@@ -85,11 +88,12 @@ export class StockReportsService {
   }
 
   /**
-   * Atualizar configuração de relatório
+   * Atualizar configura��o de relat�rio
    */
   async updateReportConfig(id: string, updates: Partial<CustomStockReport>) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
+      
       const { data, error } = await supabase
         .from('stock_report_configs')
         .update({
@@ -109,11 +113,12 @@ export class StockReportsService {
   }
 
   /**
-   * Deletar configuração de relatório
+   * Deletar configura��o de relat�rio
    */
   async deleteReportConfig(id: string) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
+      
       const { error } = await supabase
         .from('stock_report_configs')
         .delete()
@@ -128,16 +133,16 @@ export class StockReportsService {
   }
 
   // ==========================================
-  // GERAÇÃO DE RELATÓRIOS
+  // GERA��O DE RELAT�RIOS
   // ==========================================
 
   /**
-   * Gerar relatório de consumo
+   * Gerar relat�rio de consumo
    */
   async generateConsumptionReport(clinic_id: string, filters: ReportFilters) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
-      
+
       // Consultar dados de consumo baseado no material_usage
       let query = supabase
         .from('material_usage')
@@ -162,9 +167,9 @@ export class StockReportsService {
       const { data: usageData, error } = await query;
       if (error) throw error;
 
-      // Processar dados para relatório
+      // Processar dados para relat�rio
       const reportData = {
-        title: 'Relatório de Consumo de Materiais',
+        title: 'Relat�rio de Consumo de Materiais',
         generated_at: new Date().toISOString(),
         period: filters.dateRange ? {
           start: filters.dateRange.start.toISOString(),
@@ -187,21 +192,22 @@ export class StockReportsService {
   }
 
   /**
-   * Gerar relatório de valorização
+   * Gerar relat�rio de valoriza��o
    */
   async generateValuationReport(clinic_id: string, filters: ReportFilters) {
+    const supabase = await createClient();
     try {
-      // Simulação de relatório de valorização
-      // Em uma implementação real, isso calcularia o valor atual do estoque
+      // Simula��o de relat�rio de valoriza��o
+      // Em uma implementa��o real, isso calcularia o valor atual do estoque
       
       const reportData = {
-        title: 'Relatório de Valorização de Estoque',
+        title: 'Relat�rio de Valoriza��o de Estoque',
         generated_at: new Date().toISOString(),
         period: filters.dateRange ? {
           start: filters.dateRange.start.toISOString(),
           end: filters.dateRange.end.toISOString()
         } : null,
-        total_value: 50000, // Simulação
+        total_value: 50000, // Simula��o
         categories: [
           { name: 'Medicamentos', value: 25000, percentage: 50 },
           { name: 'Materiais', value: 15000, percentage: 30 },
@@ -223,13 +229,13 @@ export class StockReportsService {
   }
 
   /**
-   * Gerar relatório de movimentação
+   * Gerar relat�rio de movimenta��o
    */
   async generateMovementReport(clinic_id: string, filters: ReportFilters) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
-      
-      // Consultar movimentações
+
+      // Consultar movimenta��es
       let query = supabase
         .from('material_usage')
         .select('*')
@@ -245,7 +251,7 @@ export class StockReportsService {
       if (error) throw error;
 
       const reportData = {
-        title: 'Relatório de Movimentação de Estoque',
+        title: 'Relat�rio de Movimenta��o de Estoque',
         generated_at: new Date().toISOString(),
         period: filters.dateRange ? {
           start: filters.dateRange.start.toISOString(),
@@ -253,8 +259,8 @@ export class StockReportsService {
         } : null,
         total_movements: movements?.length || 0,
         by_type: {
-          outbound: movements?.length || 0, // Todas são saídas no material_usage
-          inbound: 0 // Não temos entradas registradas ainda
+          outbound: movements?.length || 0, // Todas s�o sa�das no material_usage
+          inbound: 0 // N�o temos entradas registradas ainda
         },
         by_category: this.groupByCategory(movements || []),
         daily_movement: this.groupByDate(movements || []),
@@ -269,12 +275,13 @@ export class StockReportsService {
   }
 
   /**
-   * Gerar relatório de vencimentos
+   * Gerar relat�rio de vencimentos
    */
   async generateExpirationReport(clinic_id: string, filters: ReportFilters) {
+    const supabase = await createClient();
     try {
-      // Simulação de relatório de vencimentos
-      // Em uma implementação real, isso consultaria produtos com datas de vencimento
+      // Simula��o de relat�rio de vencimentos
+      // Em uma implementa��o real, isso consultaria produtos com datas de vencimento
       
       const today = new Date();
       const next30Days = new Date();
@@ -283,7 +290,7 @@ export class StockReportsService {
       next90Days.setDate(today.getDate() + 90);
 
       const reportData = {
-        title: 'Relatório de Produtos Próximos ao Vencimento',
+        title: 'Relat�rio de Produtos Pr�ximos ao Vencimento',
         generated_at: new Date().toISOString(),
         categories: {
           expired: {
@@ -313,9 +320,9 @@ export class StockReportsService {
           total_items_at_risk: 15,
           total_value_at_risk: 5200,
           recommendations: [
-            'Revisar política de compras para produtos com alta rotatividade',
+            'Revisar pol�tica de compras para produtos com alta rotatividade',
             'Implementar sistema FIFO (First In, First Out)',
-            'Considerar promoções para produtos próximos ao vencimento'
+            'Considerar promo��es para produtos pr�ximos ao vencimento'
           ]
         }
       };
@@ -328,21 +335,21 @@ export class StockReportsService {
   }
 
   // ==========================================
-  // MÉTRICAS DE PERFORMANCE
+  // M�TRICAS DE PERFORMANCE
   // ==========================================
 
   /**
-   * Calcular métricas de performance
+   * Calcular m�tricas de performance
    */
   async calculatePerformanceMetrics(clinic_id: string, date: Date = new Date()) {
     try {
-      const supabase = await this.getSupabase();
-      
-      // Período de análise (último mês)
+
+      // Per�odo de an�lise (�ltimo m�s)
       const startDate = new Date(date);
       startDate.setMonth(startDate.getMonth() - 1);
 
       // Buscar dados de uso
+    const supabase = await createClient();
       const { data: usageData, error } = await supabase
         .from('material_usage')
         .select('*')
@@ -359,7 +366,7 @@ export class StockReportsService {
         .eq('clinic_id', clinic_id)
         .eq('status', 'active');
 
-      // Calcular métricas
+      // Calcular m�tricas
       const totalValue = this.calculateTotalCost(usageData || []);
       const activeAlerts = alertsData?.length || 0;
       const criticalAlerts = alertsData?.filter(a => a.alert_severity === 'critical').length || 0;
@@ -370,17 +377,17 @@ export class StockReportsService {
         totalValue,
         turnoverRate: this.calculateTurnoverRate(usageData || []),
         daysCoverage: this.calculateDaysCoverage(usageData || []),
-        accuracyPercentage: 95, // Simulação
-        wasteValue: totalValue * 0.02, // 2% de desperdício simulado
+        accuracyPercentage: 95, // Simula��o
+        wasteValue: totalValue * 0.02, // 2% de desperd�cio simulado
         wastePercentage: 2,
         activeAlertsCount: activeAlerts,
         criticalAlertsCount: criticalAlerts,
         productsCount: this.getUniqueProductsCount(usageData || []),
-        outOfStockCount: 0, // Simulação
+        outOfStockCount: 0, // Simula��o
         lowStockCount: activeAlerts
       };
 
-      // Salvar métricas no banco
+      // Salvar m�tricas no banco
       const { data: savedMetrics, error: saveError } = await supabase
         .from('stock_metrics')
         .insert({
@@ -402,11 +409,12 @@ export class StockReportsService {
   }
 
   /**
-   * Obter histórico de métricas
+   * Obter hist�rico de m�tricas
    */
   async getMetricsHistory(clinic_id: string, days: number = 30) {
+    const supabase = await createClient();
     try {
-      const supabase = await this.getSupabase();
+      
       const since = new Date();
       since.setDate(since.getDate() - days);
 
@@ -426,7 +434,7 @@ export class StockReportsService {
   }
 
   // ==========================================
-  // UTILITÁRIOS PRIVADOS
+  // UTILIT�RIOS PRIVADOS
   // ==========================================
 
   private calculateTotalCost(usageData: any[]): number {
@@ -516,18 +524,18 @@ export class StockReportsService {
   }
 
   private calculateTurnoverRate(usageData: any[]): number {
-    // Simulação de cálculo de turnover rate
-    // Em uma implementação real, seria: (Custo dos Produtos Vendidos / Estoque Médio)
+    // Simula��o de c�lculo de turnover rate
+    // Em uma implementa��o real, seria: (Custo dos Produtos Vendidos / Estoque M�dio)
     const totalCost = this.calculateTotalCost(usageData);
-    const estimatedStockValue = 50000; // Simulação
+    const estimatedStockValue = 50000; // Simula��o
     return totalCost / estimatedStockValue;
   }
 
   private calculateDaysCoverage(usageData: any[]): number {
-    // Simulação de cálculo de cobertura em dias
-    // Em uma implementação real, seria baseado no estoque atual vs consumo médio diário
+    // Simula��o de c�lculo de cobertura em dias
+    // Em uma implementa��o real, seria baseado no estoque atual vs consumo m�dio di�rio
     const dailyAverage = usageData.length / 30; // Assumindo 30 dias
-    const estimatedStockQuantity = 1000; // Simulação
+    const estimatedStockQuantity = 1000; // Simula��o
     return estimatedStockQuantity / (dailyAverage || 1);
   }
 
@@ -538,3 +546,5 @@ export class StockReportsService {
     return uniqueProducts.size;
   }
 }
+
+

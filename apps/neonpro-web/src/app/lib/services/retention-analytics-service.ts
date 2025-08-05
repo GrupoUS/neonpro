@@ -4,7 +4,7 @@
 // Core business logic for retention analytics, churn prediction, and retention strategies
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import {
   PatientRetentionMetrics,
   ChurnPrediction,
@@ -36,11 +36,9 @@ import {
 } from '@/app/types/retention-analytics';
 
 export class RetentionAnalyticsService {
-  private supabase;
+  // Supabase client created per method for proper request context
 
-  constructor() {
-    this.supabase = createClient();
-  }
+  constructor() {}
 
   // =====================================================================================
   // PATIENT RETENTION METRICS
@@ -55,7 +53,8 @@ export class RetentionAnalyticsService {
   ): Promise<PatientRetentionMetrics> {
     try {
       // Get patient appointment history
-      const { data: appointments, error: appointmentsError } = await this.supabase
+    const supabase = await createClient();
+      const { data: appointments, error: appointmentsError } = await supabase
         .from('appointments')
         .select('*')
         .eq('patient_id', patientId)
@@ -65,7 +64,7 @@ export class RetentionAnalyticsService {
       if (appointmentsError) throw appointmentsError;
 
       // Get patient follow-up responses
-      const { data: responses, error: responsesError } = await this.supabase
+      const { data: responses, error: responsesError } = await supabase
         .from('followup_responses')
         .select('*')
         .eq('patient_id', patientId);
@@ -73,7 +72,7 @@ export class RetentionAnalyticsService {
       if (responsesError) throw responsesError;
 
       // Get patient financial data
-      const { data: payments, error: paymentsError } = await this.supabase
+      const { data: payments, error: paymentsError } = await supabase
         .from('payments')
         .select('*')
         .eq('patient_id', patientId);
@@ -179,7 +178,7 @@ export class RetentionAnalyticsService {
       };
 
       // Save or update metrics in database
-      const { data: savedMetrics, error: saveError } = await this.supabase
+      const { data: savedMetrics, error: saveError } = await supabase
         .from('patient_retention_metrics')
         .upsert(metrics, { onConflict: 'patient_id,clinic_id' })
         .select()
@@ -202,7 +201,8 @@ export class RetentionAnalyticsService {
     clinicId: string
   ): Promise<PatientRetentionMetrics | null> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('patient_retention_metrics')
         .select('*')
         .eq('patient_id', patientId)
@@ -226,7 +226,8 @@ export class RetentionAnalyticsService {
     offset = 0
   ): Promise<PatientRetentionMetrics[]> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('patient_retention_metrics')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -296,7 +297,7 @@ export class RetentionAnalyticsService {
       };
 
       // Save prediction
-      const { data: savedPrediction, error } = await this.supabase
+      const { data: savedPrediction, error } = await supabase
         .from('churn_predictions')
         .insert(churnPrediction)
         .select()
@@ -320,7 +321,7 @@ export class RetentionAnalyticsService {
     offset = 0
   ): Promise<ChurnPrediction[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('churn_predictions')
         .select('*')
         .eq('clinic_id', clinicId);
@@ -361,7 +362,7 @@ export class RetentionAnalyticsService {
         roi: 0
       };
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('retention_strategies')
         .insert(newStrategy)
         .select()
@@ -383,7 +384,7 @@ export class RetentionAnalyticsService {
     activeOnly = false
   ): Promise<RetentionStrategy[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('retention_strategies')
         .select('*')
         .eq('clinic_id', clinicId);
@@ -411,7 +412,8 @@ export class RetentionAnalyticsService {
   ): Promise<RetentionPerformance[]> {
     try {
       // Get strategy details
-      const { data: strategy, error: strategyError } = await this.supabase
+    const supabase = await createClient();
+      const { data: strategy, error: strategyError } = await supabase
         .from('retention_strategies')
         .select('*')
         .eq('id', strategyId)
@@ -780,7 +782,7 @@ export class RetentionAnalyticsService {
       retention_probability_improvement: 0
     };
 
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('retention_performance')
       .insert(performance)
       .select()
@@ -806,8 +808,9 @@ export class RetentionAnalyticsService {
     
     const totalRevenue = performances.reduce((sum, p) => sum + p.revenue_generated, 0);
     const roi = totalCost > 0 ? (totalRevenue - totalCost) / totalCost : 0;
+    const supabase = await createClient();
 
-    await this.supabase
+    await supabase
       .from('retention_strategies')
       .update({
         success_rate: successRate,
@@ -878,3 +881,5 @@ export class RetentionAnalyticsService {
     };
   }
 }
+
+

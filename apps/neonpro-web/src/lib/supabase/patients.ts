@@ -1,12 +1,12 @@
-/**
+﻿/**
  * Supabase Patient Management Functions
  * 
  * Provides FHIR-compliant database operations for patient management
  * with LGPD compliance and comprehensive audit logging.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/client';
+import { createServerClient } from '@/lib/supabase/server';
 import { 
   FHIRPatient, 
   PatientDB, 
@@ -265,7 +265,7 @@ export async function createPatient(
   data: PatientRegistrationData,
   user_id: string
 ): Promise<{ patient: PatientDB; consents: PatientConsentDB[] }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get user's clinic
@@ -364,7 +364,7 @@ export async function searchPatients(
   total_count: number;
   has_next_page: boolean;
 }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get user's clinic
@@ -450,7 +450,7 @@ export async function getPatientById(
   conditions: MedicalConditionDB[];
   allergies: AllergyIntoleranceDB[];
 } | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get user's clinic for security check
@@ -506,7 +506,7 @@ export async function updatePatientConsent(
   updates: Partial<Omit<PatientConsentDB, 'id' | 'patient_id' | 'created_at'>>,
   user_id: string
 ): Promise<PatientConsentDB> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Verify patient belongs to user's clinic
@@ -554,7 +554,7 @@ export async function updatePatientConsent(
  */
 export async function getPatientStats(clinicId?: string) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user and clinic
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -663,3 +663,4 @@ export async function getPatientStats(clinicId?: string) {
     };
   }
 }
+

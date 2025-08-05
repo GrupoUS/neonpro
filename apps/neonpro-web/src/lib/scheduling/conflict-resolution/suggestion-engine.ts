@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/supabase'
 import { logger } from '@/lib/logger'
 import { ConflictDetectionResult, DetectedConflict, ConflictType } from './conflict-detection-engine'
@@ -1303,3 +1303,4 @@ export async function generateResolutionSuggestions(
 }
 
 export default SuggestionEngine
+

@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client';
+﻿import { createClient } from '@/lib/supabase/client';
 import { ConsentForm, PatientConsent, ConsentFormData, DigitalSignature } from '@/app/types/compliance';
 
 export class ConsentService {
@@ -389,3 +389,4 @@ export class ConsentService {
     });
   }
 }
+

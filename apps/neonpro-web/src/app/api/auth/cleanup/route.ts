@@ -216,8 +216,8 @@ async function verifyCleanupPermissions(
 
     // Verify JWT token with Supabase
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
 
     const { data: { user }, error } = await supabase.auth.getUser(token);
@@ -330,3 +330,4 @@ function checkRateLimit(identifier: string, maxRequests = 10, windowMs = 60000):
 }
 
 export { cleanupService };
+

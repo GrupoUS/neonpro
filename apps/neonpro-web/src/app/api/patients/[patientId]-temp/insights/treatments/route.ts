@@ -81,7 +81,7 @@ export async function POST(
       treatmentContext
     )
 
-    let response: any = { treatmentRecommendations }
+    const response: any = { treatmentRecommendations }
 
     if (includeRiskAssessment) {
       const riskAssessment = await patientInsights.generateQuickRiskAssessment(params.patientId)

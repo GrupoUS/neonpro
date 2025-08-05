@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Sistema de Agendamento Inteligente de Notificações - NeonPro
  * 
  * Componente responsável por agendar e otimizar o timing de envio de notificações,
@@ -17,7 +17,7 @@
  */
 
 import { z } from 'zod';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NotificationChannel, NotificationType, NotificationTemplate } from '../types';
 import { notificationManager } from '../core/notification-manager';
 
@@ -946,3 +946,4 @@ export class NotificationScheduler {
 
 export const notificationScheduler = new NotificationScheduler();
 export type { ScheduleConfig, ScheduledNotification, OptimizationResult, BatchExecutionResult };
+

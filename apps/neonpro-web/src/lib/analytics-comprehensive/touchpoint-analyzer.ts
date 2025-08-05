@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🎯 NeonPro Touchpoint Analysis System
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Touchpoint Analysis and Optimization
@@ -1206,3 +1206,4 @@ export {
   type ChannelPerformance,
   type CriticalMomentConfig
 }
+

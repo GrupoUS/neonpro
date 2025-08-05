@@ -24,7 +24,7 @@ const AcknowledgeAlertRequestSchema = z.object({
 // ============================================================================
 
 async function getClinicIdFromSession(): Promise<{ clinicId: string; userId: string }> {
-  const { createClient } = await import('@/app/utils/supabase/server')
+  const { createClient } = await import('@/lib/supabase/server')
   const supabase = await createClient()
   
   const { data: { session }, error: sessionError } = await supabase.auth.getSession()

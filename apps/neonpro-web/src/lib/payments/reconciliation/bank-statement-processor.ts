@@ -1,4 +1,4 @@
-// NeonPro - Bank Statement Processor
+﻿// NeonPro - Bank Statement Processor
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Automated bank statement import and processing service
 
@@ -744,3 +744,4 @@ class BankStatementProcessor {
 }
 
 export { BankStatementProcessor, type ProcessingOptions, type ProcessingResult };
+

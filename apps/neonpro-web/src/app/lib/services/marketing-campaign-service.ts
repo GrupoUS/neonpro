@@ -8,16 +8,15 @@ import {
 import { createClient } from '@/app/utils/supabase/server';
 
 export class MarketingCampaignService {
-  private supabase;
+  // Supabase client created per method for proper request context
 
-  constructor() {
-    this.supabase = createClient();
-  }
+  constructor() {}
 
   // Campaign Management
   async createCampaign(data: any) {
+    const supabase = await createClient();
     try {
-      const { data: campaign, error } = await this.supabase
+      const { data: campaign, error } = await supabase
         .from('marketing_campaigns')
         .insert([{
           ...data,
@@ -41,8 +40,9 @@ export class MarketingCampaignService {
   }
 
   async getCampaigns(filters: any = {}) {
+    const supabase = await createClient();
     try {
-      let query = this.supabase
+      let query = supabase
         .from('marketing_campaigns')
         .select(`
           *,
@@ -115,8 +115,9 @@ export class MarketingCampaignService {
   }
 
   async getCampaignById(id: string) {
+    const supabase = await createClient();
     try {
-      const { data: campaign, error } = await this.supabase
+      const { data: campaign, error } = await supabase
         .from('marketing_campaigns')
         .select(`
           *,

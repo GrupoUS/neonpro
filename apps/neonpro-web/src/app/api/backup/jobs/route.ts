@@ -8,7 +8,15 @@ import { BackupManager } from '@/lib/backup/backup-manager';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
-const backupManager = new BackupManager();
+// Initialize BackupManager only if Supabase is configured
+let backupManager: BackupManager | null = null;
+try {
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    backupManager = new BackupManager();
+  }
+} catch (error) {
+  console.warn('BackupManager initialization failed:', error);
+}
 
 // Schema para iniciar backup manual
 const startBackupSchema = z.object({
@@ -23,6 +31,13 @@ const startBackupSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
+    if (!backupManager) {
+      return NextResponse.json(
+        { error: 'Backup service not configured' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -64,6 +79,13 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    if (!backupManager) {
+      return NextResponse.json(
+        { error: 'Backup service not configured' },
+        { status: 503 }
+      );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 

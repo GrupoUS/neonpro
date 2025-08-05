@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vision Analysis Configuration API
  * GET /api/vision/config
  * PUT /api/vision/config
@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { withErrorMonitoring } from '@/lib/monitoring';
 
@@ -66,7 +66,7 @@ const configSchema = z.object({
 
 // GET - Retrieve user configuration
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -133,7 +133,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
 
 // PUT - Update user configuration
 export const PUT = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -248,7 +248,7 @@ export const PUT = withErrorMonitoring(async (request: NextRequest) => {
 
 // POST - Reset configuration to defaults
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -316,3 +316,4 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     );
   }
 });
+

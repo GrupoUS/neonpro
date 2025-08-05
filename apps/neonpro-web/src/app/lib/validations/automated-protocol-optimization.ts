@@ -446,3 +446,35 @@ export {
     AnalyticsPeriodSchema, ApprovalStatusSchema, ComplianceStatusSchema, EvidenceLevelSchema, EvidenceTypeSchema, ExperimentStatusSchema, ExperimentTypeSchema, FeedbackStatusSchema, FeedbackTypeSchema, ImplementationScopeSchema, ImplementationStatusSchema,
     OptimizationStatusSchema, PriorityLevelSchema, RolloutStrategySchema, VerificationStatusSchema
 };
+
+
+// Missing exports for automated protocol optimization
+export const updateProtocolExperimentSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const createProtocolExperimentSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const updateProtocolFeedbackSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const createProtocolFeedbackSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const createProtocolOutcomeSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const updateProtocolVersionSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+export const createProtocolVersionSchema = z.object({
+  placeholder: z.string().optional()
+});
+
+

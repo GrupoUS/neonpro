@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Security Audit Logging System
  * 
  * Comprehensive audit logging for authentication events with security monitoring,
@@ -641,3 +641,4 @@ export async function getSecurityReport(hoursBack?: number) {
 }
 
 export type { AuditEvent, SecurityMetrics, SuspiciousPattern }
+

@@ -1,13 +1,12 @@
-// Temporary RBAC types for build compatibility
-export interface Role {
-  id: string;
-  name: string;
-  permissions: string[];
-}
+// RBAC types and defaults
+export const DEFAULT_ROLES = [
+  'user',
+  'admin',
+  'moderator'
+];
 
-export interface Permission {
-  id: string;
-  name: string;
-  resource: string;
-  action: string;
+export enum Role {
+  USER = 'user',
+  ADMIN = 'admin',
+  MODERATOR = 'moderator'
 }

@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { webAuthnService } from '@/lib/auth/webauthn-service';
 import { trackLoginPerformance } from '@/lib/auth/performance-tracker';
 

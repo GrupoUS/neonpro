@@ -1,8 +1,8 @@
 ﻿/**
  * NeonPro Security Alerts API
  * 
- * API para gestão de alertas de segurança do sistema de auditoria.
- * Permite consulta, atualização de status e atribuição de alertas.
+ * API para gestao de alertas de seguranca do sistema de auditoria.
+ * Permite consulta, atualizacao de status e atribuicao de alertas.
  * 
  * Endpoints:
  * - GET /api/audit/alerts - Lista alertas
@@ -18,231 +18,194 @@ import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { AuditSeverity, logAuditEvent, AuditEventType } from '@/lib/audit/audit-system'
 import { rateLimit } from '@/lib/security/rate-limiting'
-import { validateCSRF } from '@/lib/security/csrf-protection'
-import { logSecurityEvent } from '@/lib/security/security-events'
 
-// =====================================================
-// SCHEMAS DE VALIDAÇÃO
-// =====================================================
-
-const AlertQuerySchema = z.object({
-  status: z.enum(['open', 'investigating', 'resolved', 'false_positive']).optional(),
-  severity: z.nativeEnum(AuditSeverity).optional(),
-  assigned_to: z.string().optional(),
-  limit: z.number().min(1).max(100).default(50),
-  offset: z.number().min(0).default(0)
+// Rate limiting: 100 requests per minute
+const limiter = rateLimit({
+  interval: 60 * 1000, // 1 minute
+  uniqueTokenPerInterval: 500,
 })
 
+/**
+ * Schema para filtragem de alertas
+ */
+const AlertsFilterSchema = z.object({
+  severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  status: z.enum(['open', 'investigating', 'resolved', 'false_positive']).optional(),
+  date_from: z.string().optional(),
+  date_to: z.string().optional(),
+  assigned_to: z.string().optional(),
+  limit: z.number().min(1).max(100).default(20),
+  offset: z.number().min(0).default(0),
+})
+
+/**
+ * Schema para atualizacao de alerta
+ */
 const UpdateAlertSchema = z.object({
   alert_id: z.string().uuid(),
-  status: z.enum(['open', 'investigating', 'resolved', 'false_positive']).optional(),
-  assigned_to: z.string().uuid().optional(),
-  actions_taken: z.array(z.string()).optional(),
-  notes: z.string().optional()
+  status: z.enum(['open', 'investigating', 'resolved', 'false_positive']),
+  assigned_to: z.string().optional(),
+  notes: z.string().optional(),
 })
 
-// =====================================================
-// HELPER FUNCTIONS
-// =====================================================
-
-function getClientIP(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for')
-  const realIP = request.headers.get('x-real-ip')
-  const remoteAddr = request.headers.get('x-vercel-forwarded-for')
-  
-  if (forwarded) {
-    return forwarded.split(',')[0].trim()
-  }
-  
-  return realIP || remoteAddr || 'unknown'
-}
-
-async function validateSecurityAccess(supabase: any, userId: string): Promise<boolean> {
-  try {
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('role, permissions')
-      .eq('user_id', userId)
-      .single()
-    
-    if (!profile) return false
-    
-    const hasSecurityAccess = 
-      profile.role === 'admin' ||
-      profile.role === 'security_admin' ||
-      profile.permissions?.includes('security.manage')
-    
-    return hasSecurityAccess
-  } catch (error) {
-    console.error('Erro ao validar acesso de segurança:', error)
-    return false
-  }
-}
-
-function parseAlertFilters(searchParams: URLSearchParams) {
-  const filters: any = {}
-  
-  if (searchParams.get('status')) {
-    filters.status = searchParams.get('status')
-  }
-  
-  if (searchParams.get('severity')) {
-    filters.severity = searchParams.get('severity')
-  }
-  
-  if (searchParams.get('assigned_to')) {
-    filters.assigned_to = searchParams.get('assigned_to')
-  }
-  
-  if (searchParams.get('limit')) {
-    filters.limit = parseInt(searchParams.get('limit')!)
-  }
-  
-  if (searchParams.get('offset')) {
-    filters.offset = parseInt(searchParams.get('offset')!)
-  }
-  
-  return filters
-}
-
-// =====================================================
-// GET: LISTAR ALERTAS
-// =====================================================
-
+/**
+ * GET /api/audit/alerts
+ * 
+ * Lista alertas de seguranca com filtros opcionais
+ * 
+ * Query Parameters:
+ * - severity: Nivel de severidade (low, medium, high, critical)
+ * - status: Status do alerta (open, investigating, resolved, false_positive)
+ * - date_from: Data inicial (ISO string)
+ * - date_to: Data final (ISO string)
+ * - assigned_to: ID do usuario responsavel
+ * - limit: Limite de resultados (1-100, default: 20)
+ * - offset: Deslocamento para paginacao (default: 0)
+ */
 export async function GET(request: NextRequest) {
   try {
     // Rate limiting
-    const clientIP = getClientIP(request)
-    const rateLimitResult = await rateLimit({
-      key: `security-alerts-${clientIP}`,
-      limit: 60,
-      window: 60000
-    })
-    
-    if (!rateLimitResult.success) {
+    const { success, limit: rateLimit, remaining, reset } = await limiter.check(
+      request.ip ?? 'anonymous'
+    )
+
+    if (!success) {
       return NextResponse.json(
-        { error: 'Rate limit exceeded' },
+        { error: 'Rate limit exceeded', limit: rateLimit, remaining, reset },
         { status: 429 }
       )
     }
+
+    // Parse query parameters
+    const url = new URL(request.url)
+    const searchParams = Object.fromEntries(url.searchParams.entries())
     
-    // Autenticação
+    // Convert numeric strings
+    if (searchParams.limit) searchParams.limit = parseInt(searchParams.limit)
+    if (searchParams.offset) searchParams.offset = parseInt(searchParams.offset)
+
+    const validatedParams = AlertsFilterSchema.parse(searchParams)
+
+    // Initialize Supabase client
     const supabase = createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+
+    // Build query
+    let query = supabase
+      .from('security_alerts')
+      .select(`
+        id,
+        type,
+        severity,
+        status,
+        title,
+        description,
+        source_ip,
+        user_id,
+        resource_affected,
+        metadata,
+        assigned_to,
+        created_at,
+        updated_at,
+        resolved_at,
+        notes
+      `)
+
+    // Apply filters
+    if (validatedParams.severity) {
+      query = query.eq('severity', validatedParams.severity)
     }
-    
-    // Validação de permissões
-    const hasAccess = await validateSecurityAccess(supabase, user.id)
-    if (!hasAccess) {
-      await logSecurityEvent({
-        type: 'insufficient_permissions',
-        severity: 'medium',
-        description: 'Usuário sem permissões para acessar alertas de segurança',
-        user_id: user.id,
-        ip_address: clientIP,
-        user_agent: request.headers.get('user-agent') || undefined
-      })
+
+    if (validatedParams.status) {
+      query = query.eq('status', validatedParams.status)
+    }
+
+    if (validatedParams.date_from) {
+      query = query.gte('created_at', validatedParams.date_from)
+    }
+
+    if (validatedParams.date_to) {
+      query = query.lte('created_at', validatedParams.date_to)
+    }
+
+    if (validatedParams.assigned_to) {
+      query = query.eq('assigned_to', validatedParams.assigned_to)
+    }
+
+    // Apply pagination and ordering
+    query = query
+      .order('created_at', { ascending: false })
+      .range(validatedParams.offset, validatedParams.offset + validatedParams.limit - 1)
+
+    const { data: alerts, error, count } = await query
+
+    if (error) {
+      console.error('Error fetching security alerts:', error)
       
+      // Log audit event for error
+      await logAuditEvent({
+        type: AuditEventType.SECURITY_ALERT_ACCESS,
+        severity: AuditSeverity.HIGH,
+        description: `Failed to fetch security alerts: ${error.message}`,
+        metadata: {
+          error: error.message,
+          filters: validatedParams,
+        },
+      })
+
       return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
+        { error: 'Failed to fetch security alerts' },
+        { status: 500 }
       )
     }
-    
-    // Parse e validação dos filtros
-    const { searchParams } = new URL(request.url)
-    const rawFilters = parseAlertFilters(searchParams)
-    
-    const validationResult = AlertQuerySchema.safeParse(rawFilters)
-    if (!validationResult.success) {
+
+    // Get total count for pagination
+    const { count: totalCount } = await supabase
+      .from('security_alerts')
+      .select('*', { count: 'exact', head: true })
+
+    // Log successful access
+    await logAuditEvent({
+      type: AuditEventType.SECURITY_ALERT_ACCESS,
+      severity: AuditSeverity.MEDIUM,
+      description: `Security alerts accessed successfully`,
+      metadata: {
+        filters: validatedParams,
+        count: alerts?.length || 0,
+      },
+    })
+
+    return NextResponse.json({
+      alerts,
+      pagination: {
+        limit: validatedParams.limit,
+        offset: validatedParams.offset,
+        total: totalCount,
+        hasMore: validatedParams.offset + validatedParams.limit < (totalCount || 0),
+      },
+    })
+  } catch (error) {
+    console.error('Security alerts API error:', error)
+
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
-          error: 'Invalid query parameters',
-          details: validationResult.error.errors
+          error: 'Invalid parameters',
+          details: error.errors 
         },
         { status: 400 }
       )
     }
-    
-    const filters = validationResult.data
-    
-    // Construir query
-    let query = supabase
-      .from('security_alerts')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .range(filters.offset, filters.offset + filters.limit - 1)
-    
-    if (filters.status) {
-      query = query.eq('status', filters.status)
-    }
-    
-    if (filters.severity) {
-      query = query.eq('severity', filters.severity)
-    }
-    
-    if (filters.assigned_to) {
-      query = query.eq('assigned_to', filters.assigned_to)
-    }
-    
-    const { data: alerts, error: queryError } = await query
-    
-    if (queryError) {
-      throw queryError
-    }
-    
-    // Contar total para paginação
-    let countQuery = supabase
-      .from('security_alerts')
-      .select('*', { count: 'exact', head: true })
-    
-    if (filters.status) {
-      countQuery = countQuery.eq('status', filters.status)
-    }
-    
-    if (filters.severity) {
-      countQuery = countQuery.eq('severity', filters.severity)
-    }
-    
-    if (filters.assigned_to) {
-      countQuery = countQuery.eq('assigned_to', filters.assigned_to)
-    }
-    
-    const { count } = await countQuery
-    
-    // Log da consulta
+
+    // Log audit event for unexpected error
     await logAuditEvent({
-      event_type: AuditEventType.SECURITY_ALERT_ACCESS,
-      severity: AuditSeverity.LOW,
-      description: 'Consulta de alertas de segurança realizada',
-      user_id: user.id,
-      ip_address: clientIP,
-      user_agent: request.headers.get('user-agent') || undefined,
+      type: AuditEventType.SECURITY_ALERT_ACCESS,
+      severity: AuditSeverity.HIGH,
+      description: `Unexpected error in security alerts API: ${error instanceof Error ? error.message : 'Unknown error'}`,
       metadata: {
-        filters_applied: filters,
-        results_count: alerts?.length || 0
-      }
+        error: error instanceof Error ? error.stack : error,
+      },
     })
-    
-    return NextResponse.json({
-      success: true,
-      data: alerts || [],
-      pagination: {
-        limit: filters.limit,
-        offset: filters.offset,
-        total: count || 0
-      }
-    })
-    
-  } catch (error) {
-    console.error('Erro na consulta de alertas:', error)
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -250,143 +213,126 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// =====================================================
-// PATCH: ATUALIZAR ALERTA
-// =====================================================
-
+/**
+ * PATCH /api/audit/alerts
+ * 
+ * Atualiza status e informacoes de um alerta de seguranca
+ * 
+ * Body:
+ * - alert_id: ID do alerta (UUID)
+ * - status: Novo status (open, investigating, resolved, false_positive)
+ * - assigned_to: ID do usuario responsavel (opcional)
+ * - notes: Observacoes sobre a atualizacao (opcional)
+ */
 export async function PATCH(request: NextRequest) {
   try {
     // Rate limiting
-    const clientIP = getClientIP(request)
-    const rateLimitResult = await rateLimit({
-      key: `update-alert-${clientIP}`,
-      limit: 30,
-      window: 60000
-    })
-    
-    if (!rateLimitResult.success) {
+    const { success, limit: rateLimit, remaining, reset } = await limiter.check(
+      request.ip ?? 'anonymous'
+    )
+
+    if (!success) {
       return NextResponse.json(
-        { error: 'Rate limit exceeded' },
+        { error: 'Rate limit exceeded', limit: rateLimit, remaining, reset },
         { status: 429 }
       )
     }
-    
-    // Autenticação
-    const supabase = createClient()
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-    
-    // Validação CSRF
-    const csrfValid = await validateCSRF(request)
-    if (!csrfValid) {
-      await logSecurityEvent({
-        type: 'csrf_validation_failed',
-        severity: 'high',
-        description: 'Falha na validação CSRF para atualização de alerta',
-        user_id: user.id,
-        ip_address: clientIP,
-        user_agent: request.headers.get('user-agent') || undefined
-      })
-      
-      return NextResponse.json(
-        { error: 'CSRF validation failed' },
-        { status: 403 }
-      )
-    }
-    
-    // Validação de permissões
-    const hasAccess = await validateSecurityAccess(supabase, user.id)
-    if (!hasAccess) {
-      return NextResponse.json(
-        { error: 'Insufficient permissions' },
-        { status: 403 }
-      )
-    }
-    
-    // Parse e validação do body
+
+    // Parse and validate request body
     const body = await request.json()
-    const validationResult = UpdateAlertSchema.safeParse(body)
-    
-    if (!validationResult.success) {
+    const validatedData = UpdateAlertSchema.parse(body)
+
+    // Initialize Supabase client
+    const supabase = createClient()
+
+    // Prepare update data
+    const updateData: any = {
+      status: validatedData.status,
+      updated_at: new Date().toISOString(),
+    }
+
+    if (validatedData.assigned_to) {
+      updateData.assigned_to = validatedData.assigned_to
+    }
+
+    if (validatedData.notes) {
+      updateData.notes = validatedData.notes
+    }
+
+    // Set resolved_at if status is resolved
+    if (validatedData.status === 'resolved') {
+      updateData.resolved_at = new Date().toISOString()
+    }
+
+    // Update alert
+    const { data: updatedAlert, error } = await supabase
+      .from('security_alerts')
+      .update(updateData)
+      .eq('id', validatedData.alert_id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error updating security alert:', error)
+      
+      // Log audit event for error
+      await logAuditEvent({
+        type: AuditEventType.SECURITY_ALERT_UPDATE,
+        severity: AuditSeverity.HIGH,
+        description: `Failed to update security alert: ${error.message}`,
+        metadata: {
+          alert_id: validatedData.alert_id,
+          error: error.message,
+          update_data: validatedData,
+        },
+      })
+
+      return NextResponse.json(
+        { error: 'Failed to update security alert' },
+        { status: 500 }
+      )
+    }
+
+    // Log successful update
+    await logAuditEvent({
+      type: AuditEventType.SECURITY_ALERT_UPDATE,
+      severity: AuditSeverity.MEDIUM,
+      description: `Security alert updated successfully`,
+      metadata: {
+        alert_id: validatedData.alert_id,
+        old_status: updatedAlert?.status,
+        new_status: validatedData.status,
+        assigned_to: validatedData.assigned_to,
+      },
+    })
+
+    return NextResponse.json({
+      message: 'Alert updated successfully',
+      alert: updatedAlert,
+    })
+  } catch (error) {
+    console.error('Security alert update API error:', error)
+
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
-          error: 'Invalid request body',
-          details: validationResult.error.errors
+          error: 'Invalid request data',
+          details: error.errors 
         },
         { status: 400 }
       )
     }
-    
-    const { alert_id, ...updateData } = validationResult.data
-    
-    // Buscar alerta atual
-    const { data: currentAlert, error: fetchError } = await supabase
-      .from('security_alerts')
-      .select('*')
-      .eq('id', alert_id)
-      .single()
-    
-    if (fetchError || !currentAlert) {
-      return NextResponse.json(
-        { error: 'Alert not found' },
-        { status: 404 }
-      )
-    }
-    
-    // Preparar dados de atualização
-    const updatePayload: any = {
-      ...updateData,
-      updated_at: new Date().toISOString()
-    }
-    
-    // Se status mudou para resolved, adicionar timestamp
-    if (updateData.status === 'resolved' && currentAlert.status !== 'resolved') {
-      updatePayload.resolved_at = new Date().toISOString()
-    }
-    
-    // Atualizar alerta
-    const { data: updatedAlert, error: updateError } = await supabase
-      .from('security_alerts')
-      .update(updatePayload)
-      .eq('id', alert_id)
-      .select()
-      .single()
-    
-    if (updateError) {
-      throw updateError
-    }
-    
-    // Log da atualização
+
+    // Log audit event for unexpected error
     await logAuditEvent({
-      event_type: AuditEventType.SECURITY_ALERT_UPDATE,
-      severity: AuditSeverity.MEDIUM,
-      description: `Alerta de segurança atualizado: ${alert_id}`,
-      user_id: user.id,
-      ip_address: clientIP,
-      user_agent: request.headers.get('user-agent') || undefined,
-      resource_type: 'security_alert',
-      resource_id: alert_id,
+      type: AuditEventType.SECURITY_ALERT_UPDATE,
+      severity: AuditSeverity.HIGH,
+      description: `Unexpected error in security alert update API: ${error instanceof Error ? error.message : 'Unknown error'}`,
       metadata: {
-        previous_status: currentAlert.status,
-        new_status: updateData.status,
-        changes: updateData
-      }
+        error: error instanceof Error ? error.stack : error,
+      },
     })
-    
-    return NextResponse.json({
-      success: true,
-      data: updatedAlert
-    })
-    
-  } catch (error) {
-    console.error('Erro na atualização de alerta:', error)
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -394,17 +340,91 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// =====================================================
-// OPTIONS: CORS
-// =====================================================
+/**
+ * POST /api/audit/alerts
+ * 
+ * Cria um novo alerta de seguranca
+ * Geralmente usado por sistemas automatizados de monitoramento
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Rate limiting mais restritivo para criacao
+    const { success, limit: rateLimit, remaining, reset } = await limiter.check(
+      request.ip ?? 'anonymous',
+      10 // Limite de 10 por minuto para criacao
+    )
 
-export async function OPTIONS(request: NextRequest) {
-  return new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token',
-    },
-  })
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', limit: rateLimit, remaining, reset },
+        { status: 429 }
+      )
+    }
+
+    const body = await request.json()
+    
+    // Validacao basica dos campos obrigatorios
+    const requiredFields = ['type', 'severity', 'title', 'description']
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json(
+          { error: `Missing required field: ${field}` },
+          { status: 400 }
+        )
+      }
+    }
+
+    const supabase = createClient()
+
+    // Criar novo alerta
+    const alertData = {
+      type: body.type,
+      severity: body.severity,
+      status: 'open',
+      title: body.title,
+      description: body.description,
+      source_ip: body.source_ip || request.ip,
+      user_id: body.user_id,
+      resource_affected: body.resource_affected,
+      metadata: body.metadata || {},
+      created_at: new Date().toISOString(),
+    }
+
+    const { data: newAlert, error } = await supabase
+      .from('security_alerts')
+      .insert(alertData)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating security alert:', error)
+      return NextResponse.json(
+        { error: 'Failed to create security alert' },
+        { status: 500 }
+      )
+    }
+
+    // Log audit event for new alert
+    await logAuditEvent({
+      type: AuditEventType.SECURITY_ALERT_CREATE,
+      severity: AuditSeverity.HIGH,
+      description: `New security alert created: ${alertData.title}`,
+      metadata: {
+        alert_id: newAlert.id,
+        alert_type: alertData.type,
+        severity: alertData.severity,
+      },
+    })
+
+    return NextResponse.json({
+      message: 'Alert created successfully',
+      alert: newAlert,
+    }, { status: 201 })
+  } catch (error) {
+    console.error('Security alert creation API error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
 }

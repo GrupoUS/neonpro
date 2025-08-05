@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import { systemIntegrationManager } from '@/lib/patients/integration/system-integration-manager';
 import { createClient } from '@/lib/supabase/server';
 import { AuditLogger } from '@/lib/audit/audit-logger';
@@ -11,7 +11,7 @@ const auditLogger = new AuditLogger();
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -144,7 +144,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -265,3 +265,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

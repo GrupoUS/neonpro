@@ -1,7 +1,7 @@
-// AI-Powered Predictive Analytics Engine
+﻿// AI-Powered Predictive Analytics Engine
 // Story 3.2: Task 3 - Predictive Analytics Engine
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { HealthPrediction, PatientOutcome, PatientRiskAssessment } from './types'
 
 export class PredictiveAnalyticsEngine {
@@ -762,3 +762,4 @@ interface SatisfactionRisk {
   impact: number
   mitigation: string
 }
+

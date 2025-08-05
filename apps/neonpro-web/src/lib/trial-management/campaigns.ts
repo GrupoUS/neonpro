@@ -1,8 +1,8 @@
-// Campaign Management System - STORY-SUB-002 Task 3
+﻿// Campaign Management System - STORY-SUB-002 Task 3
 // AI-powered trial conversion campaigns with A/B testing
 // Created: 2025-01-22
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import type {
   TrialCampaign,
   CampaignTarget,
@@ -421,3 +421,4 @@ export class CampaignManager {
     }
   }
 }
+

@@ -1,7 +1,7 @@
-// AI-Powered Treatment Recommendation System
+﻿// AI-Powered Treatment Recommendation System
 // Story 3.2: Task 2 - Treatment Recommendation System
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import {
   TreatmentRecommendation,
   PatientRiskAssessment,
@@ -507,3 +507,4 @@ interface TreatmentEvidence {
     studyCount: number
   }>
 }
+

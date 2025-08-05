@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Advanced Forecasting React Hook for NeonPro
  * 
  * Custom hook providing comprehensive forecasting capabilities including:
@@ -73,7 +73,7 @@ export function useForecasting(
   initialConfig: ForecastingHookConfig
 ): ForecastingState & ForecastingActions {
   const queryClient = useQueryClient()
-  const supabase = createClient()
+  const supabase = await createClient()
   const [config, setConfig] = useState<ForecastingHookConfig>(initialConfig)
   const [scenarios, setScenarios] = useState<{ [key: string]: ForecastResult }>({})
   const [error, setError] = useState<string | null>(null)
@@ -328,7 +328,7 @@ export function useForecastComparison(forecasts: ForecastResult[]) {
  */
 export function useRealTimeForecastUpdates(metric: string, enabled: boolean = true) {
   const [updates, setUpdates] = useState<any[]>([])
-  const supabase = createClient()
+  const supabase = await createClient()
 
   useEffect(() => {
     if (!enabled || !metric) return
@@ -448,3 +448,4 @@ export function useForecastFormatters() {
     }
   }), [])
 }
+

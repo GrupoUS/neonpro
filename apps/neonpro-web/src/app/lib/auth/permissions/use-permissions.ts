@@ -258,7 +258,7 @@ export function withPermissionCheck<T extends object>(
 
     if (!allowed) {
       if (fallback) {
-        const FallbackComponent = fallback
+        const FallbackComponent = fallback;
         return <FallbackComponent />
       }
       return <div>Acesso negado</div>

@@ -37,7 +37,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: tracking, error } = await this.supabase
+    const { data: tracking, error } = await supabase
       .from('progress_tracking')
       .insert(trackingData)
       .select()
@@ -51,7 +51,7 @@ class ProgressTrackingService {
     data: ProgressTracking[];
     total: number;
   }> {
-    let query = this.supabase
+    let query = supabase
       .from('progress_tracking')
       .select('*', { count: 'exact' });
 
@@ -106,7 +106,8 @@ class ProgressTrackingService {
   }
 
   async getProgressTrackingById(id: string): Promise<ProgressTracking | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('progress_tracking')
       .select('*')
       .eq('id', id)
@@ -118,8 +119,9 @@ class ProgressTrackingService {
 
   async updateProgressTracking(id: string, data: UpdateProgressTrackingRequest): Promise<ProgressTracking> {
     const user = await this.getCurrentUser();
+    const supabase = await createClient();
 
-    const { data: tracking, error } = await this.supabase
+    const { data: tracking, error } = await supabase
       .from('progress_tracking')
       .update({
         ...data,
@@ -134,7 +136,7 @@ class ProgressTrackingService {
   }
 
   async deleteProgressTracking(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('progress_tracking')
       .delete()
       .eq('id', id);
@@ -152,7 +154,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: milestone, error } = await this.supabase
+    const { data: milestone, error } = await supabase
       .from('progress_milestones')
       .insert(milestoneData)
       .select()
@@ -166,7 +168,7 @@ class ProgressTrackingService {
     data: ProgressMilestone[];
     total: number;
   }> {
-    let query = this.supabase
+    let query = supabase
       .from('progress_milestones')
       .select('*', { count: 'exact' });
 
@@ -213,8 +215,9 @@ class ProgressTrackingService {
 
   async validateMilestone(id: string, validationStatus: 'confirmed' | 'false_positive', notes?: string): Promise<ProgressMilestone> {
     const user = await this.getCurrentUser();
+    const supabase = await createClient();
 
-    const { data: milestone, error } = await this.supabase
+    const { data: milestone, error } = await supabase
       .from('progress_milestones')
       .update({
         validation_status: validationStatus,
@@ -240,7 +243,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: prediction, error } = await this.supabase
+    const { data: prediction, error } = await supabase
       .from('progress_predictions')
       .insert(predictionData)
       .select()
@@ -251,7 +254,7 @@ class ProgressTrackingService {
   }
 
   async getProgressPredictions(patientId?: string): Promise<ProgressPrediction[]> {
-    let query = this.supabase
+    let query = supabase
       .from('progress_predictions')
       .select('*')
       .order('prediction_date', { ascending: false });
@@ -267,8 +270,9 @@ class ProgressTrackingService {
 
   async verifyPrediction(id: string, actualOutcome: Record<string, any>, accuracyScore: number): Promise<ProgressPrediction> {
     const user = await this.getCurrentUser();
+    const supabase = await createClient();
 
-    const { data: prediction, error } = await this.supabase
+    const { data: prediction, error } = await supabase
       .from('progress_predictions')
       .update({
         actual_outcome: actualOutcome,
@@ -303,7 +307,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: result, error } = await this.supabase
+    const { data: result, error } = await supabase
       .from('multi_session_analysis')
       .insert(analysisData)
       .select()
@@ -314,7 +318,7 @@ class ProgressTrackingService {
   }
 
   async getMultiSessionAnalyses(patientId?: string): Promise<MultiSessionAnalysis[]> {
-    let query = this.supabase
+    let query = supabase
       .from('multi_session_analysis')
       .select('*')
       .order('created_at', { ascending: false });
@@ -338,7 +342,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: alert, error } = await this.supabase
+    const { data: alert, error } = await supabase
       .from('progress_alerts')
       .insert(alertData)
       .select()
@@ -352,7 +356,7 @@ class ProgressTrackingService {
     data: ProgressAlert[];
     total: number;
   }> {
-    let query = this.supabase
+    let query = supabase
       .from('progress_alerts')
       .select('*', { count: 'exact' });
 
@@ -405,8 +409,9 @@ class ProgressTrackingService {
 
   async markAlertRead(id: string): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
+    const supabase = await createClient();
 
-    const { data: alert, error } = await this.supabase
+    const { data: alert, error } = await supabase
       .from('progress_alerts')
       .update({
         is_read: true,
@@ -424,8 +429,9 @@ class ProgressTrackingService {
 
   async markAlertActionTaken(id: string, actionNotes?: string): Promise<ProgressAlert> {
     const user = await this.getCurrentUser();
+    const supabase = await createClient();
 
-    const { data: alert, error } = await this.supabase
+    const { data: alert, error } = await supabase
       .from('progress_alerts')
       .update({
         action_taken: true,
@@ -450,7 +456,7 @@ class ProgressTrackingService {
       updated_by: user.id
     };
 
-    const { data: metric, error } = await this.supabase
+    const { data: metric, error } = await supabase
       .from('tracking_metrics')
       .insert(metricData)
       .select()
@@ -461,7 +467,7 @@ class ProgressTrackingService {
   }
 
   async getTrackingMetrics(treatmentType?: string): Promise<TrackingMetric[]> {
-    let query = this.supabase
+    let query = supabase
       .from('tracking_metrics')
       .select('*')
       .eq('is_active', true)
@@ -479,8 +485,8 @@ class ProgressTrackingService {
   // Analytics and Dashboard
   async getProgressDashboardStats(patientId?: string): Promise<ProgressDashboardStats> {
     const baseQuery = patientId 
-      ? this.supabase.from('progress_tracking').select('*').eq('patient_id', patientId)
-      : this.supabase.from('progress_tracking').select('*');
+      ? supabase.from('progress_tracking').select('*').eq('patient_id', patientId)
+      : supabase.from('progress_tracking').select('*');
 
     const [
       { count: totalTrackings },
@@ -490,18 +496,18 @@ class ProgressTrackingService {
       { data: predictionData }
     ] = await Promise.all([
       baseQuery,
-      this.supabase.from('progress_tracking')
+      supabase.from('progress_tracking')
         .select('treatment_type')
         .eq(patientId ? 'patient_id' : 'validation_status', patientId || 'validated')
         .not('progress_score', 'eq', 100),
-      this.supabase.from('progress_milestones')
+      supabase.from('progress_milestones')
         .select('*')
         .eq(patientId ? 'patient_id' : 'validation_status', patientId || 'confirmed'),
-      this.supabase.from('progress_alerts')
+      supabase.from('progress_alerts')
         .select('alert_priority')
         .eq('is_read', false)
         .eq('alert_priority', 'urgent'),
-      this.supabase.from('progress_predictions')
+      supabase.from('progress_predictions')
         .select('accuracy_score')
         .not('accuracy_score', 'is', null)
     ]);
@@ -527,7 +533,7 @@ class ProgressTrackingService {
   }
 
   async getProgressTrendData(patientId: string, treatmentType?: string): Promise<ProgressTrendData[]> {
-    let query = this.supabase
+    let query = supabase
       .from('progress_tracking')
       .select('*')
       .eq('patient_id', patientId)
@@ -637,13 +643,15 @@ class ProgressTrackingService {
 
   // Private helper methods
   private async getCurrentUser() {
-    const { data: { user }, error } = await this.supabase.auth.getUser();
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) throw new Error('User not authenticated');
     return user;
   }
 
   private async getTrackingDataForSessions(sessionIds: string[]): Promise<ProgressTracking[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('progress_tracking')
       .select('*')
       .in('session_id', sessionIds)
@@ -695,3 +703,5 @@ class ProgressTrackingService {
 }
 
 export const progressTrackingService = new ProgressTrackingService();
+
+

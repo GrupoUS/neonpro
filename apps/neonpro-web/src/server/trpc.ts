@@ -1,4 +1,4 @@
-/**
+﻿/**
  * tRPC Server Configuration
  * Healthcare-compliant API with audit logging
  */
@@ -16,7 +16,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   
   // Get Supabase client with session
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
 
   return {
@@ -83,3 +83,4 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
   return next({ ctx });
 });
+

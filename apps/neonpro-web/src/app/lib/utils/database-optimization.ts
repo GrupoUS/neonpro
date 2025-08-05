@@ -269,8 +269,8 @@ export class StockAlertQueries {
 
   constructor(supabaseClient?: any) {
     this.supabase = supabaseClient || createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
   }
 
@@ -593,8 +593,8 @@ export class DatabaseHealthMonitor {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
   }
 
@@ -663,3 +663,4 @@ export class DatabaseHealthMonitor {
 export const optimizedQueries = new StockAlertQueries();
 export const dbHealthMonitor = new DatabaseHealthMonitor();
 export { queryMonitor, DB_CONFIG };
+

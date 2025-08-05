@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { webAuthnService } from '@/lib/auth/webauthn-service';
 
 export async function GET(request: NextRequest) {

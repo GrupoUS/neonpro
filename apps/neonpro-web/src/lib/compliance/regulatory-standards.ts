@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Healthcare Compliance Framework
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Medical Device Standards)
  * 
@@ -806,3 +806,4 @@ export const ComplianceValidationSchema = z.object({
 
 // Export singleton instance
 export const healthcareComplianceManager = new HealthcareComplianceManager();
+

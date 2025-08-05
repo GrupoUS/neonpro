@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Performance Monitoring Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
  * 
@@ -1268,3 +1268,4 @@ export const SystemMetricsSchema = z.object({
 
 // Export singleton instance
 export const performanceMonitoringEngine = new PerformanceMonitoringEngine();
+

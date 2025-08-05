@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { error } from 'console'
 import { string, any } from 'zod'
 
@@ -434,3 +434,4 @@ export class PaymentsService {
 
 // Export singleton instance
 export const paymentsService = new PaymentsService()
+

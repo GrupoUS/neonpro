@@ -1,4 +1,4 @@
-// Drill-down Analysis API
+﻿// Drill-down Analysis API
 // Description: API endpoints for interactive drill-down analysis
 // Author: Dev Agent
 // Date: 2025-01-26
@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DrillDownSystem } from '@/lib/analytics/drill-down';
 import { drillDownRequestSchema } from '@/lib/validations/kpi-validations';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 const requestSchema = z.object({
@@ -36,7 +36,7 @@ const requestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -213,3 +213,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

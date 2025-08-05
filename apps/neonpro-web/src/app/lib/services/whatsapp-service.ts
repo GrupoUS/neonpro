@@ -2,7 +2,7 @@
 // Integrates with Meta's WhatsApp Cloud API for NeonPro
 // Uses official whatsapp library with TypeScript support
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import {
   WhatsAppConfig,
   WhatsAppMessage,
@@ -21,12 +21,13 @@ import {
 const WHATSAPP_API_BASE = 'https://graph.facebook.com/v18.0';
 
 class WhatsAppService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // Configuration Management
   async getConfig(): Promise<WhatsAppConfig | null> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_config')
         .select('*')
         .single();
@@ -45,7 +46,8 @@ class WhatsAppService {
 
   async updateConfig(config: Omit<WhatsAppConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<WhatsAppConfig> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_config')
         .upsert({
           ...config,
@@ -250,7 +252,7 @@ class WhatsAppService {
 
   private async storeMessage(message: Omit<WhatsAppMessage, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
-      const { error } = await this.supabase
+      const { error } = await supabase
         .from('whatsapp_messages')
         .insert({
           ...message,
@@ -269,7 +271,8 @@ class WhatsAppService {
   // Template Management
   async getTemplates(): Promise<WhatsAppTemplate[]> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_templates')
         .select('*')
         .order('created_at', { ascending: false });
@@ -288,7 +291,8 @@ class WhatsAppService {
 
   async getTemplate(name: string): Promise<WhatsAppTemplate | null> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_templates')
         .select('*')
         .eq('name', name)
@@ -372,7 +376,7 @@ class WhatsAppService {
         updateData.read_at = new Date(parseInt(timestamp) * 1000).toISOString();
       }
 
-      const { error } = await this.supabase
+      const { error } = await supabase
         .from('whatsapp_messages')
         .update(updateData)
         .eq('metadata->whatsappMessageId', whatsappMessageId);
@@ -404,7 +408,8 @@ class WhatsAppService {
   // Opt-in Management
   async checkOptIn(phoneNumber: string): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_opt_ins')
         .select('is_opted_in')
         .eq('phone_number', phoneNumber)
@@ -429,7 +434,7 @@ class WhatsAppService {
     consentMessage?: string
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
+      const { error } = await supabase
         .from('whatsapp_opt_ins')
         .upsert({
           patient_id: patientId,
@@ -455,7 +460,8 @@ class WhatsAppService {
   // Analytics
   async getAnalytics(startDate: Date, endDate: Date): Promise<WhatsAppAnalytics[]> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('whatsapp_analytics')
         .select('*')
         .gte('date', startDate.toISOString().split('T')[0])
@@ -508,3 +514,5 @@ class WhatsAppService {
 }
 
 export const whatsAppService = new WhatsAppService();
+
+

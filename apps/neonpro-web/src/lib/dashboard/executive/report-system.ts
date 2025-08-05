@@ -1,4 +1,4 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/logger';
 import { kpiCalculationService } from './kpi-calculation-service';
@@ -721,7 +721,7 @@ export class ReportSystem {
     const now = new Date();
     const [hours, minutes] = schedule.time.split(':').map(Number);
     
-    let nextRun = new Date(now);
+    const nextRun = new Date(now);
     nextRun.setHours(hours, minutes, 0, 0);
 
     // If the time has already passed today, move to next occurrence
@@ -864,3 +864,4 @@ export class ReportSystem {
 
 // Export singleton instance
 export const reportSystem = new ReportSystem();
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Risk Scoring Algorithm
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
  * 
@@ -1104,3 +1104,4 @@ export {
   type RiskFactorDefinition,
   type RiskDataPoint
 }
+

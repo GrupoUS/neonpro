@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { pixIntegration, PixPaymentData } from '@/lib/payments/gateways/pix-integration'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
@@ -23,7 +23,7 @@ const pixPaymentSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -180,7 +180,7 @@ function isValidCNPJ(cnpj: string): boolean {
     sum += parseInt(cnpj[i]) * weights1[i]
   }
   
-  let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+  const digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
   
   if (parseInt(cnpj[12]) !== digit1) {
     return false
@@ -191,7 +191,8 @@ function isValidCNPJ(cnpj: string): boolean {
     sum += parseInt(cnpj[i]) * weights2[i]
   }
   
-  let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+  const digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
   
   return parseInt(cnpj[13]) === digit2
 }
+

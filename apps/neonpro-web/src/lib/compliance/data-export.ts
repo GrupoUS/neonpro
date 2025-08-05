@@ -23,3 +23,8 @@ export class DataExportService {
     return Buffer.from(JSON.stringify(data));
   }
 }
+
+// Export function for compatibility
+export async function generateDataExport(request: DataExportRequest): Promise<Buffer | string> {
+  return DataExportService.exportUserData(request);
+}

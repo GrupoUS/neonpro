@@ -1,5 +1,5 @@
-// lib/search/unified-search.ts - Server-side search implementation
-import { createClient } from "@/app/utils/supabase/server";
+﻿// lib/search/unified-search.ts - Server-side search implementation
+import { createClient } from "@/lib/supabase/server";
 import { AIInsightsEngine } from "@/lib/ai/insights-engine";
 import { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
 import { DuplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
@@ -775,3 +775,4 @@ export class UnifiedSearchSystem {
 }
 
 export const unifiedSearchSystem = new UnifiedSearchSystem();
+

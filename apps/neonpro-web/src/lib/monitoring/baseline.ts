@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TASK-001: Foundation Setup & Baseline
  * Baseline Metrics System
  * 
@@ -6,7 +6,7 @@
  * metrics for measuring enhancement impact and detecting regressions.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface BaselineMetric {
   metric_name: string;
@@ -714,3 +714,4 @@ export async function generateBaselineReport(
 ): Promise<BaselineReport> {
   return baselineManager.generateBaselineReport(measurementPeriod);
 }
+

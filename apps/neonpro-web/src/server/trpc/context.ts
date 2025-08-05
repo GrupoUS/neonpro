@@ -1,4 +1,4 @@
-import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+﻿import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { type Database } from '@/types/supabase';
@@ -36,9 +36,9 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   const ipAddress = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
   
   // Create Supabase server client with cookies
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       cookies: {
@@ -99,3 +99,5 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
     timestamp: new Date(),
   };
 }
+
+

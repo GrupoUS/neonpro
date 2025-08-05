@@ -1,7 +1,7 @@
 // Story 11.2: No-Show Prediction Engine Service
-// ≥80% accuracy ML-based prediction system with multi-factor analysis
+// =80% accuracy ML-based prediction system with multi-factor analysis
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import {
   NoShowPrediction,
   RiskFactor,
@@ -32,13 +32,12 @@ interface NoShowPredictionConfig {
 }
 
 export class NoShowPredictionEngine {
-  private supabase;
+  // Supabase client created per method for proper request context
   private config: NoShowPredictionConfig;
 
   constructor() {
-    this.supabase = createClient();
     this.config = {
-      minimumAccuracy: 0.8, // ≥80% requirement
+      minimumAccuracy: 0.8, // =80% requirement
       confidenceThreshold: 0.7,
       interventionThreshold: 0.6,
       modelVersion: 'v1.0',
@@ -92,8 +91,9 @@ export class NoShowPredictionEngine {
 
   async updatePredictionOutcome(predictionId: string, actualOutcome: boolean): Promise<NoShowPrediction> {
     const outcome: AppointmentOutcomeValue = actualOutcome ? 'no_show' : 'attended';
+    const supabase = await createClient();
     
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .update({ 
         actual_outcome: outcome,
@@ -108,7 +108,8 @@ export class NoShowPredictionEngine {
   }
 
   async calculateAccuracyMetrics(clinicId: string, startDate: string, endDate: string): Promise<ModelPerformance> {
-    const { data: predictions, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: predictions, error } = await supabase
       .from('no_show_predictions')
       .select('*')
       .gte('prediction_date', startDate)
@@ -149,7 +150,8 @@ export class NoShowPredictionEngine {
   }
 
   async getHighRiskPatients(clinicId: string, startDate: string, endDate: string): Promise<NoShowPrediction[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .select(`
         *,
@@ -167,7 +169,8 @@ export class NoShowPredictionEngine {
   }
 
   async createPrediction(input: CreatePredictionInput): Promise<NoShowPrediction> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .insert(input)
       .select()
@@ -178,7 +181,8 @@ export class NoShowPredictionEngine {
   }
 
   async updatePrediction(id: string, input: UpdatePredictionInput): Promise<NoShowPrediction> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .update(input)
       .eq('id', id)
@@ -190,7 +194,8 @@ export class NoShowPredictionEngine {
   }
 
   async getPrediction(id: string): Promise<NoShowPrediction | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .select('*')
       .eq('id', id)
@@ -201,7 +206,8 @@ export class NoShowPredictionEngine {
   }
 
   async getPredictionsByAppointment(appointmentId: string): Promise<NoShowPrediction[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .select('*')
       .eq('appointment_id', appointmentId)
@@ -212,7 +218,8 @@ export class NoShowPredictionEngine {
   }
 
   async getHighRiskPredictions(threshold: number = 0.7): Promise<NoShowPrediction[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_predictions')
       .select('*')
       .gte('risk_score', threshold)
@@ -225,7 +232,8 @@ export class NoShowPredictionEngine {
 
   // Risk factor management
   async createRiskFactor(input: CreateRiskFactorInput): Promise<RiskFactor> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('risk_factors')
       .insert(input)
       .select()
@@ -236,7 +244,8 @@ export class NoShowPredictionEngine {
   }
 
   async getRiskFactorsByPatient(patientId: string): Promise<RiskFactor[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('risk_factors')
       .select('*')
       .eq('patient_id', patientId)
@@ -253,7 +262,8 @@ export class NoShowPredictionEngine {
     
     for (const factor of factors) {
       const newWeight = await this.calculateFactorWeight(factor, recentAppointments);
-      await this.supabase
+    const supabase = await createClient();
+      await supabase
         .from('risk_factors')
         .update({ 
           weight_score: newWeight,
@@ -267,7 +277,8 @@ export class NoShowPredictionEngine {
 
   // Intervention management
   async createIntervention(input: CreateInterventionInput): Promise<InterventionStrategy> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('intervention_strategies')
       .insert(input)
       .select()
@@ -278,7 +289,8 @@ export class NoShowPredictionEngine {
   }
 
   async executeIntervention(id: string, input: UpdateInterventionInput): Promise<InterventionStrategy> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('intervention_strategies')
       .update({
         ...input,
@@ -299,7 +311,7 @@ export class NoShowPredictionEngine {
     }
 
     // Get existing interventions to avoid duplicates
-    const { data: existing } = await this.supabase
+    const { data: existing } = await supabase
       .from('intervention_strategies')
       .select('intervention_type')
       .eq('prediction_id', predictionId);
@@ -318,8 +330,9 @@ export class NoShowPredictionEngine {
   // Analytics and reporting
   async getModelPerformance(modelVersion?: string): Promise<ModelPerformance> {
     const version = modelVersion || this.config.modelVersion;
+    const supabase = await createClient();
     
-    const { data: predictions, error } = await this.supabase
+    const { data: predictions, error } = await supabase
       .from('no_show_predictions')
       .select('*')
       .eq('model_version', version)
@@ -410,7 +423,8 @@ export class NoShowPredictionEngine {
   }
 
   async getNoShowTrends(startDate: string, endDate: string): Promise<NoShowTrends> {
-    const { data: analytics, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: analytics, error } = await supabase
       .from('no_show_analytics')
       .select('*')
       .gte('date', startDate)
@@ -470,7 +484,8 @@ export class NoShowPredictionEngine {
 
   // Private helper methods
   private async getAppointmentDetails(appointmentId: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('appointments')
       .select(`
         *,
@@ -485,7 +500,8 @@ export class NoShowPredictionEngine {
   }
 
   private async getPatientHistoricalPattern(patientId: string) {
-    const { data: appointments, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: appointments, error } = await supabase
       .from('appointments')
       .select('*')
       .eq('patient_id', patientId)
@@ -560,6 +576,7 @@ export class NoShowPredictionEngine {
   }
 
   private async runPredictionModel(riskFactors: RiskFactor[], historicalPattern: any) {
+    const supabase = await createClient();
     let totalRisk = 0;
     let totalWeight = 0;
     const keyFactors: string[] = [];
@@ -659,9 +676,10 @@ export class NoShowPredictionEngine {
   }
 
   private async getRecentAppointments(patientId: string, days: number) {
+    const supabase = await createClient();
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
     
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('appointments')
       .select('*')
       .eq('patient_id', patientId)
@@ -681,9 +699,10 @@ export class NoShowPredictionEngine {
   }
 
   private async getTodayInterventions() {
+    const supabase = await createClient();
     const today = new Date().toISOString().split('T')[0];
     
-    const { data, error } = await this.supabase
+    const { data, error } = await supabase
       .from('intervention_strategies')
       .select('*')
       .gte('trigger_time', today)
@@ -697,7 +716,8 @@ export class NoShowPredictionEngine {
   }
 
   private async getAnalyticsForPeriod(startDate: string, endDate: string) {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('no_show_analytics')
       .select('*')
       .gte('date', startDate)
@@ -719,6 +739,7 @@ export class NoShowPredictionEngine {
   }
 
   private async calculateFactorTrends(startDate: string, endDate: string) {
+    const supabase = await createClient();
     // Placeholder implementation - would analyze factor effectiveness over time
     const factors: Record<string, any> = {};
     
@@ -734,6 +755,7 @@ export class NoShowPredictionEngine {
   }
 
   private async calculateInterventionEffectiveness(startDate: string, endDate: string) {
+    const supabase = await createClient();
     // Placeholder implementation - would analyze intervention success rates
     const interventions: Record<string, any> = {};
     
@@ -756,3 +778,5 @@ export class NoShowPredictionEngine {
 
 // Export singleton instance
 export const noShowPredictionEngine = new NoShowPredictionEngine();
+
+

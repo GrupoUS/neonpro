@@ -25,18 +25,19 @@ import {
     updateKnowledgeSourceRequestSchema
 } from '@/app/lib/validations/medical-knowledge-base';
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class MedicalKnowledgeBaseService {
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
   // Knowledge Sources Management
   async createKnowledgeSource(data: any): Promise<KnowledgeSource> {
     const validatedData = createKnowledgeSourceRequestSchema.parse(data);
-    const supabase = await this.getSupabase();
-    
+    const supabase = await createClient();
+
     const { data: source, error } = await supabase
       .from('knowledge_sources')
       .insert([validatedData])
@@ -51,7 +52,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getKnowledgeSources(filters?: { status?: string; source_type?: string }): Promise<KnowledgeSource[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase.from('knowledge_sources').select('*');
 
     if (filters?.status) {
@@ -72,7 +73,7 @@ export class MedicalKnowledgeBaseService {
 
   async updateKnowledgeSource(id: string, updates: any): Promise<KnowledgeSource> {
     const validatedData = updateKnowledgeSourceRequestSchema.parse(updates);
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('knowledge_sources')
@@ -89,7 +90,6 @@ export class MedicalKnowledgeBaseService {
   }
 
   async deleteKnowledgeSource(id: string): Promise<void> {
-    const supabase = await this.getSupabase();
 
     const { error } = await supabase
       .from('knowledge_sources')
@@ -104,7 +104,7 @@ export class MedicalKnowledgeBaseService {
   // Medical Knowledge Management
   async createMedicalKnowledge(data: any): Promise<MedicalKnowledge> {
     const validatedData = createMedicalKnowledgeRequestSchema.parse(data);
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data: knowledge, error } = await supabase
       .from('medical_knowledge')
@@ -126,7 +126,6 @@ export class MedicalKnowledgeBaseService {
     limit: number;
   }> {
     const validatedQuery = medicalSearchQuerySchema.parse(query);
-    const supabase = await this.getSupabase();
 
     let dbQuery = supabase
       .from('medical_knowledge')
@@ -198,7 +197,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getMedicalKnowledgeById(id: string): Promise<MedicalKnowledge | null> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('medical_knowledge')
@@ -217,7 +216,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async updateMedicalKnowledge(id: string, updates: Partial<MedicalKnowledge>): Promise<MedicalKnowledge> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('medical_knowledge')
@@ -240,7 +239,6 @@ export class MedicalKnowledgeBaseService {
     total_count: number;
   }> {
     const validatedQuery = drugSearchQuerySchema.parse(query);
-    const supabase = await this.getSupabase();
 
     let dbQuery = supabase
       .from('drug_information')
@@ -296,7 +294,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getDrugById(id: string): Promise<DrugInformation | null> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('drug_information')
@@ -319,8 +317,6 @@ export class MedicalKnowledgeBaseService {
       return [];
     }
 
-    const supabase = await this.getSupabase();
-
     const { data, error } = await supabase
       .from('drug_interactions')
       .select('*')
@@ -339,7 +335,7 @@ export class MedicalKnowledgeBaseService {
     status?: string; 
     conditions?: string[] 
   }): Promise<MedicalGuideline[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase.from('medical_guidelines').select('*');
 
     if (filters?.specialty) {
@@ -364,7 +360,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getGuidelineById(id: string): Promise<MedicalGuideline | null> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('medical_guidelines')
@@ -385,12 +381,12 @@ export class MedicalKnowledgeBaseService {
   // Evidence Validation
   async validateRecommendation(request: EvidenceValidationRequest): Promise<EvidenceValidationResponse> {
     const validatedRequest = evidenceValidationRequestSchema.parse(request);
-    const supabase = await this.getSupabase();
 
     // Search for relevant evidence based on recommendation
     const evidenceQuery = validatedRequest.recommendation_content.title || 
                          validatedRequest.recommendation_content.summary || 
                          'general medical evidence';
+    const supabase = await createClient();
 
     const { data: evidence, error } = await supabase
       .from('medical_knowledge')
@@ -480,7 +476,6 @@ export class MedicalKnowledgeBaseService {
 
   // Research Cache Management
   async getCachedSearchResults(query: string, sourceId?: string): Promise<ResearchCache | null> {
-    const supabase = await this.getSupabase();
 
     let dbQuery = supabase
       .from('research_cache')
@@ -505,7 +500,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async cacheSearchResults(cacheData: Omit<ResearchCache, 'id' | 'cache_date'>): Promise<ResearchCache> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('research_cache')
@@ -522,7 +517,6 @@ export class MedicalKnowledgeBaseService {
 
   // Dashboard and Analytics
   async getKnowledgeBaseDashboard(): Promise<KnowledgeBaseDashboard> {
-    const supabase = await this.getSupabase();
 
     // Get overview statistics
     const [sourcesResult, knowledgeResult, validationsResult] = await Promise.all([
@@ -571,7 +565,6 @@ export class MedicalKnowledgeBaseService {
 
   // Sync Management
   async triggerSync(sourceId: string, forceFull: boolean = false): Promise<void> {
-    const supabase = await this.getSupabase();
 
     // Update source status to syncing
     const { error: updateError } = await supabase
@@ -609,7 +602,7 @@ export class MedicalKnowledgeBaseService {
   }
 
   async getMedicalCategories(): Promise<string[]> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('medical_knowledge')
@@ -628,3 +621,5 @@ export class MedicalKnowledgeBaseService {
     return Array.from(categories).sort();
   }
 }
+
+

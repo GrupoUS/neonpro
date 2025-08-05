@@ -1,6 +1,6 @@
-'use client'
+﻿'use client'
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -79,7 +79,7 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
   const [error, setError] = useState<string | null>(null)
   const [cancellationPolicies, setCancellationPolicies] = useState<CancellationPolicies | null>(null)
 
-  const supabase = createClient()
+  const supabase = await createClient()
 
   /**
    * Load appointments and policies
@@ -374,3 +374,4 @@ export function usePatientAppointments(): UsePatientAppointmentsResult {
     getCancellationStats
   }
 }
+

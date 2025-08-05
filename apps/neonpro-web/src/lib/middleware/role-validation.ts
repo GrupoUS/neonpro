@@ -3,7 +3,7 @@
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-22
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { ROLE_HIERARCHY, checkPermission, canManageTargetRole } from '@/app/api/roles/permissions/route';
 

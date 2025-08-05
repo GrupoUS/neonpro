@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NeonPro Audit System React Hooks
  * 
  * Hooks para integração do sistema de auditoria com React,
@@ -246,7 +246,7 @@ export function useSecurityAlerts(): UseSecurityAlertsReturn {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
-  const supabase = createClient()
+  const supabase = await createClient()
   const { toast } = useToast()
 
   const fetchAlerts = useCallback(async () => {
@@ -406,7 +406,7 @@ export function useAuditReports(): UseAuditReportsReturn {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { user } = useUser()
-  const supabase = createClient()
+  const supabase = await createClient()
   const { toast } = useToast()
 
   const fetchReports = useCallback(async () => {
@@ -698,3 +698,4 @@ export function useAudit() {
     logger
   }
 }
+

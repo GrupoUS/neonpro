@@ -7,13 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import type { Database } from '@/types/database';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get all active subscription plans
     const { data: plans, error } = await supabase
@@ -68,3 +68,4 @@ function formatCurrency(amount: number): string {
     currency: 'BRL'
   }).format(amount);
 }
+

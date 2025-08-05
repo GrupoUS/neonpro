@@ -1,5 +1,5 @@
-// lib/medical/timeline-manager.ts
-import { createClient } from "@/app/utils/supabase/server";
+﻿// lib/medical/timeline-manager.ts
+import { createClient } from "@/lib/supabase/server";
 
 export interface TimelineEvent {
   id: string;
@@ -400,3 +400,4 @@ export class MedicalTimelineManager {
 }
 
 export const medicalTimelineManager = new MedicalTimelineManager();
+

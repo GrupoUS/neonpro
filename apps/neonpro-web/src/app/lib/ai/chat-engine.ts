@@ -2,7 +2,7 @@
 // Implementation of Story 4.1: Universal AI Chat Assistant
 
 import OpenAI from 'openai'
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { 
   AIResponse, 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Compliance & Security Engine - NeonPro Notifications
  * 
  * Engine de compliance para garantir conformidade com LGPD, ANVISA, CFM
@@ -18,7 +18,7 @@
  */
 
 import { z } from 'zod';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import { NotificationChannel, NotificationType } from '../types';
 
@@ -812,3 +812,4 @@ export class NotificationComplianceEngine {
 
 export const notificationComplianceEngine = new NotificationComplianceEngine();
 export type { LGPDConsent, AuditLog, DPIA, ComplianceCheckResult };
+

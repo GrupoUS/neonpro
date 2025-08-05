@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Demand Forecasting Engine - Core Implementation
  * Story 11.1: Demand Forecasting Engine (≥80% Accuracy)
  * 
@@ -1424,3 +1424,4 @@ export function processExternalFactors(externalFactors: any) {
     validation_status: 'validated'
   };
 }
+

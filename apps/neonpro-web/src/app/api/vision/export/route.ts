@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vision Analysis Export API
  * POST /api/vision/export
  * 
@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { withErrorMonitoring } from '@/lib/monitoring';
 
@@ -26,7 +26,7 @@ const exportRequestSchema = z.object({
 
 // POST - Export analysis results
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -266,7 +266,7 @@ async function generateExcelExport(analysisData: any[], options: any) {
 
 // GET - Get export history
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -315,3 +315,4 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
     );
   }
 });
+

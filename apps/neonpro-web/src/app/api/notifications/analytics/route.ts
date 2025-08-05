@@ -10,7 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { notificationAnalytics } from '@/lib/notifications/analytics/notification-analytics';
 
 // ================================================================================
@@ -75,7 +75,7 @@ async function validateAuth(request: NextRequest) {
 function calculatePeriod(period: string, dateFrom?: string, dateTo?: string) {
   const now = new Date();
   let from: Date;
-  let to: Date = dateTo ? new Date(dateTo) : now;
+  const to: Date = dateTo ? new Date(dateTo) : now;
 
   if (dateFrom) {
     from = new Date(dateFrom);

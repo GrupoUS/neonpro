@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Cash Flow Monitoring Engine - Real-time Financial Analytics
  * Story 4.2: Financial Analytics & Business Intelligence
  * Phase 1: Real-time Cash Flow Dashboard
@@ -445,3 +445,4 @@ export class CashFlowEngine {
 }
 
 export default CashFlowEngine
+

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 import { sendInvoiceEmail } from '@/lib/payments/email';
 import { generateInvoicePDF } from '@/lib/payments/pdf';
 import { renderToBuffer } from '@react-pdf/renderer';
@@ -16,7 +16,7 @@ const sendInvoiceSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Validar autenticação
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -196,3 +196,4 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+

@@ -9,7 +9,7 @@
 import { CohortAnalyzer } from '@/lib/analytics/advanced/cohort-analyzer'
 import { ForecastingEngine } from '@/lib/analytics/advanced/forecasting-engine'
 import { cookies } from 'next/headers'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -610,3 +610,5 @@ async function evaluatePredictiveModels(data: any[], metrics: string[]) {
     }))
   }))
 }
+
+

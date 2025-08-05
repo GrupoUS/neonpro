@@ -45,7 +45,7 @@ export class SessionManager extends EventEmitter {
     super();
     this.config = config;
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.redis = new Redis(config.redis.url, {
@@ -852,3 +852,4 @@ export class SessionManager extends EventEmitter {
     this.removeAllListeners();
   }
 }
+

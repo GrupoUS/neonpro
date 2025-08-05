@@ -33,7 +33,7 @@ export class ConflictDetectionEngine {
     supabaseKey: string,
     config: Partial<ConflictDetectionConfig> = {}
   ) {
-    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
+    this.const supabase = createClient(<Database>(supabaseUrl, supabaseKey);
     this.config = {
       enableTimeOverlapDetection: true,
       enableResourceConflictDetection: true,

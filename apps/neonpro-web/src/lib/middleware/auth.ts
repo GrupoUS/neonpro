@@ -1,11 +1,11 @@
-/**
+﻿/**
  * Authentication Middleware for NeonPro API Routes
  * Handles JWT token verification and user role validation
  */
 
 import { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface AuthUser {
   id: string;
@@ -77,7 +77,7 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
  */
 export async function getSupabaseUser(request: NextRequest): Promise<AuthUser | null> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
@@ -227,3 +227,4 @@ export function requireAuth(
     };
   };
 }
+

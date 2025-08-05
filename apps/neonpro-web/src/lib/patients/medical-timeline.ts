@@ -3,7 +3,7 @@
  * Manages patient medical history with visual timeline representation
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export interface TimelineEvent {
   id: string;

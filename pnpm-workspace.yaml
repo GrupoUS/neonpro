@@ -6,41 +6,41 @@ packages:
 # Turborepo configuration
 catalog:
   # Next.js and React ecosystem
-  next: "^14.2.0"
-  react: "^18.3.0"
-  react-dom: "^18.3.0"
+  next: "^15.1.0"
+  react: "^19.0.0"
+  react-dom: "^19.0.0"
   
   # TypeScript
-  typescript: "^5.4.0"
-  "@types/react": "^18.3.0"
-  "@types/react-dom": "^18.3.0"
-  "@types/node": "^20.12.0"
+  typescript: "^5.7.0"
+  "@types/react": "^19.0.0"
+  "@types/react-dom": "^19.0.0"
+  "@types/node": "^22.10.0"
   
   # Supabase
-  "@supabase/ssr": "^0.3.0"
-  "@supabase/supabase-js": "^2.43.0"
+  "@supabase/ssr": "^0.8.0"
+  "@supabase/supabase-js": "^2.48.0"
   
   # Database
-  prisma: "^5.14.0"
-  "@prisma/client": "^5.14.0"
+  prisma: "^6.1.0"
+  "@prisma/client": "^6.1.0"
   
   # UI and styling
-  tailwindcss: "^3.4.0"
+  tailwindcss: "^3.4.17"
   "@radix-ui/react-slot": "^1.0.2"
   "class-variance-authority": "^0.7.0"
   clsx: "^2.1.0"
   "tailwind-merge": "^2.3.0"
   
   # Forms and validation
-  "react-hook-form": "^7.51.0"
-  "@hookform/resolvers": "^3.3.0"
-  zod: "^3.23.0"
+  "react-hook-form": "^7.54.0"
+  "@hookform/resolvers": "^3.10.0"
+  zod: "^3.24.1"
   
   # Development tools
-  eslint: "^8.57.0"
-  "@next/eslint-config-next": "^14.2.0"
-  "eslint-config-next": "^14.2.0"
-  prettier: "^3.2.0"
+  eslint: "^9.18.0"
+  "@next/eslint-config-next": "^15.1.0"
+  "eslint-config-next": "^15.1.0"
+  prettier: "^3.4.2"
   
   # tRPC
   "@trpc/server": "^10.45.0"

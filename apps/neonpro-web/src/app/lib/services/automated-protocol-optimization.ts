@@ -31,15 +31,16 @@ import type {
 import { createClient } from '../../utils/supabase/client';
 
 export class AutomatedProtocolOptimizationService {
-  private supabase = createClient();
+  // Supabase client created per method for proper request context
 
   // Protocol Version Management
   async createProtocolVersion(data: CreateProtocolVersionRequest): Promise<ProtocolVersion> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_versions')
       .insert({
         ...data,
-        created_by: (await this.supabase.auth.getUser()).data.user?.id,
+        created_by: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -57,7 +58,7 @@ export class AutomatedProtocolOptimizationService {
     page?: number;
     per_page?: number;
   }): Promise<{ data: ProtocolVersionWithAnalytics[]; total: number }> {
-    let query = this.supabase
+    let query = supabase
       .from('protocol_versions')
       .select(`
         *,
@@ -105,7 +106,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getProtocolVersionById(id: string): Promise<ProtocolVersion | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('protocol_versions')
       .select('*')
       .eq('id', id)
@@ -116,7 +118,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async updateProtocolVersion(id: string, data: UpdateProtocolVersionRequest): Promise<ProtocolVersion> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_versions')
       .update({
         ...data,
@@ -131,7 +134,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async deleteProtocolVersion(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('protocol_versions')
       .delete()
       .eq('id', id);
@@ -141,11 +144,12 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Outcome Tracking
   async createProtocolOutcome(data: CreateProtocolOutcomeRequest): Promise<ProtocolOutcome> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_outcomes')
       .insert({
         ...data,
-        recorded_by: (await this.supabase.auth.getUser()).data.user?.id,
+        recorded_by: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -168,7 +172,7 @@ export class AutomatedProtocolOptimizationService {
     page?: number;
     per_page?: number;
   }): Promise<{ data: ProtocolOutcome[]; total: number }> {
-    let query = this.supabase.from('protocol_outcomes').select('*');
+    let query = supabase.from('protocol_outcomes').select('*');
 
     if (filters?.protocol_version_id) {
       query = query.eq('protocol_version_id', filters.protocol_version_id);
@@ -197,7 +201,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   private async getProtocolOutcomeCount(protocol_version_id: string): Promise<number> {
-    const { count, error } = await this.supabase
+    const { count, error } = await supabase
       .from('protocol_outcomes')
       .select('*', { count: 'exact', head: true })
       .eq('protocol_version_id', protocol_version_id);
@@ -208,11 +212,12 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Feedback Management
   async createProtocolFeedback(data: CreateProtocolFeedbackRequest): Promise<ProtocolFeedback> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_feedback')
       .insert({
         ...data,
-        provider_id: (await this.supabase.auth.getUser()).data.user?.id,
+        provider_id: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -238,7 +243,7 @@ export class AutomatedProtocolOptimizationService {
     page?: number;
     per_page?: number;
   }): Promise<{ data: ProtocolFeedback[]; total: number }> {
-    let query = this.supabase.from('protocol_feedback').select('*');
+    let query = supabase.from('protocol_feedback').select('*');
 
     if (filters?.protocol_id) {
       query = query.eq('protocol_id', filters.protocol_id);
@@ -270,11 +275,12 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async updateProtocolFeedback(id: string, data: UpdateProtocolFeedbackRequest): Promise<ProtocolFeedback> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_feedback')
       .update({
         ...data,
-        reviewed_by: (await this.supabase.auth.getUser()).data.user?.id,
+        reviewed_by: (await supabase.auth.getUser()).data.user?.id,
         reviewed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -287,7 +293,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   private async getProtocolFeedbackCount(protocol_id: string): Promise<number> {
-    const { count, error } = await this.supabase
+    const { count, error } = await supabase
       .from('protocol_feedback')
       .select('*', { count: 'exact', head: true })
       .eq('protocol_id', protocol_id);
@@ -313,7 +319,7 @@ export class AutomatedProtocolOptimizationService {
     const analysis = await this.performOptimizationAnalysis(protocol, outcomes.data, feedback.data);
 
     // Store optimization results
-    const { data: result, error } = await this.supabase
+    const { data: result, error } = await supabase
       .from('optimization_results')
       .insert({
         protocol_id,
@@ -449,7 +455,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getOptimizationResults(protocol_id?: string): Promise<ProtocolOptimizationQueue> {
-    let query = this.supabase.from('optimization_results').select('*');
+    let query = supabase.from('optimization_results').select('*');
 
     if (protocol_id) {
       query = query.eq('protocol_id', protocol_id);
@@ -478,11 +484,12 @@ export class AutomatedProtocolOptimizationService {
 
   // A/B Testing and Experiments
   async createProtocolExperiment(data: CreateProtocolExperimentRequest): Promise<ProtocolExperiment> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_experiments')
       .insert({
         ...data,
-        created_by: (await this.supabase.auth.getUser()).data.user?.id,
+        created_by: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -494,7 +501,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async updateProtocolExperiment(id: string, data: UpdateProtocolExperimentRequest): Promise<ProtocolExperiment> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_experiments')
       .update({
         ...data,
@@ -514,7 +522,7 @@ export class AutomatedProtocolOptimizationService {
     page?: number;
     per_page?: number;
   }): Promise<{ data: ProtocolExperiment[]; total: number }> {
-    let query = this.supabase.from('protocol_experiments').select('*');
+    let query = supabase.from('protocol_experiments').select('*');
 
     if (filters?.status) {
       query = query.eq('status', filters.status);
@@ -537,7 +545,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async analyzeExperimentResults(experiment_id: string): Promise<ProtocolExperimentResults> {
-    const { data: experiment, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: experiment, error } = await supabase
       .from('protocol_experiments')
       .select('*')
       .eq('id', experiment_id)
@@ -602,11 +611,12 @@ export class AutomatedProtocolOptimizationService {
 
   // Evidence and Compliance Management
   async createProtocolEvidence(data: CreateProtocolEvidenceRequest): Promise<ProtocolEvidence> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_evidence')
       .insert({
         ...data,
-        created_by: (await this.supabase.auth.getUser()).data.user?.id,
+        created_by: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -618,7 +628,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getProtocolEvidence(protocol_id: string): Promise<ProtocolEvidence[]> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('protocol_evidence')
       .select('*')
       .eq('protocol_id', protocol_id)
@@ -630,11 +641,12 @@ export class AutomatedProtocolOptimizationService {
 
   // Protocol Implementation and Distribution
   async createProtocolImplementation(data: CreateProtocolImplementationRequest): Promise<ProtocolImplementation> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_implementations')
       .insert({
         ...data,
-        implemented_by: (await this.supabase.auth.getUser()).data.user?.id,
+        implemented_by: (await supabase.auth.getUser()).data.user?.id,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -646,7 +658,8 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async updateProtocolImplementation(id: string, data: UpdateProtocolImplementationRequest): Promise<ProtocolImplementation> {
-    const { data: result, error } = await this.supabase
+    const supabase = await createClient();
+    const { data: result, error } = await supabase
       .from('protocol_implementations')
       .update({
         ...data,
@@ -661,7 +674,7 @@ export class AutomatedProtocolOptimizationService {
   }
 
   async getProtocolImplementations(protocol_version_id?: string): Promise<ProtocolImplementation[]> {
-    let query = this.supabase.from('protocol_implementations').select('*');
+    let query = supabase.from('protocol_implementations').select('*');
 
     if (protocol_version_id) {
       query = query.eq('protocol_version_id', protocol_version_id);
@@ -678,7 +691,7 @@ export class AutomatedProtocolOptimizationService {
     const { protocol_version_id, analytics_period, period_start, period_end } = request;
 
     // Get outcomes for the specified period
-    let outcomeQuery = this.supabase
+    let outcomeQuery = supabase
       .from('protocol_outcomes')
       .select('*')
       .gte('outcome_date', period_start)
@@ -728,7 +741,7 @@ export class AutomatedProtocolOptimizationService {
       created_at: new Date().toISOString(),
     };
 
-    const { data: result, error } = await this.supabase
+    const { data: result, error } = await supabase
       .from('protocol_analytics')
       .insert(analyticsData)
       .select()
@@ -798,7 +811,8 @@ export class AutomatedProtocolOptimizationService {
   // Helper Methods
   private async processPriorityFeedback(feedback_id: string): Promise<void> {
     // Auto-escalate critical feedback
-    await this.supabase
+    const supabase = await createClient();
+    await supabase
       .from('protocol_feedback')
       .update({
         status: 'reviewed',
@@ -813,7 +827,7 @@ export class AutomatedProtocolOptimizationService {
       this.getProtocolVersionById(protocol_id),
       this.getProtocolOutcomes({ protocol_version_id: protocol_id }),
       this.getProtocolFeedback({ protocol_id }),
-      this.supabase.from('optimization_results').select('*').eq('protocol_id', protocol_id),
+      supabase.from('optimization_results').select('*').eq('protocol_id', protocol_id),
     ]);
 
     if (!protocol) {
@@ -873,3 +887,5 @@ export class AutomatedProtocolOptimizationService {
     };
   }
 }
+
+

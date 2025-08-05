@@ -1,4 +1,4 @@
-// Analytics Export Service - STORY-SUB-002 Task 7
+﻿// Analytics Export Service - STORY-SUB-002 Task 7
 // Created: 2025-01-22
 // High-performance export service with PDF, Excel, and CSV generation
 
@@ -19,7 +19,7 @@ import type {
   DEFAULT_CSV_OPTIONS
 } from './types'
 import { AnalyticsService } from '../service'
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 // ============================================================================
 // EXPORT SERVICE CLASS
@@ -797,3 +797,4 @@ export class AnalyticsExportService {
 
 // Export singleton instance
 export const analyticsExportService = new AnalyticsExportService()
+

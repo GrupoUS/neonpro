@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { intelligentErrorHandler } from "@/lib/error-handling/intelligent-error-handler";
 

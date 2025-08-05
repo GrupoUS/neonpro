@@ -1,4 +1,4 @@
-// SSO Callback Route
+﻿// SSO Callback Route
 // Story 1.3: SSO Integration - OAuth Callback Processing
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Set session cookies
-    const cookieStore = cookies();
+// Cookie instantiation moved inside request handlers;
     
     if (result.session) {
       // Set session cookie
@@ -180,3 +180,4 @@ export async function DELETE() {
     { status: 405 }
   );
 }
+

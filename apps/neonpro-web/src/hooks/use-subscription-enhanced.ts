@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Enhanced Subscription Hook v2 - Performance Optimized
  * 
  * High-performance React hook for subscription status management:
@@ -13,7 +13,7 @@
  * @version 2.0.0 - Performance Optimized
  */
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { enhancedSubscriptionCache } from '@/lib/subscription-cache-enhanced'
 import { subscriptionPerformanceMonitor } from '@/lib/subscription-performance-monitor'
 import { subscriptionQueryOptimizer } from '@/lib/subscription-query-optimizer'
@@ -129,7 +129,7 @@ export function useSubscription(
   const subscriptionRef = useRef<any>(null)
 
   // Get current user from Supabase auth
-  const supabase = createClient()
+  const supabase = await createClient()
   const [currentUserId, setCurrentUserId] = useState<string | null>(userId || null)
 
   // Get user ID if not provided
@@ -597,3 +597,4 @@ export function useSubscriptionLimits(userId?: string): {
 
   return { getUsageLimit, subscription, isLoading, refetch }
 }
+

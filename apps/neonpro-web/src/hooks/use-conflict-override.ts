@@ -1,8 +1,8 @@
-// Hook for managing conflict override permissions and workflows
+﻿// Hook for managing conflict override permissions and workflows
 'use client';
 
 import { useState, useCallback } from 'react';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export type OverrideReason = 
@@ -50,7 +50,7 @@ export function useConflictOverride() {
   const [overrideRequests, setOverrideRequests] = useState<OverrideRequest[]>([]);
   const [userPermissions, setUserPermissions] = useState<OverridePermission | null>(null);
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Check user permissions for override system
   const checkOverridePermissions = useCallback(async () => {
@@ -358,3 +358,4 @@ export function useConflictOverride() {
     checkOverridePermissions
   };
 }
+

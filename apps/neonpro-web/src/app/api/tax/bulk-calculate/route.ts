@@ -1,14 +1,14 @@
-// Bulk Tax Calculation API Endpoint
+﻿// Bulk Tax Calculation API Endpoint
 // Story 5.5: Calculate Brazilian taxes for multiple services
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { brazilianTaxEngine } from '@/lib/services/tax/tax-engine';
 import { bulkTaxCalculationRequestSchema } from '@/lib/validations/brazilian-tax';
 
 export async function POST(request: Request) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { session }, error: authError } = await supabase.auth.getSession();
@@ -118,3 +118,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

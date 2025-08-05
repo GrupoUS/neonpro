@@ -1,9 +1,9 @@
-// Patient Authentication Utils
+﻿// Patient Authentication Utils
 // Story 1.3, Task 1: Patient Authentication System with LGPD Compliance
 // Created: Healthcare-grade authentication utilities for patient portal
 
-import { createServerClient } from '@/app/utils/supabase/server'
-import { createClient } from '@/app/utils/supabase/client'
+import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/client'
 
 export interface PatientProfile {
   id: string
@@ -195,7 +195,7 @@ export class PatientAuthClient {
   
   static async registerPatient(data: PatientRegistrationData): Promise<AuthResult> {
     try {
-      const supabase = createClient()
+      const supabase = await createClient()
       
       // Register user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -242,7 +242,7 @@ export class PatientAuthClient {
   }  
   static async loginPatient(email: string, password: string): Promise<AuthResult> {
     try {
-      const supabase = createClient()
+      const supabase = await createClient()
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -292,3 +292,4 @@ export class PatientAuthClient {
     }
   }
 }
+

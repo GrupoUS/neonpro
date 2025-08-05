@@ -124,7 +124,7 @@ export interface ProductCorrelation {
  * Advanced analytics for consumption patterns and cost optimization
  */
 export class ConsumptionAnalyzer {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
 
   /**
    * Get comprehensive consumption analytics for cost center

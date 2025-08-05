@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TASK-001: Foundation Setup & Baseline
  * Error Tracking and Monitoring System
  * 
@@ -6,7 +6,7 @@
  * and baseline error rate establishment for enhancement safety.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface ErrorEvent {
   error_type: 'javascript' | 'api' | 'database' | 'network' | 'validation' | 'authentication';
@@ -497,3 +497,4 @@ export function useErrorTracking() {
     getErrorBaseline: errorTracker.getErrorBaseline.bind(errorTracker)
   };
 }
+

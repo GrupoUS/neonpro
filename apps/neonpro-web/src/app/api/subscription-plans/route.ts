@@ -3,7 +3,7 @@
 // Subscription plans management endpoints
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { subscriptionManager } from '@/lib/payments/recurring/subscription-manager';
 import { logger } from '@/lib/utils/logger';
@@ -44,7 +44,7 @@ const updatePlanSchema = z.object({
 // GET /api/subscription-plans - List subscription plans
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 // POST /api/subscription-plans - Create new subscription plan
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/subscription-plans - Bulk update plans (admin only)
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -284,7 +284,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/subscription-plans - Bulk deactivate plans (admin only)
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -350,3 +350,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

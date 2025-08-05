@@ -12,7 +12,7 @@
  * @version 1.0.0 - Performance Optimized
  */
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { enhancedSubscriptionCache } from './subscription-cache-enhanced'
 import { subscriptionPerformanceMonitor } from './subscription-performance-monitor'
 import type { SubscriptionValidationResult, UserSubscription } from './subscription-status'

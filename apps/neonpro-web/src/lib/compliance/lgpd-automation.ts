@@ -133,7 +133,7 @@ export class LGPDAutoConsentService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.complianceService = new LGPDComplianceService();
@@ -315,7 +315,7 @@ export class LGPDAutoDataSubjectRightsService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.complianceService = new LGPDComplianceService();
@@ -605,7 +605,7 @@ export class LGPDAutoAuditService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.auditService = new LGPDAuditTrailService();
@@ -1045,7 +1045,7 @@ export class LGPDAutoReportingService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
   }
@@ -1485,7 +1485,7 @@ export class LGPDAutoAnonymizationService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     this.encryptionService = new LGPDEncryptionService();
@@ -1895,3 +1895,4 @@ export class LGPDAutoAnonymizationService {
     }
   }
 }
+

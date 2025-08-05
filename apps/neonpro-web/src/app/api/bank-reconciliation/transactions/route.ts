@@ -1,4 +1,4 @@
-// NeonPro - Bank Transactions API Routes
+﻿// NeonPro - Bank Transactions API Routes
 // Story 6.1 - Task 4: Bank Reconciliation System
 // API endpoints for individual bank transaction management
 
@@ -55,7 +55,7 @@ const MatchTransactionSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -228,7 +228,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -266,7 +266,7 @@ export async function POST(request: NextRequest) {
       case 'bulk_update': {
         const validatedData = BulkUpdateSchema.parse(body);
         
-        let updateData: any = {};
+        const updateData: any = {};
         
         switch (validatedData.action) {
           case 'mark_matched':
@@ -371,7 +371,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -466,7 +466,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -539,3 +539,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

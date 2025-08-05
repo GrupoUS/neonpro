@@ -1146,7 +1146,7 @@ let mfaServiceInstance: MFAService | null = null;
  */
 export function getMFAService(): MFAService {
   if (!mfaServiceInstance) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseUrl = process.env.SUPABASE_URL!;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     
     mfaServiceInstance = new MFAService(supabaseUrl, supabaseKey);
@@ -1193,3 +1193,4 @@ export const MFAUtils = {
 };
 
 export default MFAService;
+

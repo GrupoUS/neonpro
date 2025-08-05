@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI-Powered Automatic Scheduling System
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
  * 
@@ -785,3 +785,4 @@ export {
 
 // Default export
 export default AISchedulingSystem
+

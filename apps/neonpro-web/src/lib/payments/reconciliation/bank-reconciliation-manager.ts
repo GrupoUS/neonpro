@@ -1,4 +1,4 @@
-// NeonPro - Bank Reconciliation Manager
+﻿// NeonPro - Bank Reconciliation Manager
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Comprehensive bank reconciliation service for automated transaction matching
 
@@ -614,3 +614,4 @@ export function getBankReconciliationManager(): BankReconciliationManager {
   }
   return bankReconciliationManager;
 }
+

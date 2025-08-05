@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Data Retention Manager
  * Story 1.5: LGPD Compliance Automation
  * 
@@ -6,7 +6,7 @@
  * with configurable retention periods, automated cleanup, and audit trail integration.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 import { logger } from '@/lib/logger';
 import { LGPDDataType, LGPDPurpose } from './consent-automation-manager';
@@ -672,3 +672,4 @@ export class DataRetentionManager {
 
 // Export singleton instance
 export const dataRetentionManager = new DataRetentionManager();
+

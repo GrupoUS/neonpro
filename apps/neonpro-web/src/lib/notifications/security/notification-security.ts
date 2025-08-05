@@ -102,7 +102,7 @@ export class NotificationSecurity {
 
   constructor(config?: Partial<SecurityConfig>) {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -919,3 +919,4 @@ export class NotificationSecurity {
 }
 
 export default NotificationSecurity;
+

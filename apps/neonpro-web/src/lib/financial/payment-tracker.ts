@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Payment Tracking System
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
  * 
@@ -1335,3 +1335,4 @@ export {
   type PaymentMethod,
   type PaymentGateway
 }
+

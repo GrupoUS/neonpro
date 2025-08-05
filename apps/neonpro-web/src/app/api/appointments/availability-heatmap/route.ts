@@ -1,4 +1,4 @@
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { addDays, addMinutes, format, parseISO } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 

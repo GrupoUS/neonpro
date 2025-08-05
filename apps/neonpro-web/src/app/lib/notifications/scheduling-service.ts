@@ -3,7 +3,7 @@
  * Manages scheduled notifications with timezone support and retry logic
  */
 
-import { supabase } from '@/app/utils/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { NotificationType, NotificationChannel, NotificationPreferences } from './config';
 import { z } from 'zod';
 

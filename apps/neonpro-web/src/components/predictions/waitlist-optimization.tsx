@@ -302,7 +302,7 @@ export function WaitlistOptimization({
    * Filter and sort waitlist entries
    */
   const filteredEntries = useMemo(() => {
-    let filtered = waitlistEntries.filter(entry => {
+    const filtered = waitlistEntries.filter(entry => {
       if (priorityFilter !== 'ALL' && entry.priority !== priorityFilter) return false;
       if (specialtyFilter !== 'ALL' && entry.specialty !== specialtyFilter) return false;
       return true;

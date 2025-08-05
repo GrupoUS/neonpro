@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vision Analysis Performance Monitoring API
  * GET /api/vision/performance
  * 
@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { withErrorMonitoring } from '@/lib/monitoring';
 
@@ -20,7 +20,7 @@ const performanceQuerySchema = z.object({
 
 // GET - Performance metrics
 export const GET = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -233,7 +233,7 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
 
 // POST - Record performance metric
 export const POST = withErrorMonitoring(async (request: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Authenticate user
@@ -299,3 +299,4 @@ export const POST = withErrorMonitoring(async (request: NextRequest) => {
     );
   }
 });
+

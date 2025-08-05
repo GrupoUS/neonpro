@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/app/utils/supabase/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { securityAuditFramework } from '@/lib/auth/security-audit-framework';
 
 export async function POST(request: NextRequest) {

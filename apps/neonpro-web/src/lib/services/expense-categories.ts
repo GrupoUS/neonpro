@@ -1,10 +1,10 @@
-// lib/services/expense-categories.ts
+﻿// lib/services/expense-categories.ts
 // Service layer for expense categories management
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { ExpenseCategory } from '@/lib/types/accounts-payable'
 
-const supabase = createClient()
+const supabase = await createClient()
 
 export class ExpenseCategoryService {
   
@@ -179,3 +179,4 @@ export class ExpenseCategoryService {
     }
   }
 }
+

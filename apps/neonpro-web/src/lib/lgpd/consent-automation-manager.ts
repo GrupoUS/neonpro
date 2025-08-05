@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Consent Automation Manager
  * Story 1.5: LGPD Compliance Automation
  * 
@@ -6,7 +6,7 @@
  * throughout the authentication system with granular permission tracking.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/types/database';
 import { SecurityAuditLogger } from '@/lib/auth/security-audit-logger';
 import { logger } from '@/lib/logger';
@@ -602,3 +602,4 @@ export class ConsentAutomationManager {
 
 // Export singleton instance
 export const consentAutomationManager = new ConsentAutomationManager();
+

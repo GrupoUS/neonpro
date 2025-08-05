@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     const query = GetDelinquencyQuerySchema.parse(Object.fromEntries(searchParams));
     
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     }
     
     const delinquencyManager = new DelinquencyManager(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
     const { action, ...data } = body;
     
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     }
     
     const delinquencyManager = new DelinquencyManager(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         smtp: {
@@ -307,7 +307,7 @@ export async function PUT(request: NextRequest) {
     const { action, ...data } = body;
     
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -453,7 +453,7 @@ export async function DELETE(request: NextRequest) {
     }
     
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -524,3 +524,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

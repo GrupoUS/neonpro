@@ -37,13 +37,13 @@ export class SupplierManagementService {
 
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     this.supabase = createClient(
-      supabaseUrl || process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      supabaseKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      supabaseUrl || process.env.SUPABASE_URL!,
+      supabaseKey || process.env.SUPABASE_ANON_KEY!
     );
   }
 
   private async getSupabaseClient(): Promise<SupabaseClient> {
-    return this.supabase;
+    return supabase;
   }
 
   // =====================================================================================
@@ -51,10 +51,10 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createSupplier(clinicId: string, supplierData: CreateSupplierRequest): Promise<Supplier> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Generate unique supplier code if not provided or verify uniqueness
     const supplierCode = supplierData.supplier_code;
+    const supabase = await createClient();
     const { data: existingCode } = await supabase
       .from('suppliers')
       .select('id')
@@ -89,8 +89,8 @@ export class SupplierManagementService {
   }
 
   async getSupplier(clinicId: string, supplierId: string): Promise<Supplier | null> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('suppliers')
       .select('*')
@@ -110,8 +110,7 @@ export class SupplierManagementService {
     supplierId: string, 
     updates: UpdateSupplierRequest
   ): Promise<Supplier> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -133,9 +132,9 @@ export class SupplierManagementService {
   }
 
   async deleteSupplier(clinicId: string, supplierId: string): Promise<void> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Check for dependencies
+    const supabase = await createClient();
     const { data: contracts } = await supabase
       .from('supplier_contracts')
       .select('id')
@@ -164,8 +163,7 @@ export class SupplierManagementService {
     page = 1,
     limit = 50
   ): Promise<SupplierListResponse> {
-    const supabase = await this.getSupabaseClient();
-    
+
     let query = supabase
       .from('suppliers')
       .select('*', { count: 'exact' })
@@ -231,9 +229,9 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createContract(contractData: CreateContractRequest): Promise<SupplierContract> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Check if contract number is unique for the supplier
+    const supabase = await createClient();
     const { data: existingContract } = await supabase
       .from('supplier_contracts')
       .select('id')
@@ -269,8 +267,8 @@ export class SupplierManagementService {
   }
 
   async getContract(contractId: string): Promise<SupplierContract | null> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_contracts')
       .select(`
@@ -291,8 +289,7 @@ export class SupplierManagementService {
     contractId: string, 
     updates: Partial<CreateContractRequest>
   ): Promise<SupplierContract> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -316,8 +313,8 @@ export class SupplierManagementService {
   }
 
   async getSupplierContracts(supplierId: string): Promise<SupplierContract[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_contracts')
       .select(`
@@ -335,10 +332,10 @@ export class SupplierManagementService {
   }
 
   async getContractRenewalAlerts(clinicId: string, daysAhead = 90): Promise<ContractRenewalAlert[]> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const alertDate = new Date();
     alertDate.setDate(alertDate.getDate() + daysAhead);
+    const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('contract_renewal_alerts')
@@ -359,8 +356,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createContact(contactData: any): Promise<SupplierContact> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const contactToCreate = {
       ...contactData,
       created_at: new Date().toISOString(),
@@ -384,8 +380,8 @@ export class SupplierManagementService {
   }
 
   async getSupplierContacts(supplierId: string): Promise<SupplierContact[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_contacts')
       .select(`
@@ -408,8 +404,7 @@ export class SupplierManagementService {
     contactId: string, 
     updates: Partial<any>
   ): Promise<SupplierContact> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -442,8 +437,7 @@ export class SupplierManagementService {
     periodEnd: string,
     evaluationType: EvaluationType
   ): Promise<SupplierPerformance> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Get performance data from various sources
     const [ordersData, qualityData, financialData] = await Promise.all([
       this.getDeliveryPerformanceData(supplierId, periodStart, periodEnd),
@@ -506,8 +500,7 @@ export class SupplierManagementService {
   }
 
   async createEvaluation(evaluationData: CreateEvaluationRequest): Promise<SupplierEvaluation> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Calculate weighted score and grade
     const weights = {
       delivery_reliability: 0.25,
@@ -554,8 +547,8 @@ export class SupplierManagementService {
   }
 
   async getSupplierEvaluations(supplierId: string): Promise<SupplierEvaluation[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_evaluations')
       .select(`
@@ -577,8 +570,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createQualityIssue(issueData: CreateQualityIssueRequest): Promise<SupplierQualityIssue> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const issueToCreate = {
       ...issueData,
       issue_date: new Date().toISOString(),
@@ -607,8 +599,7 @@ export class SupplierManagementService {
     issueId: string, 
     updates: Partial<CreateQualityIssueRequest & { status: IssueStatus }>
   ): Promise<SupplierQualityIssue> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const updateData = {
       ...updates,
       updated_at: new Date().toISOString()
@@ -632,8 +623,8 @@ export class SupplierManagementService {
   }
 
   async getQualityIssuesSummary(clinicId: string): Promise<QualityIssuesSummary[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('quality_issues_summary')
       .select('*')
@@ -652,8 +643,7 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async createCommunication(communicationData: any): Promise<SupplierCommunication> {
-    const supabase = await this.getSupabaseClient();
-    
+
     const communicationToCreate = {
       ...communicationData,
       communication_date: new Date().toISOString(),
@@ -680,8 +670,8 @@ export class SupplierManagementService {
   }
 
   async getSupplierCommunications(supplierId: string): Promise<SupplierCommunication[]> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('supplier_communications')
       .select(`
@@ -704,9 +694,9 @@ export class SupplierManagementService {
   // =====================================================================================
 
   async getDashboardData(clinicId: string): Promise<SupplierDashboardData> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // Get basic supplier counts
+    const supabase = await createClient();
     const { data: suppliers } = await supabase
       .from('suppliers')
       .select('id, supplier_type, status, is_preferred, is_critical, performance_score')
@@ -770,8 +760,7 @@ export class SupplierManagementService {
     periodStart: string,
     periodEnd: string
   ): Promise<SupplierAnalytics> {
-    const supabase = await this.getSupabaseClient();
-    
+
     // This would require complex queries joining with orders, invoices, etc.
     // For now, return basic structure
     return {
@@ -793,8 +782,8 @@ export class SupplierManagementService {
   }
 
   async compareSuppliers(supplierIds: string[]): Promise<SupplierComparison> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data: suppliers, error } = await supabase
       .from('suppliers')
       .select('*')
@@ -836,8 +825,8 @@ export class SupplierManagementService {
     periodStart: string,
     periodEnd: string
   ): Promise<any> {
-    const supabase = await this.getSupabaseClient();
-    
+    const supabase = await createClient();
+
     const { data: qualityIssues } = await supabase
       .from('supplier_quality_issues')
       .select('*')
@@ -890,3 +879,5 @@ export class SupplierManagementService {
     return 'F';
   }
 }
+
+

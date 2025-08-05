@@ -538,4 +538,24 @@ export class LGPDComplianceService {
   }
 }
 
+// Export aliases for compatibility
+export { LGPDComplianceService as LGPDCore };
+
+// Export types that are being imported
+export type {
+  ConsentType,
+  ConsentStatus,
+  LegalBasis,
+  AuditEventType
+} from '../../types/lgpd';
+
+// Export DataSubjectRight as DataSubjectRequestType for compatibility
+export { DataSubjectRight as DataSubjectRequestType } from '../../types/lgpd';
+
+// Export RequestStatus as DataSubjectRequestStatus for compatibility  
+export { RequestStatus as DataSubjectRequestStatus } from '../../types/lgpd';
+
+// Export the main LGPDManager class
+export { LGPDComplianceService as LGPDManager };
+
 export default LGPDComplianceService;

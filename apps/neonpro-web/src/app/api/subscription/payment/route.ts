@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import type { Database } from '@/types/database';
 
@@ -16,7 +16,7 @@ import type { Database } from '@/types/database';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         { 
           error: 'Existing active subscription found',
           code: 'EXISTING_SUBSCRIPTION',
-          message: 'Você já possui uma assinatura ativa. Para alterar o plano, use a função de upgrade/downgrade.'
+          message: 'Voce ja possui uma assinatura ativa. Para alterar o plano, use a funcao de upgrade/downgrade.'
         },
         { status: 409 }
       );

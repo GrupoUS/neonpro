@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Integrated Session Security Manager for NeonPro
  * Combines all session security features into a unified system
  */
@@ -8,7 +8,7 @@ import { CSRFProtection } from './csrf-protection';
 import { SessionHijackingProtection, SessionFingerprint } from './session-hijacking-protection';
 import { SessionTimeoutManager } from './session-timeout-manager';
 import { SessionManager } from '../auth/session-manager';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface SecurityConfig {
   csrf: {
@@ -340,7 +340,7 @@ export class IntegratedSessionSecurity {
     sessionId: string
   ): Promise<SessionSecurityContext | null> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get session information
       const { data: sessionData } = await supabase
@@ -393,7 +393,7 @@ export class IntegratedSessionSecurity {
     config: SecurityConfig
   ): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       await supabase
         .from('session_security_configs')
@@ -414,7 +414,7 @@ export class IntegratedSessionSecurity {
     sessionId: string
   ): Promise<SecurityConfig> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       const { data } = await supabase
         .from('session_security_configs')
@@ -438,7 +438,7 @@ export class IntegratedSessionSecurity {
       await CSRFProtection.cleanupExpiredTokens();
       
       // Cleanup old security events (older than 90 days)
-      const supabase = createClient();
+      const supabase = await createClient();
       const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
       
       await supabase
@@ -453,3 +453,4 @@ export class IntegratedSessionSecurity {
 }
 
 export default IntegratedSessionSecurity;
+

@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { createClient } from "@/app/utils/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import type {
   CreateInvoiceData,
   CreatePaymentData,
@@ -32,7 +32,7 @@ export function useBilling() {
     useState<FinancialSummary | null>(null);
   const [settings, setSettings] = useState<FinancialSettings | null>(null);
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // =====================================================
   // SERVICES MANAGEMENT
@@ -787,3 +787,4 @@ export function useBilling() {
     calculatePaymentBalance,
   };
 }
+

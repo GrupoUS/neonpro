@@ -1,9 +1,9 @@
-// Stock Notifications Service
+﻿// Stock Notifications Service
 // Unified notification system for stock alerts (email, push, webhook)
 // Story 11.4: Enhanced Stock Alerts System
 // Created: 2025-01-21 (Claude Code Implementation)
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import emailService from '@/lib/email-service';
 import pushNotificationService from '@/lib/push-notification-service';
 import { Resend } from 'resend';
@@ -932,3 +932,4 @@ export type {
   StockAlertNotificationData,
   ResolutionNotificationData,
 };
+

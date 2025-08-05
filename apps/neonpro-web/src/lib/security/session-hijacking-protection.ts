@@ -1,10 +1,10 @@
-/**
+﻿/**
  * Session Hijacking Protection for NeonPro
  * Detects and prevents session hijacking attempts
  */
 
 import { NextRequest } from 'next/server';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { createHash } from 'crypto';
 
 export interface SessionFingerprint {
@@ -73,7 +73,7 @@ export class SessionHijackingProtection {
     fingerprint: SessionFingerprint
   ): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const fingerprintHash = this.createFingerprintHash(fingerprint);
       
       const { error } = await supabase
@@ -104,7 +104,7 @@ export class SessionHijackingProtection {
     currentFingerprint: SessionFingerprint
   ): Promise<SessionValidationResult> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get stored fingerprint
       const { data: storedSession, error } = await supabase
@@ -216,7 +216,7 @@ export class SessionHijackingProtection {
     sessionsToTerminate: string[];
   }> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Get all active sessions for user
       const { data: sessions, error } = await supabase
@@ -281,7 +281,7 @@ export class SessionHijackingProtection {
    */
   static async terminateSessions(sessionIds: string[]): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       // Remove session fingerprints
       const { error: fingerprintError } = await supabase
@@ -312,7 +312,7 @@ export class SessionHijackingProtection {
    */
   static async logSecurityEvent(event: SessionSecurityEvent): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       
       await supabase
         .from('security_events')
@@ -356,3 +356,4 @@ export class SessionHijackingProtection {
 }
 
 export default SessionHijackingProtection;
+

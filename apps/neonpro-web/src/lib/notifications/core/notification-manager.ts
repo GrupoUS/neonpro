@@ -616,4 +616,6 @@ export class NotificationManager {
   }
 }
 
+// Export both class and singleton instance
+export const notificationManager = new NotificationManager();
 export default NotificationManager;

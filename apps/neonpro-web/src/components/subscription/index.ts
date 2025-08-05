@@ -1,12 +1,12 @@
-/**
- * Subscription Components Exports
- * Epic: EPIC-001 - Advanced Subscription Management
- * Story: EPIC-001.1 - Subscription Middleware & Management System
- */
+﻿export { default as SubscriptionStatusCard } from './status-card';
+export { default as CompactSubscriptionWidget } from './compact-widget';
+export { default as SubscriptionDashboardWidget } from './dashboard-widget';
+export { default as DetailedSubscriptionWidget } from './detailed-widget';
+export { default as FeatureGate } from './feature-gate';
+export { default as ProFeatureGate } from './pro-feature-gate';
+export { default as EnterpriseFeatureGate } from './enterprise-feature-gate';
+export { default as UsageLimitGate } from './usage-limit-gate';
+export { default as SubscriptionAlert } from './subscription-alert';
+export { default as SubscriptionNotificationProvider } from './notification-provider';
 
-export { default as SubscriptionDashboard } from './SubscriptionDashboard';
-export { default as PlanSelector } from './PlanSelector';
-
-// Export types for use in other components
-export type { default as SubscriptionDashboardProps } from './SubscriptionDashboard';
-export type { default as PlanSelectorProps } from './PlanSelector';
+// Create placeholder components

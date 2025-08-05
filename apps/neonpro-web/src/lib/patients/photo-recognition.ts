@@ -1,5 +1,5 @@
-// lib/patients/photo-recognition.ts
-import { createClient } from "@/app/utils/supabase/server";
+﻿// lib/patients/photo-recognition.ts
+import { createClient } from "@/lib/supabase/server";
 
 export interface PhotoData {
   id: string;
@@ -426,3 +426,4 @@ export class PhotoRecognitionSystem {
 }
 
 export const photoRecognitionSystem = new PhotoRecognitionSystem();
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Predictive Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
  * 
@@ -1328,3 +1328,4 @@ export const ForecastRequestSchema = z.object({
 
 // Export singleton instance
 export const predictiveAnalyticsEngine = new PredictiveAnalyticsEngine();
+

@@ -183,7 +183,7 @@ const formatFileSize = (bytes: number): string => {
 
 const getNextRunTime = (schedule: ReportSchedule): string => {
   const now = new Date();
-  let nextRun = new Date();
+  const nextRun = new Date();
   
   switch (schedule.frequency) {
     case 'daily':

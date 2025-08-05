@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Enhanced Session Management System
  * 
  * Provides secure token storage, session timeout management,
@@ -408,3 +408,4 @@ export const sessionManager = new SessionManager()
 // Export types
 export type { SessionData, SessionActivity }
 export { SESSION_CONFIG }
+

@@ -350,7 +350,7 @@ export type TransferStatus = 'solicitada' | 'aprovada' | 'em_transito' | 'conclu
  * Core logic for managing all stock outputs with FIFO and consumption tracking
  */
 export class StockOutputManager {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
 
   /**
    * Create stock output with automatic FIFO batch selection

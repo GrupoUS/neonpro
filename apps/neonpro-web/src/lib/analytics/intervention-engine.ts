@@ -156,7 +156,7 @@ export interface InterventionAnalytics {
 
 // Main intervention engine class
 export class InterventionEngine {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
   private interventionTypes: Map<string, InterventionType> = new Map();
   private activeCampaigns: Map<string, InterventionCampaign> = new Map();
 

@@ -3,7 +3,7 @@
 
 import { createNeonProAIChatEngine } from "@/app/lib/ai/chat-engine-v2";
 import { AIRequest, UniversalChatContext } from "@/app/lib/ai/types";
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

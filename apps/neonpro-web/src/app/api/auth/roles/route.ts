@@ -1,4 +1,4 @@
-/**
+﻿/**
  * API Route: Role Management Endpoint
  * Story 1.2: Role-Based Access Control Implementation
  * 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { clinicId, role, limit, offset } = validationResult.data;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Build query
     let query = supabase
@@ -206,7 +206,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Get target user details
     const { data: targetUser, error: fetchError } = await supabase
@@ -359,3 +359,4 @@ export async function OPTIONS(request: NextRequest) {
     }
   });
 }
+

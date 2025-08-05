@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🤖 NeonPro Churn Prediction Engine
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Predição e Prevenção de Abandono de Pacientes
@@ -1246,3 +1246,4 @@ export {
   type ChurnModelConfig,
   type FeatureImportanceAnalysis
 }
+

@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 
@@ -15,9 +15,9 @@ const MonitoringFiltersSchema = z.object({
 // GET - Obter dados de monitoramento em tempo real
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
-    // Verificar autenticação
+    // Verificar autenticaï¿½ï¿½o
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError || !session) {
       return NextResponse.json(
@@ -52,23 +52,23 @@ export async function GET(request: NextRequest) {
       timestamp: now.toISOString(),
       timeRange: filters.timeRange
     };
-    // Obter métricas de conformidade se solicitado
+    // Obter mï¿½tricas de conformidade se solicitado
     if (filters.includeMetrics) {
-      // Métricas de consentimento
+      // Mï¿½tricas de consentimento
       const { data: consentMetrics } = await supabase
         .from('lgpd_consent')
         .select('status, created_at')
         .eq('clinic_id', clinicId)
         .gte('created_at', startTime.toISOString());
 
-      // Métricas de auditoria
+      // Mï¿½tricas de auditoria
       const { data: auditMetrics } = await supabase
         .from('lgpd_audit_trail')
         .select('event_type, severity, created_at')
         .eq('clinic_id', clinicId)
         .gte('created_at', startTime.toISOString());
 
-      // Métricas de solicitações de direitos
+      // Mï¿½tricas de solicitaï¿½ï¿½es de direitos
       const { data: requestMetrics } = await supabase
         .from('lgpd_data_subject_requests')
         .select('request_type, status, created_at')
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    // Calcular pontuação de conformidade em tempo real
+    // Calcular pontuaï¿½ï¿½o de conformidade em tempo real
     const complianceScore = await calculateComplianceScore(supabase, clinicId);
     monitoringData.complianceScore = complianceScore;
 
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-// Função auxiliar para calcular pontuação de conformidade
+// Funï¿½ï¿½o auxiliar para calcular pontuaï¿½ï¿½o de conformidade
 async function calculateComplianceScore(supabase: any, clinicId: string): Promise<number> {
   try {
     const now = new Date();
@@ -179,7 +179,7 @@ async function calculateComplianceScore(supabase: any, clinicId: string): Promis
     const uniqueEventTypes = new Set(auditEvents?.map(e => e.event_type) || []).size;
     const auditScore = Math.min((uniqueEventTypes / 6) * 25, 25); // 6 tipos de eventos esperados
 
-    // Verificar alertas críticos
+    // Verificar alertas crï¿½ticos
     const { data: criticalAlerts } = await supabase
       .from('lgpd_compliance_alerts')
       .select('id')
@@ -189,7 +189,7 @@ async function calculateComplianceScore(supabase: any, clinicId: string): Promis
 
     const alertPenalty = (criticalAlerts?.length || 0) * 5;
 
-    // Verificar processamento de solicitações
+    // Verificar processamento de solicitaï¿½ï¿½es
     const { data: requests } = await supabase
       .from('lgpd_data_subject_requests')
       .select('status, created_at')
@@ -201,7 +201,7 @@ async function calculateComplianceScore(supabase: any, clinicId: string): Promis
     const requestScore = (processedRequests / totalRequests) * 20;
 
     // Verificar dados criptografados
-    const encryptionScore = 25; // Assumindo que a criptografia está implementada
+    const encryptionScore = 25; // Assumindo que a criptografia estï¿½ implementada
 
     const finalScore = Math.max(0, Math.min(100, 
       consentScore + auditScore + requestScore + encryptionScore - alertPenalty
@@ -209,7 +209,8 @@ async function calculateComplianceScore(supabase: any, clinicId: string): Promis
 
     return Math.round(finalScore * 100) / 100;
   } catch (error) {
-    console.error('Erro ao calcular pontuação de conformidade:', error);
+    console.error('Erro ao calcular pontuaï¿½ï¿½o de conformidade:', error);
     return 0;
   }
 }
+

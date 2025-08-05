@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Financial Management System - Main Integration
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
  * 
@@ -1010,3 +1010,4 @@ export type {
   PerformanceIndicators,
   Recommendation
 } from './financial-dashboard-engine'
+

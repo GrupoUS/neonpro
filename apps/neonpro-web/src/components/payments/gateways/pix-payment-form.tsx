@@ -471,7 +471,7 @@ function isValidCNPJ(cnpj: string): boolean {
     sum += parseInt(cnpj[i]) * weights1[i]
   }
   
-  let digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+  const digit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
   
   if (parseInt(cnpj[12]) !== digit1) {
     return false
@@ -482,7 +482,7 @@ function isValidCNPJ(cnpj: string): boolean {
     sum += parseInt(cnpj[i]) * weights2[i]
   }
   
-  let digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+  const digit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11)
   
   return parseInt(cnpj[13]) === digit2
 }

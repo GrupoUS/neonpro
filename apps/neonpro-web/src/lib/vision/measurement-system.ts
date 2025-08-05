@@ -149,7 +149,7 @@ export enum MeasurementCategory {
  */
 export class ObjectiveMeasurementSystem {
   private supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
   
@@ -1261,3 +1261,4 @@ interface ValidationResult {
 // Export singleton instance
 export const objectiveMeasurementSystem = new ObjectiveMeasurementSystem();
 export default ObjectiveMeasurementSystem;
+

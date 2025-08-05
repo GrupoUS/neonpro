@@ -473,7 +473,7 @@ export class DeviceManager {
   ): Promise<DeviceRiskAssessment> {
     const riskFactors: string[] = [];
     const recommendations: string[] = [];
-    let trustScore = await this.calculateDeviceTrustScore(fingerprint, location);
+    const trustScore = await this.calculateDeviceTrustScore(fingerprint, location);
 
     // Check for suspicious characteristics
     if (!fingerprint.userAgent || fingerprint.userAgent === 'Unknown') {

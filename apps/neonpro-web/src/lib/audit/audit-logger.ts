@@ -1,26 +1,17 @@
-// lib/audit/audit-logger.ts
-export interface AuditEvent {
-  id: string;
-  timestamp: Date;
-  userId?: string;
-  action: string;
-  resource: string;
-  metadata?: Record<string, any>;
-}
-
+// Audit logger for compliance and security
 export class AuditLogger {
-  static async log(event: Omit<AuditEvent, 'id' | 'timestamp'>) {
-    const auditEvent = {
-      id: Math.random().toString(36),
-      timestamp: new Date(),
-      ...event
-    };
-    
-    console.log('Audit Event:', auditEvent);
-    return auditEvent;
+  static log(event: any) {
+    console.log('[AUDIT]', event);
   }
-
-  static async getLogs(filters?: any): Promise<AuditEvent[]> {
-    return [];
+  
+  static error(error: any) {
+    console.error('[AUDIT ERROR]', error);
   }
 }
+
+export const auditLog = {
+  log: (event: any) => AuditLogger.log(event),
+  error: (error: any) => AuditLogger.error(error)
+};
+
+export const auditLogger = auditLog;

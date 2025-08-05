@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Channel Optimization Engine
  * NeonPro - Sistema inteligente de otimização de canais de comunicação
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type {
   PatientChannelProfile, ChannelOptimizationRequest, ChannelOptimizationResult,
@@ -1321,3 +1321,4 @@ export class ChannelOptimizationEngine {
 
 // Export singleton instance
 export const channelOptimizationEngine = new ChannelOptimizationEngine();
+

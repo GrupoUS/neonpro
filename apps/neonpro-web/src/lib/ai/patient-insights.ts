@@ -1,9 +1,9 @@
-/**
+﻿/**
  * NeonPro AI-Powered Patient Insights Engine
  * Comprehensive AI system for patient risk assessment, behavior analysis, and personalized care recommendations
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 // Core interfaces for AI engine
 export interface PatientRiskAssessment {

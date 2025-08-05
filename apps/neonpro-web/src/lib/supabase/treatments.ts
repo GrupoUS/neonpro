@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Treatment & Procedure Data Access Layer
  * Supabase functions for HL7 FHIR R4 compliant treatment documentation
  * Includes LGPD compliance and Row Level Security
@@ -7,7 +7,7 @@
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { 
   TreatmentPlan, 
   Procedure, 
@@ -25,7 +25,7 @@ import {
 } from '@/lib/types/treatment';
 import { FHIRCodeableConcept } from '@/lib/types/fhir';
 
-const supabase = createClient();
+const supabase = await createClient();
 
 // ===============================================
 // TREATMENT PLAN FUNCTIONS
@@ -735,3 +735,4 @@ export async function deleteClinicalNote(id: string): Promise<boolean> {
   if (error) throw new Error(`Erro ao excluir nota clínica: ${error.message}`);
   return true;
 }
+

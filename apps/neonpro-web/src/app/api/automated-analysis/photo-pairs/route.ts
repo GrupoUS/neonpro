@@ -1,16 +1,16 @@
-﻿// app/api/automated-analysis/photo-pairs/route.ts
+// app/api/automated-analysis/photo-pairs/route.ts
 // API endpoints for before/after photo pairs management
 
 import { automatedBeforeAfterAnalysisService } from '@/app/lib/services/automated-before-after-analysis';
 import { validationSchemas } from '@/app/lib/validations/automated-before-after-analysis';
 import { cookies } from 'next/headers';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/automated-analysis/photo-pairs - Get photo pairs with filters
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 // POST /api/automated-analysis/photo-pairs - Create new photo pair
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/automated-analysis/photo-pairs - Update photo pair
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -120,7 +120,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/automated-analysis/photo-pairs - Delete photo pair
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

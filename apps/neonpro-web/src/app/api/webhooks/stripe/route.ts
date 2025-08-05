@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const event = JSON.parse(body);
 
     const supabase = createServerClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         cookies: {
@@ -398,3 +398,4 @@ function calculatePeriodEnd(billingCycle: string): string {
       return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()).toISOString();
   }
 }
+

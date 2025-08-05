@@ -1,8 +1,8 @@
-// Trial Management Engine - STORY-SUB-002 Task 3
+﻿// Trial Management Engine - STORY-SUB-002 Task 3
 // Core engine for AI-powered trial management and conversion optimization
 // Created: 2025-01-22
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { Analytics } from '../analytics'
 import type {
   Trial,
@@ -698,3 +698,4 @@ export class TrialManagementEngine {
     }
   }
 }
+

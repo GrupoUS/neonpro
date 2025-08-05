@@ -1,11 +1,11 @@
-// hooks/use-profile-sync.ts
+﻿// hooks/use-profile-sync.ts
 // VIBECODE V1.0 - Professional OAuth Profile Synchronization Hook
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-22
 
 "use client"
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/auth-context'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -65,12 +65,20 @@ export function useProfileSync(): UseProfileSyncReturn {
   const [isLoading, setIsLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
-  const supabase = createClient()
+  const [supabase, setSupabase] = useState<SupabaseClient | null>(null)
+
+  // Initialize Supabase client
+  useEffect(() => {
+    const initSupabase = async () => {
+      const client = await createClient()
+      setSupabase(client)
+    }
+    initSupabase()
+  }, [])
 
   // Fetch user profile from database
   const fetchProfile = useCallback(async (): Promise<Profile | null> => {
-    if (!user?.id) return null
+    if (!user?.id || !supabase) return null
 
     try {
       const { data, error } = await supabase
@@ -333,3 +341,4 @@ export function useProfileSync(): UseProfileSyncReturn {
     toggleGoogleSync,
   }
 }
+

@@ -12,7 +12,7 @@
  * - Executive dashboard analytics and reporting
  */
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import {
   MarketingCampaign,
   TreatmentROI,
@@ -42,11 +42,9 @@ import {
 } from '@/app/types/marketing-roi';
 
 export class MarketingROIService {
-  private supabase;
+  // Supabase client created per method for proper request context
 
-  constructor() {
-    this.supabase = createClient();
-  }
+  constructor() {}
 
   // ===== MARKETING CAMPAIGN ROI MANAGEMENT =====
 
@@ -82,7 +80,7 @@ export class MarketingROIService {
         created_by: userId
       };
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('marketing_campaigns')
         .insert(campaign)
         .select()
@@ -109,7 +107,8 @@ export class MarketingROIService {
   ): Promise<MarketingCampaign> {
     try {
       // First get current campaign data
-      const { data: campaign, error: fetchError } = await this.supabase
+    const supabase = await createClient();
+      const { data: campaign, error: fetchError } = await supabase
         .from('marketing_campaigns')
         .select('*')
         .eq('id', campaignId)
@@ -120,7 +119,7 @@ export class MarketingROIService {
       // Calculate updated ROI metrics
       const updatedMetrics = await this.calculateCampaignROI(campaign, metrics);
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('marketing_campaigns')
         .update({
           ...metrics,
@@ -191,7 +190,7 @@ export class MarketingROIService {
     limit = 20
   ): Promise<{ campaigns: MarketingCampaign[]; total: number }> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('marketing_campaigns')
         .select('*', { count: 'exact' })
         .eq('clinic_id', clinicId);
@@ -298,7 +297,7 @@ export class MarketingROIService {
       };
 
       // Save to database
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('treatment_roi_analysis')
         .upsert(treatmentROI)
         .select()
@@ -321,7 +320,7 @@ export class MarketingROIService {
     filters?: TreatmentROIFilters
   ): Promise<TreatmentROI[]> {
     try {
-      let query = this.supabase
+      let query = supabase
         .from('treatment_roi_analysis')
         .select('*')
         .eq('clinic_id', clinicId);
@@ -371,7 +370,8 @@ export class MarketingROIService {
   ): Promise<CustomerAcquisitionCost> {
     try {
       // Get marketing spend for the channel and period
-      const { data: campaigns, error: campaignError } = await this.supabase
+    const supabase = await createClient();
+      const { data: campaigns, error: campaignError } = await supabase
         .from('marketing_campaigns')
         .select('actual_spend, conversions, leads_generated')
         .eq('clinic_id', clinicId)
@@ -430,7 +430,7 @@ export class MarketingROIService {
       };
 
       // Save to database
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('customer_acquisition_cost')
         .upsert(cacAnalysis)
         .select()
@@ -493,7 +493,7 @@ export class MarketingROIService {
       };
 
       // Save to database
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('customer_lifetime_value')
         .upsert(ltvAnalysis)
         .select()
@@ -574,7 +574,8 @@ export class MarketingROIService {
   async checkROIAlerts(campaign: MarketingCampaign): Promise<void> {
     try {
       // Get monitoring rules for the clinic
-      const { data: rules, error } = await this.supabase
+    const supabase = await createClient();
+      const { data: rules, error } = await supabase
         .from('roi_monitoring_rules')
         .select('*')
         .eq('clinic_id', campaign.clinic_id)
@@ -612,7 +613,7 @@ export class MarketingROIService {
         updated_at: new Date()
       };
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('roi_alerts')
         .insert(alert)
         .select()
@@ -635,7 +636,8 @@ export class MarketingROIService {
    */
   async getActiveAlerts(clinicId: string): Promise<ROIAlert[]> {
     try {
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('roi_alerts')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -712,7 +714,7 @@ export class MarketingROIService {
         created_by: userId
       };
 
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('optimization_recommendations')
         .insert(recommendation)
         .select()
@@ -739,7 +741,8 @@ export class MarketingROIService {
   ): Promise<ROIDashboardMetrics> {
     try {
       // Get campaign performance data
-      const { data: campaigns, error: campaignError } = await this.supabase
+    const supabase = await createClient();
+      const { data: campaigns, error: campaignError } = await supabase
         .from('marketing_campaigns')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -838,7 +841,8 @@ export class MarketingROIService {
     try {
       // Implementation would depend on your specific requirements
       // This is a simplified version
-      const { data, error } = await this.supabase
+    const supabase = await createClient();
+      const { data, error } = await supabase
         .from('roi_trend_data')
         .select('*')
         .eq('clinic_id', clinicId)
@@ -902,7 +906,7 @@ export class MarketingROIService {
       };
 
       // Save forecast to database
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('roi_forecasts')
         .insert(roiForecast)
         .select()
@@ -973,7 +977,7 @@ export class MarketingROIService {
       }
     ];
 
-    await this.supabase.from('roi_monitoring_rules').insert(rules);
+    await supabase.from('roi_monitoring_rules').insert(rules);
   }
 
   /**
@@ -1010,3 +1014,5 @@ export class MarketingROIService {
 }
 
 export const marketingROIService = new MarketingROIService();
+
+

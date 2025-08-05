@@ -1,10 +1,10 @@
-// Brazilian Tax Management API
+﻿// Brazilian Tax Management API
 // Story 5.5: API endpoints for Brazilian tax system integration
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 // Validation schemas
@@ -46,7 +46,7 @@ const nfeGenerationSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { searchParams } = new URL(request.url);
     const clinicId = searchParams.get('clinic_id');
     const action = searchParams.get('action');
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const body = await request.json();
     const action = body.action;
 
@@ -368,3 +368,4 @@ async function validateCNPJ(supabase: any, body: any) {
     );
   }
 }
+

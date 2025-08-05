@@ -166,7 +166,7 @@ export class MedicalDocumentManager {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
     this.auditLogger = new AuditLogger()
@@ -1104,3 +1104,4 @@ export class MedicalDocumentManager {
 
 export const medicalDocumentManager = new MedicalDocumentManager()
 export default medicalDocumentManager
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🎯 NeonPro Connection Pool Manager
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
  * 
@@ -143,10 +143,9 @@ export class NeonProConnectionPoolManager {
           // Importação dinâmica para evitar erro no cliente
           const { cookies } = await import('next/headers')
           const cookieStore = await cookies()
-          
           const client = createServerClient<Database>(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            process.env.SUPABASE_URL!,
+            process.env.SUPABASE_ANON_KEY!,
             {
               cookies: {
                 get(name: string) {
@@ -176,8 +175,8 @@ export class NeonProConnectionPoolManager {
           console.error('Error creating server client with cookies:', error)
           // Fallback para cliente básico sem cookies
           const fallbackClient = createClient<Database>(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            process.env.SUPABASE_URL!,
+            process.env.SUPABASE_ANON_KEY!
           )
           this.pools.set(poolKey, fallbackClient)
           this.initializeMetrics(poolKey)
@@ -202,8 +201,8 @@ export class NeonProConnectionPoolManager {
     
     if (!this.pools.has(poolKey)) {
       const client = createBrowserClient<Database>(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY!
       )
       
       this.pools.set(poolKey, client)
@@ -222,7 +221,7 @@ export class NeonProConnectionPoolManager {
     
     return createClient<Database>(
       connectionString,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_ANON_KEY!,
       {
         db: {
           schema: 'public'
@@ -247,7 +246,7 @@ export class NeonProConnectionPoolManager {
    * Build connection string with healthcare optimizations
    */
   private buildConnectionString(operationType: 'critical' | 'standard'): string {
-    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const baseUrl = process.env.SUPABASE_URL!
     
     // Use transaction mode (6543) for critical operations, session mode (5432) for standard
     const port = operationType === 'critical' ? '6543' : '5432'
@@ -620,3 +619,4 @@ export const getConnectionPoolManager = (clinicSize?: 'small' | 'medium' | 'larg
 
 // Export types for use in other modules
 export type { PoolConfiguration, HealthcheckResult, ConnectionMetrics }
+

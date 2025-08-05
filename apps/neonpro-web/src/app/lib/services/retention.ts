@@ -33,7 +33,8 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = await createClient();
+    
     const {
       page = 1,
       limit = 20,
@@ -116,8 +117,8 @@ export class RetentionService {
    * Create patient retention analytics record
    */
   static async createPatientRetentionAnalytics(analyticsData: Omit<PatientRetentionAnalytics, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .insert([analyticsData])
@@ -136,8 +137,8 @@ export class RetentionService {
    * Update patient retention analytics record
    */
   static async updatePatientRetentionAnalytics(id: string, updates: Partial<PatientRetentionAnalytics>) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .update(updates)
@@ -169,7 +170,8 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = await createClient();
+    
     const {
       page = 1,
       limit = 20,
@@ -245,8 +247,8 @@ export class RetentionService {
    * Create churn prediction
    */
   static async createChurnPrediction(predictionData: Omit<PatientChurnPrediction, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     // Deactivate previous predictions for the same patient
     await supabase
       .from('patient_churn_predictions')
@@ -276,8 +278,8 @@ export class RetentionService {
     actual_outcome?: 'retained' | 'churned' | 'unknown',
     outcome_date?: string
   ) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const updates: any = { validation_status };
     
     if (actual_outcome) {
@@ -319,7 +321,8 @@ export class RetentionService {
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
   }) {
-    const supabase = this.getClient();
+    const supabase = await createClient();
+    
     const {
       page = 1,
       limit = 20,
@@ -392,8 +395,8 @@ export class RetentionService {
    * Create retention intervention
    */
   static async createRetentionIntervention(interventionData: Omit<RetentionIntervention, 'id' | 'created_at' | 'updated_at'>) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('retention_interventions')
       .insert([interventionData])
@@ -418,8 +421,8 @@ export class RetentionService {
     effectiveness_score?: number,
     roi?: number
   ) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const updates: any = { status };
     
     if (response_data) {
@@ -463,8 +466,7 @@ export class RetentionService {
     segment?: string;
     risk_level?: ChurnRiskLevel;
   }): Promise<RetentionMetrics> {
-    const supabase = this.getClient();
-    
+
     try {
       // Calculate high-risk and critical-risk patient counts
       const { count: highRiskPatients } = await supabase
@@ -528,8 +530,8 @@ export class RetentionService {
    * Get dashboard summary data
    */
   static async getDashboardSummary(date_range?: { start_date: string; end_date: string }) {
-    const supabase = this.getClient();
-    
+    const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('patient_retention_analytics')
       .select(`
@@ -565,3 +567,5 @@ export class RetentionService {
     };
   }
 }
+
+

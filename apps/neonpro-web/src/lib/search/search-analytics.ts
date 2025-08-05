@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Search Analytics System
  * Story 3.4: Smart Search + NLP Integration - Task 6
  * Performance monitoring and analytics for search operations
@@ -810,3 +810,4 @@ export class SearchAnalytics {
 
 // Export singleton instance
 export const searchAnalytics = new SearchAnalytics();
+

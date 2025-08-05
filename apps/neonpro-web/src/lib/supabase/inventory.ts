@@ -1,10 +1,10 @@
-/**
+﻿/**
  * Inventory Database Functions
  * Supabase database operations for inventory management
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type {
     AlertStatus,
     BarcodeSession,
@@ -19,7 +19,7 @@ import type {
     StockMovement
 } from '@/lib/types/inventory';
 
-const supabase = createClient();
+const supabase = await createClient();
 
 // =====================================================
 // INVENTORY ITEMS
@@ -682,3 +682,4 @@ export function subscribeToStockAlerts(callback: (payload: any) => void) {
     )
     .subscribe();
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI Model Performance API Route
  * GET /api/ai/model-performance
  * 
@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { ModelPerformanceService, AIABTestingService } from '@/lib/ai/duration-prediction';
 
 // Response types
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const includeABStats = searchParams.get('includeABStats') === 'true';
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -236,3 +236,4 @@ export async function DELETE() {
     { status: 405 }
   );
 }
+

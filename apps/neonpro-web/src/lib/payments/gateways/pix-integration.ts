@@ -1,4 +1,4 @@
-/**
+﻿/**
  * PIX Integration for Brazilian Instant Payments
  * Implements PIX payment processing with QR code generation and real-time status tracking
  */
@@ -407,3 +407,4 @@ export function createPixIntegration(): PixIntegration {
 
 // Export default instance
 export const pixIntegration = createPixIntegration()
+

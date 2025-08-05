@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
+﻿import { createClient } from '@/lib/supabase/client';
 import { AuditLogger } from '@/lib/audit/audit-logger';
 import { LGPDManager } from '@/lib/lgpd/lgpd-manager';
 import { PatientInsights } from '@/lib/ai/patient-insights';
@@ -480,3 +480,4 @@ export class SystemIntegrationManager {
 }
 
 export const systemIntegrationManager = new SystemIntegrationManager();
+

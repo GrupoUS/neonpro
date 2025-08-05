@@ -8,14 +8,14 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import type { Database } from '@/types/database';
 import { getSubscriptionContext } from '@/middleware/subscription/subscriptionUtils';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -158,8 +158,8 @@ export async function PUT(request: NextRequest) {
       success: true,
       data: updatedSubscription,
       message: cancel_at_period_end 
-        ? 'Assinatura será cancelada no final do período atual'
-        : 'Configurações de assinatura atualizadas'
+        ? 'Assinatura serÃ¡ cancelada no final do perÃ­odo atual'
+        : 'ConfiguraÃ§Ãµes de assinatura atualizadas'
     });
 
   } catch (error) {
@@ -243,7 +243,7 @@ function getSubscriptionStatus(subscription: any) {
       if (daysRemaining <= 0) {
         return {
           status: 'trial_expired',
-          message: 'Período de teste expirado',
+          message: 'PerÃ­odo de teste expirado',
           action_required: true
         };
       } else if (daysRemaining <= 3) {
@@ -268,7 +268,7 @@ function getSubscriptionStatus(subscription: any) {
     
     return {
       status: 'canceling',
-      message: `Assinatura será cancelada em ${daysRemaining} dias`,
+      message: `Assinatura serÃ¡ cancelada em ${daysRemaining} dias`,
       action_required: false
     };
   }
@@ -279,3 +279,4 @@ function getSubscriptionStatus(subscription: any) {
     action_required: false
   };
 }
+

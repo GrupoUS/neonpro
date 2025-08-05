@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { whatsAppService } from '@/app/lib/services/whatsapp-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { WhatsAppMessageType } from '@/app/types/whatsapp';
 
 export async function POST(request: NextRequest) {

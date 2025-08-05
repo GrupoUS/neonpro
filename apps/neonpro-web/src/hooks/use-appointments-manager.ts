@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns'
 import { pt } from 'date-fns/locale'
@@ -73,7 +73,7 @@ export function useAppointmentsManager() {
     dateRange: 'week'
   })
   
-  const supabase = createClient()
+  const supabase = await createClient()
   const { toast } = useToast()
 
   // Calculate date ranges based on filters
@@ -405,3 +405,4 @@ export function useAppointmentsManager() {
     updateAppointmentStatus
   }
 }
+

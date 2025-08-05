@@ -1,6 +1,6 @@
-// GET /api/treatment-prediction/analytics - Prediction analytics and reporting
+﻿// GET /api/treatment-prediction/analytics - Prediction analytics and reporting
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/treatment-prediction/analytics - Get prediction analytics

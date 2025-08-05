@@ -1,6 +1,6 @@
 import { patientSegmentationService } from '@/app/lib/services/patient-segmentation-service';
 import { CreateSegmentSchema } from '@/app/lib/validations/segmentation';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

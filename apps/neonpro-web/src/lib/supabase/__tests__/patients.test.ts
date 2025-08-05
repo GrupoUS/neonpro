@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { 
   createPatient, 
   getPatient, 
@@ -11,7 +11,7 @@ import {
 import { FHIR } from '@/lib/types/fhir';
 
 // Mock the Supabase client
-jest.mock('@/app/utils/supabase/client');
+jest.mock('@/lib/supabase/client');
 
 const mockSupabase = {
   from: jest.fn(),

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Financial Dashboard Engine - Real-time Analytics Hub
  * Story 4.2: Financial Analytics & Business Intelligence
  * Phase 1: Real-time Cash Flow Dashboard
@@ -887,3 +887,4 @@ export class FinancialDashboardEngine {
 }
 
 export default FinancialDashboardEngine
+

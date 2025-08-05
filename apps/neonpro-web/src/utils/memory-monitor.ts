@@ -241,7 +241,7 @@ export class MemoryMonitor {
   }
 
   private getTotalEventListeners(): number {
-    let total = 0;
+    const total = 0;
     // This is an approximation since we can't accurately count all listeners
     return total;
   }

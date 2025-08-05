@@ -113,7 +113,7 @@ export class SubscriptionManager {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     
@@ -805,3 +805,4 @@ export class SubscriptionManager {
 
 // Export singleton instance
 export const subscriptionManager = new SubscriptionManager();
+

@@ -4,7 +4,7 @@
 
 import { MarketingCampaignService } from '@/app/lib/services/marketing-campaign-service';
 import { CreateCampaignSchema } from '@/app/lib/validations/campaigns';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 const campaignService = new MarketingCampaignService();

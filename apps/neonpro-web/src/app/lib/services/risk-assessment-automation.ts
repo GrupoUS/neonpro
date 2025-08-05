@@ -24,10 +24,11 @@ import type {
     RiskValidation,
     UpdateRiskAssessmentRequest
 } from '@/app/types/risk-assessment-automation';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export class RiskAssessmentService {
   private async getSupabase() {
+    const supabase = await createClient();
     return await createClient();
   }
 
@@ -187,7 +188,7 @@ export class RiskAssessmentService {
    */
 
   async createRiskAssessment(data: CreateRiskAssessmentRequest): Promise<RiskAssessment> {
-    const supabase = await this.getSupabase();
+    
     const riskScore = this.calculateRiskScore(data.risk_factors || {}, data.assessment_context || {});
     const riskLevel = this.determineRiskLevel(riskScore);
     const riskCategories = this.generateRiskCategories(data.risk_factors || {});
@@ -244,7 +245,8 @@ export class RiskAssessmentService {
   }
 
   async getRiskAssessment(id: string): Promise<RiskAssessment | null> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('risk_assessments')
       .select('*')
@@ -260,7 +262,7 @@ export class RiskAssessmentService {
     limit: number = 50,
     offset: number = 0
   ): Promise<RiskAssessment[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase
       .from('risk_assessments')
       .select('*')
@@ -281,7 +283,7 @@ export class RiskAssessmentService {
   }
 
   async createAlert(data: CreateAlertRequest): Promise<RiskAlert> {
-    const supabase = await this.getSupabase();
+    
     const alertData = {
       ...data,
       alert_details: data.alert_details || {},
@@ -307,7 +309,7 @@ export class RiskAssessmentService {
     limit: number = 50,
     offset: number = 0
   ): Promise<RiskValidation[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase
       .from('risk_validations')
       .select('*')
@@ -332,7 +334,7 @@ export class RiskAssessmentService {
     limit: number = 50,
     offset: number = 0
   ): Promise<RiskAlert[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase
       .from('risk_alerts')
       .select('*')
@@ -353,7 +355,7 @@ export class RiskAssessmentService {
   }
 
   async updateRiskAssessment(id: string, updates: UpdateRiskAssessmentRequest): Promise<RiskAssessment> {
-    const supabase = await this.getSupabase();
+    
     const updateData: any = { ...updates };
     
     // Recalculate risk if factors changed
@@ -387,7 +389,7 @@ export class RiskAssessmentService {
   }
 
   async deleteRiskAssessment(id: string): Promise<void> {
-    const supabase = await this.getSupabase();
+    
     const { error } = await supabase
       .from('risk_assessments')
       .delete()
@@ -397,7 +399,8 @@ export class RiskAssessmentService {
   }
 
   async getPatientRiskAssessments(patientId: string, limit = 10): Promise<RiskAssessment[]> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('risk_assessments')
       .select('*')
@@ -414,7 +417,7 @@ export class RiskAssessmentService {
    */
 
   async createValidation(data: CreateValidationRequest): Promise<RiskValidation> {
-    const supabase = await this.getSupabase();
+    
     const validationData = {
       ...data,
       validation_date: new Date().toISOString(),
@@ -440,7 +443,8 @@ export class RiskAssessmentService {
   }
 
   async getValidationsForAssessment(assessmentId: string): Promise<RiskValidation[]> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('risk_validations')
       .select('*')
@@ -456,7 +460,7 @@ export class RiskAssessmentService {
    */
 
   async createMitigation(data: CreateMitigationRequest): Promise<RiskMitigation> {
-    const supabase = await this.getSupabase();
+    
     const mitigationData = {
       ...data,
       mitigation_details: data.mitigation_details || {},
@@ -474,7 +478,7 @@ export class RiskAssessmentService {
   }
 
   async updateMitigationStatus(id: string, status: 'planned' | 'active' | 'completed' | 'cancelled'): Promise<void> {
-    const supabase = await this.getSupabase();
+    
     const { error } = await supabase
       .from('risk_mitigations')
       .update({ 
@@ -491,7 +495,7 @@ export class RiskAssessmentService {
    */
 
   async acknowledgeAlert(id: string, userId: string): Promise<void> {
-    const supabase = await this.getSupabase();
+    
     const { error } = await supabase
       .from('risk_alerts')
       .update({
@@ -505,7 +509,7 @@ export class RiskAssessmentService {
   }
 
   async resolveAlert(id: string, userId: string, notes?: string): Promise<void> {
-    const supabase = await this.getSupabase();
+    
     const { error } = await supabase
       .from('risk_alerts')
       .update({
@@ -520,7 +524,8 @@ export class RiskAssessmentService {
   }
 
   async escalateAlert(id: string): Promise<void> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data: alert, error: fetchError } = await supabase
       .from('risk_alerts')
       .select('escalation_level')
@@ -543,7 +548,8 @@ export class RiskAssessmentService {
   }
 
   async getActiveAlerts(limit = 50): Promise<RiskAlert[]> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('risk_alerts')
       .select('*')
@@ -560,8 +566,7 @@ export class RiskAssessmentService {
    */
 
   async getDashboardData(): Promise<RiskDashboardData> {
-    const supabase = await this.getSupabase();
-    
+
     // Get total assessments
     const { count: totalAssessments } = await supabase
       .from('risk_assessments')
@@ -618,7 +623,7 @@ export class RiskAssessmentService {
    */
 
   async getRiskThresholds(clinicId?: string): Promise<RiskThreshold[]> {
-    const supabase = await this.getSupabase();
+    
     let query = supabase
       .from('risk_thresholds')
       .select('*')
@@ -637,7 +642,8 @@ export class RiskAssessmentService {
   }
 
   async updateRiskThreshold(id: string, updates: Partial<RiskThreshold>): Promise<RiskThreshold> {
-    const supabase = await this.getSupabase();
+    const supabase = await createClient();
+    
     const { data, error } = await supabase
       .from('risk_thresholds')
       .update(updates)
@@ -649,3 +655,5 @@ export class RiskAssessmentService {
     return data;
   }
 }
+
+

@@ -56,14 +56,14 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.453.0",
-    "next": "^14.2.0",
+    "next": "^15.1.0",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "papaparse": "^5.5.3",
     "pdfkit": "^0.17.1",
     "postcss": "^8.4.31",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-hook-form": "^7.51.0",
     "recharts": "^3.1.0",
     "resend": "^4.8.0",
@@ -78,11 +78,11 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.0",
-    "typescript": "^5.4.0"
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.0",
+    "typescript": "^5.7.0"
   }
 }

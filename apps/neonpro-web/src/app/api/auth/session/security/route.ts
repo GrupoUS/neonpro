@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Security Events API Route
  * Manages security events and monitoring
  */
@@ -16,7 +16,7 @@ let sessionManager: SessionManager | null = null;
 
 async function getSessionManager() {
   if (!sessionManager) {
-    const supabase = createClient();
+    const supabase = await createClient();
     sessionManager = new SessionManager(supabase, {
       defaultTimeout: 30,
       maxConcurrentSessions: 5,
@@ -135,3 +135,4 @@ export async function OPTIONS(request: NextRequest) {
     },
   });
 }
+

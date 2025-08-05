@@ -42,3 +42,6 @@ export class CommunicationService {
     };
   }
 }
+
+// Export singleton instance
+export const communicationService = new CommunicationService();

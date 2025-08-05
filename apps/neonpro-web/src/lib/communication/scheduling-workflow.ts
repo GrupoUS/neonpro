@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Automated Communication Workflow for Scheduling
  * Story 5.3: Automated Communication for Scheduling
  */
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { CommunicationService } from './communication-service'
 import { NoShowPredictor } from './no-show-predictor'
 import { schedulingTemplateEngine, SchedulingTemplate } from './scheduling-templates'
@@ -776,3 +776,4 @@ export class SchedulingCommunicationWorkflow {
 }
 
 export const schedulingCommunicationWorkflow = new SchedulingCommunicationWorkflow()
+

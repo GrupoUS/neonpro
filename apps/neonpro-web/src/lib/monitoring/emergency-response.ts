@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TASK-001: Foundation Setup & Baseline
  * Emergency Response System
  * 
@@ -6,7 +6,7 @@
  * with rollback capabilities and alerting mechanisms.
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface EmergencyRule {
   rule_id: string;
@@ -817,3 +817,4 @@ export async function resolveEmergencyAlert(alertId: string, method?: 'auto' | '
 export function getEmergencyStatus() {
   return emergencyResponse.getSystemStatus();
 }
+

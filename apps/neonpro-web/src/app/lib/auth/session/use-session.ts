@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Enhanced Session Hook
  * 
  * React hook for managing OAuth session state with enhanced security features.
@@ -29,7 +29,7 @@ export function useSession(): UseSessionReturn {
   const [shouldRefreshToken, setShouldRefreshToken] = useState(false)
   
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = await createClient()
 
   /**
    * Initialize session management
@@ -240,3 +240,4 @@ export function useSessionActivity() {
 }
 
 export type { SessionData }
+

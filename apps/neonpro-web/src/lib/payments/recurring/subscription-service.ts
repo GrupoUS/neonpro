@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
 import Stripe from 'stripe'
 
@@ -86,7 +86,7 @@ export class SubscriptionService {
       }
 
       // Create Stripe customer if not exists
-      let stripeCustomerId = await this.getOrCreateStripeCustomer(patient)
+      const stripeCustomerId = await this.getOrCreateStripeCustomer(patient)
 
       // Attach payment method to customer
       await stripe.paymentMethods.attach(data.paymentMethodId, {
@@ -403,3 +403,4 @@ export class SubscriptionService {
 
 // Export singleton instance
 export const subscriptionService = new SubscriptionService()
+

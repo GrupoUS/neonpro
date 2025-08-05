@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Session Terminate API Route
  * Terminates an existing session and logs security event
  */
@@ -17,7 +17,7 @@ let sessionManager: SessionManager | null = null;
 
 async function getSessionManager() {
   if (!sessionManager) {
-    const supabase = createClient();
+    const supabase = await createClient();
     sessionManager = new SessionManager(supabase, {
       defaultTimeout: 30,
       maxConcurrentSessions: 5,
@@ -35,7 +35,7 @@ async function getSessionManager() {
 export async function POST(request: NextRequest) {
   try {
     const { sessionId, reason } = await request.json();
-    const cookieStore = cookies();
+// Cookie instantiation moved inside request handlers;
     const sessionToken = sessionId || cookieStore.get('session-token')?.value;
     
     if (!sessionToken) {
@@ -171,3 +171,5 @@ export async function OPTIONS(request: NextRequest) {
     },
   });
 }
+
+

@@ -4,7 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { smsService } from '@/app/lib/services/sms-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import type { SMSProvider } from '@/app/types/sms';
 
 // Schema for provider configuration

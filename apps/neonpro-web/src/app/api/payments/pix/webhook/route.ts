@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { pixIntegration } from '@/lib/payments/gateways/pix-integration'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
@@ -83,7 +83,7 @@ function verifyWebhookSignature(body: string, signature: string | null): boolean
  * Handle payment confirmation and update related records
  */
 async function handlePaymentConfirmation(pixPaymentId: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // Get the PIX payment details
@@ -162,3 +162,4 @@ async function handlePaymentConfirmation(pixPaymentId: string) {
     console.error('Error handling payment confirmation:', error)
   }
 }
+

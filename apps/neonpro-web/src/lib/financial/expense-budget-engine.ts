@@ -1,10 +1,10 @@
-// Expense & Budget Management Engine
+﻿// Expense & Budget Management Engine
 // Epic 5, Story 5.1, Task 5: Expense & Budget Management
 // Created: 2025-01-27
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface ExpenseCategory {
   categoryId: string;
@@ -459,3 +459,4 @@ export class ExpenseBudgetEngine {
     }
   }
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Advanced Statistical Insights Hook for NeonPro
  * 
  * Custom hook providing advanced statistical analysis capabilities including:
@@ -82,7 +82,7 @@ export function useStatisticalInsights(
   initialConfig: StatisticalInsightsConfig
 ): StatisticalInsightsState & StatisticalInsightsActions {
   const queryClient = useQueryClient()
-  const supabase = createClient()
+  const supabase = await createClient()
   const [config, setConfig] = useState<StatisticalInsightsConfig>(initialConfig)
   const [error, setError] = useState<string | null>(null)
 
@@ -429,3 +429,4 @@ export function useStatisticalFormatters() {
     }
   }), [])
 }
+

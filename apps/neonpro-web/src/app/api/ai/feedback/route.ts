@@ -1,4 +1,4 @@
-/**
+﻿/**
  * AI Prediction Feedback API Route
  * POST /api/ai/feedback
  * 
@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { AIDurationPredictionService, ModelPerformanceService } from '@/lib/ai/duration-prediction';
 
 // Request/Response types
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get current user
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
@@ -280,3 +280,4 @@ export async function DELETE() {
     { status: 405 }
   );
 }
+

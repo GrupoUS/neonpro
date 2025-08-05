@@ -51,7 +51,7 @@ export class SessionSecurityMiddleware {
     
     // Initialize Supabase client
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
   }
@@ -469,3 +469,4 @@ export function createSessionSecurityMiddleware(
  * Export types for external use
  */
 export type { MiddlewareConfig, SecurityCheckResult };
+

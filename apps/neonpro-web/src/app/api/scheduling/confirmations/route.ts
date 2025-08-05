@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
 import { schedulingTemplateEngine } from '@/lib/communication/scheduling-templates'
 import { SchedulingCommunicationWorkflow } from '@/lib/communication/scheduling-workflow'

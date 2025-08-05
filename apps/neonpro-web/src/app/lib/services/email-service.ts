@@ -208,7 +208,8 @@ export class EmailService {
   // =======================================
 
   async createTemplate(template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<EmailTemplate> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('email_templates')
       .insert([{
         ...template,
@@ -227,7 +228,8 @@ export class EmailService {
   }
 
   async updateTemplate(id: string, updates: Partial<EmailTemplate>): Promise<EmailTemplate> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('email_templates')
       .update({
         ...updates,
@@ -246,7 +248,7 @@ export class EmailService {
   }
 
   async deleteTemplate(id: string): Promise<void> {
-    const { error } = await this.supabase
+    const { error } = await supabase
       .from('email_templates')
       .delete()
       .eq('id', id)
@@ -258,7 +260,8 @@ export class EmailService {
   }
 
   async getTemplate(id: string): Promise<EmailTemplate | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('email_templates')
       .select('*')
       .eq('id', id)
@@ -278,7 +281,7 @@ export class EmailService {
     isActive?: boolean;
     search?: string;
   }): Promise<EmailTemplate[]> {
-    let query = this.supabase
+    let query = supabase
       .from('email_templates')
       .select('*')
       .eq('clinic_id', this.clinicId)
@@ -335,7 +338,7 @@ export class EmailService {
     }
 
     // Check suppression list
-    const { data: suppressedEmail } = await this.supabase
+    const { data: suppressedEmail } = await supabase
       .from('email_suppressions')
       .select('*')
       .eq('email', email.toLowerCase())
@@ -366,7 +369,7 @@ export class EmailService {
     templateId?: string;
     campaignId?: string;
   }): Promise<EmailAnalytics> {
-    let query = this.supabase
+    let query = supabase
       .from('email_events')
       .select('*')
       .eq('clinic_id', this.clinicId);
@@ -397,7 +400,8 @@ export class EmailService {
   }
 
   async getDeliveryReport(messageId: string): Promise<EmailDeliveryReport | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('email_events')
       .select('*')
       .eq('message_id', messageId)
@@ -495,7 +499,8 @@ export class EmailService {
   }
 
   private async getEmailSettings(): Promise<EmailSettings | null> {
-    const { data, error } = await this.supabase
+    const supabase = await createClient();
+    const { data, error } = await supabase
       .from('email_settings')
       .select('*')
       .eq('clinic_id', this.clinicId)
@@ -582,7 +587,8 @@ export class EmailService {
 
   private async logEmailEvent(event: EmailEvent): Promise<void> {
     try {
-      await this.supabase
+    const supabase = await createClient();
+      await supabase
         .from('email_events')
         .insert([{
           ...event,
@@ -898,3 +904,5 @@ class PostmarkEmailProvider implements EmailServiceInterface {
 // =======================================
 
 export default EmailService;
+
+

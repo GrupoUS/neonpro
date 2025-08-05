@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { AnalyticsFilter } from './scheduling-analytics'
 
 type SupabaseClient = ReturnType<typeof createClient>
@@ -584,3 +584,4 @@ export class PerformanceCalculator {
 }
 
 export default PerformanceCalculator
+

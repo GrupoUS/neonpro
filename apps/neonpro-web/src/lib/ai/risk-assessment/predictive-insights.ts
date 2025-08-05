@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Predictive Insights Engine
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
  * 
@@ -1493,3 +1493,4 @@ export {
   type InsightConfidence,
   type TimeHorizon
 }
+

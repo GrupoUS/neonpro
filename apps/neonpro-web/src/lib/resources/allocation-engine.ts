@@ -552,7 +552,7 @@ export class AllocationEngine {
       // Calculate workload metrics
       let totalHours = 0;
       let consecutiveHours = 0;
-      let lastBreak: string | null = null;
+      const lastBreak: string | null = null;
 
       for (const allocation of allocations) {
         const start = new Date(allocation.start_time);

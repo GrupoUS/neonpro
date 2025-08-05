@@ -1,11 +1,11 @@
-/**
+﻿/**
  * CSRF Protection Implementation for NeonPro
  * Provides Cross-Site Request Forgery protection for forms and API endpoints
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash, randomBytes } from 'crypto';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 export interface CSRFTokenData {
   token: string;
@@ -66,7 +66,7 @@ export class CSRFProtection {
    */
   static async storeToken(tokenData: CSRFTokenData): Promise<boolean> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const tokenHash = this.createTokenHash(tokenData);
       
       const { error } = await supabase
@@ -111,7 +111,7 @@ export class CSRFProtection {
       };
       
       const tokenHash = this.createTokenHash(tokenData);
-      const supabase = createClient();
+      const supabase = await createClient();
       
       const { data, error } = await supabase
         .from('csrf_tokens')
@@ -164,7 +164,7 @@ export class CSRFProtection {
    */
   static async cleanupExpiredTokens(): Promise<void> {
     try {
-      const supabase = createClient();
+      const supabase = await createClient();
       const now = new Date().toISOString();
       
       await supabase
@@ -291,3 +291,4 @@ export default CSRFProtection;
 
 // Export with expected function name
 export const validateCSRF = CSRFProtection.validateCSRFMiddleware;
+

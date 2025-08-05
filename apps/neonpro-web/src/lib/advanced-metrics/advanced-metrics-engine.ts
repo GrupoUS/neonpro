@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Advanced Metrics Engine
  * NeonPro - Sistema avançado de métricas e análise de comunicação
  */
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type {
   AdvancedMetricsConfig, AdvancedMetricsRequest, AdvancedMetricsResult,
@@ -1082,3 +1082,4 @@ export class AdvancedMetricsEngine {
 
 // Export singleton instance
 export const advancedMetricsEngine = new AdvancedMetricsEngine();
+

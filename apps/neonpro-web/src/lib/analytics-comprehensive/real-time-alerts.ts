@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🚨 NeonPro Real-Time Alert System
  * 
  * HEALTHCARE ALERT SYSTEM - Sistema de Alertas em Tempo Real para Clínicas
@@ -1565,3 +1565,4 @@ export {
   type AlertAnalytics,
   type AlertProcessingContext
 }
+

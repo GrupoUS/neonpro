@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Breach Detection & Notification System
  * 
  * Automated detection, assessment, and notification system for data breaches
@@ -489,3 +489,6 @@ class BreachDetectionSystem {
 
     return null
   }
+
+}
+

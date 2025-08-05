@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🎯 NeonPro Experience Quality Analyzer
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Experience Quality Analysis & Optimization
@@ -1477,3 +1477,4 @@ export {
   type QualityOptimizationStrategy,
   type ExperienceQualityConfig
 }
+

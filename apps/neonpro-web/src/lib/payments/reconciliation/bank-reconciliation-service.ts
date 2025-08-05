@@ -12,7 +12,7 @@ import { z } from 'zod';
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
@@ -556,3 +556,4 @@ export class BankReconciliationService {
     return matrix[str2.length][str1.length];
   }
 }
+

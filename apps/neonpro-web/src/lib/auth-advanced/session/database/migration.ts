@@ -308,7 +308,7 @@ export async function rollbackSessionMigration(
  */
 if (require.main === module) {
   const command = process.argv[2];
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
@@ -367,3 +367,4 @@ if (require.main === module) {
 }
 
 export default SessionMigration;
+

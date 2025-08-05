@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LGPD Compliance Manager
  * 
  * Comprehensive LGPD (Lei Geral de Proteção de Dados) compliance system
@@ -707,3 +707,4 @@ export type {
   PrivacySettings,
   DataInventoryItem
 }
+

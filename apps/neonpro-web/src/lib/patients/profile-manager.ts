@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Patient Profile Manager
  * 
  * Comprehensive patient profile management system for the NeonPro clinic management platform.
@@ -11,7 +11,7 @@
 
 import { AuditLogger } from '@/lib/auth/audit/audit-logger';
 import { LGPDComplianceManager } from '@/lib/lgpd/LGPDComplianceManager';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 // Enhanced patient profile types with comprehensive data structure
 export interface PatientDemographics {
@@ -122,20 +122,31 @@ export interface ProfileUpdateData {
 
 export class ProfileManager {
   private mockProfiles: Map<string, PatientProfileExtended> = new Map();
-  private auditLogger: AuditLogger;
+  private auditLogger!: AuditLogger;
   private complianceManager: LGPDComplianceManager;
+  private initialized = false;
 
   constructor() {
-    // Initialize audit and compliance systems
-    const supabase = createClient();
-    this.auditLogger = new AuditLogger(supabase);
+    // Initialize compliance manager synchronously
     this.complianceManager = new LGPDComplianceManager();
+  }
+
+  /**
+   * Initialize async dependencies
+   */
+  private async initialize(): Promise<void> {
+    if (this.initialized) return;
+    
+    const supabase = await createClient();
+    this.auditLogger = new AuditLogger(supabase);
+    this.initialized = true;
   }
 
   /**
    * Create a new comprehensive patient profile
    */
   async createPatientProfile(profileData: Partial<PatientProfileExtended>, userId?: string): Promise<PatientProfileExtended | null> {
+    await this.initialize();
     const startTime = Date.now();
     
     try {
@@ -221,6 +232,7 @@ export class ProfileManager {
    * Retrieve complete patient profile with all related data
    */
   async getPatientProfile(patientId: string, userId?: string): Promise<PatientProfileExtended | null> {
+    await this.initialize();
     const startTime = Date.now();
     
     try {
@@ -280,6 +292,7 @@ export class ProfileManager {
     patientId: string, 
     updateData: ProfileUpdateData
   ): Promise<PatientProfileExtended | null> {
+    await this.initialize();
     try {
       const currentProfile = this.mockProfiles.get(patientId);
       if (!currentProfile) {
@@ -462,6 +475,7 @@ export class ProfileManager {
    * Get patients with incomplete profiles
    */
   async getIncompleteProfiles(threshold: number = 0.8): Promise<PatientProfileExtended[]> {
+    await this.initialize();
     try {
       return Array.from(this.mockProfiles.values())
         .filter(patient => 
@@ -479,6 +493,7 @@ export class ProfileManager {
    * Archive patient profile (soft delete)
    */
   async archivePatientProfile(patientId: string): Promise<boolean> {
+    await this.initialize();
     try {
       const profile = this.mockProfiles.get(patientId);
       if (!profile) {
@@ -508,6 +523,7 @@ export class ProfileManager {
     profilesNeedingAttention: number;
     recentlyUpdated: number;
   }> {
+    await this.initialize();
     try {
       const allPatients = Array.from(this.mockProfiles.values());
       const activePatients = allPatients.filter(patient => patient.is_active);
@@ -611,6 +627,7 @@ export class ProfileManager {
    * Archive patient profile (soft delete)
    */
   async archivePatient(patientId: string): Promise<boolean> {
+    await this.initialize();
     try {
       const profile = this.mockProfiles.get(patientId);
       
@@ -637,3 +654,4 @@ export class ProfileManager {
 }
 
 export default ProfileManager;
+

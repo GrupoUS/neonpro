@@ -1,11 +1,11 @@
-// =====================================================================================
+﻿// =====================================================================================
 // Financial Analytics Core - KPI Engine
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights
 // Created: 2025-01-27
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import {
   KPICalculation,
   PerformanceMetrics,
@@ -519,3 +519,4 @@ export class FinancialAnalyticsCore {
     return [];
   }
 }
+

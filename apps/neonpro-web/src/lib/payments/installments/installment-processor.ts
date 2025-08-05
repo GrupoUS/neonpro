@@ -644,7 +644,7 @@ let installmentProcessorInstance: InstallmentProcessor | null = null;
 export function getInstallmentProcessor(): InstallmentProcessor {
   if (!installmentProcessorInstance) {
     installmentProcessorInstance = new InstallmentProcessor({
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      supabaseUrl: process.env.SUPABASE_URL!,
       supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
       stripeSecretKey: process.env.STRIPE_SECRET_KEY!,
       webhookSecret: process.env.STRIPE_WEBHOOK_SECRET
@@ -655,3 +655,4 @@ export function getInstallmentProcessor(): InstallmentProcessor {
 }
 
 export default InstallmentProcessor;
+

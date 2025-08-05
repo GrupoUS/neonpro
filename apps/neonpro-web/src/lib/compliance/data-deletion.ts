@@ -24,3 +24,8 @@ export class DataDeletionService {
     return true;
   }
 }
+
+// Export function for compatibility
+export async function scheduleDataDeletion(request: DataDeletionRequest): Promise<{ scheduledFor: Date; requestId: string }> {
+  return DataDeletionService.scheduleDataDeletion(request);
+}

@@ -1,8 +1,8 @@
-// Analytics Repository Layer - STORY-SUB-002 Task 2
+﻿// Analytics Repository Layer - STORY-SUB-002 Task 2
 // Data access layer for analytics with optimized queries and caching
 // Created: 2025-01-22
 
-import { createClient } from '@/app/utils/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import type { 
   AnalyticsQuery, 
   MetricType, 
@@ -139,3 +139,4 @@ export class AnalyticsRepository {
     }
   }
 }
+

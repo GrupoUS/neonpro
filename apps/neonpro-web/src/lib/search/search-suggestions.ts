@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Search Suggestions Engine
  * Story 3.4: Smart Search + NLP Integration - Task 4
  * Intelligent autocomplete and query suggestions with learning capabilities
@@ -948,3 +948,4 @@ export class SearchSuggestions {
 
 // Export singleton instance
 export const searchSuggestions = new SearchSuggestions();
+

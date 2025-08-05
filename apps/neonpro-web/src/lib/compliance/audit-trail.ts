@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Audit Trail System
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Audit Trail)
  * 
@@ -1332,6 +1332,13 @@ export const AuditEventValidationSchema = z.object({
   action: z.string().min(1, 'Action is required'),
   description: z.string().min(1, 'Description is required')
 });
+
+// Export additional classes for compatibility
+export { AuditTrailManager as LGPDAuditTrail };
+export { AuditTrailManager as LGPDAuditTrailService };
+
+// Export the AuditEventType enum for direct use
+export { AuditEventType } from '../../types/lgpd';
 
 // Export singleton instance
 export const auditTrailManager = new AuditTrailManager();

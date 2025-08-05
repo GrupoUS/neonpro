@@ -1,10 +1,10 @@
-// KPI Alerts Management API
+﻿// KPI Alerts Management API
 // Description: API endpoints for KPI alert management and acknowledgment
 // Author: Dev Agent
 // Date: 2025-01-26
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
 interface AlertFilters {
@@ -29,7 +29,7 @@ const alertFiltersSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get current user
     const {
@@ -255,3 +255,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

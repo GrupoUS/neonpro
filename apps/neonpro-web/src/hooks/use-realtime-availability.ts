@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 
 export interface TimeSlot {
@@ -38,7 +38,7 @@ export function useRealtimeAvailability({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
-  const supabase = createClient()
+  const supabase = await createClient()
   const { toast } = useToast()
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
 
@@ -270,3 +270,4 @@ export function useRealtimeAvailability({
     refetch: fetchInitialSlots
   }
 }
+

@@ -1,17 +1,17 @@
-/**
+﻿/**
  * Health Check API Endpoint
  * Monitor system status and dependencies
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/app/utils/supabase/server';
 
 export async function GET() {
   const startTime = Date.now();
   
   try {
     // Check database connection
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('patients')
       .select('count')
@@ -57,3 +57,4 @@ export async function GET() {
     );
   }
 }
+

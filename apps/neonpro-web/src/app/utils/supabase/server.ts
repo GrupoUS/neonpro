@@ -1,4 +1,4 @@
-// app/utils/supabase/server.ts
+﻿// app/utils/supabase/server.ts
 // Task 1.3 - CONNECTION POOLING OPTIMIZATION
 // Updated server client with connection pooling integration
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
@@ -9,8 +9,8 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
     {
       cookies: {
         get(name: string) {
@@ -47,3 +47,4 @@ export async function createOptimizedServerClient(clinicId: string) {
 
 // Legacy support - gradually migrate to optimized version
 export { createClient as createLegacyServerClient };
+

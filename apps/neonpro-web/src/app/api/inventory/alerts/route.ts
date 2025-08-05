@@ -4,7 +4,7 @@
 // Created: 2025-01-26
 // =====================================================================================
 
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

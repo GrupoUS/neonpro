@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 // Initialize Supabase client with service role key for server-side operations
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
@@ -285,3 +285,4 @@ async function getDashboardAnalytics(startDate: string, endDate: string, userId:
     }
   }
 }
+

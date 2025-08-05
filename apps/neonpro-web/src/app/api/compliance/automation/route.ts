@@ -1,10 +1,10 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { LGPDAutomationOrchestrator } from '@/lib/compliance/lgpd-automation-orchestrator';
 import { z } from 'zod';
 
-// Schema de validação para configuração de automação
+// Schema de validaï¿½ï¿½o para configuraï¿½ï¿½o de automaï¿½ï¿½o
 const AutomationConfigSchema = z.object({
   enabled: z.boolean(),
   schedules: z.object({
@@ -25,12 +25,12 @@ const AutomationConfigSchema = z.object({
   })
 });
 
-// GET - Obter status da automação
+// GET - Obter status da automaï¿½ï¿½o
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
-    // Verificar autenticação
+    // Verificar autenticaï¿½ï¿½o
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError || !session) {
       return NextResponse.json(
@@ -41,13 +41,13 @@ export async function GET(request: NextRequest) {
 
     const orchestrator = new LGPDAutomationOrchestrator(supabase);
     
-    // Obter status geral da automação
+    // Obter status geral da automaï¿½ï¿½o
     const status = await orchestrator.getAutomationStatus();
     
-    // Obter métricas do dashboard
+    // Obter mï¿½tricas do dashboard
     const metrics = await orchestrator.getDashboardMetrics();
     
-    // Verificar saúde da conformidade
+    // Verificar saï¿½de da conformidade
     const healthCheck = await orchestrator.performComplianceHealthCheck();
     
     return NextResponse.json({
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Erro ao obter status da automação:', error);
+    console.error('Erro ao obter status da automaï¿½ï¿½o:', error);
     return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
@@ -72,12 +72,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Executar automação manual
+// POST - Executar automaï¿½ï¿½o manual
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
-    // Verificar autenticação
+    // Verificar autenticaï¿½ï¿½o
     const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError || !session) {
       return NextResponse.json(
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         
       default:
         return NextResponse.json(
-          { error: 'Ação não reconhecida' },
+          { error: 'Aï¿½ï¿½o nï¿½o reconhecida' },
           { status: 400 }
         );
     }
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Erro ao executar automação:', error);
+    console.error('Erro ao executar automaï¿½ï¿½o:', error);
     return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
@@ -146,3 +146,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

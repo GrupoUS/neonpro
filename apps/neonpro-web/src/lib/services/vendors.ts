@@ -1,10 +1,10 @@
-// lib/services/vendors.ts
+﻿// lib/services/vendors.ts
 // Service layer for vendor management
 
-import { createClient } from '@/app/utils/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { Vendor, VendorFilters, VendorFormData, VendorsResponse } from '@/lib/types/accounts-payable'
 
-const supabase = createClient()
+const supabase = await createClient()
 
 export class VendorService {
   
@@ -339,3 +339,4 @@ export class VendorService {
     }
   }
 }
+

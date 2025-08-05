@@ -33,7 +33,7 @@ type CompressionOptions = {
 }
 
 export class SupabaseStorageManager {
-  private supabase = createClientComponentClient<Database>()
+  private const supabase = createClient(ComponentClient<Database>()
   private readonly BUCKET_NAME = 'patient-photos'
   private readonly MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
   private readonly ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/webp']

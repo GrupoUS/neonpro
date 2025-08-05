@@ -1,5 +1,5 @@
 import { BudgetApprovalService } from '@/app/lib/services/budget-approval-service';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {

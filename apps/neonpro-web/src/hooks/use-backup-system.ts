@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -315,7 +315,7 @@ export const useBackupSystem = (): UseBackupSystemReturn => {
   });
 
   const [backupSystem, setBackupSystem] = useState<BackupSystem | null>(null);
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Initialize the backup system
   const initializeSystem = useCallback(async () => {
@@ -692,3 +692,4 @@ export const useBackupSystem = (): UseBackupSystemReturn => {
 };
 
 export default useBackupSystem;
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Sistema de Analytics para Notificações - NeonPro
  * 
  * Componente responsável por coletar, processar e disponibilizar métricas
@@ -17,7 +17,7 @@
  */
 
 import { z } from 'zod';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { NotificationChannel, NotificationStatus, NotificationType } from '../types';
 
 // ================================================================================
@@ -684,3 +684,4 @@ export class NotificationAnalytics {
 
 export const notificationAnalytics = new NotificationAnalytics();
 export type { AnalyticsQuery, NotificationMetrics, AnalyticsReport, PredictiveInsights };
+

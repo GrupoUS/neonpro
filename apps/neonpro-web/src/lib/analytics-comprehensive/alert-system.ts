@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 import { PerformanceMetrics, PerformanceAlert } from './performance-calculator'
 import { SchedulingMetrics } from './scheduling-analytics'
 
@@ -834,3 +834,4 @@ export class AlertSystem {
 }
 
 export default AlertSystem
+

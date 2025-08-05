@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Complication Alert System
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
  * 
@@ -699,3 +699,4 @@ Para emergências, ligue: 192 (SAMU)
 
 // Export singleton instance
 export const complicationAlertSystem = new ComplicationAlertSystem();
+

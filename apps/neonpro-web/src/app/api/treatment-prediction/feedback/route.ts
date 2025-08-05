@@ -1,6 +1,6 @@
-// GET/POST /api/treatment-prediction/feedback - Prediction feedback management
+﻿// GET/POST /api/treatment-prediction/feedback - Prediction feedback management
 import { TreatmentPredictionService } from '@/app/lib/services/treatment-prediction';
-import { createServerClient } from '@/app/utils/supabase/server';
+import { createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET /api/treatment-prediction/feedback - Get prediction feedback

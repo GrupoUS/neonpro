@@ -78,7 +78,7 @@ export interface ModelPerformance {
 
 // Main no-show prediction engine class
 export class NoShowPredictionEngine {
-  private supabase = createClientComponentClient<Database>();
+  private const supabase = createClient(ComponentClient<Database>();
   private modelVersion = '2.1.0';
 
   /**

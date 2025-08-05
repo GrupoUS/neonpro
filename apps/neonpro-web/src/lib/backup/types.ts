@@ -77,6 +77,38 @@ export enum DataType {
   DOCUMENTS = 'DOCUMENTS'  // Documentos
 }
 
+// Adicionar os tipos que estavam faltando
+export enum AlertType {
+  BACKUP_FAILURE = 'BACKUP_FAILURE',
+  STORAGE_FULL = 'STORAGE_FULL',
+  PERFORMANCE_DEGRADATION = 'PERFORMANCE_DEGRADATION',
+  SECURITY_BREACH = 'SECURITY_BREACH',
+  SYSTEM_ERROR = 'SYSTEM_ERROR'
+}
+
+export enum AlertSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+export enum TaskStatus {
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
+}
+
+export enum ScheduleFrequency {
+  HOURLY = 'HOURLY',
+  DAILY = 'DAILY',
+  WEEKLY = 'WEEKLY',
+  MONTHLY = 'MONTHLY',
+  CUSTOM = 'CUSTOM'
+}
+
 // ============================================================================
 // INTERFACES BASE
 // ============================================================================
@@ -106,7 +138,7 @@ export interface BackupConfig {
  * Agendamento de backup
  */
 export interface BackupSchedule {
-  frequency: 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CUSTOM';
+  frequency: ScheduleFrequency;
   interval?: number;        // Para frequência customizada
   time?: string;           // Horário específico (HH:mm)
   daysOfWeek?: number[];   // Dias da semana (0-6)
@@ -338,12 +370,12 @@ export interface PerformanceMetrics {
  */
 export interface BackupAlert {
   id: string;
-  type: 'FAILURE' | 'WARNING' | 'INFO' | 'CRITICAL';
+  type: AlertType;
   title: string;
   message: string;
   backupId?: string;
   configId?: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: AlertSeverity;
   acknowledged: boolean;
   acknowledgedBy?: string;
   acknowledgedAt?: Date;
@@ -368,7 +400,7 @@ export interface RecoveryTest {
   schedule: BackupSchedule;
   lastRun?: Date;
   nextRun?: Date;
-  status: 'PENDING' | 'RUNNING' | 'PASSED' | 'FAILED';
+  status: TaskStatus;
   results?: TestResults;
   enabled: boolean;
   createdAt: Date;

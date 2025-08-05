@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/app/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { MultiLocationInventoryService } from '@/app/lib/services/multi-location-inventory-service';
 import type { CreateInventoryItem, InventoryFilters } from '@/app/lib/types/inventory';
 

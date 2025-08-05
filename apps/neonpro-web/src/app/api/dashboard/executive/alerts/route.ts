@@ -1,12 +1,12 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { AlertSystem } from '@/lib/dashboard/executive/alert-system';
 
 // Schema for alert rule creation/update
 const CreateAlertRuleSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
+  name: z.string().min(1, 'Nome ï¿½ obrigatï¿½rio'),
   description: z.string().optional(),
   kpiDefinitionId: z.string().uuid().optional(),
   conditionType: z.enum(['threshold', 'trend', 'anomaly', 'custom']),
@@ -45,13 +45,13 @@ const AlertActionSchema = z.object({
 // GET /api/dashboard/executive/alerts
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Não autorizado' },
+        { error: 'Nï¿½o autorizado' },
         { status: 401 }
       );
     }
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'Usuário não associado a uma clínica' },
+        { error: 'Usuï¿½rio nï¿½o associado a uma clï¿½nica' },
         { status: 403 }
       );
     }
@@ -106,13 +106,13 @@ export async function GET(request: NextRequest) {
 // POST /api/dashboard/executive/alerts
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Verify authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'Não autorizado' },
+        { error: 'Nï¿½o autorizado' },
         { status: 401 }
       );
     }
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     if (!clinicUser) {
       return NextResponse.json(
-        { error: 'Usuário não associado a uma clínica' },
+        { error: 'Usuï¿½rio nï¿½o associado a uma clï¿½nica' },
         { status: 403 }
       );
     }
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Dados inválidos', details: error.errors },
+        { error: 'Dados invï¿½lidos', details: error.errors },
         { status: 400 }
       );
     }
@@ -154,3 +154,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

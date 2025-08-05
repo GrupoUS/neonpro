@@ -51,7 +51,5 @@ export {
 // Re-export server utilities
 export {
   auth,
-  currentUser,
-  redirectToSignIn,
-  redirectToSignUp
-} from '@clerk/nextjs';
+  currentUser
+} from '@clerk/nextjs/server';

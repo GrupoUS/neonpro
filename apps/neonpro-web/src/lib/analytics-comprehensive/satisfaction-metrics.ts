@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 📊 NeonPro Patient Satisfaction Metrics Engine
  * 
  * HEALTHCARE ANALYTICS SYSTEM - Satisfaction Metrics & Analysis
@@ -1224,3 +1224,4 @@ export {
   type SatisfactionCollectionConfig,
   type SatisfactionTrendAnalysis
 }
+

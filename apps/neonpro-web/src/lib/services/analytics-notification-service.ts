@@ -3,7 +3,7 @@ import { broadcastToChannel, broadcastToUser } from '@/app/api/websocket/route'
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
@@ -672,3 +672,4 @@ export class AnalyticsNotificationService {
 
 // Export singleton instance
 export const analyticsNotificationService = new AnalyticsNotificationService()
+

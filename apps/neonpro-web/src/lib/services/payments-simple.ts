@@ -1,4 +1,4 @@
-import { createClient } from '@/app/utils/supabase/client'
+﻿import { createClient } from '@/lib/supabase/client'
 
 // Define types directly since we don't have the database types file
 export interface Payment {
@@ -186,3 +186,4 @@ export class PaymentsService {
 
 // Export singleton instance
 export const paymentsService = new PaymentsService()
+

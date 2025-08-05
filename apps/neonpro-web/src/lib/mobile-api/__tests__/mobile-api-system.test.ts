@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Mobile API System Tests
  * Comprehensive test suite for mobile API functionality
  */
@@ -593,3 +593,4 @@ describe('MobileApiSystem', () => {
     });
   });
 });
+

@@ -2,7 +2,7 @@ import type {
     BookingResponse,
     CreateAppointmentFormData,
 } from "@/app/lib/types/appointments";
-import { createClient } from "@/app/utils/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
